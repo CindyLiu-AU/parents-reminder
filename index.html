@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>送货通知</title>
+  <script>
+    window.onload = () => document.documentElement.requestFullscreen?.();
+  </script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #0d1b2a;
+      color: #f0f4f8;
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card {
+      background: #112240;
+      border: 1px solid #1e3a5f;
+      border-radius: 24px;
+      padding: 60px 80px;
+      max-width: 860px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 8px 48px rgba(0,0,0,0.5);
+    }
+
+    .icon {
+      font-size: 80px;
+      margin-bottom: 24px;
+    }
+
+    .label {
+      font-size: 22px;
+      color: #64b5f6;
+      letter-spacing: 3px;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+    }
+
+    .title {
+      font-size: 52px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 12px;
+      line-height: 1.2;
+    }
+
+    .subtitle {
+      font-size: 28px;
+      color: #90caf9;
+      margin-bottom: 48px;
+    }
+
+    .time-box {
+      background: #f59e0b;
+      border-radius: 16px;
+      padding: 28px 48px;
+      display: inline-block;
+      margin-bottom: 40px;
+    }
+
+    .time-label {
+      font-size: 18px;
+      color: #1a1000;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .time {
+      font-size: 64px;
+      font-weight: 800;
+      color: #1a1000;
+      letter-spacing: 2px;
+    }
+
+    .note {
+      font-size: 26px;
+      color: #81c784;
+      line-height: 1.7;
+    }
+
+    .footer {
+      margin-top: 48px;
+      font-size: 16px;
+      color: #546e7a;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon">📦</div>
+    <div class="label">Coles 网购送货</div>
+    <div class="title">明天送货上门</div>
+    <div class="subtitle">2026年4月24日（星期五）</div>
+
+    <div class="time-box">
+      <div class="time-label">送货时间</div>
+      <div class="time">早上 7:30 – 8:30</div>
+    </div>
+
+    <div class="note">
+      请在家等候送货员 🏠<br>
+      听到门铃请去开门
+    </div>
+
+    <div class="footer">Cindy 发送 · 如有疑问请联系 Cindy</div>
+  </div>
+</body>
+</html>
