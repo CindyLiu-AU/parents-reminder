@@ -243,9 +243,9 @@
 
               <div class="section-label">
                 全部商品
-                <button class="toggle-btn" onclick="toggleOrder('${colId}', this)">收起 ▲</button>
+                <button class="toggle-btn" onclick="toggleOrder('${colId}', this)">展开 ▼</button>
               </div>
-              <div class="collapsible" id="${colId}" style="max-height:2000px">
+              <div class="collapsible" id="${colId}" style="max-height:0px">
                 ${allItemsHTML}
                 <div class="total-row">
                   <span class="total-label">订单合计</span>
