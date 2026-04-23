@@ -162,17 +162,25 @@
 
     // ── Clock ─────────────────────────────────────────────────
     const TZ = 'Australia/Hobart';
+
     function hobartParts() {
       const now = new Date();
-      const fmt = (opts) => new Intl.DateTimeFormat('en-AU', { timeZone: TZ, ...opts }).format(now);
+      const parts = new Intl.DateTimeFormat('en-AU', {
+        timeZone: TZ, hour12: false,
+        year: 'numeric', month: 'numeric', day: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+      }).formatToParts(now);
+      const get = (type) => parts.find(p => p.type === type)?.value || '0';
+      const hour = parseInt(get('hour'), 10);
+      const weekday = new Intl.DateTimeFormat('zh-CN', { timeZone: TZ, weekday: 'long' }).format(now);
       return {
-        hour:    parseInt(fmt({ hour: 'numeric', hour12: false })),
-        minute:  fmt({ minute: '2-digit' }),
-        hourStr: fmt({ hour: '2-digit', hour12: false }),
-        year:    fmt({ year: 'numeric' }),
-        month:   fmt({ month: 'numeric' }),
-        day:     fmt({ day: 'numeric' }),
-        weekday: new Intl.DateTimeFormat('zh-CN', { timeZone: TZ, weekday: 'long' }).format(now),
+        hour,
+        minute:  get('minute'),
+        hourStr: String(hour).padStart(2, '0'),
+        year:    get('year'),
+        month:   get('month'),
+        day:     get('day'),
+        weekday,
       };
     }
 
