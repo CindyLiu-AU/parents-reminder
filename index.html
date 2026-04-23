@@ -98,22 +98,22 @@
     }
 
     .day-badge {
-      position: absolute;
-      top: 18px;
-      right: 24px;
-      font-size: 13px;
-      font-weight: 700;
+      display: inline-block;
+      font-size: 22px;
+      font-weight: 800;
       letter-spacing: 1px;
-      padding: 4px 12px;
+      padding: 4px 16px;
       border-radius: 20px;
+      vertical-align: middle;
+      margin-left: 14px;
     }
-    .day-badge.today  { background: #14532d; color: #4ade80; }
-    .day-badge.tomorrow { background: #1c3d5a; color: #60a5fa; }
-    .day-badge.later  { background: #1a1a2e; color: #6b7280; }
+    .day-badge.today    { background: #16a34a; color: #ffffff; }
+    .day-badge.tomorrow { background: #ea580c; color: #ffffff; }
+    .day-badge.later    { background: #7c3aed; color: #ffffff; }
 
     .icon { font-size: 72px; margin-bottom: 20px; }
     .label { font-size: 20px; color: #64b5f6; letter-spacing: 3px; margin-bottom: 16px; }
-    .title { font-size: 48px; font-weight: 700; color: #ffffff; margin-bottom: 10px; line-height: 1.2; }
+    .title { font-size: 48px; font-weight: 700; color: #ffffff; margin-bottom: 10px; line-height: 1.4; }
     .subtitle { font-size: 24px; color: #90caf9; margin-bottom: 36px; }
 
     .time-box {
@@ -350,6 +350,11 @@
       return { text: `${diff} 天后`, cls: 'later' };
     }
 
+    function badgeHTML(d) {
+      const b = relativeDay(d);
+      return b ? `<span class="day-badge ${b.cls}">${b.text}</span>` : '';
+    }
+
     // ── Time slot ─────────────────────────────────────────────
     function getSlot() {
       const h = hobartParts().hour;
@@ -374,7 +379,7 @@
         card.innerHTML = `
           <div class="icon">🚚</div>
           <div class="label">Coles 网购送货</div>
-          <div class="title">${shortDate(d)} 送货上门</div>
+          <div class="title">${shortDate(d)} 送货上门${badgeHTML(d)}</div>
           <div class="subtitle">${d.fulldate || ''}</div>
           <div class="time-box">
             <div class="time-label">送货时间</div>
@@ -386,7 +391,7 @@
         card.innerHTML = `
           <div class="icon">🏠</div>
           <div class="label">家庭通知</div>
-          <div class="title">${d.who || 'Cindy'} ${shortDate(d)} 来家里</div>
+          <div class="title">${d.who || 'Cindy'} ${shortDate(d)} 来家里${badgeHTML(d)}</div>
           <div class="subtitle">${d.fulldate || ''}</div>
           <div class="time-box">
             <div class="time-label">到达时间</div>
@@ -398,7 +403,7 @@
         card.innerHTML = `
           <div class="icon">⚡</div>
           <div class="label">电力通知</div>
-          <div class="title">${shortDate(d)} 免费用电时段</div>
+          <div class="title">${shortDate(d)} 免费用电时段${badgeHTML(d)}</div>
           <div class="subtitle">${d.fulldate || ''}</div>
           <div class="time-box">
             <div class="time-label">免费时段</div>
@@ -410,7 +415,7 @@
         card.innerHTML = `
           <div class="icon">🧳</div>
           <div class="label">家庭旅行</div>
-          <div class="title">${shortDate(d)} 去 ${d.destination}</div>
+          <div class="title">${shortDate(d)} 去 ${d.destination}${badgeHTML(d)}</div>
           <div class="subtitle">${d.fulldate || ''}</div>
           <div class="time-box">
             <div class="time-label">行程</div>
@@ -434,21 +439,11 @@
         card.innerHTML = `
           <div class="icon">${d.icon || '📝'}</div>
           <div class="label">${d.label || '通知'}</div>
+          <div class="title">${d.label || '通知'}${badgeHTML(d)}</div>
           ${d.fulldate ? `<div class="subtitle">${d.fulldate}</div>` : ''}
           ${d.time ? `<div class="time-box"><div class="time-label">时间</div><div class="time">${d.time}</div></div>` : ''}
           <div class="custom-msg">${d.message}</div>
           <div class="footer">Cindy 发送 · 如有疑问请联系 Cindy</div>`;
-      }
-
-      // Inject relative day badge for all non-word, non-greeting cards
-      if (d.type !== 'word' && (d.fulldate || d.date)) {
-        const badge = relativeDay(d);
-        if (badge) {
-          const el = document.createElement('div');
-          el.className = `day-badge ${badge.cls}`;
-          el.textContent = badge.text;
-          card.appendChild(el);
-        }
       }
     }
 
