@@ -458,7 +458,7 @@
         } else {
           activeIdx = Math.floor(Date.now() / (30 * 60 * 1000)) % words.length;
           data = { type: 'word', ...words[activeIdx] };
-          updateBottomBar(words, activeIdx);
+          updateBottomBar([], 0);
         }
       } else if (slot === 'night') {
         data = { type: 'custom', icon: '🌙', label: '晚安', message: '爸爸妈妈晚安！<br>好好休息 😴' };
