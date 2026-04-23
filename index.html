@@ -75,6 +75,13 @@
       color: #546e7a;
     }
 
+    #countdown {
+      font-size: 13px;
+      color: #546e7a;
+      text-align: center;
+      letter-spacing: 1px;
+    }
+
     /* ── Main card ── */
     .card {
       background: #112240;
@@ -371,12 +378,14 @@
     function updateBottomBar(items, activeIdx) {
       const bar = document.getElementById('bottombar');
       if (!items || items.length <= 1) { bar.innerHTML = ''; return; }
+      const CN = { word: '单词', coles: 'Coles送货', visit: '家庭通知', power: '免费用电', trip: '家庭旅行', custom: '通知' };
       bar.innerHTML = items.map((item, i) => {
-        const label = item.word || item.label || item.type || '通知';
+        const label = item.word || item.label || CN[item.type] || '通知';
         const icon  = item.type === 'word' ? '📚'
                     : item.type === 'coles' ? '🚚'
                     : item.type === 'visit' ? '🏠'
                     : item.type === 'power' ? '⚡'
+                    : item.type === 'trip' ? '🧳'
                     : item.icon || '📝';
         return `<div class="pill ${i === activeIdx ? 'active' : ''}">${icon} ${label}</div>`;
       }).join('');
