@@ -1,8 +1,10 @@
 [
   {
-    "type": "coles",
-    "date": "明天",
-    "fulldate": "2026年4月24日（星期五）",
-    "time": "早上 7:30"
+    "type": "visit",
+    "who": "Cindy",
+    "date": "今天",
+    "fulldate": "2026年4月23日（今天）",
+    "time": "下午 3:00",
+    "note": "我会带一些新东西给你们 🎁"
   }
 ]
