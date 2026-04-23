@@ -431,7 +431,11 @@
         if (!n.pin_from || !n.pin_until) continue;
         const [fh, fm] = n.pin_from.split(':').map(Number);
         const [uh, um] = n.pin_until.split(':').map(Number);
-        if (nowMins >= fh * 60 + fm && nowMins < uh * 60 + um) return n;
+        const from = fh * 60 + fm, until = uh * 60 + um;
+        const active = from <= until
+          ? nowMins >= from && nowMins < until
+          : nowMins >= from || nowMins < until;
+        if (active) return n;
       }
       return null;
     }
