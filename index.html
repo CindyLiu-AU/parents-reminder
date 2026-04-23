@@ -463,13 +463,37 @@
       return null;
     }
 
+    function parseItemDateTime(d) {
+      const now = new Date();
+      let year = now.getFullYear(), month = now.getMonth(), day = now.getDate();
+      if (d.fulldate) {
+        const m = d.fulldate.match(/(\d{4})年(\d{1,2})月(\d{1,2})日/);
+        if (m) { year = parseInt(m[1]); month = parseInt(m[2]) - 1; day = parseInt(m[3]); }
+      } else if (d.date === '明天') {
+        const t = new Date(now); t.setDate(t.getDate() + 1);
+        year = t.getFullYear(); month = t.getMonth(); day = t.getDate();
+      }
+      let hour = 0, minute = 0;
+      const tm = (d.time || '').match(/(上午|早上|下午|晚上)?\s*(\d{1,2}):(\d{2})/);
+      if (tm) {
+        const p = tm[1] || '';
+        hour = parseInt(tm[2]); minute = parseInt(tm[3]);
+        if ((p === '下午' || p === '晚上') && hour < 12) hour += 12;
+        if ((p === '上午' || p === '早上') && hour === 12) hour = 0;
+      }
+      return new Date(year, month, day, hour, minute);
+    }
+
     async function loadAll() {
       const [w, n] = await Promise.all([
         fetch('words.json?t=' + Date.now()).then(r => r.json()),
         fetch('notices.json?t=' + Date.now()).then(r => r.json()),
       ]);
       words = w;
-      notices = n;
+      const now = new Date();
+      notices = n
+        .filter(d => parseItemDateTime(d) >= now || d.pin_from)
+        .sort((a, b) => parseItemDateTime(a) - parseItemDateTime(b));
     }
 
     async function tick() {
