@@ -186,7 +186,9 @@
 
     function updateClock() {
       const p = hobartParts();
-      document.getElementById('clock').textContent = `${p.hourStr}:${p.minute}`;
+      const ampm = p.hour < 12 ? 'AM' : 'PM';
+      const h12 = p.hour % 12 || 12;
+      document.getElementById('clock').textContent = `${String(h12).padStart(2,'0')}:${p.minute} ${ampm}`;
       document.getElementById('date-display').textContent =
         `${p.year}年${p.month}月${p.day}日 ${p.weekday}`;
     }
