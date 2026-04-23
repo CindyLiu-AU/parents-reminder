@@ -4,16 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>今日单词</title>
-  <script>
-    window.onload = () => document.documentElement.requestFullscreen?.();
-    setInterval(() => location.reload(), 60000);
-    function toggleAnswer() {
-      const box = document.getElementById('answer');
-      const hint = document.getElementById('hint');
-      box.classList.toggle('visible');
-      hint.textContent = box.classList.contains('visible') ? '再次点击隐藏答案' : '点击屏幕查看答案 👆';
-    }
-  </script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -23,6 +13,7 @@
       font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
       min-height: 100vh;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       cursor: pointer;
@@ -97,10 +88,25 @@
       font-size: 16px;
       color: #546e7a;
     }
+
+    #sound-banner {
+      background: #1e3a6e;
+      border: 1px solid #2dd4bf;
+      border-radius: 12px;
+      padding: 14px 32px;
+      margin-bottom: 20px;
+      font-size: 18px;
+      color: #2dd4bf;
+      display: block;
+    }
+
+    #sound-banner.hidden { display: none; }
   </style>
 </head>
-<body onclick="toggleAnswer()">
-  <div class="card">
+<body>
+  <div id="sound-banner">🔔 点击屏幕任意位置，开启新通知提示音</div>
+
+  <div class="card" onclick="handleTap()">
     <div class="icon">📚</div>
     <div class="label">今日单词</div>
     <div class="word">Hobart</div>
@@ -115,8 +121,69 @@
     </div>
 
     <div class="hint" id="hint">点击屏幕查看答案 👆</div>
-
     <div class="footer">Cindy 发送 · 如有疑问请联系 Cindy</div>
   </div>
+
+  <script>
+    // ── Version (updated on every push) ──────────────────────
+    const PAGE_VERSION = "v-20260423-word-hobart";
+
+    // ── Audio ─────────────────────────────────────────────────
+    let audioCtx = null;
+    let audioUnlocked = false;
+
+    function unlockAudio() {
+      if (audioUnlocked) return;
+      audioCtx = new AudioContext();
+      audioCtx.resume();
+      audioUnlocked = true;
+      document.getElementById('sound-banner').classList.add('hidden');
+    }
+
+    function playChime() {
+      if (!audioCtx) return;
+      const notes = [523, 659, 784, 1047];
+      notes.forEach((freq, i) => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.frequency.value = freq;
+        osc.type = 'sine';
+        const t = audioCtx.currentTime + i * 0.18;
+        gain.gain.setValueAtTime(0.3, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
+        osc.start(t);
+        osc.stop(t + 0.4);
+      });
+    }
+
+    // ── Answer toggle ─────────────────────────────────────────
+    function handleTap() {
+      unlockAudio();
+      const box = document.getElementById('answer');
+      const hint = document.getElementById('hint');
+      box.classList.toggle('visible');
+      hint.textContent = box.classList.contains('visible')
+        ? '再次点击隐藏答案'
+        : '点击屏幕查看答案 👆';
+    }
+
+    // ── Background update check (no full reload) ──────────────
+    setInterval(async () => {
+      try {
+        const res = await fetch(location.href + '?t=' + Date.now());
+        const html = await res.text();
+        const match = html.match(/PAGE_VERSION = "([^"]+)"/);
+        if (match && match[1] !== PAGE_VERSION) {
+          playChime();
+          setTimeout(() => location.reload(), 2000);
+        }
+      } catch(e) {}
+    }, 60000);
+
+    // ── Fullscreen ────────────────────────────────────────────
+    window.onload = () => document.documentElement.requestFullscreen?.();
+  </script>
 </body>
 </html>
