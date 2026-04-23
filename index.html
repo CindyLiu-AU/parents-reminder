@@ -123,6 +123,24 @@
 
     #timeslot-badge { display: none; }
 
+    #reminders-btn {
+      position: fixed;
+      bottom: 60px;
+      right: 20px;
+      background: #1e3a6e;
+      border: 1px solid #2e3a52;
+      border-radius: 50%;
+      width: 52px;
+      height: 52px;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      z-index: 200;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+
     /* ── Bottom rotation bar ── */
     #bottombar {
       position: fixed;
@@ -181,6 +199,7 @@
   <div class="card" id="card" onclick="handleTap()"></div>
   <div id="timeslot-badge"></div>
   <div id="bottombar"></div>
+  <a href="reminders.html" id="reminders-btn" onclick="event.stopPropagation()">📋</a>
 
   <script>
     // ── Weather code → emoji + description ───────────────────

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>所有通知</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #0d1b2a;
+      color: #f0f4f8;
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+      min-height: 100vh;
+      padding: 24px 20px 40px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #1e3a5f;
+    }
+
+    header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: #f59e0b;
+    }
+
+    header a {
+      font-size: 16px;
+      color: #64b5f6;
+      text-decoration: none;
+      background: #112240;
+      border: 1px solid #1e3a5f;
+      border-radius: 20px;
+      padding: 8px 20px;
+    }
+
+    .item {
+      background: #112240;
+      border: 1px solid #1e3a5f;
+      border-radius: 16px;
+      padding: 20px 24px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 18px;
+    }
+
+    .item-icon { font-size: 36px; flex-shrink: 0; }
+
+    .item-body { flex: 1; }
+
+    .item-type {
+      font-size: 13px;
+      color: #64b5f6;
+      letter-spacing: 2px;
+      margin-bottom: 6px;
+    }
+
+    .item-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 4px;
+    }
+
+    .item-time {
+      font-size: 28px;
+      font-weight: 800;
+      color: #f59e0b;
+      margin-bottom: 6px;
+    }
+
+    .item-date {
+      font-size: 14px;
+      color: #90caf9;
+      margin-bottom: 8px;
+    }
+
+    .item-note {
+      font-size: 16px;
+      color: #81c784;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>📋 所有通知</h1>
+    <a href="index.html">← 返回</a>
+  </header>
+
+  <div id="list">加载中...</div>
+
+  <script>
+    const ICONS = {
+      coles: '🚚', visit: '🏠', power: '⚡', custom: '📝'
+    };
+    const LABELS = {
+      coles: 'Coles 送货', visit: '家庭通知', power: '免费用电', custom: '通知'
+    };
+
+    function renderItem(d) {
+      const icon  = d.icon || ICONS[d.type] || '📝';
+      const label = LABELS[d.type] || d.label || '通知';
+
+      let title = '', time = '', date = '', note = '';
+
+      if (d.type === 'coles') {
+        title = `${d.date} 送货上门`;
+        time  = d.time;
+        date  = d.fulldate || '';
+        note  = d.note ? `Cindy 说：${d.note}` : '请在家等候送货员 🏠 听到门铃请去开门';
+      } else if (d.type === 'visit') {
+        title = `${d.who || 'Cindy'} ${d.date}来家里`;
+        time  = d.time;
+        date  = d.fulldate || '';
+        note  = d.note ? `Cindy 说：${d.note}` : '';
+      } else if (d.type === 'power') {
+        title = `${d.date}免费用电时段`;
+        time  = d.time;
+        date  = d.fulldate || '';
+        note  = d.note ? `Cindy 说：${d.note}` : '请使用洗衣机、烘干机等电器';
+      } else if (d.type === 'custom') {
+        title = d.label || '通知';
+        note  = d.message || '';
+      }
+
+      return `
+        <div class="item">
+          <div class="item-icon">${icon}</div>
+          <div class="item-body">
+            <div class="item-type">${label}</div>
+            <div class="item-title">${title}</div>
+            ${time ? `<div class="item-time">${time}</div>` : ''}
+            ${date ? `<div class="item-date">${date}</div>` : ''}
+            ${note ? `<div class="item-note">${note}</div>` : ''}
+          </div>
+        </div>`;
+    }
+
+    fetch('history.json?t=' + Date.now())
+      .then(r => r.json())
+      .then(data => {
+        document.getElementById('list').innerHTML =
+          data.length ? data.map(renderItem).join('') : '<p style="color:#546e7a">暂无通知记录</p>';
+      });
+  </script>
+</body>
+</html>
