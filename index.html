@@ -303,13 +303,21 @@
     }
 
     // ── Render ────────────────────────────────────────────────
+    function shortDate(d) {
+      if (d.fulldate) {
+        const m = d.fulldate.match(/(\d{1,2})月(\d{1,2})日/);
+        if (m) return `${m[1]}月${m[2]}日`;
+      }
+      return d.date || '';
+    }
+
     function render(d) {
       const card = document.getElementById('card');
       if (d.type === 'coles') {
         card.innerHTML = `
           <div class="icon">🚚</div>
           <div class="label">Coles 网购送货</div>
-          <div class="title">${d.date} 送货上门</div>
+          <div class="title">${shortDate(d)} 送货上门</div>
           <div class="subtitle">${d.fulldate || ''}</div>
           <div class="time-box">
             <div class="time-label">送货时间</div>
@@ -321,7 +329,7 @@
         card.innerHTML = `
           <div class="icon">🏠</div>
           <div class="label">家庭通知</div>
-          <div class="title">${d.who || 'Cindy'} ${d.date}来家里</div>
+          <div class="title">${d.who || 'Cindy'} ${shortDate(d)} 来家里</div>
           <div class="subtitle">${d.fulldate || ''}</div>
           <div class="time-box">
             <div class="time-label">到达时间</div>
@@ -333,7 +341,7 @@
         card.innerHTML = `
           <div class="icon">⚡</div>
           <div class="label">电力通知</div>
-          <div class="title">${d.date}免费用电时段</div>
+          <div class="title">${shortDate(d)} 免费用电时段</div>
           <div class="subtitle">${d.fulldate || ''}</div>
           <div class="time-box">
             <div class="time-label">免费时段</div>
@@ -345,7 +353,7 @@
         card.innerHTML = `
           <div class="icon">🧳</div>
           <div class="label">家庭旅行</div>
-          <div class="title">${d.date} 去 ${d.destination}</div>
+          <div class="title">${shortDate(d)} 去 ${d.destination}</div>
           <div class="subtitle">${d.fulldate || ''}</div>
           <div class="time-box">
             <div class="time-label">行程</div>
@@ -369,6 +377,8 @@
         card.innerHTML = `
           <div class="icon">${d.icon || '📝'}</div>
           <div class="label">${d.label || '通知'}</div>
+          ${d.fulldate ? `<div class="subtitle">${d.fulldate}</div>` : ''}
+          ${d.time ? `<div class="time-box"><div class="time-label">时间</div><div class="time">${d.time}</div></div>` : ''}
           <div class="custom-msg">${d.message}</div>
           <div class="footer">Cindy 发送 · 如有疑问请联系 Cindy</div>`;
       }
