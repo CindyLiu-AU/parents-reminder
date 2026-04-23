@@ -175,9 +175,9 @@
         const now = new Date();
         const upcoming = data.filter(d => parseItemDateTime(d) >= now)
                              .sort((a, b) => parseItemDateTime(a) - parseItemDateTime(b));
-        const past     = data.filter(d => parseItemDateTime(d) < now)
-                             .sort((a, b) => parseItemDateTime(b) - parseItemDateTime(a));
-        document.getElementById('list').innerHTML = [...upcoming, ...past].map(renderItem).join('');
+        document.getElementById('list').innerHTML = upcoming.length
+          ? upcoming.map(renderItem).join('')
+          : '<p style="color:#546e7a">暂无即将到来的通知</p>';
       });
   </script>
 </body>
