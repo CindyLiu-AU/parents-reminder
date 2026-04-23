@@ -1,25 +1,5 @@
 [
   {
-    "type": "custom",
-    "icon": "💼",
-    "label": "明天上班",
-    "message": "明天早上 8:30 记得去上班！💼<br>加油赚钱 💰",
-    "fulldate": "2026年4月24日（星期五）",
-    "time": "早上 8:30",
-    "pin_from": "18:00",
-    "pin_until": "23:59"
-  },
-  {
-    "type": "custom",
-    "icon": "💼",
-    "label": "今天上班",
-    "message": "今天早上 8:30 记得去上班！💼<br>加油赚钱 💰",
-    "fulldate": "2026年4月24日（星期五）",
-    "time": "早上 8:30",
-    "pin_from": "00:00",
-    "pin_until": "08:30"
-  },
-  {
     "type": "coles",
     "date": "明天",
     "fulldate": "2026年4月24日（星期五）",
