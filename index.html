@@ -84,6 +84,7 @@
 
     /* ── Main card ── */
     .card {
+      position: relative;
       background: #112240;
       border: 1px solid #1e3a5f;
       border-radius: 24px;
@@ -95,6 +96,20 @@
       margin-top: 90px;
       margin-bottom: 60px;
     }
+
+    .day-badge {
+      position: absolute;
+      top: 18px;
+      right: 24px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 4px 12px;
+      border-radius: 20px;
+    }
+    .day-badge.today  { background: #14532d; color: #4ade80; }
+    .day-badge.tomorrow { background: #1c3d5a; color: #60a5fa; }
+    .day-badge.later  { background: #1a1a2e; color: #6b7280; }
 
     .icon { font-size: 72px; margin-bottom: 20px; }
     .label { font-size: 20px; color: #64b5f6; letter-spacing: 3px; margin-bottom: 16px; }
@@ -306,6 +321,20 @@
       });
     }
 
+    // ── Relative day label ────────────────────────────────────
+    function relativeDay(d) {
+      if (!d.fulldate && !d.date) return null;
+      const p = hobartParts();
+      const today = new Date(parseInt(p.year), parseInt(p.month) - 1, parseInt(p.day));
+      const dt = parseItemDateTime(d);
+      const itemDay = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
+      const diff = Math.round((itemDay - today) / 86400000);
+      if (diff === 0) return { text: '今天', cls: 'today' };
+      if (diff === 1) return { text: '明天', cls: 'tomorrow' };
+      if (diff === 2) return { text: '后天', cls: 'later' };
+      return { text: `${diff} 天后`, cls: 'later' };
+    }
+
     // ── Time slot ─────────────────────────────────────────────
     function getSlot() {
       const h = hobartParts().hour;
@@ -394,6 +423,17 @@
           ${d.time ? `<div class="time-box"><div class="time-label">时间</div><div class="time">${d.time}</div></div>` : ''}
           <div class="custom-msg">${d.message}</div>
           <div class="footer">Cindy 发送 · 如有疑问请联系 Cindy</div>`;
+      }
+
+      // Inject relative day badge for all non-word, non-greeting cards
+      if (d.type !== 'word' && (d.fulldate || d.date)) {
+        const badge = relativeDay(d);
+        if (badge) {
+          const el = document.createElement('div');
+          el.className = `day-badge ${badge.cls}`;
+          el.textContent = badge.text;
+          card.appendChild(el);
+        }
       }
     }
 
