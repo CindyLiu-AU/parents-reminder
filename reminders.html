@@ -99,10 +99,10 @@
 
   <script>
     const ICONS = {
-      coles: '🚚', visit: '🏠', power: '⚡', custom: '📝'
+      coles: '🚚', visit: '🏠', power: '⚡', custom: '📝', trip: '🧳'
     };
     const LABELS = {
-      coles: 'Coles 送货', visit: '家庭通知', power: '免费用电', custom: '通知'
+      coles: 'Coles 送货', visit: '家庭通知', power: '免费用电', custom: '通知', trip: 'Cindy 出行'
     };
 
     function renderItem(d) {
@@ -126,6 +126,11 @@
         time  = d.time;
         date  = d.fulldate || '';
         note  = d.note ? `Cindy 说：${d.note}` : '请使用洗衣机、烘干机等电器';
+      } else if (d.type === 'trip') {
+        title = `${d.date} 去 ${d.destination}`;
+        time  = d.time;
+        date  = d.fulldate || '';
+        note  = d.note ? `Cindy 说：${d.note}` : '';
       } else if (d.type === 'custom') {
         title = d.label || '通知';
         note  = d.message || '';

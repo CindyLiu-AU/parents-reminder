@@ -7,5 +7,13 @@
     "note": "趁这个时间洗个澡吧！🛁",
     "pin_from": "15:00",
     "pin_until": "19:00"
+  },
+  {
+    "type": "trip",
+    "destination": "朗塞斯顿",
+    "date": "5月8日",
+    "fulldate": "2026年5月8日（星期四）",
+    "time": "两天一夜",
+    "note": "住 Airbnb 一晚，5月9日回家 🏡"
   }
 ]
