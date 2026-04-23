@@ -118,13 +118,7 @@
     .custom-msg { font-size: 36px; color: #f1f5f9; line-height: 1.7; margin-bottom: 16px; }
     .footer { margin-top: 28px; font-size: 14px; color: #546e7a; }
 
-    #sound-banner {
-      background: #1e3a6e; border: 1px solid #2dd4bf;
-      border-radius: 12px; padding: 12px 28px;
-      margin-bottom: 16px; font-size: 16px; color: #2dd4bf;
-      margin-top: 90px;
-    }
-    #sound-banner.hidden { display: none; }
+    #sound-banner { display: none; }
 
     #timeslot-badge {
       position: fixed; bottom: 14px; right: 20px;
@@ -200,31 +194,8 @@
       }
     }
 
-    // ── Audio ─────────────────────────────────────────────────
-    let audioCtx = null;
-    let audioUnlocked = false;
-
-    function unlockAudio() {
-      if (audioUnlocked) return;
-      audioCtx = new AudioContext();
-      audioCtx.resume();
-      audioUnlocked = true;
-      document.getElementById('sound-banner').classList.add('hidden');
-    }
-
-    function playChime() {
-      if (!audioCtx) return;
-      [523, 659, 784, 1047].forEach((freq, i) => {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.connect(gain); gain.connect(audioCtx.destination);
-        osc.frequency.value = freq; osc.type = 'sine';
-        const t = audioCtx.currentTime + i * 0.18;
-        gain.gain.setValueAtTime(0.3, t);
-        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
-        osc.start(t); osc.stop(t + 0.4);
-      });
-    }
+    function unlockAudio() {}
+    function playChime() {}
 
     // ── Time slot ─────────────────────────────────────────────
     function getSlot() {
