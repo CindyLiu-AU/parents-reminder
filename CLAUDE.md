@@ -31,6 +31,8 @@ Always-on display for Cindy's parents (Xuecheng Liu & Chao Chen) showing reminde
 ## Aliases
 - `^reminder` — work within this project context
 - `^wordlist` — add a new English word to words.json for afternoon rotation
+- `going to work` — add the TTS work day notice template to history.json; ask for date and time if not provided
+- `push bins out` — add the bin night notice template to history.json; ask for date if not provided (skip if it's a Wednesday — already auto-hardcoded)
 
 ## Notice Types (in history.json)
 Each notice needs `fulldate` ("2026年X月X日（星期X）") and `time` for sorting and badge display.
