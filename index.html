@@ -331,24 +331,30 @@
       let data;
 
       if (slot === 'afternoon') {
-        const idx = Math.floor(Date.now() / (30 * 60 * 1000)) % words.length;
-        data = { type: 'word', ...words[idx] };
-        badge.textContent = '🌤 下午 · 单词时间';
+        // Notices override words if any active
+        if (notices.length > 0) {
+          const idx = Math.floor(Date.now() / (5 * 60 * 1000)) % notices.length;
+          data = notices[idx];
+        } else {
+          const idx = Math.floor(Date.now() / (30 * 60 * 1000)) % words.length;
+          data = { type: 'word', ...words[idx] };
+        }
       } else if (slot === 'night') {
         data = { type: 'custom', icon: '🌙', label: '晚安', message: '爸爸妈妈晚安！<br>好好休息 😴' };
-        badge.textContent = '🌙 夜间模式';
       } else if (slot === 'morning') {
-        data = { type: 'custom', icon: '🌅', label: '早上好', message: '早上好，爸爸妈妈！<br>今天也要开心哦 😊' };
-        badge.textContent = '🌅 早上';
+        if (notices.length > 0) {
+          const idx = Math.floor(Date.now() / (5 * 60 * 1000)) % notices.length;
+          data = notices[idx];
+        } else {
+          data = { type: 'custom', icon: '🌅', label: '早上好', message: '早上好，爸爸妈妈！<br>今天也要开心哦 😊' };
+        }
       } else {
-        // Evening — rotate real notices if any, otherwise show good evening
         if (notices.length > 0) {
           const idx = Math.floor(Date.now() / (5 * 60 * 1000)) % notices.length;
           data = notices[idx];
         } else {
           data = { type: 'custom', icon: '🌆', label: '晚上好', message: '晚上好，爸爸妈妈！<br>好好休息，明天见 😊' };
         }
-        badge.textContent = '🌆 傍晚';
       }
 
       const dataStr = JSON.stringify(data);
