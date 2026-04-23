@@ -145,9 +145,8 @@
 
     #timeslot-badge { display: none; }
 
-    #reminders-btn {
+    #reminders-btn, #spending-btn {
       position: fixed;
-      bottom: 60px;
       right: 20px;
       background: #1e3a6e;
       border: 1px solid #2e3a52;
@@ -162,6 +161,9 @@
       z-index: 200;
       box-shadow: 0 4px 12px rgba(0,0,0,0.4);
     }
+
+    #reminders-btn { bottom: 60px; }
+    #spending-btn  { bottom: 124px; }
 
     #bottombar { display: none; }
 
@@ -247,6 +249,7 @@
   <div id="notice-list"></div>
   <div id="timeslot-badge"></div>
   <div id="bottombar"></div>
+  <a href="spending.html" id="spending-btn" onclick="event.stopPropagation()">🎁</a>
   <a href="reminders.html" id="reminders-btn" onclick="event.stopPropagation()">📋</a>
   <div id="countdown">↻ 60s</div>
   <button id="refresh-btn" onclick="manualRefresh()">刷新</button>
