@@ -48,10 +48,8 @@
     }
     .time-label { font-size: 18px; color: #1a1000; font-weight: 600; margin-bottom: 6px; }
     .time { font-size: 58px; font-weight: 800; color: #1a1000; letter-spacing: 2px; }
-
     .note { font-size: 26px; color: #81c784; line-height: 1.7; }
 
-    /* Word of the day */
     .word { font-size: 96px; font-weight: 800; color: #f59e0b; margin-bottom: 12px; letter-spacing: 4px; }
     .question { font-size: 28px; color: #90caf9; margin-bottom: 40px; }
     .answer-box {
@@ -63,7 +61,6 @@
     .answer-desc { font-size: 22px; color: #f1f5f9; line-height: 1.7; }
     .tap-hint { font-size: 20px; color: #546e7a; margin-top: 8px; }
 
-    /* Custom message */
     .custom-msg { font-size: 38px; color: #f1f5f9; line-height: 1.7; margin-bottom: 20px; }
 
     .footer { margin-top: 36px; font-size: 16px; color: #546e7a; }
@@ -74,11 +71,17 @@
       margin-bottom: 20px; font-size: 18px; color: #2dd4bf;
     }
     #sound-banner.hidden { display: none; }
+
+    #timeslot-badge {
+      position: fixed; top: 16px; right: 20px;
+      font-size: 14px; color: #546e7a;
+    }
   </style>
 </head>
 <body>
   <div id="sound-banner">🔔 点击屏幕任意位置，开启新通知提示音</div>
   <div class="card" id="card" onclick="handleTap()"></div>
+  <div id="timeslot-badge"></div>
 
   <script>
     // ── Audio ─────────────────────────────────────────────────
@@ -107,7 +110,16 @@
       });
     }
 
-    // ── Render templates ──────────────────────────────────────
+    // ── Time slot ─────────────────────────────────────────────
+    function getSlot() {
+      const h = new Date().getHours();
+      if (h >= 6 && h < 12) return 'morning';
+      if (h >= 12 && h < 18) return 'afternoon';
+      if (h >= 18 && h < 22) return 'evening';
+      return 'night';
+    }
+
+    // ── Render ────────────────────────────────────────────────
     function render(d) {
       const card = document.getElementById('card');
 
@@ -116,7 +128,7 @@
           <div class="icon">🚚</div>
           <div class="label">Coles 网购送货</div>
           <div class="title">${d.date} 送货上门</div>
-          <div class="subtitle">${d.fulldate}</div>
+          <div class="subtitle">${d.fulldate || ''}</div>
           <div class="time-box">
             <div class="time-label">送货时间</div>
             <div class="time">${d.time}</div>
@@ -128,13 +140,13 @@
         card.innerHTML = `
           <div class="icon">🏠</div>
           <div class="label">家庭通知</div>
-          <div class="title">${d.who} ${d.date}来家里</div>
-          <div class="subtitle">${d.fulldate}</div>
+          <div class="title">${d.who || 'Cindy'} ${d.date}来家里</div>
+          <div class="subtitle">${d.fulldate || ''}</div>
           <div class="time-box">
             <div class="time-label">到达时间</div>
             <div class="time">${d.time}</div>
           </div>
-          <div class="note">${d.note}</div>
+          <div class="note">${d.note || '请在家等候 ❤️'}</div>
           <div class="footer">Cindy 发送 · 如有疑问请联系 Cindy</div>`;
 
       } else if (d.type === 'power') {
@@ -142,7 +154,7 @@
           <div class="icon">⚡</div>
           <div class="label">电力通知</div>
           <div class="title">${d.date}免费用电时段</div>
-          <div class="subtitle">${d.fulldate}</div>
+          <div class="subtitle">${d.fulldate || ''}</div>
           <div class="time-box">
             <div class="time-label">免费时段</div>
             <div class="time">${d.time}</div>
@@ -184,25 +196,58 @@
       }
     }
 
-    // ── Load & background update check ───────────────────────
-    let currentVersion = null;
+    // ── Main logic ────────────────────────────────────────────
+    let lastData = null;
+    let words = [];
+    let notices = [];
 
-    async function loadNotice() {
-      const res = await fetch('current.json?t=' + Date.now());
-      const data = await res.json();
-      const version = JSON.stringify(data);
-      if (currentVersion && version !== currentVersion) {
-        playChime();
-        setTimeout(() => { currentVersion = version; render(data); }, 2000);
+    async function loadAll() {
+      const [w, n] = await Promise.all([
+        fetch('words.json?t=' + Date.now()).then(r => r.json()),
+        fetch('notices.json?t=' + Date.now()).then(r => r.json()),
+      ]);
+      words = w;
+      notices = n;
+    }
+
+    async function tick() {
+      const slot = getSlot();
+      const badge = document.getElementById('timeslot-badge');
+
+      let data;
+
+      if (slot === 'afternoon') {
+        // Rotate words every 30 minutes
+        const idx = Math.floor(Date.now() / (30 * 60 * 1000)) % words.length;
+        data = { type: 'word', ...words[idx] };
+        badge.textContent = '🌤 下午 · 单词时间';
+      } else if (slot === 'night') {
+        data = { type: 'custom', icon: '🌙', label: '晚安', message: '爸爸妈妈晚安！<br>好好休息 😴' };
+        badge.textContent = '🌙 夜间模式';
       } else {
-        currentVersion = version;
+        // Morning & evening: rotate notices every 5 minutes
+        const idx = Math.floor(Date.now() / (5 * 60 * 1000)) % notices.length;
+        data = notices[idx];
+        badge.textContent = slot === 'morning' ? '🌅 早上' : '🌆 傍晚';
+      }
+
+      const dataStr = JSON.stringify(data);
+      if (lastData && dataStr !== lastData) {
+        playChime();
+        setTimeout(() => { lastData = dataStr; render(data); }, 2000);
+      } else {
+        lastData = dataStr;
         render(data);
       }
     }
 
-    loadNotice();
-    setInterval(loadNotice, 60000);
-    window.onload = () => document.documentElement.requestFullscreen?.();
+    // ── Init ──────────────────────────────────────────────────
+    window.onload = async () => {
+      document.documentElement.requestFullscreen?.();
+      await loadAll();
+      await tick();
+      setInterval(tick, 60000);
+    };
   </script>
 </body>
 </html>
