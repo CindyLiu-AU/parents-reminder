@@ -3,10 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>电力通知</title>
+  <title>今日单词</title>
   <script>
     window.onload = () => document.documentElement.requestFullscreen?.();
     setInterval(() => location.reload(), 60000);
+    function toggleAnswer() {
+      const box = document.getElementById('answer');
+      const hint = document.getElementById('hint');
+      box.classList.toggle('visible');
+      hint.textContent = box.classList.contains('visible') ? '再次点击隐藏答案' : '点击屏幕查看答案 👆';
+    }
   </script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -19,6 +25,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      cursor: pointer;
     }
 
     .card {
@@ -32,84 +39,82 @@
       box-shadow: 0 8px 48px rgba(0,0,0,0.5);
     }
 
-    .icon {
-      font-size: 80px;
-      margin-bottom: 24px;
-    }
+    .icon { font-size: 80px; margin-bottom: 24px; }
 
     .label {
       font-size: 22px;
       color: #64b5f6;
       letter-spacing: 3px;
-      margin-bottom: 16px;
-      text-transform: uppercase;
+      margin-bottom: 32px;
     }
 
-    .title {
-      font-size: 52px;
-      font-weight: 700;
-      color: #ffffff;
+    .word {
+      font-size: 96px;
+      font-weight: 800;
+      color: #f59e0b;
       margin-bottom: 12px;
-      line-height: 1.2;
+      letter-spacing: 4px;
     }
 
-    .subtitle {
+    .question {
       font-size: 28px;
       color: #90caf9;
       margin-bottom: 48px;
     }
 
-    .time-box {
-      background: #f59e0b;
+    .answer-box {
+      background: #1a3a1a;
+      border: 2px solid #2dd4bf;
       border-radius: 16px;
-      padding: 28px 48px;
-      display: inline-block;
-      margin-bottom: 40px;
+      padding: 32px 48px;
+      margin-bottom: 32px;
+      display: none;
     }
 
-    .time-label {
-      font-size: 18px;
-      color: #1a1000;
-      font-weight: 600;
-      margin-bottom: 6px;
+    .answer-box.visible { display: block; }
+
+    .answer-cn {
+      font-size: 42px;
+      font-weight: 700;
+      color: #2dd4bf;
+      margin-bottom: 12px;
     }
 
-    .time {
-      font-size: 64px;
-      font-weight: 800;
-      color: #1a1000;
-      letter-spacing: 2px;
-    }
-
-    .note {
-      font-size: 26px;
-      color: #81c784;
+    .answer-desc {
+      font-size: 22px;
+      color: #a0c4a0;
       line-height: 1.7;
     }
 
+    .hint {
+      font-size: 20px;
+      color: #546e7a;
+      margin-top: 8px;
+    }
+
     .footer {
-      margin-top: 48px;
+      margin-top: 40px;
       font-size: 16px;
       color: #546e7a;
     }
   </style>
 </head>
-<body>
+<body onclick="toggleAnswer()">
   <div class="card">
-    <div class="icon">⚡</div>
-    <div class="label">电力通知</div>
-    <div class="title">今天免费用电时段</div>
-    <div class="subtitle">2026年4月23日（今天）</div>
+    <div class="icon">📚</div>
+    <div class="label">今日单词</div>
+    <div class="word">Hobart</div>
+    <div class="question">你知道这个词是什么意思吗？</div>
 
-    <div class="time-box">
-      <div class="time-label">免费时段</div>
-      <div class="time">下午 4:00 – 7:00</div>
+    <div class="answer-box" id="answer">
+      <div class="answer-cn">霍巴特</div>
+      <div class="answer-desc">
+        澳大利亚塔斯马尼亚州的首府 🏙️<br>
+        就是 Cindy 住的城市！
+      </div>
     </div>
 
-    <div class="note">
-      请在这个时段使用洗衣机、烘干机等电器 🏠<br>
-      可以节省电费哦！
-    </div>
+    <div class="hint" id="hint">点击屏幕查看答案 👆</div>
 
     <div class="footer">Cindy 发送 · 如有疑问请联系 Cindy</div>
   </div>
