@@ -23,67 +23,182 @@
       cursor: pointer;
     }
 
+    /* ── Top bar: clock + weather ── */
+    #topbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      background: #091525;
+      border-bottom: 1px solid #1e3a5f;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 32px;
+      z-index: 100;
+    }
+
+    #clock {
+      font-size: 36px;
+      font-weight: 700;
+      color: #f59e0b;
+      letter-spacing: 2px;
+    }
+
+    #date-display {
+      font-size: 16px;
+      color: #64b5f6;
+      margin-top: 2px;
+    }
+
+    #weather {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-align: right;
+    }
+
+    #weather-icon { font-size: 36px; }
+
+    #weather-temp {
+      font-size: 32px;
+      font-weight: 700;
+      color: #f1f5f9;
+    }
+
+    #weather-desc {
+      font-size: 14px;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+
+    #weather-location {
+      font-size: 13px;
+      color: #546e7a;
+    }
+
+    /* ── Main card ── */
     .card {
       background: #112240;
       border: 1px solid #1e3a5f;
       border-radius: 24px;
-      padding: 60px 80px;
+      padding: 48px 80px;
       max-width: 860px;
       width: 90%;
       text-align: center;
       box-shadow: 0 8px 48px rgba(0,0,0,0.5);
+      margin-top: 90px;
     }
 
-    .icon { font-size: 80px; margin-bottom: 24px; }
-    .label { font-size: 22px; color: #64b5f6; letter-spacing: 3px; margin-bottom: 20px; }
-    .title { font-size: 52px; font-weight: 700; color: #ffffff; margin-bottom: 10px; line-height: 1.2; }
-    .subtitle { font-size: 26px; color: #90caf9; margin-bottom: 40px; }
+    .icon { font-size: 72px; margin-bottom: 20px; }
+    .label { font-size: 20px; color: #64b5f6; letter-spacing: 3px; margin-bottom: 16px; }
+    .title { font-size: 48px; font-weight: 700; color: #ffffff; margin-bottom: 10px; line-height: 1.2; }
+    .subtitle { font-size: 24px; color: #90caf9; margin-bottom: 36px; }
 
     .time-box {
       background: #f59e0b;
       border-radius: 16px;
-      padding: 28px 48px;
+      padding: 24px 48px;
       display: inline-block;
-      margin-bottom: 36px;
+      margin-bottom: 32px;
     }
-    .time-label { font-size: 18px; color: #1a1000; font-weight: 600; margin-bottom: 6px; }
-    .time { font-size: 58px; font-weight: 800; color: #1a1000; letter-spacing: 2px; }
-    .note { font-size: 26px; color: #81c784; line-height: 1.7; }
+    .time-label { font-size: 16px; color: #1a1000; font-weight: 600; margin-bottom: 4px; }
+    .time { font-size: 52px; font-weight: 800; color: #1a1000; letter-spacing: 2px; }
+    .note { font-size: 24px; color: #81c784; line-height: 1.7; }
 
-    .word { font-size: 96px; font-weight: 800; color: #f59e0b; margin-bottom: 12px; letter-spacing: 4px; }
-    .question { font-size: 28px; color: #90caf9; margin-bottom: 40px; }
+    .word { font-size: 88px; font-weight: 800; color: #f59e0b; margin-bottom: 10px; letter-spacing: 4px; }
+    .question { font-size: 26px; color: #90caf9; margin-bottom: 36px; }
     .answer-box {
       background: #1a3a1a; border: 2px solid #2dd4bf;
-      border-radius: 16px; padding: 32px 48px; margin-bottom: 28px; display: none;
+      border-radius: 16px; padding: 28px 48px; margin-bottom: 24px; display: none;
     }
     .answer-box.visible { display: block; }
-    .answer-cn { font-size: 42px; font-weight: 700; color: #2dd4bf; margin-bottom: 12px; }
-    .answer-desc { font-size: 22px; color: #f1f5f9; line-height: 1.7; }
-    .tap-hint { font-size: 20px; color: #546e7a; margin-top: 8px; }
+    .answer-cn { font-size: 40px; font-weight: 700; color: #2dd4bf; margin-bottom: 10px; }
+    .answer-desc { font-size: 20px; color: #f1f5f9; line-height: 1.7; }
+    .tap-hint { font-size: 18px; color: #546e7a; margin-top: 6px; }
 
-    .custom-msg { font-size: 38px; color: #f1f5f9; line-height: 1.7; margin-bottom: 20px; }
-
-    .footer { margin-top: 36px; font-size: 16px; color: #546e7a; }
+    .custom-msg { font-size: 36px; color: #f1f5f9; line-height: 1.7; margin-bottom: 16px; }
+    .footer { margin-top: 28px; font-size: 14px; color: #546e7a; }
 
     #sound-banner {
       background: #1e3a6e; border: 1px solid #2dd4bf;
-      border-radius: 12px; padding: 14px 32px;
-      margin-bottom: 20px; font-size: 18px; color: #2dd4bf;
+      border-radius: 12px; padding: 12px 28px;
+      margin-bottom: 16px; font-size: 16px; color: #2dd4bf;
+      margin-top: 90px;
     }
     #sound-banner.hidden { display: none; }
 
     #timeslot-badge {
-      position: fixed; top: 16px; right: 20px;
-      font-size: 14px; color: #546e7a;
+      position: fixed; bottom: 14px; right: 20px;
+      font-size: 13px; color: #546e7a;
     }
   </style>
 </head>
 <body>
+
+  <!-- Top bar -->
+  <div id="topbar">
+    <div>
+      <div id="clock">--:--</div>
+      <div id="date-display">--</div>
+    </div>
+    <div id="weather">
+      <div id="weather-icon">🌤</div>
+      <div>
+        <div id="weather-temp">--°C</div>
+        <div id="weather-desc">加载中...</div>
+        <div id="weather-location">📍 Kingston, TAS</div>
+      </div>
+    </div>
+  </div>
+
   <div id="sound-banner">🔔 点击屏幕任意位置，开启新通知提示音</div>
   <div class="card" id="card" onclick="handleTap()"></div>
   <div id="timeslot-badge"></div>
 
   <script>
+    // ── Weather code → emoji + description ───────────────────
+    const WMO = {
+      0:  ['☀️','晴天'], 1: ['🌤','基本晴'], 2: ['⛅','多云'],
+      3:  ['☁️','阴天'], 45: ['🌫','有雾'], 48: ['🌫','冻雾'],
+      51: ['🌦','小毛毛雨'], 53: ['🌦','毛毛雨'], 55: ['🌧','大毛毛雨'],
+      61: ['🌧','小雨'], 63: ['🌧','中雨'], 65: ['🌧','大雨'],
+      71: ['🌨','小雪'], 73: ['🌨','中雪'], 75: ['❄️','大雪'],
+      80: ['🌦','阵雨'], 81: ['🌧','中阵雨'], 82: ['⛈','强阵雨'],
+      95: ['⛈','雷阵雨'], 96: ['⛈','冰雹雷雨'], 99: ['⛈','强冰雹雷雨'],
+    };
+
+    // ── Clock ─────────────────────────────────────────────────
+    function updateClock() {
+      const now = new Date();
+      const hh = String(now.getHours()).padStart(2, '0');
+      const mm = String(now.getMinutes()).padStart(2, '0');
+      document.getElementById('clock').textContent = `${hh}:${mm}`;
+
+      const days = ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
+      const months = ['1','2','3','4','5','6','7','8','9','10','11','12'];
+      document.getElementById('date-display').textContent =
+        `${now.getFullYear()}年${months[now.getMonth()]}月${now.getDate()}日 ${days[now.getDay()]}`;
+    }
+
+    // ── Weather (Open-Meteo, Kingston TAS) ───────────────────
+    async function fetchWeather() {
+      try {
+        const url = 'https://api.open-meteo.com/v1/forecast' +
+          '?latitude=-42.983&longitude=147.067' +
+          '&current=temperature_2m,weather_code,wind_speed_10m' +
+          '&timezone=Australia%2FHobart';
+        const res = await fetch(url);
+        const d = await res.json();
+        const code = d.current.weather_code;
+        const temp = Math.round(d.current.temperature_2m);
+        const [icon, desc] = WMO[code] || ['🌡','未知天气'];
+        document.getElementById('weather-icon').textContent = icon;
+        document.getElementById('weather-temp').textContent = `${temp}°C`;
+        document.getElementById('weather-desc').textContent = desc;
+      } catch(e) {
+        document.getElementById('weather-desc').textContent = '天气获取失败';
+      }
+    }
+
     // ── Audio ─────────────────────────────────────────────────
     let audioCtx = null;
     let audioUnlocked = false;
@@ -122,7 +237,6 @@
     // ── Render ────────────────────────────────────────────────
     function render(d) {
       const card = document.getElementById('card');
-
       if (d.type === 'coles') {
         card.innerHTML = `
           <div class="icon">🚚</div>
@@ -135,7 +249,6 @@
           </div>
           <div class="note">请在家等候送货员 🏠<br>听到门铃请去开门</div>
           <div class="footer">Cindy 发送 · 如有疑问请联系 Cindy</div>`;
-
       } else if (d.type === 'visit') {
         card.innerHTML = `
           <div class="icon">🏠</div>
@@ -148,7 +261,6 @@
           </div>
           <div class="note">${d.note || '请在家等候 ❤️'}</div>
           <div class="footer">Cindy 发送 · 如有疑问请联系 Cindy</div>`;
-
       } else if (d.type === 'power') {
         card.innerHTML = `
           <div class="icon">⚡</div>
@@ -161,7 +273,6 @@
           </div>
           <div class="note">请在这个时段使用洗衣机、烘干机等电器 🏠<br>可以节省电费哦！</div>
           <div class="footer">Cindy 发送 · 如有疑问请联系 Cindy</div>`;
-
       } else if (d.type === 'word') {
         card.innerHTML = `
           <div class="icon">📚</div>
@@ -174,7 +285,6 @@
           </div>
           <div class="tap-hint" id="hint">点击屏幕查看答案 👆</div>
           <div class="footer">Cindy 发送 · 如有疑问请联系 Cindy</div>`;
-
       } else if (d.type === 'custom') {
         card.innerHTML = `
           <div class="icon">${d.icon || '📝'}</div>
@@ -213,11 +323,9 @@
     async function tick() {
       const slot = getSlot();
       const badge = document.getElementById('timeslot-badge');
-
       let data;
 
       if (slot === 'afternoon') {
-        // Rotate words every 30 minutes
         const idx = Math.floor(Date.now() / (30 * 60 * 1000)) % words.length;
         data = { type: 'word', ...words[idx] };
         badge.textContent = '🌤 下午 · 单词时间';
@@ -225,7 +333,6 @@
         data = { type: 'custom', icon: '🌙', label: '晚安', message: '爸爸妈妈晚安！<br>好好休息 😴' };
         badge.textContent = '🌙 夜间模式';
       } else {
-        // Morning & evening: rotate notices every 5 minutes
         const idx = Math.floor(Date.now() / (5 * 60 * 1000)) % notices.length;
         data = notices[idx];
         badge.textContent = slot === 'morning' ? '🌅 早上' : '🌆 傍晚';
@@ -244,6 +351,10 @@
     // ── Init ──────────────────────────────────────────────────
     window.onload = async () => {
       document.documentElement.requestFullscreen?.();
+      updateClock();
+      setInterval(updateClock, 1000);
+      await fetchWeather();
+      setInterval(fetchWeather, 30 * 60 * 1000);
       await loadAll();
       await tick();
       setInterval(tick, 60000);
