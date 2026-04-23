@@ -4,7 +4,7 @@
     "weekStart": "2026-04-07",
     "orderNumber": "100793544",
     "deliveryDate": "2026-04-12",
-    "transferred": false,
+    "transferred": true,
     "items": [
       { "name": "芝士白米饼 100g", "amount": 1.00 },
       { "name": "花生腰果坚果棒 6条装", "amount": 2.75 },
