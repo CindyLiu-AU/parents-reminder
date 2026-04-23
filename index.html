@@ -150,6 +150,16 @@
 
     #bottombar { display: none; }
 
+    #countdown {
+      position: fixed;
+      bottom: 10px;
+      left: 14px;
+      font-size: 10px;
+      color: #1e3a5f;
+      letter-spacing: 1px;
+      z-index: 100;
+    }
+
     /* ── Notice list ── */
     #notice-list {
       width: 90%;
@@ -209,6 +219,7 @@
   <div id="timeslot-badge"></div>
   <div id="bottombar"></div>
   <a href="reminders.html" id="reminders-btn" onclick="event.stopPropagation()">📋</a>
+  <div id="countdown">↻ 60s</div>
 
   <script>
     // ── Weather code → emoji + description ───────────────────
@@ -488,6 +499,14 @@
       } else { lastData = dataStr; render(data); }
     }
 
+    // ── Countdown ─────────────────────────────────────────────
+    let cdSecs = 60;
+    setInterval(() => {
+      cdSecs = Math.max(0, cdSecs - 1);
+      const el = document.getElementById('countdown');
+      if (el) el.textContent = `↻ ${cdSecs}s`;
+    }, 1000);
+
     // ── Init ──────────────────────────────────────────────────
     window.onload = async () => {
       document.documentElement.requestFullscreen?.();
@@ -497,7 +516,7 @@
       setInterval(fetchWeather, 30 * 60 * 1000);
       await loadAll();
       await tick();
-      setInterval(tick, 60000);
+      setInterval(async () => { await tick(); cdSecs = 60; }, 60000);
     };
   </script>
 </body>
