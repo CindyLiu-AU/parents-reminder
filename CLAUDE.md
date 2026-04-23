@@ -43,6 +43,38 @@ Each notice needs `fulldate` ("2026年X月X日（星期X）") and `time` for sor
 | `power` | date, fulldate, time, note | Free power hour |
 | `custom` | icon, label, message, fulldate, time | Any other notice |
 
+## Notice Templates
+
+### "Going to work" — 爸妈来帮 Cindy 做 TTS 工作
+Use when parents are coming to Cindy's house to help with Tasman Trophy Service jobs (Cindy pays them). Fill in `fulldate`, `time` (when they should arrive), and optionally the job description in the message.
+```json
+{
+  "type": "custom",
+  "icon": "🏆",
+  "label": "今天去 Cindy 家上班",
+  "message": "记得X点到 Cindy 家，帮忙做 TTS 工作 💪",
+  "fulldate": "2026年X月X日（星期X）",
+  "time": "09:00",
+  "pin_from": "08:00",
+  "pin_until": "18:00"
+}
+```
+
+### "Push rubbish bin out" — 垃圾桶
+Use for non-Wednesday bin nights (Wednesday is auto-hardcoded in JS). Same pin window as the auto one.
+```json
+{
+  "type": "custom",
+  "icon": "🗑️",
+  "label": "垃圾桶提醒",
+  "message": "今晚请把垃圾桶推到路边",
+  "fulldate": "2026年X月X日（星期X）",
+  "time": "20:00",
+  "pin_from": "20:00",
+  "pin_until": "07:30"
+}
+```
+
 ### Pin fields (optional — locks display to this notice during window)
 ```json
 "pin_from": "15:00",
