@@ -1,14 +1,5 @@
 [
   {
-    "type": "power",
-    "date": "今天",
-    "fulldate": "2026年4月23日（今天）",
-    "time": "下午 4:00 – 7:00",
-    "note": "趁这个时间洗个澡吧！🛁",
-    "pin_from": "15:00",
-    "pin_until": "19:00"
-  },
-  {
     "type": "trip",
     "destination": "MONA 博物馆",
     "date": "4月30日",
