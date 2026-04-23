@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>今日单词</title>
+  <title>家庭通知</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -31,103 +31,52 @@
     }
 
     .icon { font-size: 80px; margin-bottom: 24px; }
+    .label { font-size: 22px; color: #64b5f6; letter-spacing: 3px; margin-bottom: 20px; }
+    .title { font-size: 52px; font-weight: 700; color: #ffffff; margin-bottom: 10px; line-height: 1.2; }
+    .subtitle { font-size: 26px; color: #90caf9; margin-bottom: 40px; }
 
-    .label {
-      font-size: 22px;
-      color: #64b5f6;
-      letter-spacing: 3px;
-      margin-bottom: 32px;
-    }
-
-    .word {
-      font-size: 96px;
-      font-weight: 800;
-      color: #f59e0b;
-      margin-bottom: 12px;
-      letter-spacing: 4px;
-    }
-
-    .question {
-      font-size: 28px;
-      color: #90caf9;
-      margin-bottom: 48px;
-    }
-
-    .answer-box {
-      background: #1a3a1a;
-      border: 2px solid #2dd4bf;
+    .time-box {
+      background: #f59e0b;
       border-radius: 16px;
-      padding: 32px 48px;
-      margin-bottom: 32px;
-      display: none;
+      padding: 28px 48px;
+      display: inline-block;
+      margin-bottom: 36px;
     }
+    .time-label { font-size: 18px; color: #1a1000; font-weight: 600; margin-bottom: 6px; }
+    .time { font-size: 58px; font-weight: 800; color: #1a1000; letter-spacing: 2px; }
 
+    .note { font-size: 26px; color: #81c784; line-height: 1.7; }
+
+    /* Word of the day */
+    .word { font-size: 96px; font-weight: 800; color: #f59e0b; margin-bottom: 12px; letter-spacing: 4px; }
+    .question { font-size: 28px; color: #90caf9; margin-bottom: 40px; }
+    .answer-box {
+      background: #1a3a1a; border: 2px solid #2dd4bf;
+      border-radius: 16px; padding: 32px 48px; margin-bottom: 28px; display: none;
+    }
     .answer-box.visible { display: block; }
+    .answer-cn { font-size: 42px; font-weight: 700; color: #2dd4bf; margin-bottom: 12px; }
+    .answer-desc { font-size: 22px; color: #a0c4a0; line-height: 1.7; }
+    .tap-hint { font-size: 20px; color: #546e7a; margin-top: 8px; }
 
-    .answer-cn {
-      font-size: 42px;
-      font-weight: 700;
-      color: #2dd4bf;
-      margin-bottom: 12px;
-    }
+    /* Custom message */
+    .custom-msg { font-size: 38px; color: #f1f5f9; line-height: 1.7; margin-bottom: 20px; }
 
-    .answer-desc {
-      font-size: 22px;
-      color: #a0c4a0;
-      line-height: 1.7;
-    }
-
-    .hint {
-      font-size: 20px;
-      color: #546e7a;
-      margin-top: 8px;
-    }
-
-    .footer {
-      margin-top: 40px;
-      font-size: 16px;
-      color: #546e7a;
-    }
+    .footer { margin-top: 36px; font-size: 16px; color: #546e7a; }
 
     #sound-banner {
-      background: #1e3a6e;
-      border: 1px solid #2dd4bf;
-      border-radius: 12px;
-      padding: 14px 32px;
-      margin-bottom: 20px;
-      font-size: 18px;
-      color: #2dd4bf;
-      display: block;
+      background: #1e3a6e; border: 1px solid #2dd4bf;
+      border-radius: 12px; padding: 14px 32px;
+      margin-bottom: 20px; font-size: 18px; color: #2dd4bf;
     }
-
     #sound-banner.hidden { display: none; }
   </style>
 </head>
 <body>
   <div id="sound-banner">🔔 点击屏幕任意位置，开启新通知提示音</div>
-
-  <div class="card" onclick="handleTap()">
-    <div class="icon">📚</div>
-    <div class="label">今日单词</div>
-    <div class="word">Hobart</div>
-    <div class="question">你知道这个词是什么意思吗？</div>
-
-    <div class="answer-box" id="answer">
-      <div class="answer-cn">霍巴特</div>
-      <div class="answer-desc">
-        澳大利亚塔斯马尼亚州的首府 🏙️<br>
-        就是 Cindy 住的城市！
-      </div>
-    </div>
-
-    <div class="hint" id="hint">点击屏幕查看答案 👆</div>
-    <div class="footer">Cindy 发送 · 如有疑问请联系 Cindy</div>
-  </div>
+  <div class="card" id="card" onclick="handleTap()"></div>
 
   <script>
-    // ── Version (updated on every push) ──────────────────────
-    const PAGE_VERSION = "v-20260423-word-hobart";
-
     // ── Audio ─────────────────────────────────────────────────
     let audioCtx = null;
     let audioUnlocked = false;
@@ -142,47 +91,113 @@
 
     function playChime() {
       if (!audioCtx) return;
-      const notes = [523, 659, 784, 1047];
-      notes.forEach((freq, i) => {
+      [523, 659, 784, 1047].forEach((freq, i) => {
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.frequency.value = freq;
-        osc.type = 'sine';
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.frequency.value = freq; osc.type = 'sine';
         const t = audioCtx.currentTime + i * 0.18;
         gain.gain.setValueAtTime(0.3, t);
         gain.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
-        osc.start(t);
-        osc.stop(t + 0.4);
+        osc.start(t); osc.stop(t + 0.4);
       });
     }
 
-    // ── Answer toggle ─────────────────────────────────────────
+    // ── Render templates ──────────────────────────────────────
+    function render(d) {
+      const card = document.getElementById('card');
+
+      if (d.type === 'coles') {
+        card.innerHTML = `
+          <div class="icon">🚚</div>
+          <div class="label">Coles 网购送货</div>
+          <div class="title">${d.date} 送货上门</div>
+          <div class="subtitle">${d.fulldate}</div>
+          <div class="time-box">
+            <div class="time-label">送货时间</div>
+            <div class="time">${d.time}</div>
+          </div>
+          <div class="note">请在家等候送货员 🏠<br>听到门铃请去开门</div>
+          <div class="footer">Cindy 发送 · 如有疑问请联系 Cindy</div>`;
+
+      } else if (d.type === 'visit') {
+        card.innerHTML = `
+          <div class="icon">🏠</div>
+          <div class="label">家庭通知</div>
+          <div class="title">${d.who} ${d.date}来家里</div>
+          <div class="subtitle">${d.fulldate}</div>
+          <div class="time-box">
+            <div class="time-label">到达时间</div>
+            <div class="time">${d.time}</div>
+          </div>
+          <div class="note">${d.note}</div>
+          <div class="footer">Cindy 发送 · 如有疑问请联系 Cindy</div>`;
+
+      } else if (d.type === 'power') {
+        card.innerHTML = `
+          <div class="icon">⚡</div>
+          <div class="label">电力通知</div>
+          <div class="title">${d.date}免费用电时段</div>
+          <div class="subtitle">${d.fulldate}</div>
+          <div class="time-box">
+            <div class="time-label">免费时段</div>
+            <div class="time">${d.time}</div>
+          </div>
+          <div class="note">请在这个时段使用洗衣机、烘干机等电器 🏠<br>可以节省电费哦！</div>
+          <div class="footer">Cindy 发送 · 如有疑问请联系 Cindy</div>`;
+
+      } else if (d.type === 'word') {
+        card.innerHTML = `
+          <div class="icon">📚</div>
+          <div class="label">今日单词</div>
+          <div class="word">${d.word}</div>
+          <div class="question">你知道这个词是什么意思吗？</div>
+          <div class="answer-box" id="answer">
+            <div class="answer-cn">${d.word_cn}</div>
+            <div class="answer-desc">${d.desc}</div>
+          </div>
+          <div class="tap-hint" id="hint">点击屏幕查看答案 👆</div>
+          <div class="footer">Cindy 发送 · 如有疑问请联系 Cindy</div>`;
+
+      } else if (d.type === 'custom') {
+        card.innerHTML = `
+          <div class="icon">${d.icon || '📝'}</div>
+          <div class="label">${d.label || '通知'}</div>
+          <div class="custom-msg">${d.message}</div>
+          <div class="footer">Cindy 发送 · 如有疑问请联系 Cindy</div>`;
+      }
+    }
+
+    // ── Tap handler ───────────────────────────────────────────
     function handleTap() {
       unlockAudio();
       const box = document.getElementById('answer');
       const hint = document.getElementById('hint');
-      box.classList.toggle('visible');
-      hint.textContent = box.classList.contains('visible')
-        ? '再次点击隐藏答案'
-        : '点击屏幕查看答案 👆';
+      if (box && hint) {
+        box.classList.toggle('visible');
+        hint.textContent = box.classList.contains('visible')
+          ? '再次点击隐藏答案' : '点击屏幕查看答案 👆';
+      }
     }
 
-    // ── Background update check (no full reload) ──────────────
-    setInterval(async () => {
-      try {
-        const res = await fetch(location.href + '?t=' + Date.now());
-        const html = await res.text();
-        const match = html.match(/PAGE_VERSION = "([^"]+)"/);
-        if (match && match[1] !== PAGE_VERSION) {
-          playChime();
-          setTimeout(() => location.reload(), 2000);
-        }
-      } catch(e) {}
-    }, 60000);
+    // ── Load & background update check ───────────────────────
+    let currentVersion = null;
 
-    // ── Fullscreen ────────────────────────────────────────────
+    async function loadNotice() {
+      const res = await fetch('current.json?t=' + Date.now());
+      const data = await res.json();
+      const version = JSON.stringify(data);
+      if (currentVersion && version !== currentVersion) {
+        playChime();
+        setTimeout(() => { currentVersion = version; render(data); }, 2000);
+      } else {
+        currentVersion = version;
+        render(data);
+      }
+    }
+
+    loadNotice();
+    setInterval(loadNotice, 60000);
     window.onload = () => document.documentElement.requestFullscreen?.();
   </script>
 </body>
