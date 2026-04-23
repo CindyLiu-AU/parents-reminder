@@ -92,6 +92,19 @@
       font-size: 16px;
       color: #81c784;
     }
+
+    .day-badge {
+      display: inline-block;
+      font-size: 14px;
+      font-weight: 800;
+      padding: 3px 12px;
+      border-radius: 20px;
+      vertical-align: middle;
+      margin-left: 10px;
+    }
+    .day-badge.today    { background: #16a34a; color: #ffffff; }
+    .day-badge.tomorrow { background: #ea580c; color: #ffffff; }
+    .day-badge.later    { background: #7c3aed; color: #ffffff; }
   </style>
 </head>
 <body>
@@ -110,6 +123,23 @@
     const LABELS = {
       coles: 'Coles 送货', visit: '家庭通知', power: '免费用电', custom: '通知', trip: '家庭旅行'
     };
+
+    function relativeDay(d) {
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const dt = parseItemDateTime(d);
+      const itemDay = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
+      const diff = Math.round((itemDay - today) / 86400000);
+      if (diff === 0) return { text: '今天', cls: 'today' };
+      if (diff === 1) return { text: '明天', cls: 'tomorrow' };
+      if (diff === 2) return { text: '后天', cls: 'later' };
+      return { text: `${diff}天后`, cls: 'later' };
+    }
+
+    function badgeHTML(d) {
+      const b = relativeDay(d);
+      return b ? `<span class="day-badge ${b.cls}">${b.text}</span>` : '';
+    }
 
     function renderItem(d) {
       const icon  = d.icon || ICONS[d.type] || '📝';
@@ -147,7 +177,7 @@
           <div class="item-icon">${icon}</div>
           <div class="item-body">
             <div class="item-type">${label}</div>
-            <div class="item-title">${title}</div>
+            <div class="item-title">${title}${badgeHTML(d)}</div>
             ${time ? `<div class="item-time">${time}</div>` : ''}
             ${date ? `<div class="item-date">${date}</div>` : ''}
             ${note ? `<div class="item-note">${note}</div>` : ''}
