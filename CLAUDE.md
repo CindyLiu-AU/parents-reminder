@@ -53,7 +53,7 @@ Use when parents are coming to Cindy's house to help with Tasman Trophy Service 
 {
   "type": "custom",
   "icon": "🏆",
-  "label": "今天去 Cindy 家上班",
+  "label": "X月X日 去 Cindy 家上班",
   "message": "记得X点到 Cindy 家，帮忙做 TTS 工作 💪",
   "fulldate": "2026年X月X日（星期X）",
   "time": "09:00",
