@@ -281,15 +281,15 @@
       const card = document.getElementById('card');
       if (d.type === 'coles') {
         card.innerHTML = `
-          <div class="icon" style="font-size:56px;margin-bottom:10px">🚚</div>
-          <div class="label" style="margin-bottom:8px">Coles 网购送货</div>
-          <div class="title" style="font-size:36px;margin-bottom:4px">${d.date} 送货上门</div>
-          <div class="subtitle" style="font-size:18px;margin-bottom:20px">${d.fulldate || ''}</div>
-          <div class="time-box" style="padding:16px 32px;margin-bottom:18px">
+          <div class="icon" style="font-size:56px;margin-bottom:16px">🚚</div>
+          <div class="label" style="margin-bottom:14px">Coles 网购送货</div>
+          <div class="title" style="font-size:36px;margin-bottom:12px">${d.date} 送货上门</div>
+          <div class="subtitle" style="font-size:18px;margin-bottom:28px">${d.fulldate || ''}</div>
+          <div class="time-box" style="padding:16px 32px;margin-bottom:28px">
             <div class="time-label">送货时间</div>
             <div class="time" style="font-size:42px">${d.time}</div>
           </div>
-          <div class="note" style="font-size:20px">请在家等候送货员 🏠 听到门铃请去开门</div>
+          <div class="note" style="font-size:20px;margin-bottom:20px">请在家等候送货员 🏠 听到门铃请去开门</div>
           <div class="footer">Cindy 发送 · 如有疑问请联系 Cindy</div>`;
       } else if (d.type === 'visit') {
         card.innerHTML = `
