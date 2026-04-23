@@ -69,9 +69,37 @@ Each notice card shows a coloured pill next to the title:
 
 ## Spending Page (spending.html)
 - Reads from `spending.json`
-- Shows weekly Coles shopping items + individual prices + total
-- Cindy tells Claude what was bought → Claude updates spending.json
-- **Future:** Auto-populate from weekly Coles confirmation emails (cindy_melbourne@yahoo.com via IMAP)
+- All item names displayed in **Chinese** (parents read this page)
+- Full order section is **collapsed by default**; tap 展开 ▼ to reveal
+- Parent items (爸妈的部分) shown in gold box with transfer amount in green — always visible
+- Cindy populates from Coles confirmation emails (cindy_melbourne@yahoo.com via IMAP) — Yahoo email MCP server set up at ~/claude_email_mcp/yahoo_email_server.py
+
+### spending.json structure
+```json
+[
+  {
+    "week": "2026年4月第4周",
+    "weekStart": "2026-04-20",
+    "orderNumber": "256169013",
+    "deliveryDate": "2026-04-12",
+    "items": [
+      { "name": "商品中文名", "amount": 9.30 },
+      { "name": "商品中文名", "amount": 31.10, "forParents": true }
+    ]
+  }
+]
+```
+- `forParents: true` marks items the parents will transfer money back for
+- Items without `forParents` are Cindy's own
+
+### Parent items rules (apply to every order)
+These items are **always** `forParents: true` whenever they appear:
+- 笼养鸡蛋 30个装 (30-pack eggs)
+- 全脂牛奶 3L (3L milk)
+- 椰子酸奶 香草味 (Cocobella Coconut Yoghurt Vanilla)
+- 普通白面粉 (Coles White Plain Flour)
+- 任何面包 / Loaf (any bread/loaf product)
+- 任何肉末 (any mince — lamb, beef, etc.)
 
 ## Navigation Buttons (main page, bottom-right)
 - 🎁 → spending.html (top)
@@ -81,7 +109,7 @@ Each notice card shows a coloured pill next to the title:
 - Tablet purchased, GitHub Pages live
 - All core features working: notices, word cards, day badges, bin reminder, spending page
 - `^wordlist` alias working — tell Claude a word to add it to words.json
+- Yahoo email MCP connected — Claude can read Coles order emails directly from cindy_melbourne@yahoo.com and populate spending.json
 
 ## Remaining To-Do
 1. Configure tablet: kiosk mode, always-on screen, auto-start browser to live URL
-2. Automate spending.json from Coles email (future)
