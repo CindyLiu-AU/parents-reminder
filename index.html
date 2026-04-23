@@ -387,6 +387,18 @@
     let words = [];
     let notices = [];
 
+    function getPinnedNotice() {
+      const p = hobartParts();
+      const nowMins = p.hour * 60 + parseInt(p.minute, 10);
+      for (const n of notices) {
+        if (!n.pin_from || !n.pin_until) continue;
+        const [fh, fm] = n.pin_from.split(':').map(Number);
+        const [uh, um] = n.pin_until.split(':').map(Number);
+        if (nowMins >= fh * 60 + fm && nowMins < uh * 60 + um) return n;
+      }
+      return null;
+    }
+
     async function loadAll() {
       const [w, n] = await Promise.all([
         fetch('words.json?t=' + Date.now()).then(r => r.json()),
@@ -400,6 +412,21 @@
       const slot = getSlot();
       const badge = document.getElementById('timeslot-badge');
       let data;
+
+      const pinned = getPinnedNotice();
+      if (pinned) {
+        data = pinned;
+        updateBottomBar([pinned], 0);
+        const dataStr = JSON.stringify(data);
+        if (lastData && dataStr !== lastData) {
+          playChime();
+          setTimeout(() => { lastData = dataStr; render(data); }, 2000);
+        } else {
+          lastData = dataStr;
+          render(data);
+        }
+        return;
+      }
 
       let activeIdx = 0;
       if (slot === 'afternoon') {
