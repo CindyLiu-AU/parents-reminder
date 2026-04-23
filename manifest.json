@@ -1,0 +1,15 @@
+{
+  "name": "家庭通知",
+  "short_name": "通知",
+  "display": "fullscreen",
+  "start_url": "/parents-reminder/",
+  "background_color": "#0d1b2a",
+  "theme_color": "#0d1b2a",
+  "icons": [
+    {
+      "src": "https://via.assets.so/img.png?w=192&h=192&tc=white&bg=112240&t=通知",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
