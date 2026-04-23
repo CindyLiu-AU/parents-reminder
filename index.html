@@ -408,6 +408,22 @@
     let words = [];
     let notices = [];
 
+    function getBinNotice() {
+      const p = hobartParts();
+      const h = p.hour;
+      const m = parseInt(p.minute, 10);
+      const day = p.weekday;
+      const isWedNight = day === '星期三' && h >= 20;
+      const isThuMorning = day === '星期四' && (h < 7 || (h === 7 && m < 30));
+      if (!isWedNight && !isThuMorning) return null;
+      return {
+        type: 'custom', icon: '🗑️', label: '垃圾桶提醒',
+        message: isWedNight
+          ? '今晚记得把垃圾桶推到路边！🗑️<br>明早垃圾车会来收'
+          : '今早 7:30 前记得把垃圾桶推到路边！🗑️'
+      };
+    }
+
     function getPinnedNotice() {
       const p = hobartParts();
       const nowMins = p.hour * 60 + parseInt(p.minute, 10);
@@ -434,7 +450,7 @@
       const badge = document.getElementById('timeslot-badge');
       let data;
 
-      const pinned = getPinnedNotice();
+      const pinned = getBinNotice() || getPinnedNotice();
       if (pinned) {
         data = pinned;
         updateBottomBar([pinned], 0);
