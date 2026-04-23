@@ -490,21 +490,26 @@
         fetch('history.json?t=' + Date.now()).then(r => r.json()),
       ]);
       words = w;
+      notices = n;
+    }
+
+    function upcomingNotices() {
       const now = new Date();
-      notices = n
-        .filter(d => parseItemDateTime(d) >= now || d.pin_from)
-        .sort((a, b) => parseItemDateTime(a) - parseItemDateTime(b));
+      return notices
+        .filter(d => parseItemDateTime(d).getTime() >= now.getTime() || d.pin_from)
+        .sort((a, b) => parseItemDateTime(a).getTime() - parseItemDateTime(b).getTime());
     }
 
     async function tick() {
       const slot = getSlot();
       let data;
 
+      const upcoming = upcomingNotices();
       const pinned = getBinNotice() || getPinnedNotice();
       if (pinned) {
         data = pinned;
-      } else if (notices.length > 0) {
-        data = notices[0];
+      } else if (upcoming.length > 0) {
+        data = upcoming[0];
       } else if (slot === 'afternoon' && words.length > 0) {
         const idx = Math.floor(Date.now() / (30 * 60 * 1000)) % words.length;
         data = { type: 'word', ...words[idx] };
