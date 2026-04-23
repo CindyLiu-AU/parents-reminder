@@ -193,7 +193,6 @@
       <div id="clock">--:--</div>
       <div id="date-display">--</div>
     </div>
-    <div id="countdown" style="font-size:11px;color:#2e4a6a;letter-spacing:1px;align-self:flex-end;padding-bottom:4px;"></div>
     <div id="weather">
       <div id="weather-icon">🌤</div>
       <div>
@@ -522,17 +521,6 @@
       }
     }
 
-    // ── Countdown ─────────────────────────────────────────────
-    let cdSecs = 60;
-    function resetCountdown() {
-      cdSecs = 60;
-    }
-    setInterval(() => {
-      cdSecs = Math.max(0, cdSecs - 1);
-      const el = document.getElementById('countdown');
-      if (el) el.textContent = `↻ ${cdSecs}s`;
-    }, 1000);
-
     // ── Init ──────────────────────────────────────────────────
     window.onload = async () => {
       document.documentElement.requestFullscreen?.();
@@ -542,8 +530,7 @@
       setInterval(fetchWeather, 30 * 60 * 1000);
       await loadAll();
       await tick();
-      setInterval(async () => { await tick(); resetCountdown(); }, 60000);
-      resetCountdown();
+      setInterval(tick, 60000);
     };
   </script>
 </body>
