@@ -175,6 +175,30 @@
       margin-top: 8px;
     }
 
+    .transfer-badge {
+      display: block;
+      width: 100%;
+      text-align: center;
+      margin-top: 16px;
+      padding: 14px 0;
+      border-radius: 12px;
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: 2px;
+    }
+
+    .badge-pending {
+      background: #ff4d4d22;
+      border: 2px solid #ff4d4d;
+      color: #ff6b6b;
+    }
+
+    .badge-done {
+      background: #4ade8022;
+      border: 2px solid #4ade80;
+      color: #4ade80;
+    }
+
     .collapsible { overflow: hidden; transition: max-height 0.3s ease; }
 
     .back-btn {
@@ -261,7 +285,9 @@
                   <span class="parent-total-label">爸妈转账金额</span>
                   <span class="parent-total-amount">$${parentTotal.toFixed(2)}</span>
                 </div>
-                <div class="parent-note">以上为爸妈专属商品，麻烦转账给 Cindy 💛</div>
+                ${week.transferred
+                  ? `<div class="transfer-badge badge-done">✅ 已转账</div>`
+                  : `<div class="transfer-badge badge-pending">⏳ 未转账</div>`}
               </div>` : ''}
             </div>`;
         }).join('');
