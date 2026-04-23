@@ -30,14 +30,20 @@
       color: #f59e0b;
     }
 
-    header a {
-      font-size: 16px;
+    header a { display: none; }
+
+    .back-btn {
+      position: fixed;
+      bottom: 32px;
+      right: 28px;
+      font-size: 18px;
       color: #64b5f6;
       text-decoration: none;
       background: #112240;
       border: 1px solid #1e3a5f;
-      border-radius: 20px;
-      padding: 8px 20px;
+      border-radius: 24px;
+      padding: 14px 28px;
+      z-index: 100;
     }
 
     .item {
@@ -91,9 +97,9 @@
 <body>
 
   <header>
-    <h1>📋 所有通知</h1>
-    <a href="index.html">← 返回</a>
+    <h1>📋 即将到来的通知</h1>
   </header>
+  <a class="back-btn" href="index.html">← 返回</a>
 
   <div id="list">加载中...</div>
 
