@@ -161,17 +161,26 @@
     };
 
     // ── Clock ─────────────────────────────────────────────────
-    function updateClock() {
+    const TZ = 'Australia/Hobart';
+    function hobartParts() {
       const now = new Date();
-      const tz = 'Australia/Hobart';
-      const hh = now.toLocaleString('en-AU', { timeZone: tz, hour: '2-digit', minute: '2-digit', hour12: false });
-      document.getElementById('clock').textContent = hh;
+      const fmt = (opts) => new Intl.DateTimeFormat('en-AU', { timeZone: TZ, ...opts }).format(now);
+      return {
+        hour:    parseInt(fmt({ hour: 'numeric', hour12: false })),
+        minute:  fmt({ minute: '2-digit' }),
+        hourStr: fmt({ hour: '2-digit', hour12: false }),
+        year:    fmt({ year: 'numeric' }),
+        month:   fmt({ month: 'numeric' }),
+        day:     fmt({ day: 'numeric' }),
+        weekday: new Intl.DateTimeFormat('zh-CN', { timeZone: TZ, weekday: 'long' }).format(now),
+      };
+    }
 
-      const days = ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
-      const hobartDate = new Date(now.toLocaleString('en-AU', { timeZone: tz }));
-      const months = ['1','2','3','4','5','6','7','8','9','10','11','12'];
+    function updateClock() {
+      const p = hobartParts();
+      document.getElementById('clock').textContent = `${p.hourStr}:${p.minute}`;
       document.getElementById('date-display').textContent =
-        `${hobartDate.getFullYear()}年${months[hobartDate.getMonth()]}月${hobartDate.getDate()}日 ${days[hobartDate.getDay()]}`;
+        `${p.year}年${p.month}月${p.day}日 ${p.weekday}`;
     }
 
     // ── Weather (Open-Meteo, Kingston TAS) ───────────────────
@@ -216,7 +225,7 @@
 
     // ── Time slot ─────────────────────────────────────────────
     function getSlot() {
-      const h = new Date().getHours();
+      const h = hobartParts().hour;
       if (h >= 6 && h < 12) return 'morning';
       if (h >= 12 && h < 18) return 'afternoon';
       if (h >= 18 && h < 22) return 'evening';
