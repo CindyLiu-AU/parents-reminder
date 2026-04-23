@@ -461,64 +461,31 @@
       notices = n;
     }
 
-    function renderList(items) {
-      const CN_LABELS = { coles: 'Coles 送货', visit: '家庭通知', power: '免费用电', trip: '家庭旅行', custom: '通知' };
-      const CN_ICONS  = { coles: '🚚', visit: '🏠', power: '⚡', trip: '🧳' };
-      document.getElementById('notice-list').innerHTML = items.map(d => {
-        const icon  = d.icon || CN_ICONS[d.type] || '📝';
-        const label = CN_LABELS[d.type] || d.label || '通知';
-        let title = '', note = '';
-        if (d.type === 'coles')  { title = `${shortDate(d)} 送货上门`; note = d.note || '请在家等候送货员 🏠 听到门铃请去开门'; }
-        else if (d.type === 'visit') { title = `${d.who || 'Cindy'} ${shortDate(d)} 来家里`; note = d.note || ''; }
-        else if (d.type === 'trip')  { title = `${shortDate(d)} 去 ${d.destination}`; note = d.note || ''; }
-        else if (d.type === 'custom') { title = d.label || '通知'; note = d.message || ''; }
-        return `
-          <div class="notice-card${d._pinned ? ' pinned' : ''}">
-            <div class="nc-icon">${icon}</div>
-            <div class="nc-body">
-              <div class="nc-label">${label}</div>
-              <div class="nc-title">${title}</div>
-              ${d.fulldate ? `<div class="nc-date">${d.fulldate}</div>` : ''}
-              ${d.time    ? `<div class="nc-time">${d.time}</div>` : ''}
-              ${note      ? `<div class="nc-note">${note}</div>` : ''}
-            </div>
-          </div>`;
-      }).join('');
-    }
+    async function tick() {
+      const slot = getSlot();
+      let data;
 
-    function showCard(data) {
-      document.getElementById('card').style.display = '';
-      document.getElementById('notice-list').style.display = 'none';
+      const pinned = getBinNotice() || getPinnedNotice();
+      if (pinned) {
+        data = pinned;
+      } else if (notices.length > 0) {
+        data = notices[0];
+      } else if (slot === 'afternoon' && words.length > 0) {
+        const idx = Math.floor(Date.now() / (30 * 60 * 1000)) % words.length;
+        data = { type: 'word', ...words[idx] };
+      } else if (slot === 'night') {
+        data = { type: 'custom', icon: '🌙', label: '晚安', message: '爸爸妈妈晚安！<br>好好休息 😴' };
+      } else if (slot === 'morning') {
+        data = { type: 'custom', icon: '🌅', label: '早上好', message: '早上好，爸爸妈妈！<br>今天也要开心哦 😊' };
+      } else {
+        data = { type: 'custom', icon: '🌆', label: '晚上好', message: '晚上好，爸爸妈妈！<br>好好休息，明天见 😊' };
+      }
+
       const dataStr = JSON.stringify(data);
       if (lastData && dataStr !== lastData) {
         playChime();
         setTimeout(() => { lastData = dataStr; render(data); }, 2000);
       } else { lastData = dataStr; render(data); }
-    }
-
-    function showList(items) {
-      document.getElementById('card').style.display = 'none';
-      document.getElementById('notice-list').style.display = 'flex';
-      renderList(items);
-    }
-
-    async function tick() {
-      const slot = getSlot();
-      const bin = getBinNotice();
-      const allNotices = bin ? [{ ...bin, _pinned: true }, ...notices] : [...notices];
-
-      if (allNotices.length > 0) {
-        showList(allNotices);
-      } else if (slot === 'afternoon' && words.length > 0) {
-        const idx = Math.floor(Date.now() / (30 * 60 * 1000)) % words.length;
-        showCard({ type: 'word', ...words[idx] });
-      } else if (slot === 'night') {
-        showCard({ type: 'custom', icon: '🌙', label: '晚安', message: '爸爸妈妈晚安！<br>好好休息 😴' });
-      } else if (slot === 'morning') {
-        showCard({ type: 'custom', icon: '🌅', label: '早上好', message: '早上好，爸爸妈妈！<br>今天也要开心哦 😊' });
-      } else {
-        showCard({ type: 'custom', icon: '🌆', label: '晚上好', message: '晚上好，爸爸妈妈！<br>好好休息，明天见 😊' });
-      }
     }
 
     // ── Init ──────────────────────────────────────────────────
