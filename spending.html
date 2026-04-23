@@ -38,7 +38,7 @@
       border: 1px solid #1e3a5f;
       border-radius: 16px;
       padding: 20px 24px;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
     }
 
     .week-title {
@@ -46,52 +46,136 @@
       font-weight: 700;
       color: #64b5f6;
       letter-spacing: 1px;
-      margin-bottom: 16px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid #1e3a5f;
+      margin-bottom: 4px;
     }
+
+    .order-meta {
+      font-size: 12px;
+      color: #546e7a;
+      margin-bottom: 18px;
+    }
+
+    /* Full order section */
+    .section-label {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #546e7a;
+      margin-bottom: 10px;
+      margin-top: 18px;
+    }
+
+    .section-label:first-of-type { margin-top: 0; }
+
+    .toggle-btn {
+      background: none;
+      border: 1px solid #1e3a5f;
+      border-radius: 8px;
+      color: #546e7a;
+      font-size: 12px;
+      padding: 4px 10px;
+      cursor: pointer;
+      float: right;
+      margin-top: -2px;
+    }
+
+    .toggle-btn:hover { color: #90caf9; border-color: #90caf9; }
 
     .item-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 8px 0;
+      padding: 7px 0;
       border-bottom: 1px solid #0d1b2a;
-      font-size: 17px;
+      font-size: 14px;
     }
 
     .item-row:last-of-type { border-bottom: none; }
-
-    .item-name { color: #e2e8f0; }
-
-    .item-amount { color: #f59e0b; font-weight: 700; }
+    .item-name { color: #cfd8e3; flex: 1; padding-right: 12px; }
+    .item-amount { color: #90a4ae; font-weight: 600; white-space: nowrap; }
 
     .total-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-top: 14px;
-      padding-top: 12px;
-      border-top: 2px solid #1e3a5f;
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid #1e3a5f;
     }
 
     .total-label {
-      font-size: 18px;
+      font-size: 14px;
       font-weight: 700;
       color: #90caf9;
     }
 
     .total-amount {
-      font-size: 26px;
+      font-size: 20px;
+      font-weight: 800;
+      color: #90caf9;
+    }
+
+    /* Parent section */
+    .parent-section {
+      background: #0d2137;
+      border: 1px solid #f59e0b44;
+      border-radius: 12px;
+      padding: 14px 18px;
+      margin-top: 18px;
+    }
+
+    .parent-section-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #f59e0b;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .parent-item-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 7px 0;
+      border-bottom: 1px solid #1e3a5f44;
+      font-size: 15px;
+    }
+
+    .parent-item-row:last-of-type { border-bottom: none; }
+    .parent-item-name { color: #e2e8f0; flex: 1; padding-right: 12px; }
+    .parent-item-amount { color: #f59e0b; font-weight: 700; white-space: nowrap; }
+
+    .parent-total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 2px solid #f59e0b44;
+    }
+
+    .parent-total-label {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fbbf24;
+    }
+
+    .parent-total-amount {
+      font-size: 28px;
       font-weight: 800;
       color: #4ade80;
     }
 
-    .empty {
+    .parent-note {
+      font-size: 12px;
       color: #546e7a;
-      font-size: 15px;
-      padding: 8px 0;
+      margin-top: 8px;
     }
+
+    .collapsible { overflow: hidden; transition: max-height 0.3s ease; }
 
     .back-btn {
       position: fixed;
@@ -112,7 +196,7 @@
 
   <header>
     <h1>🎁 Cindy 的心意</h1>
-    <p>每周为爸爸妈妈采购的物品记录</p>
+    <p>每周 Coles 订单记录 · 爸妈部分单独列出</p>
   </header>
 
   <div id="list">加载中...</div>
@@ -129,30 +213,70 @@
 
         const sorted = [...data].sort((a, b) => b.weekStart.localeCompare(a.weekStart));
 
-        document.getElementById('list').innerHTML = sorted.map(week => {
+        document.getElementById('list').innerHTML = sorted.map((week, wi) => {
           const items = week.items || [];
-          const total = items.reduce((sum, i) => sum + (i.amount || 0), 0);
+          const parentItems = items.filter(i => i.forParents);
+          const orderTotal = items.reduce((s, i) => s + (i.amount || 0), 0);
+          const parentTotal = parentItems.reduce((s, i) => s + (i.amount || 0), 0);
 
-          const itemsHTML = items.length
-            ? items.map(i => `
-                <div class="item-row">
-                  <span class="item-name">${i.name}</span>
-                  <span class="item-amount">$${i.amount.toFixed(2)}</span>
-                </div>`).join('')
-            : '<div class="empty">暂无项目</div>';
+          const allItemsHTML = items.map(i => `
+            <div class="item-row">
+              <span class="item-name">${i.name}${i.forParents ? ' <span style="font-size:11px;color:#f59e0b44">★</span>' : ''}</span>
+              <span class="item-amount">$${i.amount.toFixed(2)}</span>
+            </div>`).join('');
+
+          const parentItemsHTML = parentItems.map(i => `
+            <div class="parent-item-row">
+              <span class="parent-item-name">${i.name}</span>
+              <span class="parent-item-amount">$${i.amount.toFixed(2)}</span>
+            </div>`).join('');
+
+          const colId = `order-${wi}`;
+          const metaParts = [];
+          if (week.orderNumber) metaParts.push(`订单 #${week.orderNumber}`);
+          if (week.deliveryDate) metaParts.push(`送达 ${week.deliveryDate}`);
 
           return `
             <div class="week-card">
               <div class="week-title">📅 ${week.week}</div>
-              ${itemsHTML}
-              ${items.length ? `
-              <div class="total-row">
-                <span class="total-label">合计</span>
-                <span class="total-amount">$${total.toFixed(2)}</span>
+              ${metaParts.length ? `<div class="order-meta">${metaParts.join(' · ')}</div>` : ''}
+
+              <div class="section-label">
+                全部商品
+                <button class="toggle-btn" onclick="toggleOrder('${colId}', this)">收起 ▲</button>
+              </div>
+              <div class="collapsible" id="${colId}" style="max-height:2000px">
+                ${allItemsHTML}
+                <div class="total-row">
+                  <span class="total-label">订单合计</span>
+                  <span class="total-amount">$${orderTotal.toFixed(2)}</span>
+                </div>
+              </div>
+
+              ${parentItems.length ? `
+              <div class="parent-section">
+                <div class="parent-section-title">🧧 爸妈的部分</div>
+                ${parentItemsHTML}
+                <div class="parent-total-row">
+                  <span class="parent-total-label">爸妈转账金额</span>
+                  <span class="parent-total-amount">$${parentTotal.toFixed(2)}</span>
+                </div>
+                <div class="parent-note">以上为爸妈专属商品，麻烦转账给 Cindy 💛</div>
               </div>` : ''}
             </div>`;
         }).join('');
       });
+
+    function toggleOrder(id, btn) {
+      const el = document.getElementById(id);
+      if (el.style.maxHeight === '0px') {
+        el.style.maxHeight = '2000px';
+        btn.textContent = '收起 ▲';
+      } else {
+        el.style.maxHeight = '0px';
+        btn.textContent = '展开 ▼';
+      }
+    }
   </script>
 </body>
 </html>
