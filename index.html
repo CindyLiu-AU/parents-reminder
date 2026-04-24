@@ -180,13 +180,13 @@
     #refresh-btn {
       position: fixed;
       bottom: 10px;
-      left: 60px;
+      left: 20px;
       font-size: 11px;
-      color: #2e4a6a;
+      color: #546e7a;
       background: none;
       border: 1px solid #1e3a5f;
       border-radius: 12px;
-      padding: 2px 10px;
+      padding: 4px 12px;
       cursor: pointer;
       z-index: 100;
     }
@@ -266,8 +266,7 @@
   <div id="bottombar"></div>
   <a href="spending.html" id="spending-btn" onclick="event.stopPropagation()">🎁</a>
   <a href="reminders.html" id="reminders-btn" onclick="event.stopPropagation()">📋</a>
-  <div id="countdown">↻ 60s</div>
-  <button id="refresh-btn" onclick="manualRefresh()">刷新</button>
+  <button id="refresh-btn" onclick="manualRefresh()">⟳ 刷新</button>
   <a id="dev-btn" href="dev.html" onclick="event.stopPropagation()">🛠 dev</a>
 
   <script>
@@ -598,19 +597,8 @@
     }
 
     // ── Manual refresh ───────────────────────────────────────
-    async function manualRefresh() {
-      const btn = document.getElementById('refresh-btn');
-      btn.textContent = '⟳...';
-      btn.disabled = true;
-      try {
-        await loadAll();
-        lastData = null;
-        await tick();
-        cdSecs = 60;
-      } finally {
-        btn.textContent = '刷新';
-        btn.disabled = false;
-      }
+    function manualRefresh() {
+      location.reload();
     }
 
     // ── Countdown ─────────────────────────────────────────────
