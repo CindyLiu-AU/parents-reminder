@@ -1,6 +1,16 @@
 [
   {
     "type": "custom",
+    "icon": "💸",
+    "label": "今天的工资",
+    "message": "今天的工资 Cindy 忘记付了！对不起爸爸妈妈 😅 很快会补上的，不用担心 ❤️",
+    "fulldate": "2026年4月24日（星期五）",
+    "time": "14:30",
+    "pin_from": "14:30",
+    "pin_until": "22:00"
+  },
+  {
+    "type": "custom",
     "icon": "🏆",
     "label": "4月24日 去 Cindy 家上班",
     "message": "早上 8:30 出发去 Cindy 家，下午 2:30 结束。记得带新平板！",
@@ -11,7 +21,7 @@
   },
   {
     "type": "coles",
-    "date": "明天",
+    "date": "4月24日",
     "fulldate": "2026年4月24日（星期五）",
     "time": "早上 7:30"
   },

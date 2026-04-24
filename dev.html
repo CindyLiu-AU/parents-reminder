@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dev — parents-reminder</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #0d1b2a;
+      color: #f0f4f8;
+      font-family: "SF Mono", "Menlo", monospace;
+      padding: 24px 24px 80px;
+      font-size: 14px;
+    }
+
+    h1 {
+      font-size: 20px;
+      color: #f59e0b;
+      margin-bottom: 4px;
+    }
+
+    #now {
+      font-size: 13px;
+      color: #546e7a;
+      margin-bottom: 28px;
+    }
+
+    section {
+      margin-bottom: 28px;
+    }
+
+    h2 {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #64b5f6;
+      border-bottom: 1px solid #1e3a5f;
+      padding-bottom: 6px;
+      margin-bottom: 12px;
+    }
+
+    .active-card {
+      background: #112240;
+      border: 1px solid #f59e0b55;
+      border-radius: 12px;
+      padding: 14px 18px;
+      color: #f0f4f8;
+      line-height: 1.8;
+    }
+
+    .active-card .active-label {
+      font-size: 11px;
+      color: #f59e0b;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .active-card .active-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .active-card .active-sub {
+      font-size: 12px;
+      color: #90caf9;
+      margin-top: 4px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      text-align: left;
+      font-size: 11px;
+      color: #546e7a;
+      padding: 4px 8px 6px;
+      border-bottom: 1px solid #1e3a5f;
+    }
+
+    td {
+      padding: 8px 8px;
+      border-bottom: 1px solid #0d1b2a;
+      vertical-align: top;
+      font-size: 13px;
+      color: #cfd8e3;
+    }
+
+    td.icon { width: 36px; font-size: 18px; }
+    td.type { color: #64b5f6; white-space: nowrap; }
+    td.pin  { color: #f59e0b; font-size: 11px; }
+    td.past { color: #546e7a; }
+
+    .badge {
+      display: inline-block;
+      font-size: 10px;
+      padding: 1px 7px;
+      border-radius: 8px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      vertical-align: middle;
+      margin-left: 6px;
+    }
+    .badge-active  { background: #16a34a33; color: #4ade80; border: 1px solid #4ade8055; }
+    .badge-pinned  { background: #f59e0b22; color: #f59e0b; border: 1px solid #f59e0b55; }
+    .badge-past    { background: #1e3a5f33; color: #546e7a; border: 1px solid #1e3a5f; }
+    .badge-future  { background: #7c3aed22; color: #a78bfa; border: 1px solid #7c3aed55; }
+
+    .spend-week {
+      background: #112240;
+      border: 1px solid #1e3a5f;
+      border-radius: 10px;
+      padding: 12px 16px;
+      margin-bottom: 10px;
+    }
+
+    .spend-week-title { font-size: 13px; color: #64b5f6; font-weight: 700; margin-bottom: 6px; }
+    .spend-row { display: flex; justify-content: space-between; font-size: 12px; color: #90a4ae; padding: 2px 0; }
+    .spend-row.parents { color: #f59e0b; }
+    .spend-total { display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; margin-top: 6px; padding-top: 6px; border-top: 1px solid #1e3a5f; }
+
+    .back-btn {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      font-size: 14px;
+      color: #64b5f6;
+      text-decoration: none;
+      background: #112240;
+      border: 1px solid #1e3a5f;
+      border-radius: 20px;
+      padding: 10px 22px;
+      z-index: 100;
+    }
+
+    #refresh-dev {
+      position: fixed;
+      bottom: 24px;
+      left: 24px;
+      font-size: 13px;
+      color: #546e7a;
+      background: none;
+      border: 1px solid #1e3a5f;
+      border-radius: 20px;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+
+    .empty { color: #546e7a; font-style: italic; font-size: 13px; }
+  </style>
+</head>
+<body>
+
+  <h1>🛠 Dev Panel</h1>
+  <div id="now">Loading...</div>
+
+  <section>
+    <h2>Currently Showing</h2>
+    <div id="active-section" class="empty">calculating...</div>
+  </section>
+
+  <section>
+    <h2>history.json — All Notices</h2>
+    <div id="notices-section" class="empty">loading...</div>
+  </section>
+
+  <section>
+    <h2>spending.json — Weekly Orders</h2>
+    <div id="spending-section" class="empty">loading...</div>
+  </section>
+
+  <button id="refresh-dev" onclick="loadAll()">⟳ Refresh</button>
+  <a class="back-btn" href="index.html">← Back</a>
+
+  <script>
+    const TZ = 'Australia/Hobart';
+
+    function hobartParts() {
+      const now = new Date();
+      const parts = new Intl.DateTimeFormat('en-AU', {
+        timeZone: TZ, hour12: false,
+        year: 'numeric', month: 'numeric', day: 'numeric',
+        hour: '2-digit', minute: '2-digit', second: '2-digit'
+      }).formatToParts(now);
+      const get = t => parts.find(p => p.type === t)?.value || '0';
+      return {
+        hour: parseInt(get('hour')),
+        minute: get('minute'),
+        second: get('second'),
+        year: get('year'),
+        month: get('month'),
+        day: get('day'),
+        weekday: new Intl.DateTimeFormat('zh-CN', { timeZone: TZ, weekday: 'long' }).format(now),
+      };
+    }
+
+    function nowString() {
+      const p = hobartParts();
+      const h12 = p.hour % 12 || 12;
+      const ampm = p.hour < 12 ? 'AM' : 'PM';
+      return `Hobart time: ${p.year}-${p.month.padStart(2,'0')}-${p.day.padStart(2,'0')}  ${String(h12).padStart(2,'0')}:${p.minute}:${p.second} ${ampm}  (${p.weekday})`;
+    }
+
+    function parseItemDateTime(d) {
+      const now = new Date();
+      let year = now.getFullYear(), month = now.getMonth(), day = now.getDate();
+      if (d.fulldate) {
+        const m = d.fulldate.match(/(\d{4})年(\d{1,2})月(\d{1,2})日/);
+        if (m) { year = parseInt(m[1]); month = parseInt(m[2]) - 1; day = parseInt(m[3]); }
+      }
+      let hour = 0, minute = 0;
+      const tm = (d.time || '').match(/(上午|早上|下午|晚上)?\s*(\d{1,2}):(\d{2})/);
+      if (tm) {
+        const pref = tm[1] || '';
+        hour = parseInt(tm[2]); minute = parseInt(tm[3]);
+        if ((pref === '下午' || pref === '晚上') && hour < 12) hour += 12;
+        if ((pref === '上午' || pref === '早上') && hour === 12) hour = 0;
+      }
+      return new Date(year, month, day, hour, minute);
+    }
+
+    function isPinActive(n) {
+      if (!n.pin_from || !n.pin_until) return false;
+      const p = hobartParts();
+      const nowMins = p.hour * 60 + parseInt(p.minute, 10);
+      const [fh, fm] = n.pin_from.split(':').map(Number);
+      const [uh, um] = n.pin_until.split(':').map(Number);
+      const from = fh * 60 + fm, until = uh * 60 + um;
+      return from <= until ? nowMins >= from && nowMins < until : nowMins >= from || nowMins < until;
+    }
+
+    function getSlot() {
+      const h = hobartParts().hour;
+      if (h >= 6 && h < 12) return 'morning';
+      if (h >= 12 && h < 18) return 'afternoon';
+      if (h >= 18 && h < 22) return 'evening';
+      return 'night';
+    }
+
+    function getBinNotice() {
+      const p = hobartParts();
+      const h = p.hour, m = parseInt(p.minute, 10);
+      const day = p.weekday;
+      const isWedNight = day === '星期三' && h >= 20;
+      const isThuMorning = day === '星期四' && (h < 7 || (h === 7 && m < 30));
+      return (isWedNight || isThuMorning) ? { type: 'custom', icon: '🗑️', label: '垃圾桶提醒 (auto)' } : null;
+    }
+
+    function whatIsShowing(notices, words) {
+      const now = new Date();
+      const bin = getBinNotice();
+      if (bin) return { source: 'bin-auto', icon: '🗑️', label: bin.label, detail: 'Hardcoded bin night rule' };
+
+      const pinned = notices.find(n => isPinActive(n));
+      if (pinned) return { source: 'pinned', icon: pinned.icon || '📌', label: pinned.label || pinned.type, detail: `pin ${pinned.pin_from}–${pinned.pin_until}` };
+
+      const upcoming = notices
+        .filter(d => parseItemDateTime(d).getTime() >= now.getTime() || d.pin_from)
+        .sort((a, b) => parseItemDateTime(a) - parseItemDateTime(b));
+
+      if (upcoming.length > 0) {
+        const n = upcoming[0];
+        return { source: 'next-notice', icon: n.icon || '📅', label: n.label || n.type, detail: n.fulldate || n.date || '' };
+      }
+
+      const slot = getSlot();
+      if (slot === 'afternoon' && words.length > 0) {
+        const idx = Math.floor(Date.now() / (30 * 60 * 1000)) % words.length;
+        return { source: 'word-card', icon: '📚', label: words[idx].word, detail: `word ${idx + 1}/${words.length} · rotates every 30 min` };
+      }
+      if (slot === 'night')    return { source: 'slot', icon: '🌙', label: 'Goodnight message', detail: '10pm–6am' };
+      if (slot === 'morning')  return { source: 'slot', icon: '🌅', label: 'Good morning message', detail: '6am–12pm' };
+      return { source: 'slot', icon: '🌆', label: 'Good evening message', detail: '6pm–10pm' };
+    }
+
+    function noticeBadge(n) {
+      const now = new Date();
+      if (isPinActive(n)) return '<span class="badge badge-pinned">PINNED</span>';
+      const dt = parseItemDateTime(n);
+      if (dt < now && !n.pin_from) return '<span class="badge badge-past">PAST</span>';
+      const diff = Math.round((dt - now) / 86400000);
+      if (diff <= 1) return '<span class="badge badge-active">TODAY/TMRW</span>';
+      return `<span class="badge badge-future">${diff}d away</span>`;
+    }
+
+    function renderActive(showing) {
+      document.getElementById('active-section').innerHTML = `
+        <div class="active-card">
+          <div class="active-label">${showing.source}</div>
+          <div class="active-title">${showing.icon} ${showing.label}</div>
+          <div class="active-sub">${showing.detail}</div>
+        </div>`;
+    }
+
+    function renderNotices(notices) {
+      if (!notices.length) {
+        document.getElementById('notices-section').innerHTML = '<span class="empty">No notices</span>';
+        return;
+      }
+      const rows = notices.map(n => {
+        const dt = parseItemDateTime(n);
+        const now = new Date();
+        const isPast = dt < now && !n.pin_from;
+        const pin = n.pin_from ? `${n.pin_from}–${n.pin_until}` : '—';
+        return `<tr>
+          <td class="icon">${n.icon || (n.type === 'coles' ? '🚚' : n.type === 'visit' ? '🏠' : n.type === 'power' ? '⚡' : n.type === 'trip' ? '🧳' : '📝')}</td>
+          <td class="type ${isPast ? 'past' : ''}">${n.type}</td>
+          <td class="${isPast ? 'past' : ''}">${n.label || n.message?.slice(0,40) || n.date || ''} ${noticeBadge(n)}</td>
+          <td class="${isPast ? 'past' : ''}">${n.fulldate || n.date || '—'} ${n.time || ''}</td>
+          <td class="pin">${pin}</td>
+        </tr>`;
+      }).join('');
+      document.getElementById('notices-section').innerHTML = `
+        <table>
+          <tr><th>icon</th><th>type</th><th>label / message</th><th>date · time</th><th>pin window</th></tr>
+          ${rows}
+        </table>`;
+    }
+
+    function renderSpending(spending) {
+      if (!spending.length) {
+        document.getElementById('spending-section').innerHTML = '<span class="empty">No data</span>';
+        return;
+      }
+      const sorted = [...spending].sort((a, b) => b.weekStart.localeCompare(a.weekStart));
+      document.getElementById('spending-section').innerHTML = sorted.map(w => {
+        const items = w.items || [];
+        const parentItems = items.filter(i => i.forParents);
+        const orderTotal = items.reduce((s, i) => s + (i.amount || 0), 0);
+        const parentTotal = parentItems.reduce((s, i) => s + (i.amount || 0), 0);
+        return `<div class="spend-week">
+          <div class="spend-week-title">📅 ${w.week} &nbsp;·&nbsp; #${w.orderNumber || '—'} &nbsp;·&nbsp; 到 ${w.deliveryDate || '—'}</div>
+          ${parentItems.map(i => `<div class="spend-row parents">🧧 ${i.name} <span>$${i.amount.toFixed(2)}</span></div>`).join('')}
+          ${items.filter(i => !i.forParents).map(i => `<div class="spend-row">&nbsp;&nbsp;&nbsp;${i.name} <span>$${i.amount.toFixed(2)}</span></div>`).join('')}
+          <div class="spend-total">
+            <span>Total: $${orderTotal.toFixed(2)}</span>
+            <span style="color:#f59e0b">Parents: $${parentTotal.toFixed(2)} ${w.transferred ? '✅' : '⏳'}</span>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    async function loadAll() {
+      const btn = document.getElementById('refresh-dev');
+      btn.textContent = '⟳ Loading...';
+      btn.disabled = true;
+      document.getElementById('now').textContent = nowString();
+      try {
+        const t = Date.now();
+        const [words, notices, spending] = await Promise.all([
+          fetch(`words.json?t=${t}`).then(r => r.json()),
+          fetch(`history.json?t=${t}`).then(r => r.json()),
+          fetch(`spending.json?t=${t}`).then(r => r.json()),
+        ]);
+        renderActive(whatIsShowing(notices, words));
+        renderNotices(notices);
+        renderSpending(spending);
+        document.getElementById('now').textContent = nowString() + '  ·  fetched at ' + new Date().toLocaleTimeString();
+      } catch(e) {
+        document.getElementById('now').textContent = '❌ Fetch error: ' + e.message;
+      } finally {
+        btn.textContent = '⟳ Refresh';
+        btn.disabled = false;
+      }
+    }
+
+    loadAll();
+  </script>
+</body>
+</html>

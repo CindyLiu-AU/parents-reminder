@@ -191,6 +191,21 @@
       z-index: 100;
     }
 
+    #dev-btn {
+      position: fixed;
+      bottom: 60px;
+      left: 20px;
+      font-size: 11px;
+      color: #546e7a;
+      background: none;
+      border: 1px solid #1e3a5f;
+      border-radius: 12px;
+      padding: 4px 12px;
+      cursor: pointer;
+      z-index: 100;
+      text-decoration: none;
+    }
+
     /* ── Notice list ── */
     #notice-list {
       width: 90%;
@@ -253,6 +268,7 @@
   <a href="reminders.html" id="reminders-btn" onclick="event.stopPropagation()">📋</a>
   <div id="countdown">↻ 60s</div>
   <button id="refresh-btn" onclick="manualRefresh()">刷新</button>
+  <a id="dev-btn" href="dev.html" onclick="event.stopPropagation()">🛠 dev</a>
 
   <script>
     // ── Weather code → emoji + description ───────────────────
@@ -583,10 +599,18 @@
 
     // ── Manual refresh ───────────────────────────────────────
     async function manualRefresh() {
-      await loadAll();
-      lastData = null;
-      await tick();
-      cdSecs = 60;
+      const btn = document.getElementById('refresh-btn');
+      btn.textContent = '⟳...';
+      btn.disabled = true;
+      try {
+        await loadAll();
+        lastData = null;
+        await tick();
+        cdSecs = 60;
+      } finally {
+        btn.textContent = '刷新';
+        btn.disabled = false;
+      }
     }
 
     // ── Countdown ─────────────────────────────────────────────
@@ -606,7 +630,7 @@
       setInterval(fetchWeather, 30 * 60 * 1000);
       await loadAll();
       await tick();
-      setInterval(async () => { await tick(); cdSecs = 60; }, 60000);
+      setInterval(async () => { await loadAll(); await tick(); cdSecs = 60; }, 60000);
     };
   </script>
 </body>
