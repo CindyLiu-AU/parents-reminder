@@ -81,7 +81,8 @@
       { "name": "12种蔬菜汤料 375g", "amount": 2.30 },
       { "name": "天然希腊酸奶 170g", "amount": 2.00 },
       { "name": "新鲜羽衣甘蓝", "amount": 4.50 },
-      { "name": "防蛀牙膏 180g x2", "amount": 6.90, "forParents": true },
+      { "name": "防蛀牙膏 180g", "amount": 3.45, "forParents": true },
+      { "name": "防蛀牙膏 180g", "amount": 3.45 },
       { "name": "奶油南瓜汤罐头 535g", "amount": 2.20 }
     ]
   }
