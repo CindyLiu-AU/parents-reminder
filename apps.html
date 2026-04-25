@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>手机应用指南</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      min-height: 100vh;
+      background: #0d1b2a;
+      color: #f0f4f8;
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    #topbar {
+      position: sticky;
+      top: 0;
+      background: #091525;
+      border-bottom: 1px solid #1e3a5f;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px;
+      z-index: 100;
+    }
+
+    #topbar h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #f59e0b;
+    }
+
+    #topbar .subtitle {
+      font-size: 13px;
+      color: #64b5f6;
+      margin-top: 2px;
+    }
+
+    #back-btn {
+      background: #1e3a6e;
+      border: 1px solid #2e3a52;
+      border-radius: 20px;
+      padding: 8px 18px;
+      color: #90caf9;
+      font-size: 16px;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .page-content {
+      padding: 20px 16px 40px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #64b5f6;
+      letter-spacing: 3px;
+      margin: 24px 0 12px;
+      padding-left: 4px;
+      border-left: 3px solid #f59e0b;
+      padding-left: 10px;
+    }
+
+    .app-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 14px;
+    }
+
+    .app-card {
+      background: #112240;
+      border: 1px solid #1e3a5f;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .app-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px;
+    }
+
+    .app-emoji {
+      font-size: 42px;
+      flex-shrink: 0;
+      width: 60px;
+      height: 60px;
+      background: #0d1b2a;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .app-info { flex: 1; min-width: 0; }
+
+    .app-name-cn {
+      font-size: 20px;
+      font-weight: 700;
+      color: #ffffff;
+      line-height: 1.2;
+    }
+
+    .app-name-en {
+      font-size: 13px;
+      color: #546e7a;
+      margin-top: 2px;
+    }
+
+    .app-desc {
+      font-size: 15px;
+      color: #90caf9;
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+
+    .how-to-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      background: #0d2240;
+      border: none;
+      border-top: 1px solid #1e3a5f;
+      padding: 10px 16px;
+      color: #f59e0b;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: left;
+      font-family: inherit;
+    }
+
+    .how-to-btn .arrow {
+      font-size: 12px;
+      transition: transform 0.2s;
+    }
+    .how-to-btn.open .arrow { transform: rotate(180deg); }
+
+    .how-to-content {
+      display: none;
+      padding: 14px 16px;
+      background: #0a1a2e;
+      border-top: 1px solid #1e3a5f;
+    }
+
+    .how-to-content.visible { display: block; }
+
+    .how-to-content ol {
+      padding-left: 20px;
+    }
+
+    .how-to-content li {
+      font-size: 15px;
+      color: #e2e8f0;
+      margin-bottom: 8px;
+      line-height: 1.6;
+    }
+
+    .how-to-content li:last-child { margin-bottom: 0; }
+
+    .tip-box {
+      background: #1a2a1a;
+      border: 1px solid #2dd4bf;
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin-top: 10px;
+      font-size: 14px;
+      color: #81c784;
+      line-height: 1.6;
+    }
+
+    .tip-box::before {
+      content: "💡 小提示：";
+      font-weight: 700;
+      color: #2dd4bf;
+    }
+  </style>
+</head>
+<body>
+
+<div id="topbar">
+  <div>
+    <div id="topbar-h1" style="font-size:22px;font-weight:700;color:#f59e0b;">📱 手机应用指南</div>
+    <div class="subtitle">点击"如何使用"查看操作步骤</div>
+  </div>
+  <a href="index.html" id="back-btn">← 返回</a>
+</div>
+
+<div class="page-content">
+
+  <!-- ── 通讯 ── -->
+  <div class="section-title">💬 通讯联系</div>
+  <div class="app-grid">
+
+    <div class="app-card">
+      <div class="app-header">
+        <div class="app-emoji">💚</div>
+        <div class="app-info">
+          <div class="app-name-cn">微信</div>
+          <div class="app-name-en">WeChat</div>
+          <div class="app-desc">与国内家人朋友聊天、发语音、视频通话</div>
+        </div>
+      </div>
+      <button class="how-to-btn" onclick="toggle(this)">如何使用 <span class="arrow">▼</span></button>
+      <div class="how-to-content">
+        <ol>
+          <li>点开绿色的微信图标</li>
+          <li>点击下方的"通讯录"找到联系人</li>
+          <li>点击联系人名字 → 点"发消息"可以发文字</li>
+          <li>点麦克风图标按住说话 → 发语音</li>
+          <li>点右上角的摄像机图标 → 视频通话</li>
+        </ol>
+        <div class="tip-box">收到消息会有提示音，屏幕顶部会出现提醒</div>
+      </div>
+    </div>
+
+    <div class="app-card">
+      <div class="app-header">
+        <div class="app-emoji">📹</div>
+        <div class="app-info">
+          <div class="app-name-cn">Google Meet</div>
+          <div class="app-name-en">Meet</div>
+          <div class="app-desc">与 Cindy 视频通话（澳大利亚联系用）</div>
+        </div>
+      </div>
+      <button class="how-to-btn" onclick="toggle(this)">如何使用 <span class="arrow">▼</span></button>
+      <div class="how-to-content">
+        <ol>
+          <li>点开绿色摄像机的 Meet 图标</li>
+          <li>点"新建通话"</li>
+          <li>输入或选择 Cindy 的联系方式</li>
+          <li>点击通话按钮开始视频</li>
+        </ol>
+        <div class="tip-box">Cindy 发来 Meet 链接时，直接点链接就能加入通话</div>
+      </div>
+    </div>
+
+    <div class="app-card">
+      <div class="app-header">
+        <div class="app-emoji">📞</div>
+        <div class="app-info">
+          <div class="app-name-cn">电话</div>
+          <div class="app-name-en">Phone</div>
+          <div class="app-desc">打电话给家人、朋友或紧急联系</div>
+        </div>
+      </div>
+      <button class="how-to-btn" onclick="toggle(this)">如何使用 <span class="arrow">▼</span></button>
+      <div class="how-to-content">
+        <ol>
+          <li>点开绿色电话图标</li>
+          <li>点"通讯录"找到联系人</li>
+          <li>点联系人名字 → 点绿色电话按钮拨出</li>
+          <li>接听来电时滑动绿色按钮接听</li>
+          <li>挂断时按红色按钮</li>
+        </ol>
+        <div class="tip-box">紧急情况拨打 000（澳大利亚急救电话）</div>
+      </div>
+    </div>
+
+    <div class="app-card">
+      <div class="app-header">
+        <div class="app-emoji">💬</div>
+        <div class="app-info">
+          <div class="app-name-cn">信息</div>
+          <div class="app-name-en">Messages</div>
+          <div class="app-desc">发送和接收短信（SMS）</div>
+        </div>
+      </div>
+      <button class="how-to-btn" onclick="toggle(this)">如何使用 <span class="arrow">▼</span></button>
+      <div class="how-to-content">
+        <ol>
+          <li>点开蓝色对话泡泡的信息图标</li>
+          <li>可以看到所有短信记录</li>
+          <li>点击某条对话查看内容</li>
+          <li>点右下角铅笔图标可以发新短信</li>
+        </ol>
+        <div class="tip-box">银行、政府机构发来的通知短信都在这里看</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── 出行 ── -->
+  <div class="section-title">🚌 出行交通</div>
+  <div class="app-grid">
+
+    <div class="app-card">
+      <div class="app-header">
+        <div class="app-emoji">🚌</div>
+        <div class="app-info">
+          <div class="app-name-cn">MetroTas</div>
+          <div class="app-name-en">MetroTas</div>
+          <div class="app-desc">查询金斯顿巴士时刻表和路线</div>
+        </div>
+      </div>
+      <button class="how-to-btn" onclick="toggle(this)">如何使用 <span class="arrow">▼</span></button>
+      <div class="how-to-content">
+        <ol>
+          <li>点开绿色 M 字母的 MetroTas 图标</li>
+          <li>选择"出发地"和"目的地"</li>
+          <li>查看下一班巴士的时间和站台</li>
+          <li>上车后记得用 Greencard 刷卡</li>
+        </ol>
+        <div class="tip-box">如果不确定，可以问 Cindy 帮你查路线</div>
+      </div>
+    </div>
+
+    <div class="app-card">
+      <div class="app-header">
+        <div class="app-emoji">🚇</div>
+        <div class="app-info">
+          <div class="app-name-cn">Transit</div>
+          <div class="app-name-en">Transit</div>
+          <div class="app-desc">公共交通导航，查询巴士实时位置</div>
+        </div>
+      </div>
+      <button class="how-to-btn" onclick="toggle(this)">如何使用 <span class="arrow">▼</span></button>
+      <div class="how-to-content">
+        <ol>
+          <li>点开绿色 Transit 图标</li>
+          <li>打开后自动显示附近的巴士站</li>
+          <li>选择要去的目的地</li>
+          <li>查看最近一班巴士的到站时间</li>
+        </ol>
+        <div class="tip-box">可以看到巴士在地图上的实时位置</div>
+      </div>
+    </div>
+
+    <div class="app-card">
+      <div class="app-header">
+        <div class="app-emoji">🗺️</div>
+        <div class="app-info">
+          <div class="app-name-cn">地图</div>
+          <div class="app-name-en">Google Maps</div>
+          <div class="app-desc">查找地址、步行/驾车导航</div>
+        </div>
+      </div>
+      <button class="how-to-btn" onclick="toggle(this)">如何使用 <span class="arrow">▼</span></button>
+      <div class="how-to-content">
+        <ol>
+          <li>点开有地图标志的 Google 地图图标</li>
+          <li>在搜索框输入目的地名称</li>
+          <li>选择步行🚶或驾车🚗模式</li>
+          <li>点"开始导航"，跟着蓝色箭头走</li>
+        </ol>
+        <div class="tip-box">可以用中文搜索地址，例如："Woolworths Kingston"</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── 购物银行 ── -->
+  <div class="section-title">🛒 购物与银行</div>
+  <div class="app-grid">
+
+    <div class="app-card">
+      <div class="app-header">
+        <div class="app-emoji">🟢</div>
+        <div class="app-info">
+          <div class="app-name-cn">Woolworths</div>
+          <div class="app-name-en">Woolworths</div>
+          <div class="app-desc">超市网购，Cindy 帮你在这里订购物品送到家</div>
+        </div>
+      </div>
+      <button class="how-to-btn" onclick="toggle(this)">如何使用 <span class="arrow">▼</span></button>
+      <div class="how-to-content">
+        <ol>
+          <li>这个 App 由 Cindy 操作</li>
+          <li>Cindy 会在网上下单，安排送货到家</li>
+          <li>送货前大屏幕上会提醒送货时间</li>
+          <li>听到门铃请开门给送货员</li>
+        </ol>
+        <div class="tip-box">如果想买什么，告诉 Cindy，Cindy 加到下次订单里</div>
+      </div>
+    </div>
+
+    <div class="app-card">
+      <div class="app-header">
+        <div class="app-emoji">🏦</div>
+        <div class="app-info">
+          <div class="app-name-cn">ANZ 银行</div>
+          <div class="app-name-en">ANZ</div>
+          <div class="app-desc">查看银行账户余额、账单记录</div>
+        </div>
+      </div>
+      <button class="how-to-btn" onclick="toggle(this)">如何使用 <span class="arrow">▼</span></button>
+      <div class="how-to-content">
+        <ol>
+          <li>点开黑色 ANZ 图标</li>
+          <li>用指纹或密码登录</li>
+          <li>可以看到账户余额</li>
+          <li>点账户名称查看最近交易记录</li>
+        </ol>
+        <div class="tip-box">只能查看，不用担心操作错误。如有疑问请找 Cindy</div>
+      </div>
+    </div>
+
+    <div class="app-card">
+      <div class="app-header">
+        <div class="app-emoji">💳</div>
+        <div class="app-info">
+          <div class="app-name-cn">钱包</div>
+          <div class="app-name-en">Google Wallet</div>
+          <div class="app-desc">用手机付款（刷手机代替刷卡）</div>
+        </div>
+      </div>
+      <button class="how-to-btn" onclick="toggle(this)">如何使用 <span class="arrow">▼</span></button>
+      <div class="how-to-content">
+        <ol>
+          <li>在超市结账时，告诉收银员"手机付款"</li>
+          <li>将手机背面靠近收款机</li>
+          <li>手机屏幕亮起并显示绿色对勾即表示付款成功</li>
+        </ol>
+        <div class="tip-box">不用解锁手机，直接靠近机器就能付款。如有问题请找 Cindy</div>
+      </div>
+    </div>
+
+    <div class="app-card">
+      <div class="app-header">
+        <div class="app-emoji">💸</div>
+        <div class="app-info">
+          <div class="app-name-cn">Wise</div>
+          <div class="app-name-en">Wise</div>
+          <div class="app-desc">向国内汇款，兑换汇率好、手续费低</div>
+        </div>
+      </div>
+      <button class="how-to-btn" onclick="toggle(this)">如何使用 <span class="arrow">▼</span></button>
+      <div class="how-to-content">
+        <ol>
+          <li>这个 App 由 Cindy 帮忙操作</li>
+          <li>需要汇款时，告诉 Cindy 金额和对方账号</li>
+          <li>Cindy 会帮助完成汇款操作</li>
+        </ol>
+        <div class="tip-box">汇款通常1-2个工作日到账</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── 娱乐 ── -->
+  <div class="section-title">🎬 娱乐休闲</div>
+  <div class="app-grid">
+
+    <div class="app-card">
+      <div class="app-header">
+        <div class="app-emoji">📺</div>
+        <div class="app-info">
+          <div class="app-name-cn">YouTube</div>
+          <div class="app-name-en">YouTube</div>
+          <div class="app-desc">看视频、中文节目、新闻、教程，免费</div>
+        </div>
+      </div>
+      <button class="how-to-btn" onclick="toggle(this)">如何使用 <span class="arrow">▼</span></button>
+      <div class="how-to-content">
+        <ol>
+          <li>点开红色 YouTube 图标</li>
+          <li>点上方搜索框，输入想看的内容</li>
+          <li>例如：搜"中文新闻"或"太极拳教程"</li>
+          <li>点视频名称开始播放</li>
+          <li>屏幕向横放可以全屏观看</li>
+        </ol>
+        <div class="tip-box">不需要账号也可以看大部分视频</div>
+      </div>
+    </div>
+
+    <div class="app-card">
+      <div class="app-header">
+        <div class="app-emoji">🎵</div>
+        <div class="app-info">
+          <div class="app-name-cn">TikTok</div>
+          <div class="app-name-en">TikTok / 抖音国际版</div>
+          <div class="app-desc">刷短视频娱乐，有很多有趣的中文内容</div>
+        </div>
+      </div>
+      <button class="how-to-btn" onclick="toggle(this)">如何使用 <span class="arrow">▼</span></button>
+      <div class="how-to-content">
+        <ol>
+          <li>点开黑色 TikTok 图标</li>
+          <li>打开自动播放推荐视频</li>
+          <li>向上滑动看下一个视频</li>
+          <li>点心形图标表示喜欢</li>
+        </ol>
+        <div class="tip-box">系统会根据你的喜好推荐更多你感兴趣的内容</div>
+      </div>
+    </div>
+
+    <div class="app-card">
+      <div class="app-header">
+        <div class="app-emoji">📸</div>
+        <div class="app-info">
+          <div class="app-name-cn">相册</div>
+          <div class="app-name-en">Google Photos</div>
+          <div class="app-desc">查看手机里的所有照片和视频</div>
+        </div>
+      </div>
+      <button class="how-to-btn" onclick="toggle(this)">如何使用 <span class="arrow">▼</span></button>
+      <div class="how-to-content">
+        <ol>
+          <li>点开彩色风车图案的相册图标</li>
+          <li>可以看到所有拍过的照片</li>
+          <li>点照片可以放大查看</li>
+          <li>两根手指撑开屏幕可以进一步放大</li>
+          <li>向左右滑动可以翻看其他照片</li>
+        </ol>
+        <div class="tip-box">照片自动备份到云端，不会丢失</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── 学习翻译 ── -->
+  <div class="section-title">📚 学习与翻译</div>
+  <div class="app-grid">
+
+    <div class="app-card">
+      <div class="app-header">
+        <div class="app-emoji">💧</div>
+        <div class="app-info">
+          <div class="app-name-cn">Drops</div>
+          <div class="app-name-en">Drops</div>
+          <div class="app-desc">用游戏方式学英语单词，每天5分钟</div>
+        </div>
+      </div>
+      <button class="how-to-btn" onclick="toggle(this)">如何使用 <span class="arrow">▼</span></button>
+      <div class="how-to-content">
+        <ol>
+          <li>点开紫色水滴的 Drops 图标</li>
+          <li>选择想学的主题（如：食物、交通）</li>
+          <li>看图片猜英语单词，拖动匹配</li>
+          <li>每天玩5分钟，坚持积累词汇</li>
+        </ol>
+        <div class="tip-box">免费版每天可以玩5分钟，很适合每天练习</div>
+      </div>
+    </div>
+
+    <div class="app-card">
+      <div class="app-header">
+        <div class="app-emoji">📖</div>
+        <div class="app-info">
+          <div class="app-name-cn">Quizlet</div>
+          <div class="app-name-en">Quizlet</div>
+          <div class="app-desc">英语单词卡片学习，Cindy 制作了专属单词表</div>
+        </div>
+      </div>
+      <button class="how-to-btn" onclick="toggle(this)">如何使用 <span class="arrow">▼</span></button>
+      <div class="how-to-content">
+        <ol>
+          <li>点开蓝色 Quizlet 图标</li>
+          <li>找到 Cindy 为你准备的单词表</li>
+          <li>点"学习"开始练习</li>
+          <li>看中文猜英文，或看英文猜中文</li>
+        </ol>
+        <div class="tip-box">Cindy 每周会添加新单词，一起学英语！</div>
+      </div>
+    </div>
+
+    <div class="app-card">
+      <div class="app-header">
+        <div class="app-emoji">🌐</div>
+        <div class="app-info">
+          <div class="app-name-cn">沉浸式翻译</div>
+          <div class="app-name-en">Immersive Translate</div>
+          <div class="app-desc">在浏览网页时自动将英文翻译成中文</div>
+        </div>
+      </div>
+      <button class="how-to-btn" onclick="toggle(this)">如何使用 <span class="arrow">▼</span></button>
+      <div class="how-to-content">
+        <ol>
+          <li>用 Chrome 浏览器打开英文网页</li>
+          <li>点屏幕下方的翻译按钮</li>
+          <li>英文段落下方会出现中文翻译</li>
+        </ol>
+        <div class="tip-box">特别适合看英文信件、账单时使用</div>
+      </div>
+    </div>
+
+    <div class="app-card">
+      <div class="app-header">
+        <div class="app-emoji">🔤</div>
+        <div class="app-info">
+          <div class="app-name-cn">Hi 翻译</div>
+          <div class="app-name-en">Hi Translate</div>
+          <div class="app-desc">拍照翻译、文字翻译，中英文互译</div>
+        </div>
+      </div>
+      <button class="how-to-btn" onclick="toggle(this)">如何使用 <span class="arrow">▼</span></button>
+      <div class="how-to-content">
+        <ol>
+          <li>点开 Hi Translate 图标</li>
+          <li>在输入框输入中文 → 看英文翻译</li>
+          <li>或者输入英文 → 看中文翻译</li>
+          <li>也可以点相机图标，拍照翻译菜单或标牌</li>
+        </ol>
+        <div class="tip-box">在超市看不懂英文标签时，用拍照翻译功能很方便</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── 家庭安全 ── -->
+  <div class="section-title">🏠 家庭与安全</div>
+  <div class="app-grid">
+
+    <div class="app-card">
+      <div class="app-header">
+        <div class="app-emoji">📍</div>
+        <div class="app-info">
+          <div class="app-name-cn">Life360</div>
+          <div class="app-name-en">Life360</div>
+          <div class="app-desc">家庭位置共享，Cindy 可以看到你们在哪里</div>
+        </div>
+      </div>
+      <button class="how-to-btn" onclick="toggle(this)">如何使用 <span class="arrow">▼</span></button>
+      <div class="how-to-content">
+        <ol>
+          <li>这个 App 只需要保持打开状态就好</li>
+          <li>Cindy 可以在她的手机上看到你们的位置</li>
+          <li>如果你们出门了，Cindy 知道你们平安</li>
+          <li>不需要主动操作，保持后台运行即可</li>
+        </ol>
+        <div class="tip-box">这个 App 是为了安全，Cindy 在担心时可以确认你们平安</div>
+      </div>
+    </div>
+
+    <div class="app-card">
+      <div class="app-header">
+        <div class="app-emoji">📅</div>
+        <div class="app-info">
+          <div class="app-name-cn">日历</div>
+          <div class="app-name-en">Google Calendar</div>
+          <div class="app-desc">查看日期，记录和提醒重要事项</div>
+        </div>
+      </div>
+      <button class="how-to-btn" onclick="toggle(this)">如何使用 <span class="arrow">▼</span></button>
+      <div class="how-to-content">
+        <ol>
+          <li>点开蓝色日历图标（有数字"25"）</li>
+          <li>可以看到当月日历和重要事项</li>
+          <li>点某一天可以看当天的提醒</li>
+        </ol>
+        <div class="tip-box">主要用来查日期，重要预约 Cindy 会帮你加进去</div>
+      </div>
+    </div>
+
+    <div class="app-card">
+      <div class="app-header">
+        <div class="app-emoji">☁️</div>
+        <div class="app-info">
+          <div class="app-name-cn">OneDrive</div>
+          <div class="app-name-en">Microsoft OneDrive</div>
+          <div class="app-desc">Cindy 存放重要文件的地方，签证和文件都在这里</div>
+        </div>
+      </div>
+      <button class="how-to-btn" onclick="toggle(this)">如何使用 <span class="arrow">▼</span></button>
+      <div class="how-to-content">
+        <ol>
+          <li>这个 App 主要由 Cindy 使用和管理</li>
+          <li>如果 Cindy 让你发某个文件，在这里找</li>
+          <li>点蓝色云朵图标打开</li>
+          <li>找到对应文件夹，点文件查看或发送</li>
+        </ol>
+        <div class="tip-box">签证、保险等重要文件都保存在这里，不要删除任何文件</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── 工具 ── -->
+  <div class="section-title">🔧 常用工具</div>
+  <div class="app-grid">
+
+    <div class="app-card">
+      <div class="app-header">
+        <div class="app-emoji">🌐</div>
+        <div class="app-info">
+          <div class="app-name-cn">Chrome</div>
+          <div class="app-name-en">Google Chrome</div>
+          <div class="app-desc">上网浏览器，查找信息、看网页</div>
+        </div>
+      </div>
+      <button class="how-to-btn" onclick="toggle(this)">如何使用 <span class="arrow">▼</span></button>
+      <div class="how-to-content">
+        <ol>
+          <li>点开彩色圆圈的 Chrome 图标</li>
+          <li>点上方地址栏，输入想搜索的内容</li>
+          <li>例如：搜"Kingston TAS 天气"</li>
+          <li>点搜索结果进入网页</li>
+          <li>按手机返回键（←）可以退出网页</li>
+        </ol>
+        <div class="tip-box">大屏幕提醒网页地址：cindyliu-au.github.io/parents-reminder</div>
+      </div>
+    </div>
+
+    <div class="app-card">
+      <div class="app-header">
+        <div class="app-emoji">📷</div>
+        <div class="app-info">
+          <div class="app-name-cn">相机</div>
+          <div class="app-name-en">Camera</div>
+          <div class="app-desc">拍照和录视频</div>
+        </div>
+      </div>
+      <button class="how-to-btn" onclick="toggle(this)">如何使用 <span class="arrow">▼</span></button>
+      <div class="how-to-content">
+        <ol>
+          <li>点开相机图标</li>
+          <li>对准要拍的东西</li>
+          <li>点屏幕中间的大圆圈按钮拍照</li>
+          <li>向右滑动切换到视频模式</li>
+          <li>拍好的照片在"相册"里查看</li>
+        </ol>
+        <div class="tip-box">拍完后照片自动保存，不会丢失</div>
+      </div>
+    </div>
+
+    <div class="app-card">
+      <div class="app-header">
+        <div class="app-emoji">⚙️</div>
+        <div class="app-info">
+          <div class="app-name-cn">设置</div>
+          <div class="app-name-en">Settings</div>
+          <div class="app-desc">手机 Wi-Fi、声音、亮度等系统设置</div>
+        </div>
+      </div>
+      <button class="how-to-btn" onclick="toggle(this)">如何使用 <span class="arrow">▼</span></button>
+      <div class="how-to-content">
+        <ol>
+          <li>点开齿轮图案的设置图标</li>
+          <li>点"网络和互联网" → 找 Wi-Fi 设置</li>
+          <li>点"声音" → 调整铃声音量</li>
+          <li>点"显示" → 调整屏幕亮度</li>
+        </ol>
+        <div class="tip-box">如果不确定，不要随意更改设置。有问题联系 Cindy</div>
+      </div>
+    </div>
+
+    <div class="app-card">
+      <div class="app-header">
+        <div class="app-emoji">📥</div>
+        <div class="app-info">
+          <div class="app-name-cn">Play 商店</div>
+          <div class="app-name-en">Google Play Store</div>
+          <div class="app-desc">下载安装新的手机 App</div>
+        </div>
+      </div>
+      <button class="how-to-btn" onclick="toggle(this)">如何使用 <span class="arrow">▼</span></button>
+      <div class="how-to-content">
+        <ol>
+          <li>Cindy 会帮你安装需要的 App</li>
+          <li>如果需要安装什么，告诉 Cindy</li>
+          <li>自己不需要主动下载 App</li>
+        </ol>
+        <div class="tip-box">不要随意安装不认识的 App，有问题请找 Cindy</div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  function toggle(btn) {
+    const content = btn.nextElementSibling;
+    const isOpen = content.classList.contains('visible');
+    content.classList.toggle('visible', !isOpen);
+    btn.classList.toggle('open', !isOpen);
+  }
+</script>
+
+</body>
+</html>

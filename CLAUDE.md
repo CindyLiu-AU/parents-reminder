@@ -19,6 +19,7 @@ Always-on display for Cindy's parents (Xuecheng Liu & Chao Chen) showing reminde
 | `index.html` | / | Main always-on display (clock, weather, notice card) |
 | `reminders.html` | /reminders.html | Upcoming notices list |
 | `spending.html` | /spending.html | Weekly Coles shopping summary for parents |
+| `apps.html` | /apps.html | App guide for parents — each app with icon, description, and expandable "如何使用" steps |
 
 ## Data Files
 | File | Purpose |
@@ -43,6 +44,8 @@ Each notice needs `fulldate` ("2026年X月X日（星期X）") and `time` for sor
 | `visit` | who, date, fulldate, time | Someone visiting |
 | `trip` | destination, date, fulldate, time, note | Family trip |
 | `power` | date, fulldate, time, note | Free power hour |
+
+**Important:** `date` must always be the actual date (e.g. "4月24日"), never relative terms like "今天" or "明天". It appears in notice titles on both index.html and reminders.html.
 | `custom` | icon, label, message, fulldate, time | Any other notice |
 
 ## Notice Templates
@@ -136,7 +139,8 @@ These items are **always** `forParents: true` whenever they appear:
 - 任何肉末 (any mince — lamb, beef, etc.)
 
 ## Navigation Buttons (main page, bottom-right)
-- 🎁 → spending.html (top)
+- 📱 → apps.html (top)
+- 🎁 → spending.html (middle)
 - 📋 → reminders.html (bottom)
 
 ## Current Status
