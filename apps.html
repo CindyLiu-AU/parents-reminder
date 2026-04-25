@@ -38,17 +38,20 @@
       margin-top: 2px;
     }
 
-    #back-btn {
-      background: #1e3a6e;
-      border: 1px solid #2e3a52;
-      border-radius: 20px;
-      padding: 8px 18px;
-      color: #90caf9;
-      font-size: 16px;
+    .back-btn {
+      position: fixed;
+      bottom: 32px;
+      right: 28px;
+      font-size: 18px;
+      color: #1a1000;
       text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      background: #f59e0b;
+      border: 2px solid #f59e0b;
+      border-radius: 24px;
+      padding: 14px 28px;
+      z-index: 100;
+      font-weight: 700;
+      box-shadow: 0 4px 16px rgba(245,158,11,0.4);
     }
 
     .page-content {
@@ -195,7 +198,7 @@
     <div id="topbar-h1" style="font-size:22px;font-weight:700;color:#f59e0b;">📱 手机应用指南</div>
     <div class="subtitle">点击"如何使用"查看操作步骤</div>
   </div>
-  <a href="index.html" id="back-btn">← 返回</a>
+
 </div>
 
 <div class="page-content">
@@ -662,6 +665,8 @@
   </div>
 
 </div>
+
+<a class="back-btn" href="index.html">← 返回</a>
 
 <script>
   function toggle(btn) {
