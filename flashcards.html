@@ -194,8 +194,11 @@
       event.stopPropagation();
       speechSynthesis.cancel();
       const utter = new SpeechSynthesisUtterance(word);
-      utter.lang = 'en-AU';
       utter.rate = 0.85;
+      const voices = speechSynthesis.getVoices();
+      const enVoice = voices.find(v => v.lang.startsWith('en-AU'))
+                   || voices.find(v => v.lang.startsWith('en'));
+      if (enVoice) utter.voice = enVoice;
       speechSynthesis.speak(utter);
     }
 
