@@ -271,6 +271,7 @@
           const metaParts = [];
           if (week.orderNumber) metaParts.push(`订单 #${week.orderNumber}`);
           if (week.deliveryDate) metaParts.push(`送达 ${week.deliveryDate}`);
+          if (week.note) metaParts.push(week.note);
 
           return `
             <div class="week-card">
