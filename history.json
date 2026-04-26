@@ -1,29 +1,5 @@
 [
   {
-    "type": "custom",
-    "icon": "💸",
-    "label": "今天的工资",
-    "message": "今天的工资 Cindy 忘记付了！对不起爸爸妈妈 😅 很快会补上的，不用担心 ❤️",
-    "fulldate": "2026年4月24日（星期五）",
-    "time": "14:30",
-    "pin_from": "14:30",
-    "pin_until": "22:00"
-  },
-  {
-    "type": "coles",
-    "date": "4月24日",
-    "fulldate": "2026年4月24日（星期五）",
-    "time": "早上 7:30"
-  },
-  {
-    "type": "visit",
-    "who": "Cindy",
-    "date": "今天",
-    "fulldate": "2026年4月23日",
-    "time": "下午 3:00",
-    "note": "我会带一些新东西给你们 🎁"
-  },
-  {
     "type": "trip",
     "destination": "MONA 博物馆",
     "date": "5月1日",
