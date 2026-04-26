@@ -101,30 +101,6 @@
     .note-item .item-en { font-size: 15px; color: #7b9eb5; }
     .note-item .item-cn { font-size: 16px; color: #b0bec5; font-weight: 400; }
 
-    /* Language toggle */
-    .lang-toggle {
-      padding: 12px 22px;
-      display: flex;
-      gap: 10px;
-      border-bottom: 1px solid #0d1b2a;
-    }
-    .lang-btn {
-      padding: 7px 18px;
-      border-radius: 20px;
-      border: 1px solid #2e5f9e;
-      background: #0d2137;
-      color: #90caf9;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
-    }
-    .lang-btn.active {
-      background: #f59e0b;
-      color: #1a1000;
-      border-color: #f59e0b;
-    }
-
     /* Video section */
     .video-item { border-bottom: 1px solid #0d1b2a; }
     .video-item:last-child { border-bottom: none; }
@@ -208,15 +184,11 @@
       <span class="chevron open">▼</span>
     </div>
     <div class="section-body">
-      <div class="lang-toggle">
-        <button class="lang-btn active" data-lang="en" onclick="setVideoLang('en')">English</button>
-        <button class="lang-btn" data-lang="zh" onclick="setVideoLang('zh')">中文普通话</button>
-      </div>
 
       <div class="video-item">
         <div class="video-title" onclick="toggleVideo(this)">
           <span class="video-num">1</span>
-          <span class="video-name-en" data-en="Speed limits" data-zh="速度限制">Speed limits</span>
+          <span class="video-name-en">速度限制</span>
           <span class="video-chevron">▶</span>
         </div>
         <div class="video-player"><iframe data-en="3voiU1l8pqM" data-zh="PFGUHUxTvpA" src="" allowfullscreen allow="autoplay"></iframe></div>
@@ -225,7 +197,7 @@
       <div class="video-item">
         <div class="video-title" onclick="toggleVideo(this)">
           <span class="video-num">2</span>
-          <span class="video-name-en" data-en="Dividing lines" data-zh="分隔线">Dividing lines</span>
+          <span class="video-name-en">分隔线</span>
           <span class="video-chevron">▶</span>
         </div>
         <div class="video-player"><iframe data-en="HRgWXH6S6nA" data-zh="kK-PkjDZDy8" src="" allowfullscreen allow="autoplay"></iframe></div>
@@ -234,7 +206,7 @@
       <div class="video-item">
         <div class="video-title" onclick="toggleVideo(this)">
           <span class="video-num">3</span>
-          <span class="video-name-en" data-en="Signage and other markings" data-zh="标志与路面标记">Signage and other markings</span>
+          <span class="video-name-en">标志与路面标记</span>
           <span class="video-chevron">▶</span>
         </div>
         <div class="video-player"><iframe data-en="y9xE0hYWNP0" data-zh="vMRjoWzoAJk" src="" allowfullscreen allow="autoplay"></iframe></div>
@@ -243,7 +215,7 @@
       <div class="video-item">
         <div class="video-title" onclick="toggleVideo(this)">
           <span class="video-num">4</span>
-          <span class="video-name-en" data-en="Intersections" data-zh="交叉路口">Intersections</span>
+          <span class="video-name-en">交叉路口</span>
           <span class="video-chevron">▶</span>
         </div>
         <div class="video-player"><iframe data-en="dax6-bWWxNo" data-zh="nUVHYdsrRCc" src="" allowfullscreen allow="autoplay"></iframe></div>
@@ -252,7 +224,7 @@
       <div class="video-item">
         <div class="video-title" onclick="toggleVideo(this)">
           <span class="video-num">5</span>
-          <span class="video-name-en" data-en="Overtaking and distance" data-zh="超车与跟车距离">Overtaking and distance</span>
+          <span class="video-name-en">超车与跟车距离</span>
           <span class="video-chevron">▶</span>
         </div>
         <div class="video-player"><iframe data-en="bqpXFZBdVno" data-zh="dCnziCZptk0" src="" allowfullscreen allow="autoplay"></iframe></div>
@@ -261,7 +233,7 @@
       <div class="video-item">
         <div class="video-title" onclick="toggleVideo(this)">
           <span class="video-num">6</span>
-          <span class="video-name-en" data-en="Health and wellbeing" data-zh="健康与安全驾驶">Health and wellbeing</span>
+          <span class="video-name-en">健康与安全驾驶</span>
           <span class="video-chevron">▶</span>
         </div>
         <div class="video-player"><iframe data-en="rFoS0gKVwd4" data-zh="YV0M0mWAMXg" src="" allowfullscreen allow="autoplay"></iframe></div>
@@ -270,7 +242,7 @@
       <div class="video-item">
         <div class="video-title" onclick="toggleVideo(this)">
           <span class="video-num">7</span>
-          <span class="video-name-en" data-en="Rules for L1 drivers" data-zh="L牌学员规则">Rules for L1 drivers</span>
+          <span class="video-name-en">L牌学员规则</span>
           <span class="video-chevron">▶</span>
         </div>
         <div class="video-player"><iframe data-en="l8dMznsxYcg" data-zh="SNSAdU-PiXs" src="" allowfullscreen allow="autoplay"></iframe></div>
@@ -279,7 +251,7 @@
       <div class="video-item">
         <div class="video-title" onclick="toggleVideo(this)">
           <span class="video-num">8</span>
-          <span class="video-name-en" data-en="Towing a vehicle" data-zh="拖拽车辆">Towing a vehicle</span>
+          <span class="video-name-en">拖拽车辆</span>
           <span class="video-chevron">▶</span>
         </div>
         <div class="video-player"><iframe data-en="xoEXLp9K2vg" data-zh="tpFaRC_a5rI" src="" allowfullscreen allow="autoplay"></iframe></div>
@@ -288,7 +260,7 @@
       <div class="video-item">
         <div class="video-title" onclick="toggleVideo(this)">
           <span class="video-num">9</span>
-          <span class="video-name-en" data-en="Left Something Behind Exercise" data-zh="遗留物品练习">Left Something Behind Exercise</span>
+          <span class="video-name-en">遗留物品练习</span>
           <span class="video-chevron">▶</span>
         </div>
         <div class="video-player"><iframe data-en="VijYTJmEy_k" data-zh="5_x-NlTFRNg" src="" allowfullscreen allow="autoplay"></iframe></div>
@@ -297,7 +269,7 @@
       <div class="video-item">
         <div class="video-title" onclick="toggleVideo(this)">
           <span class="video-num">10</span>
-          <span class="video-name-en" data-en="Turning Right At Lights" data-zh="在红绿灯处右转">Turning Right At Lights</span>
+          <span class="video-name-en">在红绿灯处右转</span>
           <span class="video-chevron">▶</span>
         </div>
         <div class="video-player"><iframe data-en="SjMuUi1GkjU" data-zh="c1icnRASPsk" src="" allowfullscreen allow="autoplay"></iframe></div>
@@ -306,7 +278,7 @@
       <div class="video-item">
         <div class="video-title" onclick="toggleVideo(this)">
           <span class="video-num">11</span>
-          <span class="video-name-en" data-en="What to bring to your Driving Assessment" data-zh="驾驶评估考试须携带的物品">What to bring to your Driving Assessment</span>
+          <span class="video-name-en">驾驶评估考试须携带的物品</span>
           <span class="video-chevron">▶</span>
         </div>
         <div class="video-player"><iframe data-en="rGdl-zwRYhk" data-zh="fr2nFCkavcQ" src="" allowfullscreen allow="autoplay"></iframe></div>
@@ -315,7 +287,7 @@
       <div class="video-item">
         <div class="video-title" onclick="toggleVideo(this)">
           <span class="video-num">12</span>
-          <span class="video-name-en" data-en="Rural Driving" data-zh="农村道路驾驶">Rural Driving</span>
+          <span class="video-name-en">农村道路驾驶</span>
           <span class="video-chevron">▶</span>
         </div>
         <div class="video-player"><iframe data-en="iqjLE9lv9_w" data-zh="HEOYIro064w" src="" allowfullscreen allow="autoplay"></iframe></div>
@@ -324,7 +296,7 @@
       <div class="video-item">
         <div class="video-title" onclick="toggleVideo(this)">
           <span class="video-num">13</span>
-          <span class="video-name-en" data-en="Crashes" data-zh="交通事故">Crashes</span>
+          <span class="video-name-en">交通事故</span>
           <span class="video-chevron">▶</span>
         </div>
         <div class="video-player"><iframe data-en="zXmikACJd9k" data-zh="VKBVxjk97zs" src="" allowfullscreen allow="autoplay"></iframe></div>
@@ -333,7 +305,7 @@
       <div class="video-item">
         <div class="video-title" onclick="toggleVideo(this)">
           <span class="video-num">14</span>
-          <span class="video-name-en" data-en="Getting to know your vehicle" data-zh="了解您的车辆">Getting to know your vehicle</span>
+          <span class="video-name-en">了解您的车辆</span>
           <span class="video-chevron">▶</span>
         </div>
         <div class="video-player"><iframe data-en="ubIoqOnMuJ0" data-zh="eP5YG8Jl5qk" src="" allowfullscreen allow="autoplay"></iframe></div>
@@ -342,7 +314,7 @@
       <div class="video-item">
         <div class="video-title" onclick="toggleVideo(this)">
           <span class="video-num">15</span>
-          <span class="video-name-en" data-en="Vehicle Roadworthiness" data-zh="车辆适路性检查">Vehicle Roadworthiness</span>
+          <span class="video-name-en">车辆适路性检查</span>
           <span class="video-chevron">▶</span>
         </div>
         <div class="video-player"><iframe data-en="M0_T1fJ3Jzs" data-zh="P7oRQGqzus0" src="" allowfullscreen allow="autoplay"></iframe></div>
@@ -351,7 +323,7 @@
       <div class="video-item">
         <div class="video-title" onclick="toggleVideo(this)">
           <span class="video-num">16</span>
-          <span class="video-name-en" data-en="Blind Spots and Mirrors" data-zh="盲区与后视镜">Blind Spots and Mirrors</span>
+          <span class="video-name-en">盲区与后视镜</span>
           <span class="video-chevron">▶</span>
         </div>
         <div class="video-player"><iframe data-en="G_zW4u6Ur48" data-zh="iOzZ9gOXJbg" src="" allowfullscreen allow="autoplay"></iframe></div>
@@ -360,7 +332,7 @@
       <div class="video-item">
         <div class="video-title" onclick="toggleVideo(this)">
           <span class="video-num">17</span>
-          <span class="video-name-en" data-en="Buying and Selling a Car" data-zh="买卖汽车">Buying and Selling a Car</span>
+          <span class="video-name-en">买卖汽车</span>
           <span class="video-chevron">▶</span>
         </div>
         <div class="video-player"><iframe data-en="1Aa0DnrQ1es" data-zh="SHKf05QgzCQ" src="" allowfullscreen allow="autoplay"></iframe></div>
@@ -369,7 +341,7 @@
       <div class="video-item">
         <div class="video-title" onclick="toggleVideo(this)">
           <span class="video-num">18</span>
-          <span class="video-name-en" data-en="Parking" data-zh="停车">Parking</span>
+          <span class="video-name-en">停车</span>
           <span class="video-chevron">▶</span>
         </div>
         <div class="video-player"><iframe data-en="NbBt506Qnvk" data-zh="BEOIsgujPFc" src="" allowfullscreen allow="autoplay"></iframe></div>
@@ -378,7 +350,7 @@
       <div class="video-item">
         <div class="video-title" onclick="toggleVideo(this)">
           <span class="video-num">19</span>
-          <span class="video-name-en" data-en="Signage" data-zh="道路标志">Signage</span>
+          <span class="video-name-en">道路标志</span>
           <span class="video-chevron">▶</span>
         </div>
         <div class="video-player"><iframe data-en="U55BdJLv8v0" data-zh="dtkGHeq0qQs" src="" allowfullscreen allow="autoplay"></iframe></div>
@@ -387,25 +359,15 @@
       <div class="video-item">
         <div class="video-title" onclick="toggleVideo(this)">
           <span class="video-num">20</span>
-          <span class="video-name-en" data-en="Zip Merging" data-zh="拉链式并道">Zip Merging</span>
+          <span class="video-name-en">拉链式并道</span>
           <span class="video-chevron">▶</span>
         </div>
         <div class="video-player"><iframe data-en="dNJHh_1pfJo" data-zh="qFqxfRrxKC4" src="" allowfullscreen allow="autoplay"></iframe></div>
       </div>
-
-      <div class="video-item">
-        <div class="video-title" onclick="toggleVideo(this)">
-          <span class="video-num">21</span>
-          <span class="video-name-en" data-en="Supervising a learner to drive" data-zh="监督学员驾驶">Supervising a learner to drive</span>
-          <span class="video-chevron">▶</span>
-        </div>
-        <div class="video-player"><iframe data-en="i9On7QYhSoA" data-zh="" src="" allowfullscreen allow="autoplay"></iframe></div>
-      </div>
-
-      <div class="video-item">
+<div class="video-item">
         <div class="video-title" onclick="toggleVideo(this)">
           <span class="video-num">22</span>
-          <span class="video-name-en" data-en="Parallel Reverse Parking" data-zh="平行倒车入位">Parallel Reverse Parking</span>
+          <span class="video-name-en">平行倒车入位</span>
           <span class="video-chevron">▶</span>
         </div>
         <div class="video-player"><iframe data-en="tcxuCAkbEmA" data-zh="YkAAmIPiFBE" src="" allowfullscreen allow="autoplay"></iframe></div>
@@ -414,7 +376,7 @@
       <div class="video-item">
         <div class="video-title" onclick="toggleVideo(this)">
           <span class="video-num">23</span>
-          <span class="video-name-en" data-en="Single Continuous Lines" data-zh="单条连续线">Single Continuous Lines</span>
+          <span class="video-name-en">单条连续线</span>
           <span class="video-chevron">▶</span>
         </div>
         <div class="video-player"><iframe data-en="Eo5DnPaTMwU" data-zh="IWILfF5qy9Y" src="" allowfullscreen allow="autoplay"></iframe></div>
@@ -423,7 +385,7 @@
       <div class="video-item">
         <div class="video-title" onclick="toggleVideo(this)">
           <span class="video-num">24</span>
-          <span class="video-name-en" data-en="Secure Loads" data-zh="固定货物">Secure Loads</span>
+          <span class="video-name-en">固定货物</span>
           <span class="video-chevron">▶</span>
         </div>
         <div class="video-player"><iframe data-en="fCuuXxlHrJw" data-zh="WMy-Seagge8" src="" allowfullscreen allow="autoplay"></iframe></div>
@@ -432,7 +394,7 @@
       <div class="video-item">
         <div class="video-title" onclick="toggleVideo(this)">
           <span class="video-num">25</span>
-          <span class="video-name-en" data-en="Traffic Flow" data-zh="交通流量">Traffic Flow</span>
+          <span class="video-name-en">交通流量</span>
           <span class="video-chevron">▶</span>
         </div>
         <div class="video-player"><iframe data-en="JEHQ0RSh3j4" data-zh="iuooEnzzIgw" src="" allowfullscreen allow="autoplay"></iframe></div>
@@ -754,35 +716,11 @@
   <a class="back-btn" href="index.html">← 返回</a>
 
   <script>
-    let videoLang = 'en';
-
-    function setVideoLang(lang) {
-      videoLang = lang;
-      document.querySelectorAll('.video-player').forEach(p => {
-        if (p.style.display === 'block') {
-          p.style.display = 'none';
-          p.querySelector('iframe').src = '';
-          p.previousElementSibling.querySelector('.video-chevron').textContent = '▶';
-        }
-      });
-      document.querySelectorAll('.lang-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.lang === lang);
-      });
-      document.querySelectorAll('.video-name-en').forEach(el => {
-        el.textContent = el.dataset[lang] || el.dataset.en;
-      });
-      document.querySelectorAll('.video-item').forEach(item => {
-        const iframe = item.querySelector('iframe');
-        item.style.display = (lang === 'zh' && !iframe.dataset.zh) ? 'none' : '';
-      });
-    }
-
     function toggleVideo(titleEl) {
       const player = titleEl.nextElementSibling;
       const chevron = titleEl.querySelector('.video-chevron');
       const iframe = player.querySelector('iframe');
       const isOpen = player.style.display === 'block';
-      const id = videoLang === 'zh' ? (iframe.dataset.zh || iframe.dataset.en) : iframe.dataset.en;
 
       if (isOpen) {
         player.style.display = 'none';
@@ -790,12 +728,15 @@
         chevron.textContent = '▶';
       } else {
         player.style.display = 'block';
-        iframe.src = 'https://www.youtube.com/embed/' + id + '?autoplay=1';
+        iframe.src = 'https://www.youtube.com/embed/' + iframe.dataset.zh + '?autoplay=1';
         chevron.textContent = '▼';
       }
+      // Recalculate section max-height so lower videos aren't clipped
+      const sectionBody = titleEl.closest('.section-body');
+      sectionBody.style.maxHeight = sectionBody.scrollHeight + 'px';
     }
 
-    function toggle(header) {
+    function toggle(header) { {
       const body = header.nextElementSibling;
       const chevron = header.querySelector('.chevron');
       if (body.style.maxHeight && body.style.maxHeight !== '0px') {
