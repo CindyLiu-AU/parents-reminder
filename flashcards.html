@@ -192,14 +192,18 @@
 
     function speak(word, event) {
       event.stopPropagation();
-      speechSynthesis.cancel();
-      const utter = new SpeechSynthesisUtterance(word);
-      utter.rate = 0.85;
-      const voices = speechSynthesis.getVoices();
-      const enVoice = voices.find(v => v.lang.startsWith('en-AU'))
-                   || voices.find(v => v.lang.startsWith('en'));
-      if (enVoice) utter.voice = enVoice;
-      speechSynthesis.speak(utter);
+      if (window.fully) {
+        fully.textToSpeech(word, 'en_AU', 1.0, 0.85);
+      } else {
+        speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(word);
+        utter.rate = 0.85;
+        const voices = speechSynthesis.getVoices();
+        const enVoice = voices.find(v => v.lang.startsWith('en-AU'))
+                     || voices.find(v => v.lang.startsWith('en'));
+        if (enVoice) utter.voice = enVoice;
+        speechSynthesis.speak(utter);
+      }
     }
 
     function flip(scene) {
