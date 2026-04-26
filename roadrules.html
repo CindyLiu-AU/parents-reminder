@@ -14,7 +14,7 @@
       font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
       min-height: 100vh;
       padding: 28px 28px 100px;
-      max-width: 960px;
+      max-width: 1180px;
       margin: 0 auto;
     }
 
@@ -101,6 +101,52 @@
     .note-item .item-en { font-size: 15px; color: #7b9eb5; }
     .note-item .item-cn { font-size: 16px; color: #b0bec5; font-weight: 400; }
 
+    /* Page layout */
+    .page-layout {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    .sidebar {
+      width: 170px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 24px;
+      background: #112240;
+      border: 1px solid #1e3a5f;
+      border-radius: 16px;
+      padding: 12px 0;
+      max-height: calc(100vh - 48px);
+      overflow-y: auto;
+    }
+
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 16px;
+      text-decoration: none;
+      color: #7b9eb5;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+      border-left: 3px solid transparent;
+      transition: color 0.2s, background 0.2s, border-color 0.2s;
+    }
+
+    .sidebar-item:hover { color: #90caf9; background: #0d2137; }
+
+    .sidebar-item.active {
+      color: #f59e0b;
+      border-left-color: #f59e0b;
+      background: #0d2137;
+    }
+
+    .sidebar-icon { font-size: 17px; line-height: 1; }
+
+    .main-content { flex: 1; min-width: 0; }
+
     /* Video section */
     .video-item { border-bottom: 1px solid #0d1b2a; }
     .video-item:last-child { border-bottom: none; }
@@ -174,8 +220,21 @@
     <p>塔斯马尼亚学习驾照手册 · 中英对照</p>
   </header>
 
+  <div class="page-layout">
+
+    <nav class="sidebar" id="sidebar">
+      <a class="sidebar-item active" href="#videos"><span class="sidebar-icon">🎬</span>学习视频</a>
+      <a class="sidebar-item" href="#legal"><span class="sidebar-icon">⚖️</span>法律要求</a>
+      <a class="sidebar-item" href="#pathway"><span class="sidebar-icon">🗺️</span>驾照流程</a>
+      <a class="sidebar-item" href="#supervisor"><span class="sidebar-icon">👤</span>陪练要求</a>
+      <a class="sidebar-item" href="#precheck"><span class="sidebar-icon">🔍</span>出发前检查</a>
+      <a class="sidebar-item" href="#position"><span class="sidebar-icon">🪑</span>驾驶姿势</a>
+      <a class="sidebar-item" href="#vocab"><span class="sidebar-icon">📖</span>重要词汇</a>
+    </nav>
+
+    <div class="main-content">
   <!-- Videos Section -->
-  <div class="section">
+  <div class="section" id="videos">
     <div class="section-header" onclick="toggle(this)">
       <div class="section-header-text">
         <span class="section-title-en">Learn to Drive Videos (TAS Transport)</span>
@@ -404,7 +463,7 @@
   </div>
 
   <!-- Section 1 -->
-  <div class="section">
+  <div class="section" id="legal">
     <div class="section-header" onclick="toggle(this)">
       <div class="section-header-text">
         <span class="section-title-en">Your Legal Requirements When Learning to Drive</span>
@@ -445,7 +504,7 @@
   </div>
 
   <!-- Section 2 -->
-  <div class="section">
+  <div class="section" id="pathway">
     <div class="section-header" onclick="toggle(this)">
       <div class="section-header-text">
         <span class="section-title-en">Licensing Pathway</span>
@@ -482,7 +541,7 @@
   </div>
 
   <!-- Section 3 -->
-  <div class="section">
+  <div class="section" id="supervisor">
     <div class="section-header" onclick="toggle(this)">
       <div class="section-header-text">
         <span class="section-title-en">Supervisory Driver Requirements</span>
@@ -519,7 +578,7 @@
   </div>
 
   <!-- Section 4 -->
-  <div class="section">
+  <div class="section" id="precheck">
     <div class="section-header" onclick="toggle(this)">
       <div class="section-header-text">
         <span class="section-title-en">Pre-Drive Car Checks</span>
@@ -556,7 +615,7 @@
   </div>
 
   <!-- Section 5 -->
-  <div class="section">
+  <div class="section" id="position">
     <div class="section-header" onclick="toggle(this)">
       <div class="section-header-text">
         <span class="section-title-en">Driving Position</span>
@@ -597,7 +656,7 @@
   </div>
 
   <!-- Section 6: Key Vocabulary -->
-  <div class="section">
+  <div class="section" id="vocab">
     <div class="section-header" onclick="toggle(this)">
       <div class="section-header-text">
         <span class="section-title-en">Key Terms &amp; Vocabulary</span>
@@ -713,6 +772,9 @@
     </div>
   </div>
 
+    </div><!-- /main-content -->
+  </div><!-- /page-layout -->
+
   <a class="back-btn" href="index.html">← 返回</a>
 
   <script>
@@ -752,6 +814,18 @@
     document.querySelectorAll('.section-body').forEach(b => {
       b.style.maxHeight = b.scrollHeight + 'px';
     });
+
+    // Sidebar active highlight
+    const _observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          document.querySelectorAll('.sidebar-item').forEach(item => {
+            item.classList.toggle('active', item.getAttribute('href') === '#' + entry.target.id);
+          });
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '-10% 0px -55% 0px' });
+    document.querySelectorAll('.section[id]').forEach(s => _observer.observe(s));
   </script>
 </body>
 </html>
