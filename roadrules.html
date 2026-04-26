@@ -194,6 +194,26 @@
       border: none;
       border-radius: 8px;
     }
+    /* TOC */
+    .toc-list { padding: 8px 0 12px; }
+    .toc-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 9px 20px;
+      cursor: pointer;
+      border-bottom: 1px solid #0d1b2a;
+      transition: background 0.15s;
+      gap: 12px;
+    }
+    .toc-row:last-child { border-bottom: none; }
+    .toc-row:hover { background: #0d2137; }
+    .toc-chapter { background: #0d2137; }
+    .toc-chapter .toc-label { font-size: 15px; font-weight: 700; color: #f59e0b; }
+    .toc-sub .toc-label { font-size: 14px; color: #90caf9; }
+    .toc-page { font-size: 13px; color: #546e7a; white-space: nowrap; flex-shrink: 0; }
+    .toc-chapter .toc-page { color: #f59e0b; font-weight: 700; }
+
     /* Back button */
     .back-btn {
       position: fixed;
@@ -229,6 +249,7 @@
       <a class="sidebar-item" href="#precheck"><span class="sidebar-icon">🔍</span>出发前检查</a>
       <a class="sidebar-item" href="#position"><span class="sidebar-icon">🪑</span>驾驶姿势</a>
       <a class="sidebar-item" href="#vocab"><span class="sidebar-icon">📖</span>重要词汇</a>
+      <a class="sidebar-item" href="#toc"><span class="sidebar-icon">📑</span>目录</a>
       <a class="sidebar-item" href="#roadrules-pdf"><span class="sidebar-icon">📄</span>道路规则手册</a>
     </nav>
 
@@ -791,6 +812,103 @@
   </div>
   </div>
   </div>
+  <!-- Table of Contents -->
+  <div class="section" id="toc">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-header-text">
+        <span class="section-title-en">Table of Contents</span>
+        <span class="section-title-cn">📑 目录 — 各章节页码</span>
+      </div>
+      <span class="chevron open">▼</span>
+    </div>
+    <div class="section-body">
+      <p style="padding:12px 20px 4px;font-size:13px;color:#546e7a;">点击任意条目直接跳转到对应PDF页面 · Tap any entry to jump to that page</p>
+      <div class="toc-list">
+<div class="toc-row toc-chapter" onclick="goToPDFPage(9)" style=""><span class="toc-label">第1章 · 塔斯马尼亚道路规则简介</span><span class="toc-page">第1页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(9)" style="padding-left:32px;"><span class="toc-label">为何需要《道路规则》？</span><span class="toc-page">第1页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(9)" style="padding-left:32px;"><span class="toc-label">道路规则是法律</span><span class="toc-page">第1页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(10)" style="padding-left:32px;"><span class="toc-label">交通事故的五大原因</span><span class="toc-page">第2页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(10)" style="padding-left:32px;"><span class="toc-label">与弱势道路使用者共享道路</span><span class="toc-page">第2页</span></div>
+<div class="toc-row toc-chapter" onclick="goToPDFPage(12)" style=""><span class="toc-label">第2章 · 《道路规则》适用于哪些人和哪些情况？</span><span class="toc-page">第4页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(12)" style="padding-left:32px;"><span class="toc-label">什么是道路使用者？</span><span class="toc-page">第4页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(13)" style="padding-left:32px;"><span class="toc-label">什么是车辆？</span><span class="toc-page">第5页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(13)" style="padding-left:32px;"><span class="toc-label">什么是道路或道路相关区域？</span><span class="toc-page">第5页</span></div>
+<div class="toc-row toc-chapter" onclick="goToPDFPage(14)" style=""><span class="toc-label">第3章 · 一般安全</span><span class="toc-page">第6页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(14)" style="padding-left:32px;"><span class="toc-label">保持安全距离（3秒法则）</span><span class="toc-page">第6页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(14)" style="padding-left:32px;"><span class="toc-label">安全带</span><span class="toc-page">第6页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(15)" style="padding-left:32px;"><span class="toc-label">手机及其他电子设备</span><span class="toc-page">第7页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(16)" style="padding-left:32px;"><span class="toc-label">倒车</span><span class="toc-page">第8页</span></div>
+<div class="toc-row toc-chapter" onclick="goToPDFPage(17)" style=""><span class="toc-label">第4章 · 靠左行驶</span><span class="toc-page">第9页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(17)" style="padding-left:32px;"><span class="toc-label">单车道道路靠左行驶</span><span class="toc-page">第9页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(17)" style="padding-left:32px;"><span class="toc-label">多车道道路靠左行驶</span><span class="toc-page">第9页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(18)" style="padding-left:32px;"><span class="toc-label">靠左行驶的例外情况</span><span class="toc-page">第10页</span></div>
+<div class="toc-row toc-chapter" onclick="goToPDFPage(20)" style=""><span class="toc-label">第5章 · 车道与道路标线</span><span class="toc-page">第12页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(20)" style="padding-left:32px;"><span class="toc-label">单条虚线</span><span class="toc-page">第12页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(20)" style="padding-left:32px;"><span class="toc-label">双实线</span><span class="toc-page">第12页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(21)" style="padding-left:32px;"><span class="toc-label">单实线</span><span class="toc-page">第13页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(22)" style="padding-left:32px;"><span class="toc-label">双虚线</span><span class="toc-page">第14页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(23)" style="padding-left:32px;"><span class="toc-label">虚线旁的一条实线</span><span class="toc-page">第15页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(25)" style="padding-left:32px;"><span class="toc-label">越过中心线超越自行车</span><span class="toc-page">第17页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(26)" style="padding-left:32px;"><span class="toc-label">特殊用途车道 / 道路标线</span><span class="toc-page">第18页</span></div>
+<div class="toc-row toc-chapter" onclick="goToPDFPage(28)" style=""><span class="toc-label">第6章 · 限速</span><span class="toc-page">第20页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(28)" style="padding-left:32px;"><span class="toc-label">限速标志 / 默认限速</span><span class="toc-page">第20页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(29)" style="padding-left:32px;"><span class="toc-label">学员及P牌驾驶员限速</span><span class="toc-page">第21页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(30)" style="padding-left:32px;"><span class="toc-label">学校区域限速</span><span class="toc-page">第22页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(31)" style="padding-left:32px;"><span class="toc-label">超车时的限速 / 紧急车辆</span><span class="toc-page">第23页</span></div>
+<div class="toc-row toc-chapter" onclick="goToPDFPage(32)" style=""><span class="toc-label">第7章 · 让行</span><span class="toc-page">第24页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(32)" style="padding-left:32px;"><span class="toc-label">变道 / 合并</span><span class="toc-page">第24页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(33)" style="padding-left:32px;"><span class="toc-label">人行横道</span><span class="toc-page">第25页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(34)" style="padding-left:32px;"><span class="toc-label">行人共享区</span><span class="toc-page">第26页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(35)" style="padding-left:32px;"><span class="toc-label">应急车辆</span><span class="toc-page">第27页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(36)" style="padding-left:32px;"><span class="toc-label">公交车 / 驶入车流</span><span class="toc-page">第28页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(37)" style="padding-left:32px;"><span class="toc-label">马匹和牲畜</span><span class="toc-page">第29页</span></div>
+<div class="toc-row toc-chapter" onclick="goToPDFPage(38)" style=""><span class="toc-label">第8章 · 转弯</span><span class="toc-page">第30页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(38)" style="padding-left:32px;"><span class="toc-label">左转</span><span class="toc-page">第30页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(39)" style="padding-left:32px;"><span class="toc-label">右转</span><span class="toc-page">第31页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(41)" style="padding-left:32px;"><span class="toc-label">掉头</span><span class="toc-page">第33页</span></div>
+<div class="toc-row toc-chapter" onclick="goToPDFPage(43)" style=""><span class="toc-label">第9章 · 转向灯</span><span class="toc-page">第35页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(43)" style="padding-left:32px;"><span class="toc-label">何时打转向灯</span><span class="toc-page">第35页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(45)" style="padding-left:32px;"><span class="toc-label">转向灯或刹车灯不亮怎么办</span><span class="toc-page">第37页</span></div>
+<div class="toc-row toc-chapter" onclick="goToPDFPage(46)" style=""><span class="toc-label">第10章 · 交通信号灯</span><span class="toc-page">第38页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(46)" style="padding-left:32px;"><span class="toc-label">红灯 / 黄灯 / 绿灯</span><span class="toc-page">第38页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(47)" style="padding-left:32px;"><span class="toc-label">在信号灯处让行</span><span class="toc-page">第39页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(47)" style="padding-left:32px;"><span class="toc-label">闪烁的黄色信号灯</span><span class="toc-page">第39页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(48)" style="padding-left:32px;"><span class="toc-label">交通箭头</span><span class="toc-page">第40页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(50)" style="padding-left:32px;"><span class="toc-label">警用信号灯</span><span class="toc-page">第42页</span></div>
+<div class="toc-row toc-chapter" onclick="goToPDFPage(51)" style=""><span class="toc-label">第11章 · 交叉路口</span><span class="toc-page">第43页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(51)" style="padding-left:32px;"><span class="toc-label">无信号灯的交叉路口</span><span class="toc-page">第43页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(52)" style="padding-left:32px;"><span class="toc-label">有信号灯的交叉路口</span><span class="toc-page">第44页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(52)" style="padding-left:32px;"><span class="toc-label">停车标志和停车线</span><span class="toc-page">第44页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(54)" style="padding-left:32px;"><span class="toc-label">让行标志</span><span class="toc-page">第46页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(54)" style="padding-left:32px;"><span class="toc-label">T型路口</span><span class="toc-page">第46页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(56)" style="padding-left:32px;"><span class="toc-label">匝道</span><span class="toc-page">第48页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(57)" style="padding-left:32px;"><span class="toc-label">环形交叉路口</span><span class="toc-page">第49页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(59)" style="padding-left:32px;"><span class="toc-label">平交道（铁路道口）</span><span class="toc-page">第51页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(60)" style="padding-left:32px;"><span class="toc-label">保持路口畅通</span><span class="toc-page">第52页</span></div>
+<div class="toc-row toc-chapter" onclick="goToPDFPage(61)" style=""><span class="toc-label">第12章 · 超车</span><span class="toc-page">第53页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(61)" style="padding-left:32px;"><span class="toc-label">从右侧超车 / 左侧超车</span><span class="toc-page">第53页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(62)" style="padding-left:32px;"><span class="toc-label">何时不应超车</span><span class="toc-page">第54页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(63)" style="padding-left:32px;"><span class="toc-label">被超车 / 超越自行车</span><span class="toc-page">第55页</span></div>
+<div class="toc-row toc-chapter" onclick="goToPDFPage(66)" style=""><span class="toc-label">第13章 · 停车与停放</span><span class="toc-page">第58页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(66)" style="padding-left:32px;"><span class="toc-label">停车地点</span><span class="toc-page">第58页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(67)" style="padding-left:32px;"><span class="toc-label">停车规则</span><span class="toc-page">第59页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(68)" style="padding-left:32px;"><span class="toc-label">停车限制</span><span class="toc-page">第60页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(69)" style="padding-left:32px;"><span class="toc-label">停车规则的例外情况</span><span class="toc-page">第61页</span></div>
+<div class="toc-row toc-chapter" onclick="goToPDFPage(70)" style=""><span class="toc-label">第14章 · 交通标志与道路标线</span><span class="toc-page">第62页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(70)" style="padding-left:32px;"><span class="toc-label">限制性标志</span><span class="toc-page">第62页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(73)" style="padding-left:32px;"><span class="toc-label">警告标志 / 临时警告标志</span><span class="toc-page">第65页</span></div>
+<div class="toc-row toc-chapter" onclick="goToPDFPage(74)" style=""><span class="toc-label">第15章 · 前照灯、危险警示灯及警示装置</span><span class="toc-page">第66页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(74)" style="padding-left:32px;"><span class="toc-label">前照灯</span><span class="toc-page">第66页</span></div>
+<div class="toc-row toc-sub" onclick="goToPDFPage(74)" style="padding-left:32px;"><span class="toc-label">危险警示灯 / 喇叭</span><span class="toc-page">第66页</span></div>
+<div class="toc-row toc-chapter" onclick="goToPDFPage(76)" style=""><span class="toc-label">第16章 · 行人规则</span><span class="toc-page">第68页</span></div>
+<div class="toc-row toc-chapter" onclick="goToPDFPage(78)" style=""><span class="toc-label">第17章 · 自行车骑行规则</span><span class="toc-page">第70页</span></div>
+<div class="toc-row toc-chapter" onclick="goToPDFPage(80)" style=""><span class="toc-label">第18章 · 车祸</span><span class="toc-page">第72页</span></div>
+<div class="toc-row toc-chapter" onclick="goToPDFPage(81)" style=""><span class="toc-label">第19章 · 拖车</span><span class="toc-page">第73页</span></div>
+<div class="toc-row toc-chapter" onclick="goToPDFPage(82)" style=""><span class="toc-label">第20章 · 执行道路规则（违规与处罚）</span><span class="toc-page">第74页</span></div>
+      </div>
+    </div>
+  </div>
+
   <!-- PDF Road Rules -->
   <div class="section" id="roadrules-pdf">
     <div class="section-header" onclick="toggle(this); initPDF()">
@@ -886,6 +1004,7 @@
               canvas.height = vp.height;
               // CSS size = physical size ÷ dpr → crisp at all pixel densities
               canvas.style.cssText = `width:100%;height:${Math.floor(vp.height / dpr)}px;display:block;margin-bottom:4px;border-radius:4px;`;
+              canvas.id = 'pdf-page-' + pageNum;
               container.appendChild(canvas);
               page.render({canvasContext: canvas.getContext('2d'), viewport: vp}).promise.then(() => {
                 pageNum++;
@@ -901,6 +1020,22 @@
       document.head.appendChild(script);
     }
 
+
+    function goToPDFPage(n) {
+      // Open PDF section and start loading
+      const pdfBody = document.getElementById('pdf-container').closest('.section-body');
+      pdfBody.style.maxHeight = 'none';
+      const chevron = document.getElementById('roadrules-pdf').querySelector('.chevron');
+      chevron.classList.add('open');
+      initPDF();
+      // Scroll to target page — retry until canvas is rendered
+      const attempt = (tries) => {
+        const el = document.getElementById('pdf-page-' + n);
+        if (el) { el.scrollIntoView({behavior: 'smooth', block: 'start'}); }
+        else if (tries > 0) { setTimeout(() => attempt(tries - 1), 700); }
+      };
+      attempt(15);
+    }
     // Sidebar active highlight
     const _observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
