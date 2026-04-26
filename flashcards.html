@@ -166,7 +166,6 @@
     <p>点击卡片查看翻译和解释</p>
   </header>
 
-  <div id="dbg" style="font-size:12px;color:#546e7a;text-align:center;margin-bottom:8px;"></div>
   <div class="cards-row" id="cards-row"></div>
 
   <a class="back-btn" href="index.html">← 返回</a>
@@ -178,7 +177,7 @@
           <div class="flip-card">
             <div class="face front">
               <div class="word-en">${w.word}</div>
-              <button class="play-btn" onclick="speak('${w.word}', event)">🔊 发音</button>
+              <button class="play-btn" onclick="speak('${w.audio||''}', event)">🔊 发音</button>
               <div class="tap-hint">点击卡片查看翻译 👆</div>
             </div>
             <div class="face back">
@@ -191,24 +190,11 @@
       `).join('');
     }
 
-    function speak(word, event) {
+    function speak(audioUrl, event) {
       event.stopPropagation();
-      const dbg = document.getElementById('dbg');
-      if (window.fully) {
-        const hasTTS = typeof fully.textToSpeech === 'function';
-        if (dbg) dbg.textContent = 'fully: ✓  textToSpeech: ' + (hasTTS ? '✓' : '✗');
-        if (hasTTS) fully.textToSpeech(word);
-      } else {
-        if (dbg) dbg.textContent = 'fully: ✗  using speechSynthesis';
-        speechSynthesis.cancel();
-        const utter = new SpeechSynthesisUtterance(word);
-        utter.rate = 0.85;
-        const voices = speechSynthesis.getVoices();
-        const enVoice = voices.find(v => v.lang.startsWith('en-AU'))
-                     || voices.find(v => v.lang.startsWith('en'));
-        if (enVoice) utter.voice = enVoice;
-        speechSynthesis.speak(utter);
-      }
+      if (!audioUrl) return;
+      const audio = new Audio(audioUrl + '?v=1');
+      audio.play().catch(() => {});
     }
 
     function flip(scene) {

@@ -2,71 +2,85 @@
   {
     "word": "Hobart",
     "word_cn": "霍巴特",
-    "desc": "澳大利亚塔斯马尼亚州的首府 🏙️<br>就是 Cindy 住的城市！"
+    "desc": "澳大利亚塔斯马尼亚州的首府 🏙️<br>就是 Cindy 住的城市！",
+    "audio": "audio/hobart.m4a"
   },
   {
     "word": "Pack",
     "word_cn": "打包 / 一包",
-    "desc": "动词：打包行李，把东西装好 🧳<br>名词：一包东西，例如 a pack of chips（一包薯片）"
+    "desc": "动词：打包行李，把东西装好 🧳<br>名词：一包东西，例如 a pack of chips（一包薯片）",
+    "audio": "audio/pack.m4a"
   },
   {
     "word": "15 PACK",
     "word_cn": "15 件装",
-    "desc": "表示一组有 15 个的商品 🛒<br>例如：15 pack of eggs（15个装的鸡蛋）"
+    "desc": "表示一组有 15 个的商品 🛒<br>例如：15 pack of eggs（15个装的鸡蛋）",
+    "audio": "audio/15-pack.m4a"
   },
   {
     "word": "Cindy",
     "word_cn": "辛迪",
-    "desc": "你们女儿的英文名字 ❤️<br>Cynthia 的简称，意思是「月亮女神」"
+    "desc": "你们女儿的英文名字 ❤️<br>Cynthia 的简称，意思是「月亮女神」",
+    "audio": "audio/cindy.m4a"
   },
   {
     "word": "White",
     "word_cn": "白色",
-    "desc": "颜色之一，雪的颜色 ⬜<br>例如：white shirt（白衬衫）、white rice（白米饭）"
+    "desc": "颜色之一，雪的颜色 ⬜<br>例如：white shirt（白衬衫）、white rice（白米饭）",
+    "audio": "audio/white.m4a"
   },
   {
     "word": "Bread",
     "word_cn": "面包",
-    "desc": "一种常见的西式主食 🍞<br>例如：white bread（白面包）、toast bread（吐司）"
+    "desc": "一种常见的西式主食 🍞<br>例如：white bread（白面包）、toast bread（吐司）",
+    "audio": "audio/bread.m4a"
   },
   {
     "word": "City",
     "word_cn": "城市",
-    "desc": "人口较多的地方 🏙️<br>例如：Hobart is a city in Tasmania（霍巴特是塔斯马尼亚的一个城市）"
+    "desc": "人口较多的地方 🏙️<br>例如：Hobart is a city in Tasmania（霍巴特是塔斯马尼亚的一个城市）",
+    "audio": "audio/city.m4a"
   },
   {
     "word": "Loaf",
     "word_cn": "一条面包",
-    "desc": "整块烤好的面包 🍞<br>例如：a loaf of bread（一条面包），超市里整条卖的那种"
+    "desc": "整块烤好的面包 🍞<br>例如：a loaf of bread（一条面包），超市里整条卖的那种",
+    "audio": "audio/loaf.m4a"
   },
   {
     "word": "Please",
     "word_cn": "请 / 麻烦你",
-    "desc": "礼貌用语，表示请求 🙏<br>例如：Can I have this, please?（请问这个可以给我吗？）"
+    "desc": "礼貌用语，表示请求 🙏<br>例如：Can I have this, please?（请问这个可以给我吗？）",
+    "audio": "audio/please.m4a"
   },
   {
     "word": "Receipt",
     "word_cn": "收据 / 小票",
-    "desc": "购物后收到的付款证明 🧾<br>例如：Can I have a receipt?（能给我一张收据吗？）"
+    "desc": "购物后收到的付款证明 🧾<br>例如：Can I have a receipt?（能给我一张收据吗？）",
+    "audio": "audio/receipt.m4a"
   },
   {
     "word": "Membership Card",
     "word_cn": "会员卡",
-    "desc": "超市或商店的积分卡 💳<br>例如：Do you have a membership card?（你有会员卡吗？）"
+    "desc": "超市或商店的积分卡 💳<br>例如：Do you have a membership card?（你有会员卡吗？）",
+    "audio": "audio/membership-card.m4a"
   },
   {
     "word": "Kingston",
     "word_cn": "金斯顿",
-    "desc": "你们住的地方，霍巴特南边的一个小镇 🏘️<br>告诉别人你住哪里时就说：I live in Kingston"
+    "desc": "你们住的地方，霍巴特南边的一个小镇 🏘️<br>告诉别人你住哪里时就说：I live in Kingston",
+    "audio": "audio/kingston.m4a"
   },
   {
     "word": "Friday",
     "word_cn": "星期五",
-    "desc": "一周中的第五天 📅<br>例如：See you on Friday（星期五见）<br>一周顺序：Mon 周一・Tue 周二・Wed 周三・Thu 周四・Fri 周五"
+    "desc": "一周中的第五天 📅<br>例如：See you on Friday（星期五见）<br>一周顺序：Mon 周一・Tue 周二・Wed 周三・Thu 周四・Fri 周五",
+    "audio": "audio/friday.m4a"
   },
   {
     "word": "May I have a receipt please",
     "word_cn": "请给我收据",
-    "desc": "在超市或商店结账后索取收据的礼貌说法 🧾<br>收银员会把小票打印给你"
+    "desc": "在超市或商店结账后索取收据的礼貌说法 🧾<br>收银员会把小票打印给你",
+    "audio": "audio/may-i-have-a-receipt-please.m4a"
   }
 ]
