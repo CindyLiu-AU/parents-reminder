@@ -53,5 +53,20 @@
     "word": "Membership Card",
     "word_cn": "会员卡",
     "desc": "超市或商店的积分卡 💳<br>例如：Do you have a membership card?（你有会员卡吗？）"
+  },
+  {
+    "word": "Kingston",
+    "word_cn": "金斯顿",
+    "desc": "你们住的地方，霍巴特南边的一个小镇 🏘️<br>告诉别人你住哪里时就说：I live in Kingston"
+  },
+  {
+    "word": "Friday",
+    "word_cn": "星期五",
+    "desc": "一周中的第五天 📅<br>例如：See you on Friday（星期五见）<br>一周顺序：Mon 周一・Tue 周二・Wed 周三・Thu 周四・Fri 周五"
+  },
+  {
+    "word": "May I have a receipt please",
+    "word_cn": "请给我收据",
+    "desc": "在超市或商店结账后索取收据的礼貌说法 🧾<br>收银员会把小票打印给你"
   }
 ]
