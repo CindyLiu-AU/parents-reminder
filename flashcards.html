@@ -141,38 +141,6 @@
       color: #2e4a6a;
     }
 
-    /* ── Navigation ── */
-    .nav {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 28px;
-    }
-
-    .nav-btn {
-      background: #1e3a6e;
-      border: 1px solid #2e5f9e;
-      border-radius: 14px;
-      padding: 12px 28px;
-      color: #90caf9;
-      font-size: 17px;
-      font-family: inherit;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .nav-btn:disabled {
-      opacity: 0.25;
-      cursor: default;
-    }
-
-    .page-indicator {
-      font-size: 16px;
-      color: #64b5f6;
-      min-width: 120px;
-      text-align: center;
-    }
-
     /* ── Back button (matches other subpages) ── */
     .back-btn {
       position: fixed;
@@ -200,25 +168,11 @@
 
   <div class="cards-row" id="cards-row"></div>
 
-  <div class="nav">
-    <button class="nav-btn" id="prev-btn" onclick="changePage(-1)">← 上一组</button>
-    <div class="page-indicator" id="page-indicator"></div>
-    <button class="nav-btn" id="next-btn" onclick="changePage(1)">下一组 →</button>
-  </div>
-
   <a class="back-btn" href="index.html">← 返回</a>
 
   <script>
-    let words = [];
-    let page = 0;
-    const PER = 3;
-
-    function render() {
-      const start = page * PER;
-      const slice = words.slice(start, start + PER);
-      const total = Math.ceil(words.length / PER);
-
-      document.getElementById('cards-row').innerHTML = slice.map(w => `
+    function render(words) {
+      document.getElementById('cards-row').innerHTML = words.map(w => `
         <div class="scene" onclick="flip(this)">
           <div class="flip-card">
             <div class="face front">
@@ -234,10 +188,6 @@
           </div>
         </div>
       `).join('');
-
-      document.getElementById('page-indicator').textContent = `第 ${page + 1} 组 · 共 ${total} 组`;
-      document.getElementById('prev-btn').disabled = page === 0;
-      document.getElementById('next-btn').disabled = page >= total - 1;
     }
 
     function speak(word, event) {
@@ -253,14 +203,9 @@
       scene.querySelector('.flip-card').classList.toggle('flipped');
     }
 
-    function changePage(dir) {
-      page += dir;
-      render();
-    }
-
     fetch('words.json?t=' + Date.now())
       .then(r => r.json())
-      .then(data => { words = data; render(); });
+      .then(render);
   </script>
 </body>
 </html>
