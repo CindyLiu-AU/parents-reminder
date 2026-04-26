@@ -100,9 +100,26 @@
       line-height: 1.2;
     }
 
+    .play-btn {
+      margin-top: 16px;
+      background: #1e3a6e;
+      border: 1px solid #2e5f9e;
+      border-radius: 20px;
+      padding: 8px 22px;
+      color: #90caf9;
+      font-size: 18px;
+      font-family: inherit;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .play-btn:active {
+      background: #2e5f9e;
+    }
+
     .tap-hint {
       font-size: 13px;
       color: #546e7a;
+      margin-top: 10px;
     }
 
     .word-cn {
@@ -206,7 +223,8 @@
           <div class="flip-card">
             <div class="face front">
               <div class="word-en">${w.word}</div>
-              <div class="tap-hint">点击查看翻译 👆</div>
+              <button class="play-btn" onclick="speak('${w.word}', event)">🔊 发音</button>
+              <div class="tap-hint">点击卡片查看翻译 👆</div>
             </div>
             <div class="face back">
               <div class="word-cn">${w.word_cn}</div>
@@ -220,6 +238,15 @@
       document.getElementById('page-indicator').textContent = `第 ${page + 1} 组 · 共 ${total} 组`;
       document.getElementById('prev-btn').disabled = page === 0;
       document.getElementById('next-btn').disabled = page >= total - 1;
+    }
+
+    function speak(word, event) {
+      event.stopPropagation();
+      speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(word);
+      utter.lang = 'en-AU';
+      utter.rate = 0.85;
+      speechSynthesis.speak(utter);
     }
 
     function flip(scene) {
