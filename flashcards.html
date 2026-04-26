@@ -192,11 +192,10 @@
 
     function speak(word, event) {
       event.stopPropagation();
-      speechSynthesis.cancel();
-      const utter = new SpeechSynthesisUtterance(word);
-      utter.lang = 'en-AU';
-      utter.rate = 0.85;
-      speechSynthesis.speak(utter);
+      const audio = new Audio(
+        'https://translate.google.com/translate_tts?ie=UTF-8&tl=en&client=tw-ob&q=' + encodeURIComponent(word)
+      );
+      audio.play().catch(() => {});
     }
 
     function flip(scene) {
