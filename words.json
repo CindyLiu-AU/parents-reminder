@@ -33,5 +33,25 @@
     "word": "City",
     "word_cn": "城市",
     "desc": "人口较多的地方 🏙️<br>例如：Hobart is a city in Tasmania（霍巴特是塔斯马尼亚的一个城市）"
+  },
+  {
+    "word": "Loaf",
+    "word_cn": "一条面包",
+    "desc": "整块烤好的面包 🍞<br>例如：a loaf of bread（一条面包），超市里整条卖的那种"
+  },
+  {
+    "word": "Please",
+    "word_cn": "请 / 麻烦你",
+    "desc": "礼貌用语，表示请求 🙏<br>例如：Can I have this, please?（请问这个可以给我吗？）"
+  },
+  {
+    "word": "Receipt",
+    "word_cn": "收据 / 小票",
+    "desc": "购物后收到的付款证明 🧾<br>例如：Can I have a receipt?（能给我一张收据吗？）"
+  },
+  {
+    "word": "Membership Card",
+    "word_cn": "会员卡",
+    "desc": "超市或商店的积分卡 💳<br>例如：Do you have a membership card?（你有会员卡吗？）"
   }
 ]
