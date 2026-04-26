@@ -93,6 +93,29 @@
       letter-spacing: 1px;
     }
 
+    /* ── Big clock ── */
+    .big-clock-time {
+      font-size: 100px;
+      font-weight: 800;
+      color: #f59e0b;
+      letter-spacing: 4px;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+    .big-clock-ampm {
+      font-size: 30px;
+      font-weight: 600;
+      color: #f59e0b;
+      letter-spacing: 2px;
+      vertical-align: 20px;
+    }
+    .big-clock-date {
+      font-size: 24px;
+      color: #64b5f6;
+      margin-top: 20px;
+      letter-spacing: 1px;
+    }
+
     /* ── Main card ── */
     .card {
       position: relative;
@@ -341,6 +364,20 @@
       document.getElementById('clock').textContent = `${String(h12).padStart(2,'0')}:${p.minute} ${ampm}`;
       document.getElementById('date-display').textContent =
         `${p.year}年${p.month}月${p.day}日 ${p.weekday}`;
+      if (clockMode) renderBigClock();
+    }
+
+    let clockMode = false;
+
+    function renderBigClock() {
+      const p = hobartParts();
+      const ampm = p.hour < 12 ? 'AM' : 'PM';
+      const h12 = p.hour % 12 || 12;
+      const card = document.getElementById('card');
+      if (card) card.innerHTML = `
+        <div class="big-clock-time">${String(h12).padStart(2,'0')}:${p.minute}<span class="big-clock-ampm"> ${ampm}</span></div>
+        <div class="big-clock-date">${p.year}年${p.month}月${p.day}日 ${p.weekday}</div>
+      `;
     }
 
     // ── Weather (Open-Meteo, Kingston TAS) ───────────────────
@@ -427,6 +464,12 @@
 
     function render(d) {
       const card = document.getElementById('card');
+      if (d.type === 'clock') {
+        clockMode = true;
+        renderBigClock();
+        return;
+      }
+      clockMode = false;
       if (d.type === 'coles') {
         card.innerHTML = `
           <div class="icon">🚚</div>
@@ -618,12 +661,8 @@
       } else if (slot === 'afternoon' && words.length > 0) {
         const idx = Math.floor(Date.now() / (30 * 60 * 1000)) % words.length;
         data = { type: 'word', ...words[idx] };
-      } else if (slot === 'night') {
-        data = { type: 'custom', icon: '🌙', label: '晚安', message: '爸爸妈妈晚安！<br>好好休息 😴' };
-      } else if (slot === 'morning') {
-        data = { type: 'custom', icon: '🌅', label: '早上好', message: '早上好，爸爸妈妈！<br>今天也要开心哦 😊' };
       } else {
-        data = { type: 'custom', icon: '🌆', label: '晚上好', message: '晚上好，爸爸妈妈！<br>好好休息，明天见 😊' };
+        data = { type: 'clock' };
       }
 
       const dataStr = JSON.stringify(data);
