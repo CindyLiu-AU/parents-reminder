@@ -401,13 +401,60 @@
       </div>`;
     }
 
+    function analogClockSVG(hourAngle, minAngle, secAngle) {
+      const hand = (angle, length, width, color, tail = 10) => {
+        const rad = (angle - 90) * Math.PI / 180;
+        const x2 = (100 + length * Math.cos(rad)).toFixed(1);
+        const y2 = (100 + length * Math.sin(rad)).toFixed(1);
+        const xt = (100 - tail * Math.cos(rad)).toFixed(1);
+        const yt = (100 - tail * Math.sin(rad)).toFixed(1);
+        return `<line x1="${xt}" y1="${yt}" x2="${x2}" y2="${y2}" stroke="${color}" stroke-width="${width}" stroke-linecap="round"/>`;
+      };
+
+      let markers = '';
+      for (let i = 0; i < 60; i++) {
+        const rad = (i * 6 - 90) * Math.PI / 180;
+        const isHour = i % 5 === 0;
+        const isMain = i % 15 === 0;
+        const r1 = isMain ? 72 : isHour ? 76 : 82;
+        const r2 = 88;
+        const x1 = (100 + r1 * Math.cos(rad)).toFixed(1);
+        const y1 = (100 + r1 * Math.sin(rad)).toFixed(1);
+        const x2 = (100 + r2 * Math.cos(rad)).toFixed(1);
+        const y2 = (100 + r2 * Math.sin(rad)).toFixed(1);
+        markers += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${isMain ? '#f59e0b' : isHour ? '#546e7a' : '#1e3a5f'}" stroke-width="${isMain ? 3 : isHour ? 2 : 1}" stroke-linecap="round"/>`;
+      }
+
+      let nums = '';
+      [[12,0],[3,90],[6,180],[9,270]].forEach(([n, deg]) => {
+        const rad = (deg - 90) * Math.PI / 180;
+        const x = (100 + 62 * Math.cos(rad)).toFixed(1);
+        const y = (100 + 62 * Math.sin(rad)).toFixed(1);
+        nums += `<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="central" fill="#64b5f6" font-size="15" font-weight="700" font-family="Arial,sans-serif">${n}</text>`;
+      });
+
+      return `<svg viewBox="0 0 200 200" width="260" height="260" style="display:block;margin:0 auto 4px">
+        <circle cx="100" cy="100" r="97" fill="#091525" stroke="#f59e0b" stroke-width="3"/>
+        <circle cx="100" cy="100" r="90" fill="none" stroke="#1a3050" stroke-width="0.5"/>
+        ${markers}
+        ${nums}
+        ${hand(hourAngle,  52, 5.5, '#f1f5f9', 12)}
+        ${hand(minAngle,   70, 3.5, '#f1f5f9', 12)}
+        ${hand(secAngle,   78, 1.5, '#f59e0b',  14)}
+        <circle cx="100" cy="100" r="5" fill="#f59e0b"/>
+        <circle cx="100" cy="100" r="2" fill="#091525"/>
+      </svg>`;
+    }
+
     function renderBigClock() {
       const p = hobartParts();
-      const ampm = p.hour < 12 ? 'AM' : 'PM';
-      const h12 = p.hour % 12 || 12;
+      const now = new Date();
+      const sec = now.getSeconds();
+      const min = parseInt(p.minute, 10);
+      const hr  = p.hour % 12;
       const card = document.getElementById('card');
       if (card) card.innerHTML = `
-        <div class="big-clock-time">${String(h12).padStart(2,'0')}:${p.minute}<span class="big-clock-ampm"> ${ampm}</span></div>
+        ${analogClockSVG(hr * 30 + min * 0.5, min * 6 + sec * 0.1, sec * 6)}
         <div class="big-clock-date">${p.year}年${p.month}月${p.day}日 ${p.weekday}</div>
         ${noticeBarHTML(currentNotice)}
       `;
