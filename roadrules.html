@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <title>道路规则学习</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #0d1b2a;
+      color: #f0f4f8;
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+      min-height: 100vh;
+      padding: 28px 28px 100px;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      margin-bottom: 32px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #1e3a5f;
+    }
+
+    header h1 { font-size: 28px; font-weight: 700; color: #f59e0b; }
+    header p  { font-size: 14px; color: #546e7a; }
+
+    .section {
+      margin-bottom: 28px;
+      background: #112240;
+      border: 1px solid #1e3a5f;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .section-header {
+      padding: 16px 22px;
+      background: #0d2137;
+      border-bottom: 1px solid #1e3a5f;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      user-select: none;
+    }
+
+    .section-header-text { display: flex; flex-direction: column; gap: 4px; }
+    .section-title-en { font-size: 18px; font-weight: 700; color: #f59e0b; letter-spacing: 0.5px; }
+    .section-title-cn { font-size: 22px; font-weight: 700; color: #2dd4bf; }
+    .chevron { font-size: 18px; color: #546e7a; transition: transform 0.3s; }
+    .chevron.open { transform: rotate(180deg); }
+
+    .section-body { overflow: hidden; transition: max-height 0.35s ease; }
+
+    .item {
+      padding: 16px 22px;
+      border-bottom: 1px solid #0d1b2a;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      align-items: start;
+    }
+    .item:last-child { border-bottom: none; }
+
+    .item-en {
+      font-size: 17px;
+      color: #90caf9;
+      line-height: 1.6;
+    }
+    .item-cn {
+      font-size: 19px;
+      color: #e2e8f0;
+      font-weight: 600;
+      line-height: 1.6;
+    }
+
+    .item-en .label {
+      display: inline-block;
+      background: #1e3a6e;
+      border: 1px solid #2e5f9e;
+      border-radius: 6px;
+      padding: 2px 8px;
+      font-size: 13px;
+      color: #64b5f6;
+      margin-bottom: 4px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .note-item {
+      padding: 12px 22px;
+      background: #0d2137;
+      border-left: 3px solid #f59e0b;
+      margin: 0 0 1px;
+    }
+    .note-item .item-en { font-size: 15px; color: #7b9eb5; }
+    .note-item .item-cn { font-size: 16px; color: #b0bec5; font-weight: 400; }
+
+    /* Back button */
+    .back-btn {
+      position: fixed;
+      bottom: 32px;
+      right: 28px;
+      font-size: 18px;
+      color: #1a1000;
+      text-decoration: none;
+      background: #f59e0b;
+      border: 2px solid #f59e0b;
+      border-radius: 24px;
+      padding: 14px 28px;
+      z-index: 100;
+      font-weight: 700;
+      box-shadow: 0 4px 16px rgba(245,158,11,0.4);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>🚗 道路规则学习</h1>
+    <p>塔斯马尼亚学习驾照手册 · 中英对照</p>
+  </header>
+
+  <!-- Section 1 -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-header-text">
+        <span class="section-title-en">Your Legal Requirements When Learning to Drive</span>
+        <span class="section-title-cn">学习驾车的法律要求</span>
+      </div>
+      <span class="chevron open">▼</span>
+    </div>
+    <div class="section-body">
+      <div class="item">
+        <div class="item-en">Carry your <strong>learner licence</strong> when driving</div>
+        <div class="item-cn">开车时必须随身携带 <strong>学习驾照</strong></div>
+      </div>
+      <div class="item">
+        <div class="item-en">Be supervised by a <strong>supervisory driver</strong> sitting next to you</div>
+        <div class="item-cn">必须有 <strong>陪练驾驶员</strong> 坐在旁边监督</div>
+      </div>
+      <div class="item">
+        <div class="item-en">Display <strong>L plates</strong> clearly visible from front and back</div>
+        <div class="item-cn">车头车尾必须清晰显示 <strong>L牌</strong></div>
+      </div>
+      <div class="item">
+        <div class="item-en">Have a <strong>zero blood alcohol content</strong></div>
+        <div class="item-cn"><strong>血液酒精含量必须为零</strong>（不能喝酒开车）</div>
+      </div>
+      <div class="item">
+        <div class="item-en">Hold your learner licence for at least <strong>12 continuous months</strong></div>
+        <div class="item-cn">学习驾照必须持有至少 <strong>连续12个月</strong></div>
+      </div>
+      <div class="item">
+        <div class="item-en"><strong>Not tow</strong> another vehicle, including a trailer</div>
+        <div class="item-cn"><strong>不能拖拽</strong> 其他车辆（包括拖车）</div>
+      </div>
+      <div class="item">
+        <div class="item-en">Not drive faster than <strong>90 km/h</strong> even if a higher speed limit applies</div>
+        <div class="item-cn">最高车速 <strong>90公里/小时</strong>，即使限速更高也不能超过</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 2 -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-header-text">
+        <span class="section-title-en">Licensing Pathway</span>
+        <span class="section-title-cn">驾照晋级流程</span>
+      </div>
+      <span class="chevron open">▼</span>
+    </div>
+    <div class="section-body">
+      <div class="item">
+        <div class="item-en"><span class="label">STEP 1 · L牌</span><br>Minimum age: <strong>15 years 11 months</strong><br>Pass <strong>Driver Knowledge Test</strong></div>
+        <div class="item-cn">最低年龄：<strong>15岁11个月</strong><br>通过 <strong>驾驶知识笔试</strong></div>
+      </div>
+      <div class="item">
+        <div class="item-en"><span class="label">L牌期间</span><br>Hold licence for <strong>12 months</strong><br>Log <strong>80 hours</strong> (including <strong>15 hours at night</strong>)<br>Max speed <strong>90 km/h</strong></div>
+        <div class="item-cn">持有驾照 <strong>12个月</strong><br>记录 <strong>80小时</strong> 练车（含 <strong>15小时夜间</strong>）<br>最高车速 <strong>90公里/小时</strong></div>
+      </div>
+      <div class="item">
+        <div class="item-en"><span class="label">STEP 2 · 红P牌</span><br>Minimum age: <strong>17 years</strong><br>Pass <strong>Hazard Perception Test</strong><br>Pass <strong>P1 Practical Driving Assessment (P1 PDA)</strong></div>
+        <div class="item-cn">最低年龄：<strong>17岁</strong><br>通过 <strong>危险感知测试</strong><br>通过 <strong>P1实际驾驶评估</strong></div>
+      </div>
+      <div class="item">
+        <div class="item-en"><span class="label">P1红牌期间</span><br>Hold for <strong>12 months</strong><br>Display <strong>red P plates</strong><br><strong>Zero</strong> blood alcohol<br><strong>No mobile phone</strong> use at all<br>Max speed <strong>100 km/h</strong></div>
+        <div class="item-cn">持有 <strong>12个月</strong><br>展示 <strong>红色P牌</strong><br>血液酒精 <strong>零含量</strong><br><strong>完全禁止</strong> 使用手机<br>最高车速 <strong>100公里/小时</strong></div>
+      </div>
+      <div class="item">
+        <div class="item-en"><span class="label">STEP 3 · 绿P牌</span><br>Hold P2 for <strong>1–2 years</strong> (depends on age)<br>Display <strong>green P plates</strong><br>Hands-free phone permitted</div>
+        <div class="item-cn">持有P2 <strong>1至2年</strong>（视年龄而定）<br>展示 <strong>绿色P牌</strong><br>可免提使用手机</div>
+      </div>
+      <div class="item">
+        <div class="item-en"><span class="label">STEP 4 · 正式驾照</span><br><strong>Full licence</strong> — no speed restrictions<br>Safer driver reward: free 3-year full licence (up to $75.75)</div>
+        <div class="item-cn"><strong>正式驾照</strong> — 无速度限制<br>安全驾驶奖励：免费3年正式驾照（价值最高 $75.75）</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 3 -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-header-text">
+        <span class="section-title-en">Supervisory Driver Requirements</span>
+        <span class="section-title-cn">陪练驾驶员要求</span>
+      </div>
+      <span class="chevron open">▼</span>
+    </div>
+    <div class="section-body">
+      <div class="item">
+        <div class="item-en">Must have a <strong>full Australian driver licence</strong> (not restricted)</div>
+        <div class="item-cn">必须持有 <strong>澳大利亚正式驾照</strong>（非限制类驾照）</div>
+      </div>
+      <div class="item">
+        <div class="item-en">Must have held the full licence <strong>continuously for 12 months</strong></div>
+        <div class="item-cn">正式驾照必须 <strong>连续持有12个月</strong> 以上</div>
+      </div>
+      <div class="item">
+        <div class="item-en">Must <strong>not have been disqualified</strong> for a traffic offence in the previous <strong>two years</strong></div>
+        <div class="item-cn">过去 <strong>两年内</strong> 不能因交通违规被 <strong>吊销驾照</strong></div>
+      </div>
+      <div class="item">
+        <div class="item-en">Blood alcohol content of <strong>less than .05</strong> while supervising</div>
+        <div class="item-cn">陪练时血液酒精含量必须 <strong>低于0.05</strong></div>
+      </div>
+      <div class="item">
+        <div class="item-en">Must <strong>provide driving instruction</strong> to the learner while they are driving</div>
+        <div class="item-cn">必须在学员开车时 <strong>给予驾驶指导</strong></div>
+      </div>
+      <div class="note-item">
+        <div class="item-en">1 hour of professional driving instruction = <strong>2 logbook hours</strong> (max 10 sessions = 20 hours)</div>
+        <div class="item-cn">教练上1小时课 = 记录 <strong>2小时</strong>（最多10次课，共20小时）</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 4 -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-header-text">
+        <span class="section-title-en">Pre-Drive Car Checks</span>
+        <span class="section-title-cn">出发前检查车辆</span>
+      </div>
+      <span class="chevron open">▼</span>
+    </div>
+    <div class="section-body">
+      <div class="item">
+        <div class="item-en">Check <strong>around the outside</strong> of the car for any dangers (e.g. broken glass)</div>
+        <div class="item-cn">检查 <strong>车身外围</strong> 是否有危险（如碎玻璃）</div>
+      </div>
+      <div class="item">
+        <div class="item-en">You and all passengers have <strong>seatbelts</strong> on</div>
+        <div class="item-cn">所有人都系好 <strong>安全带</strong></div>
+      </div>
+      <div class="item">
+        <div class="item-en">Car is <strong>registered</strong> (check at transport.tas.gov.au)</div>
+        <div class="item-cn">车辆已 <strong>注册登记</strong></div>
+      </div>
+      <div class="item">
+        <div class="item-en">Car is <strong>roadworthy</strong> — tyres, horn, headlights, brakes, wipers are working</div>
+        <div class="item-cn">车辆 <strong>适合上路</strong> — 轮胎、喇叭、车灯、刹车、雨刮器均正常</div>
+      </div>
+      <div class="item">
+        <div class="item-en">Basic maintenance: <strong>petrol level, oil, water, tyre pressure</strong>, windscreen is clear</div>
+        <div class="item-cn">基本保养：<strong>油量、机油、冷却水、轮胎气压</strong>，挡风玻璃干净</div>
+      </div>
+      <div class="item">
+        <div class="item-en">Adjust your <strong>seat, mirrors and steering wheel</strong> before driving</div>
+        <div class="item-cn">开车前调整好 <strong>座椅、后视镜和方向盘</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 5 -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-header-text">
+        <span class="section-title-en">Driving Position</span>
+        <span class="section-title-cn">正确驾驶姿势</span>
+      </div>
+      <span class="chevron open">▼</span>
+    </div>
+    <div class="section-body">
+      <div class="item">
+        <div class="item-en">Legs apart, <strong>knees slightly bent</strong></div>
+        <div class="item-cn">双腿分开，<strong>膝盖微弯</strong></div>
+      </div>
+      <div class="item">
+        <div class="item-en">Feet can <strong>reach the pedals</strong> (clutch, brake and accelerator)</div>
+        <div class="item-cn">双脚能 <strong>踩到踏板</strong>（离合器、刹车、油门）</div>
+      </div>
+      <div class="item">
+        <div class="item-en"><strong>Back resting</strong> on the seat's backrest</div>
+        <div class="item-cn"><strong>背部靠紧</strong> 座椅靠背</div>
+      </div>
+      <div class="item">
+        <div class="item-en">Arms have a <strong>slight bend</strong> when holding the steering wheel</div>
+        <div class="item-cn">握住方向盘时手臂 <strong>微微弯曲</strong>，不要伸直</div>
+      </div>
+      <div class="item">
+        <div class="item-en"><strong>Top of head restraint</strong> should be level with your ears</div>
+        <div class="item-cn"><strong>头枕顶部</strong> 应与耳朵齐平</div>
+      </div>
+      <div class="item">
+        <div class="item-en"><strong>Side mirrors</strong>: just see a small part of the car's side + level view of road behind</div>
+        <div class="item-cn"><strong>侧后视镜</strong>：能看到少许车身侧面 + 平行的后方道路视野</div>
+      </div>
+      <div class="item">
+        <div class="item-en">Wear <strong>suitable shoes</strong> — avoid thongs or high heels</div>
+        <div class="item-cn">穿 <strong>合适的鞋子</strong> — 不要穿拖鞋或高跟鞋开车</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 6: Key Vocabulary -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-header-text">
+        <span class="section-title-en">Key Terms &amp; Vocabulary</span>
+        <span class="section-title-cn">重要词汇</span>
+      </div>
+      <span class="chevron open">▼</span>
+    </div>
+    <div class="section-body">
+      <div class="item">
+        <div class="item-en"><strong>Learner licence (L)</strong></div>
+        <div class="item-cn"><strong>学习驾照（L牌）</strong> — 最初申请的驾照</div>
+      </div>
+      <div class="item">
+        <div class="item-en"><strong>P1 licence</strong> (red P plates)</div>
+        <div class="item-cn"><strong>P1驾照（红色P牌）</strong> — 通过实际驾驶评估后获得</div>
+      </div>
+      <div class="item">
+        <div class="item-en"><strong>P2 licence</strong> (green P plates)</div>
+        <div class="item-cn"><strong>P2驾照（绿色P牌）</strong> — P1之后的进阶驾照</div>
+      </div>
+      <div class="item">
+        <div class="item-en"><strong>Supervisory driver</strong></div>
+        <div class="item-cn"><strong>陪练驾驶员</strong> — 坐在旁边监督学员开车的人</div>
+      </div>
+      <div class="item">
+        <div class="item-en"><strong>Logbook</strong></div>
+        <div class="item-cn"><strong>练车记录本</strong> — 记录每次练车时间和小时数</div>
+      </div>
+      <div class="item">
+        <div class="item-en"><strong>Demerit points</strong></div>
+        <div class="item-cn"><strong>扣分记录</strong> — 违规驾驶会累积扣分</div>
+      </div>
+      <div class="item">
+        <div class="item-en"><strong>Blood alcohol content (BAC)</strong></div>
+        <div class="item-cn"><strong>血液酒精含量（BAC）</strong> — 衡量饮酒量的指标</div>
+      </div>
+      <div class="item">
+        <div class="item-en"><strong>Hazard Perception Test</strong></div>
+        <div class="item-cn"><strong>危险感知测试</strong> — 考察识别路上危险的能力</div>
+      </div>
+      <div class="item">
+        <div class="item-en"><strong>P1 Practical Driving Assessment (P1 PDA)</strong></div>
+        <div class="item-cn"><strong>P1实际驾驶评估</strong> — 在路上进行的实际驾驶考试</div>
+      </div>
+      <div class="item">
+        <div class="item-en"><strong>Driver Knowledge Test (DKT)</strong></div>
+        <div class="item-cn"><strong>驾驶知识测试</strong> — 申请L牌前的笔试</div>
+      </div>
+      <div class="item">
+        <div class="item-en"><strong>Manual</strong> transmission / car</div>
+        <div class="item-cn"><strong>手动挡</strong> 变速箱 / 手动车</div>
+      </div>
+      <div class="item">
+        <div class="item-en"><strong>Automatic</strong> transmission / car</div>
+        <div class="item-cn"><strong>自动挡</strong> 变速箱 / 自动车</div>
+      </div>
+      <div class="item">
+        <div class="item-en"><strong>Accelerator</strong></div>
+        <div class="item-cn"><strong>油门踏板</strong> — 右脚踩，加速</div>
+      </div>
+      <div class="item">
+        <div class="item-en"><strong>Brake</strong></div>
+        <div class="item-cn"><strong>刹车踏板</strong> — 右脚踩，减速/停车</div>
+      </div>
+      <div class="item">
+        <div class="item-en"><strong>Clutch</strong></div>
+        <div class="item-cn"><strong>离合器踏板</strong> — 左脚踩（手动车换挡时用）</div>
+      </div>
+      <div class="item">
+        <div class="item-en"><strong>Hazard lights</strong></div>
+        <div class="item-cn"><strong>双闪灯</strong> — 紧急情况时四个转向灯同时闪烁</div>
+      </div>
+      <div class="item">
+        <div class="item-en"><strong>Indicate / Indicator</strong></div>
+        <div class="item-cn"><strong>打转向灯</strong> / <strong>转向灯</strong></div>
+      </div>
+      <div class="item">
+        <div class="item-en"><strong>Merge</strong></div>
+        <div class="item-cn"><strong>并道</strong> — 从一条车道合并到另一条车道</div>
+      </div>
+      <div class="item">
+        <div class="item-en"><strong>Give way</strong></div>
+        <div class="item-cn"><strong>让行</strong> — 让其他车辆或行人先行</div>
+      </div>
+      <div class="item">
+        <div class="item-en"><strong>Roundabout</strong></div>
+        <div class="item-cn"><strong>环形交叉路口（转盘）</strong></div>
+      </div>
+      <div class="item">
+        <div class="item-en"><strong>Intersection</strong></div>
+        <div class="item-cn"><strong>十字路口 / 交叉路口</strong></div>
+      </div>
+      <div class="item">
+        <div class="item-en"><strong>Pedestrian crossing</strong></div>
+        <div class="item-cn"><strong>人行横道 / 斑马线</strong></div>
+      </div>
+      <div class="item">
+        <div class="item-en"><strong>Speed limit</strong></div>
+        <div class="item-cn"><strong>限速</strong> — 该路段允许的最高车速</div>
+      </div>
+      <div class="item">
+        <div class="item-en"><strong>Road rules / Traffic laws</strong></div>
+        <div class="item-cn"><strong>道路规则 / 交通法规</strong></div>
+      </div>
+      <div class="item">
+        <div class="item-en"><strong>Tyre tread</strong></div>
+        <div class="item-cn"><strong>轮胎花纹深度</strong> — 影响抓地力和刹车效果</div>
+      </div>
+      <div class="item">
+        <div class="item-en"><strong>Registered</strong> (vehicle)</div>
+        <div class="item-cn">车辆 <strong>已注册登记</strong>（已缴纳车辆注册费）</div>
+      </div>
+    </div>
+  </div>
+
+  <a class="back-btn" href="index.html">← 返回</a>
+
+  <script>
+    function toggle(header) {
+      const body = header.nextElementSibling;
+      const chevron = header.querySelector('.chevron');
+      if (body.style.maxHeight && body.style.maxHeight !== '0px') {
+        body.style.maxHeight = '0px';
+        chevron.classList.remove('open');
+      } else {
+        body.style.maxHeight = body.scrollHeight + 'px';
+        chevron.classList.add('open');
+      }
+    }
+
+    // Init: open all sections
+    document.querySelectorAll('.section-body').forEach(b => {
+      b.style.maxHeight = b.scrollHeight + 'px';
+    });
+  </script>
+</body>
+</html>
