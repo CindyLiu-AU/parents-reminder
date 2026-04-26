@@ -101,6 +101,54 @@
     .note-item .item-en { font-size: 15px; color: #7b9eb5; }
     .note-item .item-cn { font-size: 16px; color: #b0bec5; font-weight: 400; }
 
+    /* Video section */
+    .video-item { border-bottom: 1px solid #0d1b2a; }
+    .video-item:last-child { border-bottom: none; }
+
+    .video-title {
+      padding: 14px 22px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.2s;
+    }
+    .video-title:hover { background: #0d2137; }
+
+    .video-num {
+      font-size: 13px;
+      font-weight: 700;
+      color: #64b5f6;
+      background: #1e3a6e;
+      border: 1px solid #2e5f9e;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .video-name-en {
+      font-size: 16px;
+      color: #90caf9;
+      flex: 1;
+      font-weight: 600;
+    }
+
+    .video-chevron { font-size: 14px; color: #f59e0b; }
+
+    .video-player { padding: 0 22px 16px; display: none; }
+
+    .video-player iframe {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border: none;
+      border-radius: 8px;
+    }
+
     /* Back button */
     .back-btn {
       position: fixed;
@@ -125,6 +173,245 @@
     <h1>🚗 道路规则学习</h1>
     <p>塔斯马尼亚学习驾照手册 · 中英对照</p>
   </header>
+
+  <!-- Videos Section -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-header-text">
+        <span class="section-title-en">Learn to Drive Videos (TAS Transport)</span>
+        <span class="section-title-cn">学习驾车视频（塔州交通厅）</span>
+      </div>
+      <span class="chevron open">▼</span>
+    </div>
+    <div class="section-body">
+
+      <div class="video-item">
+        <div class="video-title" onclick="toggleVideo(this)">
+          <span class="video-num">1</span>
+          <span class="video-name-en">Speed limits</span>
+          <span class="video-chevron">▶</span>
+        </div>
+        <div class="video-player"><iframe data-id="3voiU1l8pqM" src="" allowfullscreen allow="autoplay"></iframe></div>
+      </div>
+
+      <div class="video-item">
+        <div class="video-title" onclick="toggleVideo(this)">
+          <span class="video-num">2</span>
+          <span class="video-name-en">Dividing lines</span>
+          <span class="video-chevron">▶</span>
+        </div>
+        <div class="video-player"><iframe data-id="HRgWXH6S6nA" src="" allowfullscreen allow="autoplay"></iframe></div>
+      </div>
+
+      <div class="video-item">
+        <div class="video-title" onclick="toggleVideo(this)">
+          <span class="video-num">3</span>
+          <span class="video-name-en">Signage and other markings</span>
+          <span class="video-chevron">▶</span>
+        </div>
+        <div class="video-player"><iframe data-id="y9xE0hYWNP0" src="" allowfullscreen allow="autoplay"></iframe></div>
+      </div>
+
+      <div class="video-item">
+        <div class="video-title" onclick="toggleVideo(this)">
+          <span class="video-num">4</span>
+          <span class="video-name-en">Intersections</span>
+          <span class="video-chevron">▶</span>
+        </div>
+        <div class="video-player"><iframe data-id="dax6-bWWxNo" src="" allowfullscreen allow="autoplay"></iframe></div>
+      </div>
+
+      <div class="video-item">
+        <div class="video-title" onclick="toggleVideo(this)">
+          <span class="video-num">5</span>
+          <span class="video-name-en">Overtaking and distance</span>
+          <span class="video-chevron">▶</span>
+        </div>
+        <div class="video-player"><iframe data-id="bqpXFZBdVno" src="" allowfullscreen allow="autoplay"></iframe></div>
+      </div>
+
+      <div class="video-item">
+        <div class="video-title" onclick="toggleVideo(this)">
+          <span class="video-num">6</span>
+          <span class="video-name-en">Health and wellbeing</span>
+          <span class="video-chevron">▶</span>
+        </div>
+        <div class="video-player"><iframe data-id="rFoS0gKVwd4" src="" allowfullscreen allow="autoplay"></iframe></div>
+      </div>
+
+      <div class="video-item">
+        <div class="video-title" onclick="toggleVideo(this)">
+          <span class="video-num">7</span>
+          <span class="video-name-en">Rules for L1 drivers</span>
+          <span class="video-chevron">▶</span>
+        </div>
+        <div class="video-player"><iframe data-id="l8dMznsxYcg" src="" allowfullscreen allow="autoplay"></iframe></div>
+      </div>
+
+      <div class="video-item">
+        <div class="video-title" onclick="toggleVideo(this)">
+          <span class="video-num">8</span>
+          <span class="video-name-en">Towing a vehicle</span>
+          <span class="video-chevron">▶</span>
+        </div>
+        <div class="video-player"><iframe data-id="xoEXLp9K2vg" src="" allowfullscreen allow="autoplay"></iframe></div>
+      </div>
+
+      <div class="video-item">
+        <div class="video-title" onclick="toggleVideo(this)">
+          <span class="video-num">9</span>
+          <span class="video-name-en">Left Something Behind Exercise</span>
+          <span class="video-chevron">▶</span>
+        </div>
+        <div class="video-player"><iframe data-id="VijYTJmEy_k" src="" allowfullscreen allow="autoplay"></iframe></div>
+      </div>
+
+      <div class="video-item">
+        <div class="video-title" onclick="toggleVideo(this)">
+          <span class="video-num">10</span>
+          <span class="video-name-en">Turning Right At Lights</span>
+          <span class="video-chevron">▶</span>
+        </div>
+        <div class="video-player"><iframe data-id="SjMuUi1GkjU" src="" allowfullscreen allow="autoplay"></iframe></div>
+      </div>
+
+      <div class="video-item">
+        <div class="video-title" onclick="toggleVideo(this)">
+          <span class="video-num">11</span>
+          <span class="video-name-en">What to bring to your Driving Assessment</span>
+          <span class="video-chevron">▶</span>
+        </div>
+        <div class="video-player"><iframe data-id="rGdl-zwRYhk" src="" allowfullscreen allow="autoplay"></iframe></div>
+      </div>
+
+      <div class="video-item">
+        <div class="video-title" onclick="toggleVideo(this)">
+          <span class="video-num">12</span>
+          <span class="video-name-en">Rural Driving</span>
+          <span class="video-chevron">▶</span>
+        </div>
+        <div class="video-player"><iframe data-id="iqjLE9lv9_w" src="" allowfullscreen allow="autoplay"></iframe></div>
+      </div>
+
+      <div class="video-item">
+        <div class="video-title" onclick="toggleVideo(this)">
+          <span class="video-num">13</span>
+          <span class="video-name-en">Crashes</span>
+          <span class="video-chevron">▶</span>
+        </div>
+        <div class="video-player"><iframe data-id="zXmikACJd9k" src="" allowfullscreen allow="autoplay"></iframe></div>
+      </div>
+
+      <div class="video-item">
+        <div class="video-title" onclick="toggleVideo(this)">
+          <span class="video-num">14</span>
+          <span class="video-name-en">Getting to know your vehicle</span>
+          <span class="video-chevron">▶</span>
+        </div>
+        <div class="video-player"><iframe data-id="ubIoqOnMuJ0" src="" allowfullscreen allow="autoplay"></iframe></div>
+      </div>
+
+      <div class="video-item">
+        <div class="video-title" onclick="toggleVideo(this)">
+          <span class="video-num">15</span>
+          <span class="video-name-en">Vehicle Roadworthiness</span>
+          <span class="video-chevron">▶</span>
+        </div>
+        <div class="video-player"><iframe data-id="M0_T1fJ3Jzs" src="" allowfullscreen allow="autoplay"></iframe></div>
+      </div>
+
+      <div class="video-item">
+        <div class="video-title" onclick="toggleVideo(this)">
+          <span class="video-num">16</span>
+          <span class="video-name-en">Blind Spots and Mirrors</span>
+          <span class="video-chevron">▶</span>
+        </div>
+        <div class="video-player"><iframe data-id="G_zW4u6Ur48" src="" allowfullscreen allow="autoplay"></iframe></div>
+      </div>
+
+      <div class="video-item">
+        <div class="video-title" onclick="toggleVideo(this)">
+          <span class="video-num">17</span>
+          <span class="video-name-en">Buying and Selling a Car</span>
+          <span class="video-chevron">▶</span>
+        </div>
+        <div class="video-player"><iframe data-id="1Aa0DnrQ1es" src="" allowfullscreen allow="autoplay"></iframe></div>
+      </div>
+
+      <div class="video-item">
+        <div class="video-title" onclick="toggleVideo(this)">
+          <span class="video-num">18</span>
+          <span class="video-name-en">Parking</span>
+          <span class="video-chevron">▶</span>
+        </div>
+        <div class="video-player"><iframe data-id="NbBt506Qnvk" src="" allowfullscreen allow="autoplay"></iframe></div>
+      </div>
+
+      <div class="video-item">
+        <div class="video-title" onclick="toggleVideo(this)">
+          <span class="video-num">19</span>
+          <span class="video-name-en">Signage</span>
+          <span class="video-chevron">▶</span>
+        </div>
+        <div class="video-player"><iframe data-id="U55BdJLv8v0" src="" allowfullscreen allow="autoplay"></iframe></div>
+      </div>
+
+      <div class="video-item">
+        <div class="video-title" onclick="toggleVideo(this)">
+          <span class="video-num">20</span>
+          <span class="video-name-en">Zip Merging</span>
+          <span class="video-chevron">▶</span>
+        </div>
+        <div class="video-player"><iframe data-id="dNJHh_1pfJo" src="" allowfullscreen allow="autoplay"></iframe></div>
+      </div>
+
+      <div class="video-item">
+        <div class="video-title" onclick="toggleVideo(this)">
+          <span class="video-num">21</span>
+          <span class="video-name-en">Supervising a learner to drive</span>
+          <span class="video-chevron">▶</span>
+        </div>
+        <div class="video-player"><iframe data-id="i9On7QYhSoA" src="" allowfullscreen allow="autoplay"></iframe></div>
+      </div>
+
+      <div class="video-item">
+        <div class="video-title" onclick="toggleVideo(this)">
+          <span class="video-num">22</span>
+          <span class="video-name-en">Parallel Reverse Parking</span>
+          <span class="video-chevron">▶</span>
+        </div>
+        <div class="video-player"><iframe data-id="tcxuCAkbEmA" src="" allowfullscreen allow="autoplay"></iframe></div>
+      </div>
+
+      <div class="video-item">
+        <div class="video-title" onclick="toggleVideo(this)">
+          <span class="video-num">23</span>
+          <span class="video-name-en">Single Continuous Lines</span>
+          <span class="video-chevron">▶</span>
+        </div>
+        <div class="video-player"><iframe data-id="Eo5DnPaTMwU" src="" allowfullscreen allow="autoplay"></iframe></div>
+      </div>
+
+      <div class="video-item">
+        <div class="video-title" onclick="toggleVideo(this)">
+          <span class="video-num">24</span>
+          <span class="video-name-en">Secure Loads</span>
+          <span class="video-chevron">▶</span>
+        </div>
+        <div class="video-player"><iframe data-id="fCuuXxlHrJw" src="" allowfullscreen allow="autoplay"></iframe></div>
+      </div>
+
+      <div class="video-item">
+        <div class="video-title" onclick="toggleVideo(this)">
+          <span class="video-num">25</span>
+          <span class="video-name-en">Traffic Flow</span>
+          <span class="video-chevron">▶</span>
+        </div>
+        <div class="video-player"><iframe data-id="JEHQ0RSh3j4" src="" allowfullscreen allow="autoplay"></iframe></div>
+      </div>
+
+    </div>
+  </div>
 
   <!-- Section 1 -->
   <div class="section">
@@ -439,6 +726,23 @@
   <a class="back-btn" href="index.html">← 返回</a>
 
   <script>
+    function toggleVideo(titleEl) {
+      const player = titleEl.nextElementSibling;
+      const chevron = titleEl.querySelector('.video-chevron');
+      const iframe = player.querySelector('iframe');
+      const isOpen = player.style.display === 'block';
+
+      if (isOpen) {
+        player.style.display = 'none';
+        iframe.src = '';
+        chevron.textContent = '▶';
+      } else {
+        player.style.display = 'block';
+        iframe.src = 'https://www.youtube.com/embed/' + iframe.dataset.id + '?autoplay=1';
+        chevron.textContent = '▼';
+      }
+    }
+
     function toggle(header) {
       const body = header.nextElementSibling;
       const chevron = header.querySelector('.chevron');
