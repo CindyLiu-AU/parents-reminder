@@ -860,6 +860,8 @@
       if (!status) return;
       status.textContent = '正在加载PDF，请稍候… Loading…';
       _pdfReady = true;
+      // Remove the small max-height set at init so the PDF can grow freely
+      document.getElementById('pdf-container').closest('.section-body').style.maxHeight = 'none';
 
       const script = document.createElement('script');
       script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
@@ -870,17 +872,20 @@
         pdfjsLib.getDocument('road-rules-zh.pdf').promise.then(pdf => {
           status.remove();
           const container = document.getElementById('pdf-container');
+          const dpr = window.devicePixelRatio || 1;
           let pageNum = 1;
 
           function renderNext() {
             if (pageNum > pdf.numPages) return;
             pdf.getPage(pageNum).then(page => {
-              const scale = (container.clientWidth - 16) / page.getViewport({scale: 1}).width;
-              const vp = page.getViewport({scale});
+              // Multiply by devicePixelRatio so text/images render at native screen sharpness
+              const baseScale = (container.clientWidth - 16) / page.getViewport({scale: 1}).width;
+              const vp = page.getViewport({scale: baseScale * dpr});
               const canvas = document.createElement('canvas');
               canvas.width = vp.width;
               canvas.height = vp.height;
-              canvas.style.cssText = 'width:100%;display:block;margin-bottom:4px;border-radius:4px;';
+              // CSS size = physical size ÷ dpr → crisp at all pixel densities
+              canvas.style.cssText = `width:100%;height:${Math.floor(vp.height / dpr)}px;display:block;margin-bottom:4px;border-radius:4px;`;
               container.appendChild(canvas);
               page.render({canvasContext: canvas.getContext('2d'), viewport: vp}).promise.then(() => {
                 pageNum++;
