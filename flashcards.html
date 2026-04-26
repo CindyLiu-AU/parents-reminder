@@ -166,6 +166,7 @@
     <p>点击卡片查看翻译和解释</p>
   </header>
 
+  <div id="dbg" style="font-size:12px;color:#546e7a;text-align:center;margin-bottom:8px;"></div>
   <div class="cards-row" id="cards-row"></div>
 
   <a class="back-btn" href="index.html">← 返回</a>
@@ -192,9 +193,13 @@
 
     function speak(word, event) {
       event.stopPropagation();
+      const dbg = document.getElementById('dbg');
       if (window.fully) {
-        fully.textToSpeech(word, 'en_AU', 1.0, 0.85);
+        const hasTTS = typeof fully.textToSpeech === 'function';
+        if (dbg) dbg.textContent = 'fully: ✓  textToSpeech: ' + (hasTTS ? '✓' : '✗');
+        if (hasTTS) fully.textToSpeech(word);
       } else {
+        if (dbg) dbg.textContent = 'fully: ✗  using speechSynthesis';
         speechSynthesis.cancel();
         const utter = new SpeechSynthesisUtterance(word);
         utter.rate = 0.85;
