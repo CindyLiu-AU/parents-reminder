@@ -793,7 +793,7 @@
   </div>
   <!-- PDF Road Rules -->
   <div class="section" id="roadrules-pdf">
-    <div class="section-header" onclick="toggle(this)">
+    <div class="section-header" onclick="toggle(this); initPDF()">
       <div class="section-header-text">
         <span class="section-title-en">Tasmanian Road Rules 2022 (Full Handbook)</span>
         <span class="section-title-cn">📄 塔州道路规则完整手册（中文PDF）</span>
@@ -801,12 +801,10 @@
       <span class="chevron open">▼</span>
     </div>
     <div class="section-body">
-      <div style="padding: 16px;">
-        <iframe
-          src="road-rules-zh.pdf"
-          style="width:100%; height:80vh; border:none; border-radius:8px; background:#fff;"
-          title="塔州道路规则中文手册">
-        </iframe>
+      <div id="pdf-container" style="background:#1a1a2e; padding:8px; min-height:200px;">
+        <div id="pdf-status" style="padding:40px; text-align:center; color:#90caf9; font-size:17px;">
+          点击上方标题展开查看 PDF
+        </div>
       </div>
     </div>
   </div>
@@ -853,6 +851,50 @@
     document.querySelectorAll('.section-body').forEach(b => {
       b.style.maxHeight = b.scrollHeight + 'px';
     });
+
+    // PDF.js renderer — works in kiosk mode (no native PDF plugin needed)
+    let _pdfReady = false;
+    function initPDF() {
+      if (_pdfReady) return;
+      const status = document.getElementById('pdf-status');
+      if (!status) return;
+      status.textContent = '正在加载PDF，请稍候… Loading…';
+      _pdfReady = true;
+
+      const script = document.createElement('script');
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+      script.onload = () => {
+        pdfjsLib.GlobalWorkerOptions.workerSrc =
+          'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        pdfjsLib.getDocument('road-rules-zh.pdf').promise.then(pdf => {
+          status.remove();
+          const container = document.getElementById('pdf-container');
+          let pageNum = 1;
+
+          function renderNext() {
+            if (pageNum > pdf.numPages) return;
+            pdf.getPage(pageNum).then(page => {
+              const scale = (container.clientWidth - 16) / page.getViewport({scale: 1}).width;
+              const vp = page.getViewport({scale});
+              const canvas = document.createElement('canvas');
+              canvas.width = vp.width;
+              canvas.height = vp.height;
+              canvas.style.cssText = 'width:100%;display:block;margin-bottom:4px;border-radius:4px;';
+              container.appendChild(canvas);
+              page.render({canvasContext: canvas.getContext('2d'), viewport: vp}).promise.then(() => {
+                pageNum++;
+                renderNext();
+              });
+            });
+          }
+          renderNext();
+        }).catch(() => {
+          document.getElementById('pdf-status').textContent = '❌ PDF加载失败，请检查网络连接';
+        });
+      };
+      document.head.appendChild(script);
+    }
 
     // Sidebar active highlight
     const _observer = new IntersectionObserver(entries => {
