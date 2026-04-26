@@ -78,9 +78,9 @@
     "audio": "audio/friday.m4a"
   },
   {
-    "word": "May I have a receipt please",
+    "word": "Receipt, please",
     "word_cn": "请给我收据",
-    "desc": "在超市或商店结账后索取收据的礼貌说法 🧾<br>收银员会把小票打印给你",
-    "audio": "audio/may-i-have-a-receipt-please.m4a"
+    "desc": "在超市或商店结账后索取收据的简洁说法 🧾<br>收银员会把小票打印给你",
+    "audio": "audio/receipt-please.m4a"
   }
 ]
