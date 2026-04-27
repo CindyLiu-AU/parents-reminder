@@ -110,15 +110,16 @@
 
     .sidebar {
       width: 170px;
-      flex-shrink: 0;
-      position: sticky;
+      position: fixed;
       top: 24px;
+      left: 28px;
       background: #112240;
       border: 1px solid #1e3a5f;
       border-radius: 16px;
       padding: 12px 0;
       max-height: calc(100vh - 48px);
       overflow-y: auto;
+      z-index: 50;
     }
 
     .sidebar-item {
@@ -145,7 +146,7 @@
 
     .sidebar-icon { font-size: 17px; line-height: 1; }
 
-    .main-content { flex: 1; min-width: 0; }
+    .main-content { flex: 1; min-width: 0; margin-left: 190px; }
 
     /* Video section */
     .video-item { border-bottom: 1px solid #0d1b2a; }
