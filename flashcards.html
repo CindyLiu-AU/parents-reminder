@@ -104,6 +104,10 @@
     .rec-btn.recorded  { background: #14532d; border-color: #22c55e; color: #86efac; }
     @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.6; } }
 
+    /* listen button */
+    .listen-btn { opacity: 0.35; pointer-events: none; }
+    .listen-btn.has-rec { opacity: 1; pointer-events: auto; background: #1a3a1a; border-color: #22c55e; color: #86efac; }
+
     .word-cn   { font-size: 26px; font-weight: 700; color: #2dd4bf; margin-bottom: 10px; }
     .word-desc { font-size: 13px; color: #90caf9; line-height: 1.8; }
     .flip-hint-back { margin-top: 12px; font-size: 12px; color: #2e4a6a; }
@@ -215,12 +219,13 @@
               <div class="face front">
                 <div class="word-en">${w.word}</div>
                 <div class="action-row">
-                  <button class="play-btn${hasRec?' has-rec':''}" id="play-${idx}"
-                          onclick="speak('${w.word}',${idx},event)">🔊 发音</button>
+                  <button class="play-btn" onclick="speak('${w.word}',event)">🔊 发音</button>
                   <button class="rec-btn${hasRec?' recorded':''}" id="rec-${idx}"
                           onclick="toggleRecord('${w.word}',${idx},event)">
                     ${hasRec?'🎙️ 已录音':'🎙️ 录音'}
                   </button>
+                  <button class="rec-btn listen-btn${hasRec?' has-rec':''}" id="listen-${idx}"
+                          onclick="playRecording('${w.word}',event)">▶️ 听录音</button>
                 </div>
               </div>
               <div class="face back">
@@ -265,11 +270,9 @@
       saveSet(key, set); updateCounters(); renderTabs();
     }
 
-    /* ── Speak: recorded audio first, TTS fallback ── */
-    function speak(word, idx, event) {
+    /* ── Speak: always TTS (Karen) ── */
+    function speak(word, event) {
       event.stopPropagation();
-      const stored = localStorage.getItem(recKey(word));
-      if (stored) { new Audio(stored).play().catch(() => {}); return; }
       speechSynthesis.cancel();
       const utter = new SpeechSynthesisUtterance(word);
       utter.lang = 'en-AU';
@@ -285,13 +288,19 @@
       else speechSynthesis.onvoiceschanged = () => { speechSynthesis.onvoiceschanged = null; doSpeak(); };
     }
 
+    /* ── Play recording ── */
+    function playRecording(word, event) {
+      event.stopPropagation();
+      const stored = localStorage.getItem(recKey(word));
+      if (stored) new Audio(stored).play().catch(() => {});
+    }
+
     /* ── Record ── */
     let activeRecorder = null;
 
     function toggleRecord(word, idx, event) {
       event.stopPropagation();
-      const recBtn  = document.getElementById('rec-' + idx);
-      const playBtn = document.getElementById('play-' + idx);
+      const recBtn = document.getElementById('rec-' + idx);
 
       if (activeRecorder) {
         activeRecorder.stop();
@@ -316,10 +325,11 @@
           const reader = new FileReader();
           reader.onload = () => {
             localStorage.setItem(recKey(word), reader.result);
-            recBtn.textContent  = '🎙️ 已录音';
+            recBtn.textContent = '🎙️ 已录音';
             recBtn.classList.remove('recording');
             recBtn.classList.add('recorded');
-            playBtn.classList.add('has-rec');
+            const listenBtn = document.getElementById('listen-' + idx);
+            if (listenBtn) listenBtn.classList.add('has-rec');
           };
           reader.readAsDataURL(blob);
         };
