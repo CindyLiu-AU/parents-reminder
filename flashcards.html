@@ -27,27 +27,15 @@
       border-bottom: 1px solid #1e3a5f;
       flex-wrap: wrap;
     }
-
     header h1 { font-size: 28px; font-weight: 700; color: #f59e0b; }
     header p   { font-size: 14px; color: #546e7a; }
 
-    .counters {
-      margin-left: auto;
-      display: flex;
-      gap: 16px;
-      flex-shrink: 0;
-    }
+    .counters { margin-left: auto; display: flex; gap: 16px; flex-shrink: 0; }
     .counter-dad { font-size: 15px; font-weight: 700; color: #38bdf8; white-space: nowrap; }
     .counter-mum { font-size: 15px; font-weight: 700; color: #f472b6; white-space: nowrap; }
 
     /* ── Week tabs ── */
-    .week-tabs {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 24px;
-      flex-wrap: wrap;
-    }
-
+    .week-tabs { display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; }
     .week-tab {
       padding: 10px 22px;
       border-radius: 20px;
@@ -64,50 +52,23 @@
     .week-tab.active { background: #f59e0b; border-color: #f59e0b; color: #1a1000; }
 
     /* ── grid ── */
-    .cards-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-      margin-bottom: 36px;
-    }
+    .cards-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 36px; }
 
     /* ── card wrapper ── */
     .card-wrap { display: flex; flex-direction: column; gap: 10px; }
 
     /* ── Flip card ── */
-    .scene {
-      perspective: 900px;
-      height: 280px;
-      cursor: pointer;
-      user-select: none;
-      flex-shrink: 0;
-    }
-
-    .flip-card {
-      width: 100%;
-      height: 100%;
-      position: relative;
-      transform-style: preserve-3d;
-      transition: transform 0.45s ease;
-    }
-
+    .scene { perspective: 900px; height: 300px; cursor: pointer; user-select: none; flex-shrink: 0; }
+    .flip-card { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.45s ease; }
     .flip-card.flipped { transform: rotateY(180deg); }
 
     .face {
-      position: absolute;
-      inset: 0;
-      border-radius: 20px;
-      backface-visibility: hidden;
-      -webkit-backface-visibility: hidden;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 24px 20px;
-      text-align: center;
+      position: absolute; inset: 0; border-radius: 20px;
+      backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; padding: 20px 16px; text-align: center;
       transition: border-color 0.3s, box-shadow 0.3s;
     }
-
     .front { background: #112240; border: 1px solid #1e3a5f; }
     .back  { background: #0d2745; border: 1px solid #2e5f9e; transform: rotateY(180deg); }
 
@@ -116,71 +77,57 @@
     .card-wrap.mum .front     { border-color: #f472b6; box-shadow: 0 0 14px rgba(244,114,182,0.22); }
     .card-wrap.dad.mum .front { border-color: #22c55e; box-shadow: 0 0 18px rgba(34,197,94,0.30); }
 
-    .word-en {
-      font-size: 40px;
-      font-weight: 800;
-      color: #f59e0b;
-      letter-spacing: 2px;
-      margin-bottom: 14px;
-      line-height: 1.2;
-    }
+    .word-en { font-size: 36px; font-weight: 800; color: #f59e0b; letter-spacing: 2px; margin-bottom: 12px; line-height: 1.2; }
 
-    .play-btn {
-      margin-top: 16px;
-      background: #1e3a6e;
-      border: 1px solid #2e5f9e;
-      border-radius: 20px;
-      padding: 8px 22px;
-      color: #90caf9;
-      font-size: 18px;
+    /* ── Play + Record buttons ── */
+    .action-row { display: flex; gap: 8px; margin-top: 4px; }
+
+    .play-btn, .rec-btn {
+      border-radius: 18px;
+      padding: 7px 14px;
+      font-size: 15px;
       font-family: inherit;
       font-weight: 600;
       cursor: pointer;
+      border: 1px solid #2e5f9e;
+      background: #1e3a6e;
+      color: #90caf9;
+      transition: all 0.2s;
     }
-    .play-btn:active { background: #2e5f9e; }
+    .play-btn:active, .rec-btn:active { opacity: 0.7; }
 
-    .word-cn   { font-size: 28px; font-weight: 700; color: #2dd4bf; margin-bottom: 10px; }
-    .word-desc { font-size: 14px; color: #90caf9; line-height: 1.8; }
-    .flip-hint-back { margin-top: 14px; font-size: 12px; color: #2e4a6a; }
+    /* play button turns green when a recording exists */
+    .play-btn.has-rec { background: #14532d; border-color: #22c55e; color: #86efac; }
+
+    /* record button states */
+    .rec-btn.recording { background: #7f1d1d; border-color: #ef4444; color: #fca5a5; animation: pulse 1s infinite; }
+    .rec-btn.recorded  { background: #14532d; border-color: #22c55e; color: #86efac; }
+    @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.6; } }
+
+    .word-cn   { font-size: 26px; font-weight: 700; color: #2dd4bf; margin-bottom: 10px; }
+    .word-desc { font-size: 13px; color: #90caf9; line-height: 1.8; }
+    .flip-hint-back { margin-top: 12px; font-size: 12px; color: #2e4a6a; }
 
     /* ── Known buttons ── */
     .btn-row { display: flex; gap: 8px; }
-
     .known-btn {
-      flex: 1;
-      padding: 10px 6px;
-      border-radius: 14px;
-      border: 2px solid #1e3a5f;
-      background: #112240;
-      color: #546e7a;
-      font-size: 15px;
-      font-family: inherit;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s;
+      flex: 1; padding: 10px 6px; border-radius: 14px;
+      border: 2px solid #1e3a5f; background: #112240;
+      color: #546e7a; font-size: 15px; font-family: inherit;
+      font-weight: 700; cursor: pointer; transition: all 0.2s;
     }
-
     .known-btn-dad:hover { border-color: #38bdf8; color: #38bdf8; }
     .known-btn-dad.known { background: #0a1e30; border-color: #38bdf8; color: #38bdf8; }
-
     .known-btn-mum:hover { border-color: #f472b6; color: #f472b6; }
     .known-btn-mum.known { background: #2d0a1a; border-color: #f472b6; color: #f472b6; }
 
     /* ── Back button ── */
     .back-btn {
-      position: fixed;
-      bottom: 32px;
-      right: 28px;
-      font-size: 18px;
-      color: #1a1000;
-      text-decoration: none;
-      background: #f59e0b;
-      border: 2px solid #f59e0b;
-      border-radius: 24px;
-      padding: 14px 28px;
-      z-index: 100;
-      font-weight: 700;
-      box-shadow: 0 4px 16px rgba(245,158,11,0.4);
+      position: fixed; bottom: 32px; right: 28px;
+      font-size: 18px; color: #1a1000; text-decoration: none;
+      background: #f59e0b; border: 2px solid #f59e0b;
+      border-radius: 24px; padding: 14px 28px; z-index: 100;
+      font-weight: 700; box-shadow: 0 4px 16px rgba(245,158,11,0.4);
     }
   </style>
 </head>
@@ -197,83 +144,84 @@
 
   <div class="week-tabs" id="week-tabs"></div>
   <div class="cards-row" id="cards-row"></div>
-
   <a class="back-btn" href="index.html">← 返回</a>
 
   <script>
-    const KEY_DAD = 'flashcard_known_dad';
-    const KEY_MUM = 'flashcard_known_mum';
+    const KEY_DAD  = 'flashcard_known_dad';
+    const KEY_MUM  = 'flashcard_known_mum';
+    const REC_PFX  = 'word_rec_';
     const WEEK_SIZE = 3;
 
+    /* ── localStorage helpers ── */
     function loadSet(key) {
-      try { return new Set(JSON.parse(localStorage.getItem(key) || '[]')); }
-      catch { return new Set(); }
+      try { return new Set(JSON.parse(localStorage.getItem(key) || '[]')); } catch { return new Set(); }
     }
-    function saveSet(key, set) {
-      localStorage.setItem(key, JSON.stringify([...set]));
-    }
+    function saveSet(key, set) { localStorage.setItem(key, JSON.stringify([...set])); }
+    function recKey(word) { return REC_PFX + word.replace(/[^a-zA-Z0-9]/g, '_'); }
 
-    // migrate legacy single-key data → dad
+    /* migrate legacy single-key → dad */
     const legacy = localStorage.getItem('flashcard_known');
     if (legacy) {
-      const existing = loadSet(KEY_DAD);
-      try { JSON.parse(legacy).forEach(w => existing.add(w)); } catch {}
-      saveSet(KEY_DAD, existing);
+      const ex = loadSet(KEY_DAD);
+      try { JSON.parse(legacy).forEach(w => ex.add(w)); } catch {}
+      saveSet(KEY_DAD, ex);
       localStorage.removeItem('flashcard_known');
     }
 
     let dad = loadSet(KEY_DAD);
     let mum = loadSet(KEY_MUM);
-    let allWords = [];
-    let weeks = [];
-    let activeWeek = 0;
+    let allWords = [], weeks = [], activeWeek = 0;
 
+    /* ── Counters ── */
     function updateCounters() {
-      const dadTotal = allWords.filter(w => dad.has(w.word)).length;
-      const mumTotal = allWords.filter(w => mum.has(w.word)).length;
-      const total = allWords.length;
-      document.getElementById('counter-dad').textContent = `👨 爸爸共认识 ${dadTotal} / ${total}`;
-      document.getElementById('counter-mum').textContent = `👩 妈妈共认识 ${mumTotal} / ${total}`;
+      const dt = allWords.filter(w => dad.has(w.word)).length;
+      const mt = allWords.filter(w => mum.has(w.word)).length;
+      const t  = allWords.length;
+      document.getElementById('counter-dad').textContent = `👨 爸爸共认识 ${dt} / ${t}`;
+      document.getElementById('counter-mum').textContent = `👩 妈妈共认识 ${mt} / ${t}`;
     }
 
-    function weekLabel(weeksAgo) {
-      const d = new Date();
-      d.setDate(d.getDate() - weeksAgo * 7);
-      const month = d.getMonth() + 1;
-      const weekNum = Math.ceil(d.getDate() / 7);
-      return `${month}月第${weekNum}周`;
+    /* ── Tabs ── */
+    function weekLabel(ago) {
+      const d = new Date(); d.setDate(d.getDate() - ago * 7);
+      return `${d.getMonth()+1}月第${Math.ceil(d.getDate()/7)}周`;
     }
-
     function renderTabs() {
-      document.getElementById('week-tabs').innerHTML = weeks.map((words, i) => {
-        const d = words.filter(w => dad.has(w.word)).length;
-        const m = words.filter(w => mum.has(w.word)).length;
-        const n = words.length;
-        return `
-        <button class="week-tab${i === activeWeek ? ' active' : ''}"
-                onclick="switchWeek(${i})">
+      document.getElementById('week-tabs').innerHTML = weeks.map((ws, i) => {
+        const d = ws.filter(w => dad.has(w.word)).length;
+        const m = ws.filter(w => mum.has(w.word)).length;
+        const n = ws.length;
+        return `<button class="week-tab${i===activeWeek?' active':''}" onclick="switchWeek(${i})">
           ${weekLabel(i)}<br>
           <span style="font-size:12px;font-weight:600;opacity:0.85;">👨${d}/${n} · 👩${m}/${n}</span>
         </button>`;
       }).join('');
     }
 
+    /* ── Cards ── */
     function renderCards() {
-      const words = weeks[activeWeek] || [];
-      // global index offset so IDs are unique across weeks
+      const words  = weeks[activeWeek] || [];
       const offset = activeWeek * WEEK_SIZE;
       document.getElementById('cards-row').innerHTML = words.map((w, i) => {
-        const idx = offset + i;
+        const idx    = offset + i;
         const dKnown = dad.has(w.word);
         const mKnown = mum.has(w.word);
-        const wrapClass = ['card-wrap', dKnown ? 'dad' : '', mKnown ? 'mum' : ''].filter(Boolean).join(' ');
+        const hasRec = !!localStorage.getItem(recKey(w.word));
+        const wrapCls = ['card-wrap', dKnown?'dad':'', mKnown?'mum':''].filter(Boolean).join(' ');
         return `
-        <div class="${wrapClass}" id="wrap-${idx}">
+        <div class="${wrapCls}" id="wrap-${idx}">
           <div class="scene" onclick="flip(this)">
             <div class="flip-card">
               <div class="face front">
                 <div class="word-en">${w.word}</div>
-                <button class="play-btn" onclick="speak('${w.word}', event)">🔊 发音</button>
+                <div class="action-row">
+                  <button class="play-btn${hasRec?' has-rec':''}" id="play-${idx}"
+                          onclick="speak('${w.word}',${idx},event)">🔊 发音</button>
+                  <button class="rec-btn${hasRec?' recorded':''}" id="rec-${idx}"
+                          onclick="toggleRecord('${w.word}',${idx},event)">
+                    ${hasRec?'🎙️ 已录音':'🎙️ 录音'}
+                  </button>
+                </div>
               </div>
               <div class="face back">
                 <div class="word-cn">${w.word_cn}</div>
@@ -283,13 +231,13 @@
             </div>
           </div>
           <div class="btn-row">
-            <button class="known-btn known-btn-dad${dKnown ? ' known' : ''}"
-                    onclick="toggle('${w.word}', 'dad', ${idx}, event)">
-              ${dKnown ? '✅ 爸爸认识' : '☐ 爸爸认识'}
+            <button class="known-btn known-btn-dad${dKnown?' known':''}"
+                    onclick="toggle('${w.word}','dad',${idx},event)">
+              ${dKnown?'✅ 爸爸认识':'☐ 爸爸认识'}
             </button>
-            <button class="known-btn known-btn-mum${mKnown ? ' known' : ''}"
-                    onclick="toggle('${w.word}', 'mum', ${idx}, event)">
-              ${mKnown ? '✅ 妈妈认识' : '☐ 妈妈认识'}
+            <button class="known-btn known-btn-mum${mKnown?' known':''}"
+                    onclick="toggle('${w.word}','mum',${idx},event)">
+              ${mKnown?'✅ 妈妈认识':'☐ 妈妈认识'}
             </button>
           </div>
         </div>`;
@@ -297,18 +245,15 @@
       updateCounters();
     }
 
-    function switchWeek(i) {
-      activeWeek = i;
-      renderTabs();
-      renderCards();
-    }
+    function switchWeek(i) { activeWeek = i; renderTabs(); renderCards(); }
 
+    /* ── Known toggle ── */
     function toggle(word, who, idx, event) {
       event.stopPropagation();
-      const wrap = document.getElementById('wrap-' + idx);
-      const set  = who === 'dad' ? dad : mum;
-      const key  = who === 'dad' ? KEY_DAD : KEY_MUM;
-      const btn  = wrap.querySelector('.known-btn-' + who);
+      const wrap  = document.getElementById('wrap-' + idx);
+      const set   = who === 'dad' ? dad : mum;
+      const key   = who === 'dad' ? KEY_DAD : KEY_MUM;
+      const btn   = wrap.querySelector('.known-btn-' + who);
       const label = who === 'dad' ? '爸爸认识' : '妈妈认识';
       if (set.has(word)) {
         set.delete(word); btn.classList.remove('known');
@@ -317,12 +262,14 @@
         set.add(word); btn.classList.add('known');
         btn.textContent = '✅ ' + label; wrap.classList.add(who);
       }
-      saveSet(key, set);
-      updateCounters();
+      saveSet(key, set); updateCounters(); renderTabs();
     }
 
-    function speak(word, event) {
+    /* ── Speak: recorded audio first, TTS fallback ── */
+    function speak(word, idx, event) {
       event.stopPropagation();
+      const stored = localStorage.getItem(recKey(word));
+      if (stored) { new Audio(stored).play().catch(() => {}); return; }
       speechSynthesis.cancel();
       const utter = new SpeechSynthesisUtterance(word);
       utter.lang = 'en-AU';
@@ -334,22 +281,64 @@
         if (voice) utter.voice = voice;
         speechSynthesis.speak(utter);
       }
-      if (speechSynthesis.getVoices().length) { doSpeak(); }
-      else { speechSynthesis.onvoiceschanged = () => { speechSynthesis.onvoiceschanged = null; doSpeak(); }; }
+      if (speechSynthesis.getVoices().length) doSpeak();
+      else speechSynthesis.onvoiceschanged = () => { speechSynthesis.onvoiceschanged = null; doSpeak(); };
     }
 
-    function flip(scene) {
-      scene.querySelector('.flip-card').classList.toggle('flipped');
+    /* ── Record ── */
+    let activeRecorder = null;
+
+    function toggleRecord(word, idx, event) {
+      event.stopPropagation();
+      const recBtn  = document.getElementById('rec-' + idx);
+      const playBtn = document.getElementById('play-' + idx);
+
+      if (activeRecorder) {
+        activeRecorder.stop();
+        activeRecorder = null;
+        return;
+      }
+
+      navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+        const chunks = [];
+        const mr = new MediaRecorder(stream);
+        activeRecorder = mr;
+
+        recBtn.textContent = '⏹ 停止';
+        recBtn.classList.add('recording');
+        recBtn.classList.remove('recorded');
+
+        mr.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+        mr.onstop = () => {
+          stream.getTracks().forEach(t => t.stop());
+          activeRecorder = null;
+          const blob = new Blob(chunks, { type: mr.mimeType });
+          const reader = new FileReader();
+          reader.onload = () => {
+            localStorage.setItem(recKey(word), reader.result);
+            recBtn.textContent  = '🎙️ 已录音';
+            recBtn.classList.remove('recording');
+            recBtn.classList.add('recorded');
+            playBtn.classList.add('has-rec');
+          };
+          reader.readAsDataURL(blob);
+        };
+
+        mr.start();
+        // auto-stop after 6 seconds
+        setTimeout(() => { if (mr.state === 'recording') mr.stop(); }, 6000);
+      }).catch(() => {
+        recBtn.textContent = '🎙️ 录音';
+      });
     }
+
+    function flip(scene) { scene.querySelector('.flip-card').classList.toggle('flipped'); }
 
     fetch('words.json?t=' + Date.now())
       .then(r => r.json())
       .then(words => {
         allWords = words;
-        // chunk into groups of WEEK_SIZE
-        for (let i = 0; i < words.length; i += WEEK_SIZE) {
-          weeks.push(words.slice(i, i + WEEK_SIZE));
-        }
+        for (let i = 0; i < words.length; i += WEEK_SIZE) weeks.push(words.slice(i, i + WEEK_SIZE));
         renderTabs();
         renderCards();
       });
