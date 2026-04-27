@@ -212,7 +212,7 @@
             <div class="flip-card">
               <div class="face front">
                 <div class="word-en">${w.word}</div>
-                <button class="play-btn" onclick="speak('${w.audio||''}', event)">🔊 发音</button>
+                <button class="play-btn" onclick="speak('${w.word}', event)">🔊 发音</button>
                 <div class="tap-hint">点击卡片查看翻译 👆</div>
               </div>
               <div class="face back">
@@ -250,10 +250,22 @@
       updateCounter();
     }
 
-    function speak(audioUrl, event) {
+    function speak(word, event) {
       event.stopPropagation();
-      if (!audioUrl) return;
-      new Audio(audioUrl + '?v=1').play().catch(() => {});
+      speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(word);
+      utter.lang = 'en-AU';
+      function doSpeak() {
+        const voices = speechSynthesis.getVoices();
+        const voice = voices.find(v => v.name === 'Karen')
+                   || voices.find(v => v.lang === 'en-AU')
+                   || voices.find(v => v.lang.startsWith('en'));
+        if (voice) utter.voice = voice;
+        speechSynthesis.speak(utter);
+      }
+      // voices may load async on first call
+      if (speechSynthesis.getVoices().length) { doSpeak(); }
+      else { speechSynthesis.onvoiceschanged = () => { speechSynthesis.onvoiceschanged = null; doSpeak(); }; }
     }
 
     function flip(scene) {
