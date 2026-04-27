@@ -237,11 +237,19 @@
       document.getElementById('counter-mum').textContent = `👩 妈妈认识 ${mumCount} / ${n}`;
     }
 
+    function weekLabel(weeksAgo) {
+      const d = new Date();
+      d.setDate(d.getDate() - weeksAgo * 7);
+      const month = d.getMonth() + 1;
+      const weekNum = Math.ceil(d.getDate() / 7);
+      return `${month}月第${weekNum}周`;
+    }
+
     function renderTabs() {
       document.getElementById('week-tabs').innerHTML = weeks.map((_, i) => `
         <button class="week-tab${i === activeWeek ? ' active' : ''}"
                 onclick="switchWeek(${i})">
-          ${i === 0 ? '📌 本周' : `第 ${i + 1} 周`}
+          ${weekLabel(i)}
         </button>`).join('');
     }
 
