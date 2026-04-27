@@ -20,23 +20,25 @@
 
     header {
       display: flex;
-      align-items: baseline;
+      align-items: center;
       gap: 16px;
       margin-bottom: 32px;
       padding-bottom: 16px;
       border-bottom: 1px solid #1e3a5f;
+      flex-wrap: wrap;
     }
 
     header h1 { font-size: 28px; font-weight: 700; color: #f59e0b; }
     header p   { font-size: 14px; color: #546e7a; }
 
-    .known-counter {
+    .counters {
       margin-left: auto;
-      font-size: 15px;
-      font-weight: 700;
-      color: #2dd4bf;
-      white-space: nowrap;
+      display: flex;
+      gap: 16px;
+      flex-shrink: 0;
     }
+    .counter-dad { font-size: 15px; font-weight: 700; color: #38bdf8; white-space: nowrap; }
+    .counter-mum { font-size: 15px; font-weight: 700; color: #f472b6; white-space: nowrap; }
 
     /* ── grid ── */
     .cards-row {
@@ -83,25 +85,13 @@
       transition: border-color 0.3s, box-shadow 0.3s;
     }
 
-    .front {
-      background: #112240;
-      border: 1px solid #1e3a5f;
-    }
+    .front { background: #112240; border: 1px solid #1e3a5f; }
+    .back  { background: #0d2745; border: 1px solid #2e5f9e; transform: rotateY(180deg); }
 
-    .back {
-      background: #0d2745;
-      border: 1px solid #2e5f9e;
-      transform: rotateY(180deg);
-    }
-
-    /* known glow */
-    .card-wrap.known .front {
-      border-color: #22c55e;
-      box-shadow: 0 0 16px rgba(34,197,94,0.25);
-    }
-    .card-wrap.known .back {
-      border-color: #22c55e;
-    }
+    /* card glow by who knows it */
+    .card-wrap.dad .front         { border-color: #38bdf8; box-shadow: 0 0 14px rgba(56,189,248,0.22); }
+    .card-wrap.mum .front         { border-color: #f472b6; box-shadow: 0 0 14px rgba(244,114,182,0.22); }
+    .card-wrap.dad.mum .front     { border-color: #22c55e; box-shadow: 0 0 18px rgba(34,197,94,0.30); }
 
     .word-en {
       font-size: 40px;
@@ -127,31 +117,32 @@
     .play-btn:active { background: #2e5f9e; }
 
     .tap-hint { font-size: 13px; color: #546e7a; margin-top: 10px; }
-
-    .word-cn { font-size: 28px; font-weight: 700; color: #2dd4bf; margin-bottom: 10px; }
+    .word-cn  { font-size: 28px; font-weight: 700; color: #2dd4bf; margin-bottom: 10px; }
     .word-desc { font-size: 14px; color: #90caf9; line-height: 1.8; }
     .flip-hint-back { margin-top: 14px; font-size: 12px; color: #2e4a6a; }
 
-    /* ── Known button ── */
+    /* ── Known buttons row ── */
+    .btn-row { display: flex; gap: 8px; }
+
     .known-btn {
-      width: 100%;
-      padding: 10px;
+      flex: 1;
+      padding: 10px 6px;
       border-radius: 14px;
       border: 2px solid #1e3a5f;
       background: #112240;
       color: #546e7a;
-      font-size: 16px;
+      font-size: 15px;
       font-family: inherit;
       font-weight: 700;
       cursor: pointer;
       transition: all 0.2s;
     }
-    .known-btn:hover { border-color: #22c55e; color: #22c55e; }
-    .known-btn.known {
-      background: #052e16;
-      border-color: #22c55e;
-      color: #22c55e;
-    }
+
+    .known-btn-dad:hover       { border-color: #38bdf8; color: #38bdf8; }
+    .known-btn-dad.known       { background: #0a1e30; border-color: #38bdf8; color: #38bdf8; }
+
+    .known-btn-mum:hover       { border-color: #f472b6; color: #f472b6; }
+    .known-btn-mum.known       { background: #2d0a1a; border-color: #f472b6; color: #f472b6; }
 
     /* ── Back button ── */
     .back-btn {
@@ -176,7 +167,10 @@
   <header>
     <h1>📖 英语单词卡</h1>
     <p>点击卡片查看翻译和解释</p>
-    <span class="known-counter" id="counter"></span>
+    <div class="counters">
+      <span class="counter-dad" id="counter-dad"></span>
+      <span class="counter-mum" id="counter-mum"></span>
+    </div>
   </header>
 
   <div class="cards-row" id="cards-row"></div>
@@ -184,30 +178,43 @@
   <a class="back-btn" href="index.html">← 返回</a>
 
   <script>
-    const STORAGE_KEY = 'flashcard_known';
+    const KEY_DAD = 'flashcard_known_dad';
+    const KEY_MUM = 'flashcard_known_mum';
 
-    function loadKnown() {
-      try { return new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')); }
+    function loadSet(key) {
+      try { return new Set(JSON.parse(localStorage.getItem(key) || '[]')); }
       catch { return new Set(); }
     }
-
-    function saveKnown(set) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify([...set]));
+    function saveSet(key, set) {
+      localStorage.setItem(key, JSON.stringify([...set]));
     }
 
-    let known = loadKnown();
-    let totalWords = 0;
+    // migrate old single-key data → dad's record
+    const legacy = localStorage.getItem('flashcard_known');
+    if (legacy) {
+      const existing = loadSet(KEY_DAD);
+      try { JSON.parse(legacy).forEach(w => existing.add(w)); } catch {}
+      saveSet(KEY_DAD, existing);
+      localStorage.removeItem('flashcard_known');
+    }
 
-    function updateCounter() {
-      document.getElementById('counter').textContent = `已认识 ${known.size} / ${totalWords} 个单词 ✨`;
+    let dad = loadSet(KEY_DAD);
+    let mum = loadSet(KEY_MUM);
+    let total = 0;
+
+    function updateCounters() {
+      document.getElementById('counter-dad').textContent = `👨 爸爸认识 ${dad.size} / ${total}`;
+      document.getElementById('counter-mum').textContent = `👩 妈妈认识 ${mum.size} / ${total}`;
     }
 
     function render(words) {
-      totalWords = words.length;
-      document.getElementById('cards-row').innerHTML = words.map(w => {
-        const isKnown = known.has(w.word);
+      total = words.length;
+      document.getElementById('cards-row').innerHTML = words.map((w, i) => {
+        const dKnown = dad.has(w.word);
+        const mKnown = mum.has(w.word);
+        const wrapClass = ['card-wrap', dKnown ? 'dad' : '', mKnown ? 'mum' : ''].filter(Boolean).join(' ');
         return `
-        <div class="card-wrap${isKnown ? ' known' : ''}" id="wrap-${w.word}">
+        <div class="${wrapClass}" id="wrap-${i}">
           <div class="scene" onclick="flip(this)">
             <div class="flip-card">
               <div class="face front">
@@ -222,32 +229,42 @@
               </div>
             </div>
           </div>
-          <button class="known-btn${isKnown ? ' known' : ''}"
-                  onclick="toggleKnown('${w.word}', event)">
-            ${isKnown ? '✅ 已认识' : '☐ 我认识'}
-          </button>
+          <div class="btn-row">
+            <button class="known-btn known-btn-dad${dKnown ? ' known' : ''}"
+                    onclick="toggle('${w.word}', 'dad', ${i}, event)">
+              ${dKnown ? '✅ 爸爸认识' : '☐ 爸爸认识'}
+            </button>
+            <button class="known-btn known-btn-mum${mKnown ? ' known' : ''}"
+                    onclick="toggle('${w.word}', 'mum', ${i}, event)">
+              ${mKnown ? '✅ 妈妈认识' : '☐ 妈妈认识'}
+            </button>
+          </div>
         </div>`;
       }).join('');
-      updateCounter();
+      updateCounters();
     }
 
-    function toggleKnown(word, event) {
+    function toggle(word, who, idx, event) {
       event.stopPropagation();
-      const wrap = document.getElementById('wrap-' + word);
-      const btn  = wrap.querySelector('.known-btn');
-      if (known.has(word)) {
-        known.delete(word);
-        wrap.classList.remove('known');
+      const wrap = document.getElementById('wrap-' + idx);
+      const set  = who === 'dad' ? dad : mum;
+      const key  = who === 'dad' ? KEY_DAD : KEY_MUM;
+      const btn  = wrap.querySelector('.known-btn-' + who);
+      const label = who === 'dad' ? '爸爸认识' : '妈妈认识';
+
+      if (set.has(word)) {
+        set.delete(word);
         btn.classList.remove('known');
-        btn.textContent = '☐ 我认识';
+        btn.textContent = '☐ ' + label;
+        wrap.classList.remove(who);
       } else {
-        known.add(word);
-        wrap.classList.add('known');
+        set.add(word);
         btn.classList.add('known');
-        btn.textContent = '✅ 已认识';
+        btn.textContent = '✅ ' + label;
+        wrap.classList.add(who);
       }
-      saveKnown(known);
-      updateCounter();
+      saveSet(key, set);
+      updateCounters();
     }
 
     function speak(word, event) {
@@ -263,7 +280,6 @@
         if (voice) utter.voice = voice;
         speechSynthesis.speak(utter);
       }
-      // voices may load async on first call
       if (speechSynthesis.getVoices().length) { doSpeak(); }
       else { speechSynthesis.onvoiceschanged = () => { speechSynthesis.onvoiceschanged = null; doSpeak(); }; }
     }
