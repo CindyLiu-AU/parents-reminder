@@ -104,9 +104,15 @@
     .rec-btn.recorded  { background: #14532d; border-color: #22c55e; color: #86efac; }
     @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.6; } }
 
-    /* listen button */
+    /* listen / clear buttons */
     .listen-btn { opacity: 0.35; pointer-events: none; }
     .listen-btn.has-rec { opacity: 1; pointer-events: auto; background: #1a3a1a; border-color: #22c55e; color: #86efac; }
+
+    .clear-btn { opacity: 0.35; pointer-events: none; }
+    .clear-btn.has-rec { opacity: 1; pointer-events: auto; background: #2d0a0a; border-color: #ef4444; color: #fca5a5; }
+
+    /* 2×2 grid for action buttons */
+    .action-row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 4px; }
 
     .word-cn   { font-size: 26px; font-weight: 700; color: #2dd4bf; margin-bottom: 10px; }
     .word-desc { font-size: 13px; color: #90caf9; line-height: 1.8; }
@@ -226,6 +232,8 @@
                   </button>
                   <button class="rec-btn listen-btn${hasRec?' has-rec':''}" id="listen-${idx}"
                           onclick="playRecording('${w.word}',event)">▶️ 听录音</button>
+                  <button class="rec-btn clear-btn${hasRec?' has-rec':''}" id="clear-${idx}"
+                          onclick="clearRecording('${w.word}',${idx},event)">🗑️ 清除录音</button>
                 </div>
               </div>
               <div class="face back">
@@ -297,6 +305,16 @@
       if (stored) new Audio(stored).play().catch(() => {});
     }
 
+    /* ── Clear recording ── */
+    function clearRecording(word, idx, event) {
+      event.stopPropagation();
+      localStorage.removeItem(recKey(word));
+      document.getElementById('rec-' + idx).textContent = '🎙️ 录音';
+      document.getElementById('rec-' + idx).classList.remove('recorded');
+      document.getElementById('listen-' + idx).classList.remove('has-rec');
+      document.getElementById('clear-' + idx).classList.remove('has-rec');
+    }
+
     /* ── Record ── */
     let activeRecorder = null;
 
@@ -332,6 +350,8 @@
             recBtn.classList.add('recorded');
             const listenBtn = document.getElementById('listen-' + idx);
             if (listenBtn) listenBtn.classList.add('has-rec');
+            const clearBtn = document.getElementById('clear-' + idx);
+            if (clearBtn) clearBtn.classList.add('has-rec');
           };
           reader.readAsDataURL(blob);
         };
