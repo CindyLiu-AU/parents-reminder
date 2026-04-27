@@ -233,44 +233,6 @@
       z-index: 100;
     }
 
-    #refresh-btn {
-      position: fixed;
-      bottom: 36px;
-      left: 20px;
-      font-size: 11px;
-      color: #546e7a;
-      background: none;
-      border: 1px solid #1e3a5f;
-      border-radius: 12px;
-      padding: 4px 12px;
-      cursor: pointer;
-      z-index: 100;
-    }
-
-    #fetch-time {
-      position: fixed;
-      bottom: 10px;
-      left: 20px;
-      font-size: 10px;
-      color: #2e4a6a;
-      letter-spacing: 0.3px;
-      z-index: 100;
-    }
-
-    #dev-btn {
-      position: fixed;
-      bottom: 70px;
-      left: 20px;
-      font-size: 11px;
-      color: #546e7a;
-      background: none;
-      border: 1px solid #1e3a5f;
-      border-radius: 12px;
-      padding: 4px 12px;
-      cursor: pointer;
-      z-index: 100;
-      text-decoration: none;
-    }
 
     /* ── Notice list ── */
     #notice-list {
@@ -336,9 +298,6 @@
   <a href="apps.html" id="apps-btn" onclick="event.stopPropagation()">📱</a>
   <a href="spending.html" id="spending-btn" onclick="event.stopPropagation()">🛒</a>
   <a href="reminders.html" id="reminders-btn" onclick="event.stopPropagation()">📋</a>
-  <button id="refresh-btn" onclick="manualRefresh()">⟳ 刷新</button>
-  <div id="fetch-time"></div>
-  <a id="dev-btn" href="dev.html" onclick="event.stopPropagation()">🛠 dev</a>
 
   <script>
     // ── Weather code → emoji + description ───────────────────
