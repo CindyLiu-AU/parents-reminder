@@ -203,7 +203,7 @@
   <script>
     const KEY_DAD = 'flashcard_known_dad';
     const KEY_MUM = 'flashcard_known_mum';
-    const WEEK_SIZE = 6;
+    const WEEK_SIZE = 3;
 
     function loadSet(key) {
       try { return new Set(JSON.parse(localStorage.getItem(key) || '[]')); }
@@ -229,12 +229,11 @@
     let activeWeek = 0;
 
     function updateCounters() {
-      const weekWords = weeks[activeWeek] || [];
-      const dadCount = weekWords.filter(w => dad.has(w.word)).length;
-      const mumCount = weekWords.filter(w => mum.has(w.word)).length;
-      const n = weekWords.length;
-      document.getElementById('counter-dad').textContent = `👨 爸爸认识 ${dadCount} / ${n}`;
-      document.getElementById('counter-mum').textContent = `👩 妈妈认识 ${mumCount} / ${n}`;
+      const dadTotal = allWords.filter(w => dad.has(w.word)).length;
+      const mumTotal = allWords.filter(w => mum.has(w.word)).length;
+      const total = allWords.length;
+      document.getElementById('counter-dad').textContent = `👨 爸爸共认识 ${dadTotal} / ${total}`;
+      document.getElementById('counter-mum').textContent = `👩 妈妈共认识 ${mumTotal} / ${total}`;
     }
 
     function weekLabel(weeksAgo) {
@@ -246,11 +245,17 @@
     }
 
     function renderTabs() {
-      document.getElementById('week-tabs').innerHTML = weeks.map((_, i) => `
+      document.getElementById('week-tabs').innerHTML = weeks.map((words, i) => {
+        const d = words.filter(w => dad.has(w.word)).length;
+        const m = words.filter(w => mum.has(w.word)).length;
+        const n = words.length;
+        return `
         <button class="week-tab${i === activeWeek ? ' active' : ''}"
                 onclick="switchWeek(${i})">
-          ${weekLabel(i)}
-        </button>`).join('');
+          ${weekLabel(i)}<br>
+          <span style="font-size:12px;font-weight:600;opacity:0.85;">👨${d}/${n} · 👩${m}/${n}</span>
+        </button>`;
+      }).join('');
     }
 
     function renderCards() {
