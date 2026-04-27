@@ -587,13 +587,13 @@
       const h = p.hour;
       const m = parseInt(p.minute, 10);
       const day = p.weekday;
-      const isWedNight = day === '星期三' && h >= 20;
+      const isWedNight = day === '星期三' && h >= 19;
       const isThuMorning = day === '星期四' && (h < 7 || (h === 7 && m < 30));
       if (!isWedNight && !isThuMorning) return null;
       return {
         type: 'custom', icon: '🗑️', label: '垃圾桶提醒',
         message: isWedNight
-          ? '今晚记得把垃圾桶推到路边！🗑️<br>明早垃圾车会来收'
+          ? '今晚 7 点记得把垃圾桶推到路边！🗑️<br>明早垃圾车会来收'
           : '今早 7:30 前记得把垃圾桶推到路边！🗑️'
       };
     }

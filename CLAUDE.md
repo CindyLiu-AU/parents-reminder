@@ -31,7 +31,7 @@ Always-on display for Cindy's parents (Xuecheng Liu & Chao Chen) showing reminde
 
 ## Aliases
 - `^reminder` — work within this project context
-- `^wordlist` — add a new English word to words.json for afternoon rotation
+- `^wordlist` — add a new English word to words.json for afternoon rotation; always prepend (insert at index 0), so newest words appear first
 - `going to work` — add the TTS work day notice template to history.json; ask for date and time if not provided
 - `push bins out` — add the bin night notice template to history.json; ask for date if not provided (skip if it's a Wednesday — already auto-hardcoded)
 
@@ -102,7 +102,7 @@ Each notice card shows a coloured pill next to the title:
 - 🟣 后天 / X天后 (purple)
 
 ## Recurring Logic (hardcoded in JS, no JSON needed)
-- **Bin night:** Every Wednesday 8pm → Thursday 7:30am — 🗑️ "把垃圾桶推到路边"
+- **Bin night:** Every Wednesday 7pm → Thursday 7:30am — 🗑️ "把垃圾桶推到路边"
 
 ## Spending Page (spending.html)
 - Reads from `spending.json`
