@@ -225,7 +225,7 @@
               <div class="face front">
                 <div class="word-en">${w.word}</div>
                 <div class="action-row">
-                  <button class="play-btn" onclick="speak('${w.word}',event)">🔊 发音</button>
+                  <button class="play-btn" onclick="speak('${w.audio||''}','${w.word}',event)">🔊 发音</button>
                   <button class="rec-btn${hasRec?' recorded':''}" id="rec-${idx}"
                           onclick="toggleRecord('${w.word}',${idx},event)">
                     ${hasRec?'🎙️ 已录音':'🎙️ 录音'}
@@ -278,24 +278,10 @@
       saveSet(key, set); updateCounters(); renderTabs();
     }
 
-    /* ── Speak: recorded audio if available, else Karen TTS ── */
-    function speak(word, event) {
+    /* ── Speak: audio file (Karen voice, pre-generated) ── */
+    function speak(audioPath, word, event) {
       event.stopPropagation();
-      const stored = localStorage.getItem(recKey(word));
-      if (stored) { new Audio(stored).play().catch(() => {}); return; }
-      speechSynthesis.cancel();
-      const utter = new SpeechSynthesisUtterance(word);
-      utter.lang = 'en-AU';
-      function doSpeak() {
-        const voices = speechSynthesis.getVoices();
-        const voice = voices.find(v => v.name === 'Karen')
-                   || voices.find(v => v.lang === 'en-AU')
-                   || voices.find(v => v.lang.startsWith('en'));
-        if (voice) utter.voice = voice;
-        speechSynthesis.speak(utter);
-      }
-      if (speechSynthesis.getVoices().length) doSpeak();
-      else speechSynthesis.onvoiceschanged = () => { speechSynthesis.onvoiceschanged = null; doSpeak(); };
+      if (audioPath) { new Audio(audioPath + '?v=1').play().catch(() => {}); return; }
     }
 
     /* ── Play recording ── */
