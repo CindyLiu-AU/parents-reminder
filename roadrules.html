@@ -147,6 +147,33 @@
 
     .sidebar-icon { font-size: 17px; line-height: 1; }
 
+    .sidebar-group {
+      cursor: pointer;
+      justify-content: space-between;
+      user-select: none;
+    }
+    .group-chevron { font-size: 13px; color: #546e7a; transition: transform 0.3s; margin-left: auto; }
+    .group-chevron.open { transform: rotate(180deg); }
+
+    .sidebar-sub { overflow: hidden; max-height: 0; transition: max-height 0.35s ease; }
+    .sidebar-sub.open { max-height: 300px; }
+
+    .sidebar-subitem {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px 8px 30px;
+      text-decoration: none;
+      color: #546e7a;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+      border-left: 3px solid transparent;
+      transition: color 0.2s, background 0.2s, border-color 0.2s;
+    }
+    .sidebar-subitem:hover { color: #90caf9; background: #0d2137; }
+    .sidebar-subitem.active { color: #f59e0b; border-left-color: #f59e0b; background: #0d2137; }
+
     .main-content { flex: 1; min-width: 0; margin-left: 190px; }
 
     /* Video section */
@@ -246,7 +273,17 @@
     <nav class="sidebar" id="sidebar">
       <a class="sidebar-item active" href="#videos"><span class="sidebar-icon">🎬</span>学习视频</a>
       <a class="sidebar-item" href="#quizlet"><span class="sidebar-icon">🃏</span>道路标识练习</a>
-      <a class="sidebar-item" href="#legal"><span class="sidebar-icon">📚</span>驾驶知识</a>
+      <div class="sidebar-item sidebar-group" onclick="toggleGroup(this)">
+        <span class="sidebar-icon">📚</span>驾驶知识<span class="group-chevron open">▾</span>
+      </div>
+      <div class="sidebar-sub open">
+        <a class="sidebar-subitem" href="#legal">⚖️ 法律要求</a>
+        <a class="sidebar-subitem" href="#pathway">🗺️ 驾照流程</a>
+        <a class="sidebar-subitem" href="#supervisor">👤 陪练要求</a>
+        <a class="sidebar-subitem" href="#precheck">🔍 出发前检查</a>
+        <a class="sidebar-subitem" href="#position">🪑 驾驶姿势</a>
+        <a class="sidebar-subitem" href="#vocab">📖 重要词汇</a>
+      </div>
       <div style="margin: 6px 12px; border-top: 1px solid #1e3a5f;"></div>
       <a class="sidebar-item" href="#toc"><span class="sidebar-icon">📑</span>目录</a>
       <a class="sidebar-item" href="#roadrules-pdf"><span class="sidebar-icon">📄</span>道路规则手册</a>
@@ -1052,12 +1089,23 @@
       };
       attempt(15);
     }
+    function toggleGroup(el) {
+      const sub = el.nextElementSibling;
+      const chevron = el.querySelector('.group-chevron');
+      const isOpen = sub.classList.toggle('open');
+      chevron.classList.toggle('open', isOpen);
+    }
+
     // Sidebar active highlight
     const _observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
+          const id = '#' + entry.target.id;
           document.querySelectorAll('.sidebar-item').forEach(item => {
-            item.classList.toggle('active', item.getAttribute('href') === '#' + entry.target.id);
+            item.classList.toggle('active', item.getAttribute('href') === id);
+          });
+          document.querySelectorAll('.sidebar-subitem').forEach(item => {
+            item.classList.toggle('active', item.getAttribute('href') === id);
           });
         }
       });
