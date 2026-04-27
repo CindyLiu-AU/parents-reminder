@@ -22,7 +22,7 @@
       display: flex;
       align-items: center;
       gap: 16px;
-      margin-bottom: 32px;
+      margin-bottom: 20px;
       padding-bottom: 16px;
       border-bottom: 1px solid #1e3a5f;
       flex-wrap: wrap;
@@ -39,6 +39,29 @@
     }
     .counter-dad { font-size: 15px; font-weight: 700; color: #38bdf8; white-space: nowrap; }
     .counter-mum { font-size: 15px; font-weight: 700; color: #f472b6; white-space: nowrap; }
+
+    /* ── Week tabs ── */
+    .week-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .week-tab {
+      padding: 10px 22px;
+      border-radius: 20px;
+      border: 1px solid #1e3a5f;
+      background: #112240;
+      color: #7b9eb5;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .week-tab:hover { color: #90caf9; background: #0d2137; }
+    .week-tab.active { background: #f59e0b; border-color: #f59e0b; color: #1a1000; }
 
     /* ── grid ── */
     .cards-row {
@@ -88,10 +111,10 @@
     .front { background: #112240; border: 1px solid #1e3a5f; }
     .back  { background: #0d2745; border: 1px solid #2e5f9e; transform: rotateY(180deg); }
 
-    /* card glow by who knows it */
-    .card-wrap.dad .front         { border-color: #38bdf8; box-shadow: 0 0 14px rgba(56,189,248,0.22); }
-    .card-wrap.mum .front         { border-color: #f472b6; box-shadow: 0 0 14px rgba(244,114,182,0.22); }
-    .card-wrap.dad.mum .front     { border-color: #22c55e; box-shadow: 0 0 18px rgba(34,197,94,0.30); }
+    /* card glow */
+    .card-wrap.dad .front     { border-color: #38bdf8; box-shadow: 0 0 14px rgba(56,189,248,0.22); }
+    .card-wrap.mum .front     { border-color: #f472b6; box-shadow: 0 0 14px rgba(244,114,182,0.22); }
+    .card-wrap.dad.mum .front { border-color: #22c55e; box-shadow: 0 0 18px rgba(34,197,94,0.30); }
 
     .word-en {
       font-size: 40px;
@@ -116,12 +139,11 @@
     }
     .play-btn:active { background: #2e5f9e; }
 
-    .tap-hint { font-size: 13px; color: #546e7a; margin-top: 10px; }
-    .word-cn  { font-size: 28px; font-weight: 700; color: #2dd4bf; margin-bottom: 10px; }
+    .word-cn   { font-size: 28px; font-weight: 700; color: #2dd4bf; margin-bottom: 10px; }
     .word-desc { font-size: 14px; color: #90caf9; line-height: 1.8; }
     .flip-hint-back { margin-top: 14px; font-size: 12px; color: #2e4a6a; }
 
-    /* ── Known buttons row ── */
+    /* ── Known buttons ── */
     .btn-row { display: flex; gap: 8px; }
 
     .known-btn {
@@ -138,11 +160,11 @@
       transition: all 0.2s;
     }
 
-    .known-btn-dad:hover       { border-color: #38bdf8; color: #38bdf8; }
-    .known-btn-dad.known       { background: #0a1e30; border-color: #38bdf8; color: #38bdf8; }
+    .known-btn-dad:hover { border-color: #38bdf8; color: #38bdf8; }
+    .known-btn-dad.known { background: #0a1e30; border-color: #38bdf8; color: #38bdf8; }
 
-    .known-btn-mum:hover       { border-color: #f472b6; color: #f472b6; }
-    .known-btn-mum.known       { background: #2d0a1a; border-color: #f472b6; color: #f472b6; }
+    .known-btn-mum:hover { border-color: #f472b6; color: #f472b6; }
+    .known-btn-mum.known { background: #2d0a1a; border-color: #f472b6; color: #f472b6; }
 
     /* ── Back button ── */
     .back-btn {
@@ -173,6 +195,7 @@
     </div>
   </header>
 
+  <div class="week-tabs" id="week-tabs"></div>
   <div class="cards-row" id="cards-row"></div>
 
   <a class="back-btn" href="index.html">← 返回</a>
@@ -180,6 +203,7 @@
   <script>
     const KEY_DAD = 'flashcard_known_dad';
     const KEY_MUM = 'flashcard_known_mum';
+    const WEEK_SIZE = 6;
 
     function loadSet(key) {
       try { return new Set(JSON.parse(localStorage.getItem(key) || '[]')); }
@@ -189,7 +213,7 @@
       localStorage.setItem(key, JSON.stringify([...set]));
     }
 
-    // migrate old single-key data → dad's record
+    // migrate legacy single-key data → dad
     const legacy = localStorage.getItem('flashcard_known');
     if (legacy) {
       const existing = loadSet(KEY_DAD);
@@ -200,21 +224,38 @@
 
     let dad = loadSet(KEY_DAD);
     let mum = loadSet(KEY_MUM);
-    let total = 0;
+    let allWords = [];
+    let weeks = [];
+    let activeWeek = 0;
 
     function updateCounters() {
-      document.getElementById('counter-dad').textContent = `👨 爸爸认识 ${dad.size} / ${total}`;
-      document.getElementById('counter-mum').textContent = `👩 妈妈认识 ${mum.size} / ${total}`;
+      const weekWords = weeks[activeWeek] || [];
+      const dadCount = weekWords.filter(w => dad.has(w.word)).length;
+      const mumCount = weekWords.filter(w => mum.has(w.word)).length;
+      const n = weekWords.length;
+      document.getElementById('counter-dad').textContent = `👨 爸爸认识 ${dadCount} / ${n}`;
+      document.getElementById('counter-mum').textContent = `👩 妈妈认识 ${mumCount} / ${n}`;
     }
 
-    function render(words) {
-      total = words.length;
+    function renderTabs() {
+      document.getElementById('week-tabs').innerHTML = weeks.map((_, i) => `
+        <button class="week-tab${i === activeWeek ? ' active' : ''}"
+                onclick="switchWeek(${i})">
+          ${i === 0 ? '📌 本周' : `第 ${i + 1} 周`}
+        </button>`).join('');
+    }
+
+    function renderCards() {
+      const words = weeks[activeWeek] || [];
+      // global index offset so IDs are unique across weeks
+      const offset = activeWeek * WEEK_SIZE;
       document.getElementById('cards-row').innerHTML = words.map((w, i) => {
+        const idx = offset + i;
         const dKnown = dad.has(w.word);
         const mKnown = mum.has(w.word);
         const wrapClass = ['card-wrap', dKnown ? 'dad' : '', mKnown ? 'mum' : ''].filter(Boolean).join(' ');
         return `
-        <div class="${wrapClass}" id="wrap-${i}">
+        <div class="${wrapClass}" id="wrap-${idx}">
           <div class="scene" onclick="flip(this)">
             <div class="flip-card">
               <div class="face front">
@@ -230,17 +271,23 @@
           </div>
           <div class="btn-row">
             <button class="known-btn known-btn-dad${dKnown ? ' known' : ''}"
-                    onclick="toggle('${w.word}', 'dad', ${i}, event)">
+                    onclick="toggle('${w.word}', 'dad', ${idx}, event)">
               ${dKnown ? '✅ 爸爸认识' : '☐ 爸爸认识'}
             </button>
             <button class="known-btn known-btn-mum${mKnown ? ' known' : ''}"
-                    onclick="toggle('${w.word}', 'mum', ${i}, event)">
+                    onclick="toggle('${w.word}', 'mum', ${idx}, event)">
               ${mKnown ? '✅ 妈妈认识' : '☐ 妈妈认识'}
             </button>
           </div>
         </div>`;
       }).join('');
       updateCounters();
+    }
+
+    function switchWeek(i) {
+      activeWeek = i;
+      renderTabs();
+      renderCards();
     }
 
     function toggle(word, who, idx, event) {
@@ -250,17 +297,12 @@
       const key  = who === 'dad' ? KEY_DAD : KEY_MUM;
       const btn  = wrap.querySelector('.known-btn-' + who);
       const label = who === 'dad' ? '爸爸认识' : '妈妈认识';
-
       if (set.has(word)) {
-        set.delete(word);
-        btn.classList.remove('known');
-        btn.textContent = '☐ ' + label;
-        wrap.classList.remove(who);
+        set.delete(word); btn.classList.remove('known');
+        btn.textContent = '☐ ' + label; wrap.classList.remove(who);
       } else {
-        set.add(word);
-        btn.classList.add('known');
-        btn.textContent = '✅ ' + label;
-        wrap.classList.add(who);
+        set.add(word); btn.classList.add('known');
+        btn.textContent = '✅ ' + label; wrap.classList.add(who);
       }
       saveSet(key, set);
       updateCounters();
@@ -289,7 +331,15 @@
 
     fetch('words.json?t=' + Date.now())
       .then(r => r.json())
-      .then(render);
+      .then(words => {
+        allWords = words;
+        // chunk into groups of WEEK_SIZE
+        for (let i = 0; i < words.length; i += WEEK_SIZE) {
+          weeks.push(words.slice(i, i + WEEK_SIZE));
+        }
+        renderTabs();
+        renderCards();
+      });
   </script>
 </body>
 </html>
