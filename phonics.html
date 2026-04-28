@@ -29,8 +29,8 @@
     .top-row {
       display: flex; align-items: center; gap: 12px; margin-bottom: 12px;
     }
-    .top-row h1 { font-size: 22px; font-weight: 800; color: #f59e0b; }
-    .top-row p  { font-size: 12px; color: #546e7a; }
+    .top-row h1 { font-size: 28px; font-weight: 800; color: #f59e0b; }
+    .top-row p  { font-size: 15px; color: #546e7a; }
 
     /* Progress */
     .prog-wrap { margin-left: auto; text-align: right; }
@@ -48,8 +48,8 @@
       background: #112240;
       color: #64748b;
       font-family: inherit;
-      font-size: 16px; font-weight: 700;
-      padding: 8px 18px;
+      font-size: 18px; font-weight: 700;
+      padding: 10px 22px;
       cursor: pointer;
       transition: all .2s;
     }
@@ -60,55 +60,54 @@
     .cards-wrap { padding: 20px; }
     .cards-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 14px;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
     }
 
     .ph-card {
-      border-radius: 16px;
-      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      border: 2px solid var(--border);
       background: var(--bg);
       overflow: hidden;
-      transition: transform .15s, box-shadow .15s;
     }
 
     /* Letter hero */
     .ph-hero {
-      padding: 18px 12px 12px;
+      padding: 28px 16px 18px;
       text-align: center;
       background: var(--hero);
-      border-bottom: 1px solid var(--border);
+      border-bottom: 2px solid var(--border);
     }
     .ph-letters {
-      font-size: 80px; font-weight: 900; line-height: 1;
+      font-size: 110px; font-weight: 900; line-height: 1;
       color: var(--accent);
-      text-shadow: 0 0 32px var(--glow);
-      letter-spacing: -1px;
+      text-shadow: 0 0 40px var(--glow);
+      letter-spacing: -2px;
       text-transform: lowercase;
     }
     .ph-ipa {
-      font-size: 19px; color: var(--accent);
-      opacity: .65; margin-top: 4px; font-family: serif; letter-spacing: .03em;
+      font-size: 24px; color: var(--accent);
+      opacity: .7; margin-top: 6px; font-family: serif; letter-spacing: .04em;
     }
 
     /* Body */
-    .ph-body { padding: 12px 14px 14px; }
+    .ph-body { padding: 18px 20px 20px; }
 
-    .ph-example { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-    .ph-emoji   { font-size: 28px; }
-    .ph-word    { font-size: 22px; color: #94a3b8; font-weight: 600; }
+    .ph-example { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+    .ph-emoji   { font-size: 36px; }
+    .ph-word    { font-size: 28px; color: #94a3b8; font-weight: 600; }
     .ph-word em { color: var(--accent); font-style: normal; }
 
     .ph-tip {
-      font-size: 14px; color: #546e7a; line-height: 1.6;
-      margin-bottom: 13px; min-height: 40px;
+      font-size: 17px; color: #64748b; line-height: 1.65;
+      margin-bottom: 16px; min-height: 48px;
     }
 
     /* Buttons */
-    .ph-btns { display: flex; gap: 6px; }
+    .ph-btns { display: flex; gap: 8px; }
     .ph-btn {
-      flex: 1; border: none; border-radius: 9px;
-      padding: 11px 4px; font-size: 18px; line-height: 1;
+      flex: 1; border: none; border-radius: 12px;
+      padding: 14px 4px; font-size: 22px; line-height: 1;
       cursor: pointer; font-family: inherit;
       background: #112240; color: #546e7a;
       transition: all .15s;
