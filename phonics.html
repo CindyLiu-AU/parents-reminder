@@ -247,16 +247,51 @@ function updateProgress() {
   document.getElementById('prog-fill').style.width  = (done / TOTAL * 100) + '%';
 }
 
-/* ── Audio playback ── */
-function playAudio(path, e) {
-  e && e.stopPropagation();
-  new Audio(path + '?v=1').play().catch(() => {});
+/* ── Web Audio API (no media session / no browser UI) ── */
+let _ctx = null;
+const _bufCache = {};
+
+async function _getCtx() {
+  if (!_ctx) _ctx = new (window.AudioContext || window.webkitAudioContext)();
+  if (_ctx.state === 'suspended') await _ctx.resume();
+  return _ctx;
 }
 
-function playRec(id, e) {
+async function _playBuf(buf) {
+  const ctx = await _getCtx();
+  const src = ctx.createBufferSource();
+  src.buffer = buf;
+  src.connect(ctx.destination);
+  src.start(0);
+}
+
+async function playAudio(path, e) {
+  e && e.stopPropagation();
+  try {
+    const ctx = await _getCtx();
+    if (!_bufCache[path]) {
+      const resp = await fetch(path + '?v=1');
+      const ab   = await resp.arrayBuffer();
+      _bufCache[path] = await ctx.decodeAudioData(ab);
+    }
+    await _playBuf(_bufCache[path]);
+  } catch(err) {}
+}
+
+async function playRec(id, e) {
   e && e.stopPropagation();
   const data = localStorage.getItem(recKey(id));
-  if (data) new Audio(data).play().catch(() => {});
+  if (!data) return;
+  try {
+    const ctx    = await _getCtx();
+    const b64    = data.split(',')[1];
+    const bin    = atob(b64);
+    const ab     = new ArrayBuffer(bin.length);
+    const view   = new Uint8Array(ab);
+    for (let i = 0; i < bin.length; i++) view[i] = bin.charCodeAt(i);
+    const buf    = await ctx.decodeAudioData(ab);
+    await _playBuf(buf);
+  } catch(err) {}
 }
 
 /* ── Recording ── */
