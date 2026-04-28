@@ -139,6 +139,13 @@
       border-radius: 24px; padding: 14px 28px; z-index: 100;
       font-weight: 700; box-shadow: 0 4px 16px rgba(245,158,11,0.4);
     }
+    .standby-btn {
+      position: fixed; bottom: 32px; left: 28px;
+      font-size: 15px; color: #7dd3fc; text-decoration: none;
+      background: #112240; border: 1px solid #1e3a5f;
+      border-radius: 24px; padding: 12px 22px; z-index: 100;
+      font-weight: 600;
+    }
   </style>
 </head>
 <body>
@@ -154,6 +161,7 @@
 
   <div class="week-tabs" id="week-tabs"></div>
   <div class="cards-row" id="cards-row"></div>
+  <a class="standby-btn" href="standby-admin.html">📋 备用队列</a>
   <a class="back-btn" href="index.html">← 返回</a>
 
   <script>
