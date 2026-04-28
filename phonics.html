@@ -8,6 +8,9 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
+    /* Always reserve scrollbar gutter so grid width never shifts when audio plays */
+    html { overflow-y: scroll; }
+
     body {
       background: #0a1628;
       color: #f0f4f8;
@@ -68,7 +71,6 @@
       overflow: hidden;
       transition: transform .15s, box-shadow .15s;
     }
-    .ph-card:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,.35); }
 
     /* Letter hero */
     .ph-hero {
