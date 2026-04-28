@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <title>自然拼读 Phonics</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #0a1628;
+      color: #f0f4f8;
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+      min-height: 100vh;
+      padding-bottom: 100px;
+    }
+
+    /* ── Sticky Header ── */
+    .top-bar {
+      position: sticky; top: 0; z-index: 50;
+      background: #0d1b2a;
+      border-bottom: 1px solid #1e3a5f;
+      padding: 16px 20px 12px;
+    }
+    .top-row {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 12px;
+    }
+    .top-row h1 { font-size: 22px; font-weight: 800; color: #f59e0b; }
+    .top-row p  { font-size: 12px; color: #546e7a; }
+
+    /* Progress */
+    .prog-wrap { margin-left: auto; text-align: right; }
+    .prog-label { font-size: 12px; color: #64748b; margin-bottom: 5px; }
+    .prog-bar   { width: 140px; height: 7px; background: #1e3a5f; border-radius: 4px; overflow: hidden; margin-left: auto; }
+    .prog-fill  { height: 100%; background: linear-gradient(90deg,#22c55e,#86efac); border-radius: 4px; transition: width .5s; }
+
+    /* Tabs */
+    .tabs { display: flex; gap: 6px; overflow-x: auto; }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab {
+      flex-shrink: 0;
+      border: 1.5px solid #1e3a5f;
+      border-radius: 20px;
+      background: #112240;
+      color: #64748b;
+      font-family: inherit;
+      font-size: 13px; font-weight: 700;
+      padding: 6px 16px;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .tab .cnt { font-size: 11px; opacity: .7; margin-left: 4px; }
+    .tab.active { color: #0a1628; border-color: transparent; }
+
+    /* ── Cards ── */
+    .cards-wrap { padding: 20px; }
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 14px;
+    }
+
+    .ph-card {
+      border-radius: 16px;
+      border: 1.5px solid var(--border);
+      background: var(--bg);
+      overflow: hidden;
+      transition: transform .15s, box-shadow .15s;
+    }
+    .ph-card:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,.35); }
+
+    /* Letter hero */
+    .ph-hero {
+      padding: 18px 12px 12px;
+      text-align: center;
+      background: var(--hero);
+      border-bottom: 1px solid var(--border);
+    }
+    .ph-letters {
+      font-size: 58px; font-weight: 900; line-height: 1;
+      color: var(--accent);
+      text-shadow: 0 0 32px var(--glow);
+      letter-spacing: -1px;
+    }
+    .ph-ipa {
+      font-size: 15px; color: var(--accent);
+      opacity: .65; margin-top: 3px; font-family: serif; letter-spacing: .03em;
+    }
+
+    /* Body */
+    .ph-body { padding: 12px 14px 14px; }
+
+    .ph-example { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .ph-emoji   { font-size: 22px; }
+    .ph-word    { font-size: 17px; color: #94a3b8; font-weight: 600; }
+    .ph-word em { color: var(--accent); font-style: normal; }
+
+    .ph-tip {
+      font-size: 11.5px; color: #546e7a; line-height: 1.55;
+      margin-bottom: 11px; min-height: 34px;
+    }
+
+    /* Buttons */
+    .ph-btns { display: flex; gap: 5px; }
+    .ph-btn {
+      flex: 1; border: none; border-radius: 9px;
+      padding: 9px 4px; font-size: 15px; line-height: 1;
+      cursor: pointer; font-family: inherit;
+      background: #112240; color: #546e7a;
+      transition: all .15s;
+    }
+    .ph-btn:hover:not(:disabled) { background: #1e3a5f; color: #94a3b8; }
+    .ph-btn.lit    { background: var(--accent); color: #000; }
+    .ph-btn.rec-on { background: #ef4444; color: #fff; animation: blink 1s infinite; }
+    .ph-btn:disabled { opacity: .25; cursor: default; }
+
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+    /* ── Back button ── */
+    .back-btn {
+      position: fixed; bottom: 28px; right: 20px;
+      text-decoration: none; font-weight: 700; font-size: 16px;
+      background: #f59e0b; color: #1a1000;
+      border-radius: 24px; padding: 12px 24px;
+      box-shadow: 0 4px 16px rgba(245,158,11,.4); z-index: 100;
+    }
+  </style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="top-row">
+    <div>
+      <h1>🔤 自然拼读</h1>
+      <p>Phonics · 学会每个字母的发音秘密</p>
+    </div>
+    <div class="prog-wrap">
+      <div class="prog-label" id="prog-label">已练习 0 / 47</div>
+      <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+  </div>
+  <div class="tabs" id="tabs"></div>
+</div>
+
+<div class="cards-wrap">
+  <div class="cards-grid" id="cards-grid"></div>
+</div>
+
+<a class="back-btn" href="flashcards.html">← 返回</a>
+
+<script>
+/* ── Data ── */
+const TABS = [
+  { id:'short',     label:'短元音', accent:'#f87171', bg:'rgba(248,113,113,.10)', hero:'rgba(248,113,113,.07)', border:'rgba(248,113,113,.22)', glow:'rgba(248,113,113,.5)' },
+  { id:'long',      label:'长元音', accent:'#fbbf24', bg:'rgba(251,191,36,.10)',  hero:'rgba(251,191,36,.07)',  border:'rgba(251,191,36,.22)',  glow:'rgba(251,191,36,.5)' },
+  { id:'consonant', label:'辅音',   accent:'#60a5fa', bg:'rgba(96,165,250,.10)',  hero:'rgba(96,165,250,.07)',  border:'rgba(96,165,250,.22)',  glow:'rgba(96,165,250,.5)' },
+  { id:'digraph',   label:'组合音', accent:'#34d399', bg:'rgba(52,211,153,.10)',  hero:'rgba(52,211,153,.07)',  border:'rgba(52,211,153,.22)',  glow:'rgba(52,211,153,.5)' },
+  { id:'blend',     label:'混合音', accent:'#c084fc', bg:'rgba(192,132,252,.10)', hero:'rgba(192,132,252,.07)', border:'rgba(192,132,252,.22)', glow:'rgba(192,132,252,.5)' },
+];
+
+const DATA = {
+  short: [
+    { id:'sv-a', letters:'A', ipa:'/æ/',  emoji:'🍎', word:'apple',    hl:'a',  tip:'嘴巴大大张开，发短短的"啊"，比中文更短促', audio:'audio/phonics/ph-sv-a.m4a' },
+    { id:'sv-e', letters:'E', ipa:'/ɛ/',  emoji:'🥚', word:'egg',      hl:'e',  tip:'嘴巴半开，嘴角微张，发短短的"欸"', audio:'audio/phonics/ph-sv-e.m4a' },
+    { id:'sv-i', letters:'I', ipa:'/ɪ/',  emoji:'🦋', word:'insect',   hl:'i',  tip:'嘴角微向两边，发比"衣"更短更轻的音', audio:'audio/phonics/ph-sv-i.m4a' },
+    { id:'sv-o', letters:'O', ipa:'/ɒ/',  emoji:'🍊', word:'orange',   hl:'o',  tip:'嘴唇圆圆张大，发短短的"哦"', audio:'audio/phonics/ph-sv-o.m4a' },
+    { id:'sv-u', letters:'U', ipa:'/ʌ/',  emoji:'☂️', word:'umbrella', hl:'u',  tip:'嘴巴微开，舌头放松，发短"啊"的感觉', audio:'audio/phonics/ph-sv-u.m4a' },
+  ],
+  long: [
+    { id:'lv-a', letters:'A', ipa:'/eɪ/', emoji:'🎂', word:'cake', hl:'a',  tip:'先发"欸"，嘴角上扬，连起来像"诶"', audio:'audio/phonics/ph-lv-a.m4a' },
+    { id:'lv-e', letters:'E', ipa:'/iː/', emoji:'🐝', word:'bee',  hl:'ee', tip:'嘴角向两侧拉开，发长长的"衣"', audio:'audio/phonics/ph-lv-e.m4a' },
+    { id:'lv-i', letters:'I', ipa:'/aɪ/', emoji:'🚲', word:'bike', hl:'i',  tip:'先张大嘴发"啊"，收嘴角发"衣"，像"爱"', audio:'audio/phonics/ph-lv-i.m4a' },
+    { id:'lv-o', letters:'O', ipa:'/oʊ/', emoji:'⛵', word:'boat', hl:'oa', tip:'嘴唇从圆变小，先"哦"再"乌"，连起来', audio:'audio/phonics/ph-lv-o.m4a' },
+    { id:'lv-u', letters:'U', ipa:'/juː/',emoji:'🧊', word:'cube', hl:'u',  tip:'先发"衣"再发"乌"，嘴唇从两边收圆', audio:'audio/phonics/ph-lv-u.m4a' },
+  ],
+  consonant: [
+    { id:'c-b', letters:'B', ipa:'/b/',  emoji:'🏀', word:'ball',   hl:'b', tip:'嘴唇紧闭，憋气后爆发出声音', audio:'audio/phonics/ph-c-b.m4a' },
+    { id:'c-c', letters:'C', ipa:'/k/',  emoji:'🐱', word:'cat',    hl:'c', tip:'喉咙深处发出"k"音（和K一样）', audio:'audio/phonics/ph-c-c.m4a' },
+    { id:'c-d', letters:'D', ipa:'/d/',  emoji:'🐕', word:'dog',    hl:'d', tip:'舌尖顶上颚，爆发出有声的音', audio:'audio/phonics/ph-c-d.m4a' },
+    { id:'c-f', letters:'F', ipa:'/f/',  emoji:'🐟', word:'fish',   hl:'f', tip:'上牙轻咬下唇，呼气发出', audio:'audio/phonics/ph-c-f.m4a' },
+    { id:'c-g', letters:'G', ipa:'/g/',  emoji:'🐐', word:'goat',   hl:'g', tip:'喉咙深处发出更重的声音（比C有声）', audio:'audio/phonics/ph-c-g.m4a' },
+    { id:'c-h', letters:'H', ipa:'/h/',  emoji:'🎩', word:'hat',    hl:'h', tip:'张嘴呼气，轻轻地发出"哈"的感觉', audio:'audio/phonics/ph-c-h.m4a' },
+    { id:'c-j', letters:'J', ipa:'/dʒ/',emoji:'🍯', word:'jam',    hl:'j', tip:'舌尖顶上颚，爆发出"dj"的声音', audio:'audio/phonics/ph-c-j.m4a' },
+    { id:'c-k', letters:'K', ipa:'/k/',  emoji:'🪁', word:'kite',   hl:'k', tip:'和C一样，喉咙深处发"k"', audio:'audio/phonics/ph-c-k.m4a' },
+    { id:'c-l', letters:'L', ipa:'/l/',  emoji:'🦁', word:'lion',   hl:'l', tip:'舌尖轻触上颚，声音从两侧流出', audio:'audio/phonics/ph-c-l.m4a' },
+    { id:'c-m', letters:'M', ipa:'/m/',  emoji:'🌙', word:'moon',   hl:'m', tip:'嘴唇闭合，声音从鼻腔发出', audio:'audio/phonics/ph-c-m.m4a' },
+    { id:'c-n', letters:'N', ipa:'/n/',  emoji:'👃', word:'nose',   hl:'n', tip:'舌尖顶上颚，声音从鼻腔出来', audio:'audio/phonics/ph-c-n.m4a' },
+    { id:'c-p', letters:'P', ipa:'/p/',  emoji:'🦜', word:'parrot', hl:'p', tip:'嘴唇闭合后爆发，像B但不振动声带', audio:'audio/phonics/ph-c-p.m4a' },
+    { id:'c-r', letters:'R', ipa:'/r/',  emoji:'🐰', word:'rabbit', hl:'r', tip:'嘴唇微圆，舌头卷起不碰上颚', audio:'audio/phonics/ph-c-r.m4a' },
+    { id:'c-s', letters:'S', ipa:'/s/',  emoji:'☀️', word:'sun',    hl:'s', tip:'牙齿靠拢，呼气发出嘶嘶声', audio:'audio/phonics/ph-c-s.m4a' },
+    { id:'c-t', letters:'T', ipa:'/t/',  emoji:'🐢', word:'turtle', hl:'t', tip:'舌尖顶上颚后爆发，像D但不振动声带', audio:'audio/phonics/ph-c-t.m4a' },
+    { id:'c-v', letters:'V', ipa:'/v/',  emoji:'🚐', word:'van',    hl:'v', tip:'上牙轻咬下唇，振动声带（比F有声）', audio:'audio/phonics/ph-c-v.m4a' },
+    { id:'c-w', letters:'W', ipa:'/w/',  emoji:'💧', word:'water',  hl:'w', tip:'嘴唇先圆，发"乌"后迅速张开', audio:'audio/phonics/ph-c-w.m4a' },
+    { id:'c-y', letters:'Y', ipa:'/j/',  emoji:'🌟', word:'yellow', hl:'y', tip:'嘴角向两边，像"衣"后迅速过渡', audio:'audio/phonics/ph-c-y.m4a' },
+    { id:'c-z', letters:'Z', ipa:'/z/',  emoji:'🦓', word:'zebra',  hl:'z', tip:'牙齿靠拢振动声带，比S更有声', audio:'audio/phonics/ph-c-z.m4a' },
+  ],
+  digraph: [
+    { id:'dg-sh',  letters:'SH', ipa:'/ʃ/',  emoji:'🛍️', word:'shop',  hl:'sh', tip:'嘴唇前伸发"嘘"，不振动声带', audio:'audio/phonics/ph-dg-sh.m4a' },
+    { id:'dg-ch',  letters:'CH', ipa:'/tʃ/', emoji:'🪑', word:'chair', hl:'ch', tip:'舌尖顶上颚爆发"ch"，像中文"吃"开头', audio:'audio/phonics/ph-dg-ch.m4a' },
+    { id:'dg-th1', letters:'TH', ipa:'/θ/',  emoji:'💭', word:'think', hl:'th', tip:'舌尖伸出轻触牙齿间，呼气（无声TH）', audio:'audio/phonics/ph-dg-th1.m4a' },
+    { id:'dg-th2', letters:'TH', ipa:'/ð/',  emoji:'👆', word:'this',  hl:'th', tip:'舌尖伸出轻触牙齿间，振动声带（有声TH）', audio:'audio/phonics/ph-dg-th2.m4a' },
+    { id:'dg-wh',  letters:'WH', ipa:'/w/',  emoji:'💨', word:'wheel', hl:'wh', tip:'和W一样，嘴唇圆圆发出', audio:'audio/phonics/ph-dg-wh.m4a' },
+    { id:'dg-ph',  letters:'PH', ipa:'/f/',  emoji:'📱', word:'phone', hl:'ph', tip:'和F一样，上牙轻咬下唇呼气', audio:'audio/phonics/ph-dg-ph.m4a' },
+    { id:'dg-ng',  letters:'NG', ipa:'/ŋ/',  emoji:'💍', word:'ring',  hl:'ng', tip:'舌根顶上颚，声音从鼻腔发出，像"嗯"', audio:'audio/phonics/ph-dg-ng.m4a' },
+  ],
+  blend: [
+    { id:'bl-bl', letters:'BL', ipa:'/bl/', emoji:'💙', word:'blue',  hl:'bl', tip:'B和L连续发音，中间不停顿', audio:'audio/phonics/ph-bl-bl.m4a' },
+    { id:'bl-br', letters:'BR', ipa:'/br/', emoji:'🍞', word:'bread', hl:'br', tip:'B和R连续发音', audio:'audio/phonics/ph-bl-br.m4a' },
+    { id:'bl-cl', letters:'CL', ipa:'/kl/', emoji:'⏰', word:'clock', hl:'cl', tip:'K和L连续发音', audio:'audio/phonics/ph-bl-cl.m4a' },
+    { id:'bl-cr', letters:'CR', ipa:'/kr/', emoji:'🦀', word:'crab',  hl:'cr', tip:'K和R连续发音', audio:'audio/phonics/ph-bl-cr.m4a' },
+    { id:'bl-fl', letters:'FL', ipa:'/fl/', emoji:'🦋', word:'fly',   hl:'fl', tip:'F和L连续发音', audio:'audio/phonics/ph-bl-fl.m4a' },
+    { id:'bl-fr', letters:'FR', ipa:'/fr/', emoji:'🐸', word:'frog',  hl:'fr', tip:'F和R连续发音', audio:'audio/phonics/ph-bl-fr.m4a' },
+    { id:'bl-gr', letters:'GR', ipa:'/gr/', emoji:'🌿', word:'green', hl:'gr', tip:'G和R连续发音', audio:'audio/phonics/ph-bl-gr.m4a' },
+    { id:'bl-pl', letters:'PL', ipa:'/pl/', emoji:'🎮', word:'play',  hl:'pl', tip:'P和L连续发音', audio:'audio/phonics/ph-bl-pl.m4a' },
+    { id:'bl-sp', letters:'SP', ipa:'/sp/', emoji:'🌀', word:'spin',  hl:'sp', tip:'S和P连续发音', audio:'audio/phonics/ph-bl-sp.m4a' },
+    { id:'bl-st', letters:'ST', ipa:'/st/', emoji:'⭐', word:'star',  hl:'st', tip:'S和T连续发音', audio:'audio/phonics/ph-bl-st.m4a' },
+    { id:'bl-tr', letters:'TR', ipa:'/tr/', emoji:'🌳', word:'tree',  hl:'tr', tip:'T和R连续发音', audio:'audio/phonics/ph-bl-tr.m4a' },
+  ],
+};
+
+const ALL_IDS = Object.values(DATA).flat().map(d => d.id);
+const TOTAL   = ALL_IDS.length;
+
+/* ── State ── */
+let activeTab = 'short';
+let mediaRecorder = null;
+let activeRecId   = null;
+let recChunks     = [];
+let recTimer      = null;
+
+/* ── Utils ── */
+function hilite(word, sub) {
+  const i = word.toLowerCase().indexOf(sub.toLowerCase());
+  if (i < 0) return word;
+  return word.slice(0, i) + '<em>' + word.slice(i, i + sub.length) + '</em>' + word.slice(i + sub.length);
+}
+
+function recKey(id) { return 'ph_rec_' + id; }
+function hasRec(id) { return !!localStorage.getItem(recKey(id)); }
+
+function updateProgress() {
+  const done = ALL_IDS.filter(hasRec).length;
+  document.getElementById('prog-label').textContent = `已练习 ${done} / ${TOTAL}`;
+  document.getElementById('prog-fill').style.width  = (done / TOTAL * 100) + '%';
+}
+
+/* ── Audio playback ── */
+function playAudio(path, e) {
+  e && e.stopPropagation();
+  new Audio(path + '?v=1').play().catch(() => {});
+}
+
+function playRec(id, e) {
+  e && e.stopPropagation();
+  const data = localStorage.getItem(recKey(id));
+  if (data) new Audio(data).play().catch(() => {});
+}
+
+/* ── Recording ── */
+function startRec(id, e) {
+  e && e.stopPropagation();
+
+  // If already recording this card → stop
+  if (activeRecId === id && mediaRecorder && mediaRecorder.state === 'recording') {
+    mediaRecorder.stop();
+    return;
+  }
+  // Stop any other ongoing recording
+  if (mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop();
+
+  navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+    recChunks  = [];
+    activeRecId = id;
+    mediaRecorder = new MediaRecorder(stream);
+
+    const recBtn = document.getElementById('rec-' + id);
+    if (recBtn) { recBtn.textContent = '⏹️'; recBtn.classList.add('rec-on'); }
+
+    mediaRecorder.ondataavailable = e => recChunks.push(e.data);
+    mediaRecorder.onstop = () => {
+      stream.getTracks().forEach(t => t.stop());
+      clearTimeout(recTimer);
+      const blob   = new Blob(recChunks, { type: 'audio/webm' });
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        localStorage.setItem(recKey(id), reader.result);
+        resetRecBtn(id);
+        updateProgress();
+      };
+      reader.readAsDataURL(blob);
+      activeRecId = null;
+    };
+
+    mediaRecorder.start();
+    recTimer = setTimeout(() => { if (mediaRecorder.state === 'recording') mediaRecorder.stop(); }, 8000);
+  }).catch(() => alert('请允许麦克风权限'));
+}
+
+function clearRec(id, e) {
+  e && e.stopPropagation();
+  localStorage.removeItem(recKey(id));
+  resetRecBtn(id);
+  updateProgress();
+}
+
+function resetRecBtn(id) {
+  const recBtn  = document.getElementById('rec-'  + id);
+  const playBtn = document.getElementById('play-' + id);
+  const delBtn  = document.getElementById('del-'  + id);
+  if (!recBtn) return;
+  recBtn.textContent = '🎙️'; recBtn.classList.remove('rec-on');
+  const got = hasRec(id);
+  if (playBtn) { playBtn.disabled = !got; playBtn.classList.toggle('lit', got); }
+  if (delBtn)  { delBtn.disabled  = !got; }
+}
+
+/* ── Render ── */
+function tabAccent(tabId) {
+  return TABS.find(t => t.id === tabId) || TABS[0];
+}
+
+function renderTabs() {
+  const el = document.getElementById('tabs');
+  el.innerHTML = TABS.map(t => {
+    const count = DATA[t.id].length;
+    const active = t.id === activeTab;
+    const style  = active
+      ? `style="background:${t.accent};color:#0a1628;border-color:${t.accent}"`
+      : '';
+    return `<button class="tab${active?' active':''}" ${style} onclick="switchTab('${t.id}')">${t.label}<span class="cnt">${count}</span></button>`;
+  }).join('');
+}
+
+function renderCards() {
+  const tab   = TABS.find(t => t.id === activeTab);
+  const items = DATA[activeTab];
+  document.getElementById('cards-grid').innerHTML = items.map(item => {
+    const got = hasRec(item.id);
+    return `
+    <div class="ph-card" style="
+      --accent:${tab.accent};--bg:${tab.bg};--hero:${tab.hero};
+      --border:${tab.border};--glow:${tab.glow}">
+      <div class="ph-hero">
+        <div class="ph-letters">${item.letters}</div>
+        <div class="ph-ipa">${item.ipa}</div>
+      </div>
+      <div class="ph-body">
+        <div class="ph-example">
+          <span class="ph-emoji">${item.emoji}</span>
+          <span class="ph-word">${hilite(item.word, item.hl)}</span>
+        </div>
+        <div class="ph-tip">${item.tip}</div>
+        <div class="ph-btns">
+          <button class="ph-btn" title="听发音"
+            onclick="playAudio('${item.audio}',event)">🔊</button>
+          <button class="ph-btn" id="rec-${item.id}" title="录音（最多8秒）"
+            onclick="startRec('${item.id}',event)">🎙️</button>
+          <button class="ph-btn ${got?'lit':''}" id="play-${item.id}" title="听我的录音"
+            onclick="playRec('${item.id}',event)" ${got?'':'disabled'}>▶️</button>
+          <button class="ph-btn" id="del-${item.id}" title="清除录音"
+            onclick="clearRec('${item.id}',event)" ${got?'':'disabled'}>🗑️</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function switchTab(id) {
+  activeTab = id;
+  renderTabs();
+  renderCards();
+}
+
+/* ── Init ── */
+renderTabs();
+renderCards();
+updateProgress();
+</script>
+</body>
+</html>
