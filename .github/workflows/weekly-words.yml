@@ -1,0 +1,47 @@
+name: Weekly Word Rotation
+
+on:
+  schedule:
+    # Every Monday 11am AEST (01:00 UTC Monday)
+    - cron: '0 1 * * 1'
+  workflow_dispatch:  # allow manual trigger from GitHub UI
+
+permissions:
+  contents: write
+
+jobs:
+  rotate-words:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Rotate 3 words from standby into words.json
+        run: |
+          node -e "
+          const fs = require('fs');
+          const standby = JSON.parse(fs.readFileSync('standby.json', 'utf8'));
+          const words   = JSON.parse(fs.readFileSync('words.json',   'utf8'));
+
+          if (standby.length === 0) {
+            console.log('Standby queue is empty — nothing to rotate.');
+            process.exit(0);
+          }
+
+          const batch = standby.splice(0, 3);
+          const updated = [...batch, ...words];
+
+          fs.writeFileSync('words.json',   JSON.stringify(updated,  null, 2) + '\n');
+          fs.writeFileSync('standby.json', JSON.stringify(standby, null, 2) + '\n');
+
+          console.log('Rotated: ' + batch.map(w => w.word).join(', '));
+          "
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add words.json standby.json
+          git diff --staged --quiet && echo "No changes." || (
+            git commit -m "Auto: weekly word rotation $(date -u +%Y-%m-%d)" &&
+            git push
+          )

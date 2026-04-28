@@ -26,14 +26,23 @@ Always-on display for Cindy's parents (Xuecheng Liu & Chao Chen) showing reminde
 |------|---------|
 | `history.json` | Single source of truth for all notices (used by both index + reminders pages) |
 | `notices.json` | Legacy — no longer used by index.html, kept for reference |
-| `words.json` | English word list for afternoon word rotation |
+| `words.json` | Active English word list shown in flashcards.html (newest first) |
+| `standby.json` | Queue of upcoming words — auto-promoted 3 at a time every Monday via GitHub Actions |
 | `spending.json` | Weekly Coles shopping items + totals |
 
 ## Aliases
 - `^reminder` — work within this project context
-- `^wordlist` — add a new English word to words.json for afternoon rotation; always prepend (insert at index 0), so newest words appear first
+- `^wordlist` — add a new English word to the **active** words.json for afternoon rotation; always prepend (insert at index 0), so newest words appear first
+- `^wordlist standby` — add a new English word to the **standby queue** (standby.json); always append to the end (FIFO — first in, first promoted)
 - `going to work` — add the TTS work day notice template to history.json; ask for date and time if not provided
 - `push bins out` — add the bin night notice template to history.json; ask for date if not provided (skip if it's a Wednesday — already auto-hardcoded)
+
+## Weekly Word Auto-Rotation
+- **GitHub Actions** (`.github/workflows/weekly-words.yml`) runs every Monday at 11am AEST
+- Takes the first 3 words from `standby.json` and prepends them to `words.json`
+- Commits the change directly to the repo — parents see new words automatically
+- Manual trigger: GitHub → Actions tab → "Weekly Word Rotation" → Run workflow
+- If `standby.json` is empty, the workflow skips with no error
 
 ## Notice Types (in history.json)
 Each notice needs `fulldate` ("2026年X月X日（星期X）") and `time` for sorting and badge display.
