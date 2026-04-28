@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>备用单词队列</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #0d1b2a;
+      color: #f0f4f8;
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+      min-height: 100vh;
+      padding: 28px 28px 80px;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #1e3a5f;
+    }
+    header h1 { font-size: 26px; font-weight: 700; color: #f59e0b; }
+    header .sub { font-size: 14px; color: #64748b; margin-left: auto; text-align: right; line-height: 1.5; }
+
+    .info-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .badge {
+      background: #1e3a5f;
+      border-radius: 10px;
+      padding: 10px 18px;
+      font-size: 14px;
+      color: #94a3b8;
+    }
+    .badge strong { color: #f0f4f8; font-size: 18px; display: block; }
+
+    .next-rotation {
+      background: #1a2e1a;
+      border: 1px solid #22c55e44;
+      border-radius: 10px;
+      padding: 10px 18px;
+      font-size: 14px;
+      color: #86efac;
+    }
+    .next-rotation strong { color: #22c55e; font-size: 16px; }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #475569;
+    }
+    .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
+    .empty-state p { font-size: 16px; }
+
+    .week-group { margin-bottom: 28px; }
+    .week-label {
+      font-size: 13px;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 10px;
+      padding-left: 4px;
+    }
+    .week-label span {
+      background: #1e3a5f;
+      color: #7dd3fc;
+      border-radius: 6px;
+      padding: 2px 10px;
+      font-size: 12px;
+    }
+
+    .word-row {
+      background: #112240;
+      border: 1px solid #1e3a5f;
+      border-radius: 12px;
+      padding: 14px 18px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .word-row:hover { border-color: #2e5a8f; }
+
+    .queue-num {
+      font-size: 13px;
+      color: #475569;
+      width: 22px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .word-main { flex: 1; min-width: 0; }
+    .word-en {
+      font-size: 20px;
+      font-weight: 700;
+      color: #f0f4f8;
+      margin-bottom: 2px;
+    }
+    .word-cn {
+      font-size: 14px;
+      color: #7dd3fc;
+      margin-bottom: 4px;
+    }
+    .word-desc {
+      font-size: 13px;
+      color: #64748b;
+      line-height: 1.5;
+    }
+
+    .audio-btn {
+      background: #1e3a5f;
+      border: none;
+      border-radius: 8px;
+      color: #7dd3fc;
+      font-size: 18px;
+      width: 38px;
+      height: 38px;
+      cursor: pointer;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .audio-btn:hover { background: #2e5a8f; }
+    .audio-btn.no-audio { color: #2e4a6f; cursor: default; }
+
+    .active-section {
+      margin-top: 36px;
+      padding-top: 24px;
+      border-top: 1px solid #1e3a5f;
+    }
+    .section-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #94a3b8;
+      margin-bottom: 14px;
+    }
+    .active-word {
+      background: #0d1b2a;
+      border: 1px solid #1e3a5f;
+      border-radius: 10px;
+      padding: 10px 16px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      color: #475569;
+    }
+    .active-word .aw-en { color: #64748b; font-weight: 600; width: 140px; flex-shrink: 0; }
+    .active-word .aw-cn { color: #475569; }
+
+    footer {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: #0a1628;
+      border-top: 1px solid #1e3a5f;
+      padding: 12px 28px;
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+    footer a {
+      color: #475569;
+      text-decoration: none;
+      font-size: 14px;
+      padding: 6px 14px;
+      border-radius: 8px;
+      border: 1px solid #1e3a5f;
+    }
+    footer a:hover { color: #94a3b8; border-color: #2e4a6f; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>📋 备用单词队列</h1>
+  </div>
+  <div class="sub" id="next-info">计算中…</div>
+</header>
+
+<div class="info-bar">
+  <div class="badge">
+    <strong id="standby-count">—</strong>
+    备用单词
+  </div>
+  <div class="badge">
+    <strong id="weeks-count">—</strong>
+    可用周数
+  </div>
+  <div class="next-rotation" id="next-rotation-badge">
+    <strong>下次推送：</strong> 计算中…
+  </div>
+</div>
+
+<div id="standby-list"></div>
+
+<div class="active-section">
+  <div class="section-title">已激活单词（words.json，共 <span id="active-count">—</span> 个）</div>
+  <div id="active-list"></div>
+</div>
+
+<footer>
+  <a href="flashcards.html">🃏 单词卡</a>
+  <a href="index.html">🏠 主页</a>
+</footer>
+
+<script>
+  function nextMonday() {
+    const d = new Date();
+    const day = d.getDay(); // 0=Sun,1=Mon,...
+    const daysUntil = day === 1 ? 7 : (8 - day) % 7;
+    d.setDate(d.getDate() + daysUntil);
+    d.setHours(11, 0, 0, 0);
+    return d;
+  }
+
+  function formatDate(d) {
+    return `${d.getMonth()+1}月${d.getDate()}日（${['日','一','二','三','四','五','六'][d.getDay()]}）`;
+  }
+
+  function playAudio(path) {
+    if (!path) return;
+    new Audio(path + '?v=1').play().catch(() => {});
+  }
+
+  async function load() {
+    const [standbyRes, wordsRes] = await Promise.all([
+      fetch('standby.json?v=' + Date.now()),
+      fetch('words.json?v='   + Date.now())
+    ]);
+    const standby = await standbyRes.json();
+    const words   = await wordsRes.json();
+
+    // Info bar
+    document.getElementById('standby-count').textContent = standby.length;
+    document.getElementById('weeks-count').textContent   = Math.floor(standby.length / 3) + (standby.length % 3 ? '+' : '');
+    document.getElementById('active-count').textContent  = words.length;
+
+    const mon = nextMonday();
+    const monStr = formatDate(mon);
+    document.getElementById('next-rotation-badge').innerHTML =
+      `<strong>下次推送：</strong> 周一 ${monStr} 上午11点`;
+    document.getElementById('next-info').innerHTML =
+      `下次自动推送<br><strong style="color:#22c55e">${monStr}</strong>`;
+
+    // Standby list
+    const container = document.getElementById('standby-list');
+    if (standby.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="icon">📭</div>
+          <p>备用队列是空的</p>
+          <p style="margin-top:8px;font-size:14px">告诉 Claude "<strong>^wordlist standby 单词</strong>" 来添加</p>
+        </div>`;
+    } else {
+      // Group into batches of 3
+      let html = '';
+      for (let i = 0; i < standby.length; i += 3) {
+        const batch = standby.slice(i, i + 3);
+        const weekNum = Math.floor(i / 3) + 1;
+        const weekDate = new Date(mon);
+        weekDate.setDate(weekDate.getDate() + (weekNum - 1) * 7);
+        html += `<div class="week-group">
+          <div class="week-label"><span>第 ${weekNum} 批 · ${weekDate.getMonth()+1}月${weekDate.getDate()}日推送</span></div>`;
+        batch.forEach((w, j) => {
+          const num = i + j + 1;
+          const hasAudio = !!w.audio;
+          html += `
+          <div class="word-row">
+            <div class="queue-num">${num}</div>
+            <div class="word-main">
+              <div class="word-en">${w.word}</div>
+              <div class="word-cn">${w.word_cn || ''}</div>
+              <div class="word-desc">${w.desc || ''}</div>
+            </div>
+            <button class="audio-btn ${hasAudio ? '' : 'no-audio'}"
+              onclick="${hasAudio ? `playAudio('${w.audio}')` : ''}"
+              title="${hasAudio ? '播放发音' : '无音频'}">🔊</button>
+          </div>`;
+        });
+        html += '</div>';
+      }
+      container.innerHTML = html;
+    }
+
+    // Active words (just names, collapsed)
+    const activeContainer = document.getElementById('active-list');
+    if (words.length === 0) {
+      activeContainer.innerHTML = '<div style="color:#475569;font-size:14px">暂无</div>';
+    } else {
+      activeContainer.innerHTML = words.map(w => `
+        <div class="active-word">
+          <span class="aw-en">${w.word}</span>
+          <span class="aw-cn">${w.word_cn || ''}</span>
+        </div>`).join('');
+    }
+  }
+
+  load();
+</script>
+</body>
+</html>
