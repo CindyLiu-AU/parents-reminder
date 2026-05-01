@@ -1,5 +1,31 @@
 [
   {
+    "week": "2026年5月第1周",
+    "weekStart": "2026-04-27",
+    "orderNumber": "256848279",
+    "deliveryDate": "2026-05-03",
+    "transferred": false,
+    "items": [
+      { "name": "白吐司面包", "amount": 3.10, "forParents": true },
+      { "name": "黄油微波爆米花（Poppin）", "amount": 4.95 },
+      { "name": "黄油微波爆米花（Coles）", "amount": 0.95 },
+      { "name": "盐味微波爆米花（Coles）", "amount": 0.95 },
+      { "name": "三倍黄油微波爆米花（Poppin）", "amount": 4.95 },
+      { "name": "洗碗机洗涤片（Coles Ultra）", "amount": 5.50 },
+      { "name": "全脂牛奶 3L x2", "amount": 10.30, "forParents": true },
+      { "name": "香肠土豆泥冷冻餐", "amount": 7.50 },
+      { "name": "牛肉肉酱千层面（Coles Kitchen）", "amount": 5.00 },
+      { "name": "韩式烤牛肉冷冻餐", "amount": 7.50 },
+      { "name": "羊肉炖菜（Coles Kitchen）", "amount": 5.00 },
+      { "name": "烟熏肉丸冷冻餐", "amount": 7.50 },
+      { "name": "棕洋葱", "amount": 3.80 },
+      { "name": "羊肉末 500g", "amount": 9.00, "forParents": true },
+      { "name": "大包装牛肉末 2kg（Drovers Choice）", "amount": 25.00, "forParents": true },
+      { "name": "速食燕麦片 10包装（Uncle Tobys）", "amount": 3.50 },
+      { "name": "甜辣酱（Mae Ploy）", "amount": 4.10 }
+    ]
+  },
+  {
     "week": "2026年4月第2周",
     "weekStart": "2026-04-07",
     "orderNumber": "100793544",
