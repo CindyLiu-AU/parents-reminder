@@ -29,6 +29,10 @@
       margin-bottom: 24px;
       padding-bottom: 14px;
       border-bottom: 1px solid #1e3a5f;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
     }
 
     header h1 {
@@ -41,6 +45,27 @@
       font-size: 20px;
       color: #546e7a;
       margin-top: 6px;
+    }
+
+    .owed-badge {
+      text-align: right;
+      flex-shrink: 0;
+    }
+    .owed-label {
+      font-size: 14px;
+      color: #64748b;
+      margin-bottom: 4px;
+    }
+    .owed-amount {
+      font-size: 36px;
+      font-weight: 800;
+      color: #f87171;
+      line-height: 1;
+    }
+    .owed-sub {
+      font-size: 13px;
+      color: #64748b;
+      margin-top: 3px;
     }
 
     .week-card {
@@ -231,8 +256,15 @@
 <body>
 
   <header>
-    <h1>🎁 Cindy 为爸妈的花费</h1>
-    <p>每周 Coles 订单记录 · 爸妈部分单独列出</p>
+    <div>
+      <h1>🎁 Cindy 为爸妈的花费</h1>
+      <p>每周 Coles 订单记录 · 爸妈部分单独列出</p>
+    </div>
+    <div class="owed-badge">
+      <div class="owed-label">爸妈未转账合计</div>
+      <div class="owed-amount" id="owed-total">—</div>
+      <div class="owed-sub" id="owed-orders"></div>
+    </div>
   </header>
 
   <div id="list">加载中...</div>
@@ -246,6 +278,13 @@
           document.getElementById('list').innerHTML = '<p style="color:#546e7a">暂无记录</p>';
           return;
         }
+
+        // Owed total
+        const unpaid = data.filter(w => !w.transferred);
+        const owedTotal = unpaid.reduce((s, w) =>
+          s + (w.items || []).filter(i => i.forParents).reduce((t, i) => t + (i.amount || 0), 0), 0);
+        document.getElementById('owed-total').textContent = '$' + owedTotal.toFixed(2);
+        document.getElementById('owed-orders').textContent = `共 ${unpaid.length} 笔未转账`;
 
         const sorted = [...data].sort((a, b) => b.weekStart.localeCompare(a.weekStart));
 
