@@ -1,0 +1,40 @@
+/* ── Light mode via CSS filter ── */
+html.light {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+/* Re-invert media so images / video / iframes look natural */
+html.light img,
+html.light video,
+html.light iframe {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+/* ── Theme toggle button ── */
+#theme-toggle {
+  position: fixed;
+  bottom: 32px;
+  left: 28px;
+  z-index: 9999;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid #2e5a8f;
+  background: #1e3a6e;
+  font-size: 22px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  transition: background 0.2s;
+  line-height: 1;
+  padding: 0;
+  font-family: inherit;
+}
+#theme-toggle:hover { background: #2e5a8f; }
+
+/* Re-invert the button itself in light mode so it keeps its dark style */
+html.light #theme-toggle {
+  filter: invert(1) hue-rotate(180deg);
+}
