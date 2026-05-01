@@ -130,12 +130,19 @@
       border-radius: 24px; padding: 12px 24px;
       box-shadow: 0 4px 16px rgba(245,158,11,.4); z-index: 100;
     }
-    .videos-btn {
-      position: fixed; bottom: 28px; left: 20px;
-      text-decoration: none; font-weight: 700; font-size: 16px;
-      background: #1e1a00; color: #fbbf24;
-      border: 1.5px solid #78450060;
-      border-radius: 24px; padding: 12px 24px; z-index: 100;
+    .page-tabs {
+      display: flex; gap: 8px; padding: 14px 20px 0; flex-wrap: wrap;
+    }
+    .page-tab {
+      padding: 10px 24px; border-radius: 20px;
+      font-size: 15px; font-weight: 700; font-family: inherit;
+      text-decoration: none;
+      border: 1px solid #1e3a5f; background: #112240; color: #7b9eb5;
+      transition: all 0.2s;
+    }
+    .page-tab:hover { border-color: #3b7dd8; color: #90caf9; }
+    .page-tab.active {
+      background: #f59e0b22; border-color: #f59e0b; color: #f59e0b;
     }
   </style>
 </head>
@@ -155,11 +162,15 @@
   <div class="tabs" id="tabs"></div>
 </div>
 
+<div class="page-tabs">
+  <a class="page-tab active" href="phonics.html">🔤 自然拼读</a>
+  <a class="page-tab" href="phonics-videos.html">🎬 视频课</a>
+</div>
+
 <div class="cards-wrap">
   <div class="cards-grid" id="cards-grid"></div>
 </div>
 
-<a class="videos-btn" href="phonics-videos.html">🎬 视频课</a>
 <a class="back-btn" href="flashcards.html">← 返回</a>
 
 <script>
