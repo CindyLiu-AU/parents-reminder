@@ -18,11 +18,11 @@
       { "name": "韩式烤牛肉冷冻餐", "amount": 7.50 },
       { "name": "羊肉炖菜（Coles Kitchen）", "amount": 5.00 },
       { "name": "烟熏肉丸冷冻餐", "amount": 7.50 },
-      { "name": "棕洋葱", "amount": 3.80 },
+      { "name": "棕洋葱", "amount": 3.80, "forParents": true },
       { "name": "羊肉末 500g", "amount": 9.00, "forParents": true },
       { "name": "大包装牛肉末 2kg（Drovers Choice）", "amount": 25.00, "forParents": true },
       { "name": "速食燕麦片 10包装（Uncle Tobys）", "amount": 3.50 },
-      { "name": "甜辣酱（Mae Ploy）", "amount": 4.10 }
+      { "name": "甜辣酱（Mae Ploy）", "amount": 4.10, "forParents": true }
     ]
   },
   {
