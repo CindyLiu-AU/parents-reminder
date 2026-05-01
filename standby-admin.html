@@ -26,7 +26,7 @@
       border-bottom: 1px solid #1e3a5f;
     }
     header h1 { font-size: 26px; font-weight: 700; color: #f59e0b; }
-    header .sub { font-size: 14px; color: #64748b; margin-left: auto; text-align: right; line-height: 1.5; }
+    header .sub { font-size: 14px; color: #64748b; margin-top: 4px; line-height: 1.5; }
 
     .info-bar {
       display: flex;
@@ -159,25 +159,32 @@
     .active-word .aw-en { color: #64748b; font-weight: 600; width: 140px; flex-shrink: 0; }
     .active-word .aw-cn { color: #475569; }
 
-    footer {
-      position: fixed;
-      bottom: 0; left: 0; right: 0;
-      background: #0a1628;
-      border-top: 1px solid #1e3a5f;
-      padding: 12px 28px;
-      display: flex;
-      gap: 12px;
-      justify-content: center;
+    /* ── Page nav tabs ── */
+    .page-tabs {
+      display: flex; gap: 8px; flex-wrap: wrap; margin-left: auto; flex-shrink: 0;
     }
-    footer a {
-      color: #475569;
+    .page-tab {
+      padding: 10px 24px; border-radius: 20px;
+      font-size: 15px; font-weight: 700; font-family: inherit;
       text-decoration: none;
-      font-size: 14px;
-      padding: 6px 14px;
-      border-radius: 8px;
-      border: 1px solid #1e3a5f;
+      border: 1px solid #1e3a5f; background: #112240; color: #7b9eb5;
+      transition: all 0.2s;
     }
-    footer a:hover { color: #94a3b8; border-color: #2e4a6f; }
+    .page-tab:hover { border-color: #3b7dd8; color: #90caf9; }
+    .page-tab.active {
+      background: #f59e0b22; border-color: #f59e0b; color: #f59e0b;
+    }
+
+    /* ── Back button ── */
+    .back-btn {
+      position: fixed; bottom: 32px; right: 28px; z-index: 100;
+      text-decoration: none; font-weight: 700;
+      border-radius: 24px;
+      font-size: 18px; color: #1a1000;
+      background: #f59e0b; border: 2px solid #f59e0b;
+      padding: 14px 28px;
+      box-shadow: 0 4px 16px rgba(245,158,11,0.4);
+    }
   </style>
 </head>
 <body>
@@ -185,8 +192,13 @@
 <header>
   <div>
     <h1>📋 备用单词队列</h1>
+    <div class="sub" id="next-info">计算中…</div>
   </div>
-  <div class="sub" id="next-info">计算中…</div>
+  <div class="page-tabs">
+    <a class="page-tab" href="flashcards.html">📖 单词卡</a>
+    <a class="page-tab" href="phonics.html">🔤 自然拼读</a>
+    <a class="page-tab active" href="standby-admin.html">📋 备用队列</a>
+  </div>
 </header>
 
 <div class="info-bar">
@@ -210,10 +222,7 @@
   <div id="active-list"></div>
 </div>
 
-<footer>
-  <a href="flashcards.html">🃏 单词卡</a>
-  <a href="index.html">🏠 主页</a>
-</footer>
+<a class="back-btn" href="index.html">← 返回</a>
 
 <script>
   function nextMonday() {
