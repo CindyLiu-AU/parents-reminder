@@ -289,12 +289,6 @@ async function playRec(id, e) {
   } catch(err) {}
 }
 
-/* ── Video ── */
-function openVideo(url, e) {
-  e && e.stopPropagation();
-  window.open(url, '_blank');
-}
-
 /* ── Recording ── */
 function startRec(id, e) {
   e && e.stopPropagation();
@@ -392,7 +386,6 @@ function renderCards() {
         <div class="ph-btns">
           <button class="ph-btn" title="听发音"
             onclick="playAudio('${item.audio}',event)">🔊</button>
-          ${item.video ? `<button class="ph-btn" title="看视频" onclick="openVideo('${item.video}',event)">🎬</button>` : ''}
           <button class="ph-btn" id="rec-${item.id}" title="录音（最多8秒）"
             onclick="startRec('${item.id}',event)">🎙️</button>
           <button class="ph-btn ${got?'lit':''}" id="play-${item.id}" title="听我的录音"
