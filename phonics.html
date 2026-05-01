@@ -92,11 +92,11 @@
     /* Body */
     .ph-body { padding: 18px 20px 20px; }
 
-    .ph-example { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
+    .ph-example { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
     .ph-emoji   { font-size: 36px; }
     .ph-word    { font-size: 28px; color: #94a3b8; font-weight: 600; }
     .ph-word em { color: var(--accent); font-style: normal; }
-    .ph-word-cn { font-size: 15px; color: #475569; margin-bottom: 14px; padding-left: 4px; }
+    .ph-word-cn { font-size: 28px; color: #475569; font-weight: 600; }
 
     .ph-tip {
       font-size: 17px; color: #64748b; line-height: 1.65;
@@ -384,8 +384,8 @@ function renderCards() {
         <div class="ph-example">
           <span class="ph-emoji">${item.emoji}</span>
           <span class="ph-word">${hilite(item.word, item.hl)}</span>
+          <span class="ph-word-cn">${item.cn}</span>
         </div>
-        <div class="ph-word-cn">${item.cn}</div>
         <div class="ph-tip">${item.tip}</div>
         <div class="ph-btns">
           <button class="ph-btn" title="听发音"
