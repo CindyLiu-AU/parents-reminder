@@ -133,7 +133,7 @@
 
     /* ── Page nav tabs ── */
     .page-tabs {
-      display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap;
+      display: flex; gap: 8px; flex-wrap: wrap; margin-left: auto; flex-shrink: 0;
     }
     .page-tab {
       padding: 10px 24px; border-radius: 20px;
@@ -163,19 +163,20 @@
 <body>
 
   <header>
-    <h1>📖 英语单词卡</h1>
-    <p>点击卡片查看翻译和解释</p>
+    <div>
+      <h1>📖 英语单词卡</h1>
+      <p>点击卡片查看翻译和解释</p>
+    </div>
     <div class="counters">
       <span class="counter-dad" id="counter-dad"></span>
       <span class="counter-mum" id="counter-mum"></span>
     </div>
+    <div class="page-tabs">
+      <a class="page-tab active" href="flashcards.html">📖 单词卡</a>
+      <a class="page-tab" href="phonics.html">🔤 自然拼读</a>
+      <a class="page-tab" href="standby-admin.html">📋 备用队列</a>
+    </div>
   </header>
-
-  <div class="page-tabs">
-    <a class="page-tab active" href="flashcards.html">📖 单词卡</a>
-    <a class="page-tab" href="phonics.html">🔤 自然拼读</a>
-    <a class="page-tab" href="standby-admin.html">📋 备用队列</a>
-  </div>
   <div class="week-tabs" id="week-tabs"></div>
   <div class="cards-row" id="cards-row"></div>
   <a class="back-btn" href="index.html">← 返回</a>

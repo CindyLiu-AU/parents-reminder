@@ -131,7 +131,7 @@
       box-shadow: 0 4px 16px rgba(245,158,11,.4); z-index: 100;
     }
     .page-tabs {
-      display: flex; gap: 8px; padding: 14px 20px 0; flex-wrap: wrap;
+      display: flex; gap: 8px; flex-wrap: wrap; margin-left: auto; flex-shrink: 0;
     }
     .page-tab {
       padding: 10px 24px; border-radius: 20px;
@@ -158,13 +158,12 @@
       <div class="prog-label" id="prog-label">已练习 0 / 36</div>
       <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
     </div>
+    <div class="page-tabs">
+      <a class="page-tab active" href="phonics.html">🔤 自然拼读</a>
+      <a class="page-tab" href="phonics-videos.html">🎬 视频课</a>
+    </div>
   </div>
   <div class="tabs" id="tabs"></div>
-</div>
-
-<div class="page-tabs">
-  <a class="page-tab active" href="phonics.html">🔤 自然拼读</a>
-  <a class="page-tab" href="phonics-videos.html">🎬 视频课</a>
 </div>
 
 <div class="cards-wrap">
