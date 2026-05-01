@@ -131,30 +131,32 @@
     .known-btn-mum:hover { border-color: #f472b6; color: #f472b6; }
     .known-btn-mum.known { background: #2d0a1a; border-color: #f472b6; color: #f472b6; }
 
-    /* ── Fixed right-side nav buttons ── */
-    .back-btn, .standby-btn, .phonics-btn {
-      position: fixed; right: 28px; z-index: 100;
-      text-decoration: none; font-weight: 700;
-      border-radius: 24px; text-align: center;
+    /* ── Page nav tabs ── */
+    .page-tabs {
+      display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap;
     }
+    .page-tab {
+      padding: 10px 24px; border-radius: 20px;
+      font-size: 15px; font-weight: 700; font-family: inherit;
+      text-decoration: none; cursor: pointer;
+      border: 1px solid #1e3a5f; background: #112240; color: #7b9eb5;
+      transition: all 0.2s;
+    }
+    .page-tab:hover { border-color: #3b7dd8; color: #90caf9; }
+    .page-tab.active {
+      background: #f59e0b22; border-color: #f59e0b;
+      color: #f59e0b;
+    }
+
+    /* ── Back button ── */
     .back-btn {
-      bottom: 32px;
+      position: fixed; bottom: 32px; right: 28px; z-index: 100;
+      text-decoration: none; font-weight: 700;
+      border-radius: 24px;
       font-size: 18px; color: #1a1000;
       background: #f59e0b; border: 2px solid #f59e0b;
       padding: 14px 28px;
       box-shadow: 0 4px 16px rgba(245,158,11,0.4);
-    }
-    .standby-btn {
-      bottom: 100px;
-      font-size: 15px; color: #7dd3fc;
-      background: #112240; border: 1px solid #1e3a5f;
-      padding: 12px 22px;
-    }
-    .phonics-btn {
-      bottom: 164px;
-      font-size: 15px; color: #fbbf24;
-      background: #1e1a00; border: 1px solid #78450060;
-      padding: 12px 22px;
     }
   </style>
 </head>
@@ -169,10 +171,13 @@
     </div>
   </header>
 
+  <div class="page-tabs">
+    <a class="page-tab active" href="flashcards.html">📖 单词卡</a>
+    <a class="page-tab" href="phonics.html">🔤 自然拼读</a>
+    <a class="page-tab" href="standby-admin.html">📋 备用队列</a>
+  </div>
   <div class="week-tabs" id="week-tabs"></div>
   <div class="cards-row" id="cards-row"></div>
-  <a class="phonics-btn"  href="phonics.html">🔤 自然拼读</a>
-  <a class="standby-btn" href="standby-admin.html">📋 备用队列</a>
   <a class="back-btn" href="index.html">← 返回</a>
 
   <script>
