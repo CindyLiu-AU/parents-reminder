@@ -38,24 +38,9 @@
       margin-top: 2px;
     }
 
-    .back-btn {
-      position: fixed;
-      bottom: 32px;
-      right: 28px;
-      font-size: 18px;
-      color: #1a1000;
-      text-decoration: none;
-      background: #f59e0b;
-      border: 2px solid #f59e0b;
-      border-radius: 24px;
-      padding: 14px 28px;
-      z-index: 100;
-      font-weight: 700;
-      box-shadow: 0 4px 16px rgba(245,158,11,0.4);
-    }
 
     .page-content {
-      padding: 20px 16px 40px;
+      padding: 20px 16px 80px;
       max-width: 900px;
       margin: 0 auto;
     }
@@ -578,7 +563,8 @@
 
 </div>
 
-<a class="back-btn" href="index.html">← 返回</a>
+<script>window.NAV_ACTIVE = 'apps';</script>
+<script src="navbar.js"></script>
 
 <script>
   function toggle(btn) {
