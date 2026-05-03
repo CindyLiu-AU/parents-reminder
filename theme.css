@@ -1,16 +1,216 @@
-/* ── Light mode via CSS filter ── */
-html.light {
-  filter: invert(1) hue-rotate(180deg);
+/* ════════════════════════════════════════
+   LIGHT MODE — explicit color overrides
+   (no CSS filter, so emojis look natural)
+   ════════════════════════════════════════ */
+
+/* ── Base ── */
+html.light body {
+  background: #ffffff !important;
+  color: #1e293b !important;
 }
 
-/* Re-invert media so images / video / iframes look natural */
-html.light img,
-html.light video,
-html.light iframe {
-  filter: invert(1) hue-rotate(180deg);
+/* ── Top bars / sticky headers ── */
+html.light #topbar,
+html.light .top-bar,
+html.light header {
+  background: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+html.light header h1,
+html.light .top-row h1 { color: #b45309 !important; }
+html.light header p,
+html.light .top-row p  { color: #64748b !important; }
+
+/* ── Page-nav tabs ── */
+html.light .page-tab {
+  background: #f1f5f9 !important;
+  border-color: #e2e8f0 !important;
+  color: #475569 !important;
+}
+html.light .page-tab.active {
+  background: #fffbeb !important;
+  border-color: #f59e0b !important;
+  color: #b45309 !important;
 }
 
-/* ── Theme toggle button ── */
+/* ── Week / section tabs ── */
+html.light .week-tab,
+html.light .tab {
+  background: #f1f5f9 !important;
+  border-color: #e2e8f0 !important;
+  color: #475569 !important;
+}
+html.light .week-tab.active { background: #f59e0b !important; color: #1a1000 !important; border-color: #f59e0b !important; }
+
+/* ── Cards / containers ── */
+html.light .week-card,
+html.light .word-row,
+html.light .active-word,
+html.light .vid-card,
+html.light .modal-box,
+html.light .app-card,
+html.light .item,
+html.light .section {
+  background: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+
+/* flip-card faces */
+html.light .face.front,
+html.light .face.back { background: #f8fafc !important; }
+
+/* nested darker sections */
+html.light .parent-section,
+html.light .section-header,
+html.light .note-item,
+html.light .how-to-content,
+html.light .tip-box,
+html.light .answer-box,
+html.light .back.face,
+html.light .app-emoji { background: #eef2f7 !important; }
+html.light .parent-section { border-color: #bfdbfe !important; }
+
+/* sidebar */
+html.light .sidebar { background: #f8fafc !important; border-color: #e2e8f0 !important; }
+html.light .sidebar-item { color: #475569 !important; }
+html.light .sidebar-item.active,
+html.light .sidebar-item:hover { background: #eef2f7 !important; color: #b45309 !important; }
+html.light .sidebar-subitem { color: #64748b !important; }
+html.light .sidebar-subitem.active,
+html.light .sidebar-subitem:hover { background: #eef2f7 !important; }
+
+/* ── Nav buttons (index.html) ── */
+html.light #reminders-btn,
+html.light #spending-btn,
+html.light #apps-btn,
+html.light #flashcards-btn,
+html.light #roadrules-btn {
+  background: #dbeafe !important;
+  border-color: #93c5fd !important;
+}
+
+/* ── Borders ── */
+html.light .item-row,
+html.light .parent-item-row { border-color: #f1f5f9 !important; }
+html.light .total-row        { border-color: #e2e8f0 !important; }
+html.light .parent-total-row { border-color: #bfdbfe !important; }
+
+/* ── Spending page ── */
+html.light .week-title        { color: #2563eb !important; }
+html.light .order-meta,
+html.light .section-label,
+html.light .owed-label,
+html.light .owed-sub          { color: #64748b !important; }
+html.light .item-name,
+html.light .parent-item-name  { color: #1e293b !important; }
+html.light .item-amount       { color: #475569 !important; }
+html.light .total-label,
+html.light .total-amount      { color: #1d4ed8 !important; }
+html.light .parent-section-title { color: #b45309 !important; }
+html.light .parent-item-amount   { color: #b45309 !important; }
+html.light .parent-total-label   { color: #b45309 !important; }
+html.light .parent-total-amount  { color: #15803d !important; }
+html.light .owed-amount          { color: #dc2626 !important; }
+html.light .badge-pending { background: #fee2e2 !important; border-color: #fca5a5 !important; color: #dc2626 !important; }
+html.light .badge-done    { background: #dcfce7 !important; border-color: #86efac !important; color: #15803d !important; }
+
+/* ── Phonics page ── */
+html.light .ph-card           { border-color: #e2e8f0 !important; }
+html.light .ph-letters        { color: #1e293b !important; }
+html.light .ph-ipa            { color: #475569 !important; }
+html.light .ph-word           { color: #334155 !important; }
+html.light .ph-word-cn        { color: #64748b !important; }
+html.light .ph-tip            { color: #64748b !important; }
+html.light .ph-btn {
+  background: #f1f5f9 !important;
+  color: #475569 !important;
+}
+html.light .ph-btn:hover:not(:disabled) { background: #e2e8f0 !important; }
+html.light .prog-bar          { background: #e2e8f0 !important; }
+html.light .badge             { background: #dbeafe !important; color: #1d4ed8 !important; }
+
+/* ── Phonics videos page ── */
+html.light .thumb-wrap        { background: #e2e8f0 !important; }
+html.light .vid-title         { color: #334155 !important; }
+html.light .lesson-num        { background: #f59e0b !important; color: #1a1000 !important; }
+html.light .modal-bg          { background: rgba(0,0,0,0.6) !important; }
+html.light .modal-close {
+  background: #e2e8f0 !important;
+  color: #475569 !important;
+}
+html.light .modal-title       { color: #1e293b !important; }
+
+/* ── Flashcards page ── */
+html.light .word-en           { color: #b45309 !important; }
+html.light .word-cn           { color: #0d9488 !important; }
+html.light .word-desc         { color: #475569 !important; }
+html.light .flip-hint-back    { color: #cbd5e1 !important; }
+html.light .counter-dad       { color: #7c3aed !important; }
+html.light .counter-mum       { color: #db2777 !important; }
+html.light .play-btn,
+html.light .rec-btn {
+  background: #dbeafe !important;
+  border-color: #93c5fd !important;
+  color: #1d4ed8 !important;
+}
+html.light .play-btn.has-rec,
+html.light .listen-btn.has-rec,
+html.light .rec-btn.recorded  {
+  background: #dcfce7 !important;
+  border-color: #86efac !important;
+  color: #15803d !important;
+}
+html.light .known-btn {
+  background: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+  color: #64748b !important;
+}
+html.light .known-btn-dad.known { background: #ede9fe !important; border-color: #a78bfa !important; color: #7c3aed !important; }
+html.light .known-btn-mum.known { background: #fce7f3 !important; border-color: #f9a8d4 !important; color: #db2777 !important; }
+
+/* ── Standby admin page ── */
+html.light .word-row .word-en  { color: #1e293b !important; }
+html.light .word-row .word-cn  { color: #0369a1 !important; }
+html.light .word-row .word-desc { color: #64748b !important; }
+html.light .queue-num          { color: #94a3b8 !important; }
+html.light .audio-btn {
+  background: #dbeafe !important;
+  color: #1d4ed8 !important;
+}
+html.light .next-rotation {
+  background: #f0fdf4 !important;
+  border-color: #86efac !important;
+  color: #15803d !important;
+}
+html.light .next-rotation strong { color: #15803d !important; }
+html.light .section-title      { color: #64748b !important; }
+html.light .active-word .aw-en { color: #475569 !important; }
+html.light .active-word .aw-cn { color: #64748b !important; }
+html.light .week-label span    { background: #dbeafe !important; color: #1d4ed8 !important; }
+
+/* ── Reminders page ── */
+html.light .item-type          { color: #2563eb !important; }
+html.light .item-title         { color: #1e293b !important; }
+html.light .item-date          { color: #1d4ed8 !important; }
+html.light .item-note          { color: #15803d !important; }
+
+/* ── Apps page ── */
+html.light .app-name-cn        { color: #1e293b !important; }
+html.light .app-desc           { color: #475569 !important; }
+html.light .how-to-btn         { color: #b45309 !important; background: #fffbeb !important; border-color: #fde68a !important; }
+html.light .how-to-content li  { color: #334155 !important; }
+html.light .tip-box            { background: #f0fdf4 !important; color: #15803d !important; border-color: #86efac !important; }
+
+/* ── Road rules page ── */
+html.light .section-title-en   { color: #b45309 !important; }
+html.light .section-title-cn   { color: #0d9488 !important; }
+html.light .item-en            { color: #2563eb !important; }
+html.light .item-cn            { color: #334155 !important; }
+html.light .item-en .label     { color: #2563eb !important; }
+html.light .video-num          { background: #dbeafe !important; color: #1d4ed8 !important; }
+html.light .video-name-en      { color: #2563eb !important; }
+
+/* ── Toggle button ── */
 #theme-toggle {
   position: fixed;
   bottom: 32px;
@@ -34,13 +234,9 @@ html.light iframe {
 }
 #theme-toggle:hover { background: #2e5a8f; }
 
-/* Re-invert the button itself in light mode so it keeps its dark style */
 html.light #theme-toggle {
-  filter: invert(1) hue-rotate(180deg);
+  background: #e2e8f0;
+  border-color: #cbd5e1;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }
-
-/* Re-invert emoji spans so they look natural in light mode */
-html.light .emoji-fix {
-  display: inline-block;
-  filter: invert(1) hue-rotate(180deg);
-}
+html.light #theme-toggle:hover { background: #cbd5e1; }
