@@ -38,3 +38,9 @@ html.light iframe {
 html.light #theme-toggle {
   filter: invert(1) hue-rotate(180deg);
 }
+
+/* Re-invert emoji spans so they look natural in light mode */
+html.light .emoji-fix {
+  display: inline-block;
+  filter: invert(1) hue-rotate(180deg);
+}
