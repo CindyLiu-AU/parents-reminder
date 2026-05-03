@@ -210,6 +210,25 @@ html.light .item-en .label     { color: #2563eb !important; }
 html.light .video-num          { background: #dbeafe !important; color: #1d4ed8 !important; }
 html.light .video-name-en      { color: #2563eb !important; }
 
+/* ── Checklist (reminders page) ── */
+html.light .checklist-toggle {
+  background: #f1f5f9 !important;
+  border-color: #e2e8f0 !important;
+  color: #2563eb !important;
+}
+html.light .checklist-item {
+  background: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+  color: #1e293b !important;
+}
+html.light .checklist-item.done {
+  background: #f0fdf4 !important;
+  border-color: #86efac !important;
+  color: #64748b !important;
+}
+html.light .checklist-tick { border-color: #cbd5e1 !important; }
+html.light .checklist-item.done .checklist-tick { background: #22c55e !important; border-color: #22c55e !important; }
+
 /* ── Toggle button ── */
 #theme-toggle {
   position: fixed;
