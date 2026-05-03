@@ -209,6 +209,15 @@ html.light .item-cn            { color: #334155 !important; }
 html.light .item-en .label     { color: #2563eb !important; }
 html.light .video-num          { background: #dbeafe !important; color: #1d4ed8 !important; }
 html.light .video-name-en      { color: #2563eb !important; }
+html.light .toc-sub .toc-label { color: #334155 !important; }
+html.light .toc-page           { color: #64748b !important; }
+html.light .toc-row:hover      { background: #f1f5f9 !important; }
+html.light .toc-chapter        { background: #eef2f7 !important; }
+html.light .sidebar-item       { color: #334155 !important; }
+html.light .sidebar-item:hover { color: #1e293b !important; background: #eef2f7 !important; }
+html.light .sidebar-subitem    { color: #475569 !important; }
+html.light .sidebar-subitem:hover { color: #1e293b !important; background: #eef2f7 !important; }
+html.light .note-item .item-en { color: #334155 !important; }
 
 /* ── Checklist (reminders page) ── */
 html.light .checklist-toggle {
