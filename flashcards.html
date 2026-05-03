@@ -13,7 +13,7 @@
       color: #f0f4f8;
       font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
       min-height: 100vh;
-      padding: 28px 28px 80px;
+      padding: 28px 28px 100px;
       max-width: 1100px;
       margin: 0 auto;
     }
@@ -148,6 +148,16 @@
       color: #f59e0b;
     }
 
+    /* ── Back button ── */
+    .back-btn {
+      position: fixed; bottom: 32px; right: 28px; z-index: 100;
+      text-decoration: none; font-weight: 700;
+      border-radius: 24px;
+      font-size: 18px; color: #1a1000;
+      background: #f59e0b; border: 2px solid #f59e0b;
+      padding: 14px 28px;
+      box-shadow: 0 4px 16px rgba(245,158,11,0.4);
+    }
   </style>
   <link rel="stylesheet" href="theme.css">
 </head>
@@ -170,8 +180,7 @@
   </header>
   <div class="week-tabs" id="week-tabs"></div>
   <div class="cards-row" id="cards-row"></div>
-  <script>window.NAV_ACTIVE = 'flashcards';</script>
-  <script src="navbar.js"></script>
+  <a class="back-btn" href="index.html">← 返回</a>
 
   <script>
     const KEY_DAD  = 'flashcard_known_dad';

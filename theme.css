@@ -238,32 +238,6 @@ html.light .checklist-item.done {
 html.light .checklist-tick { border-color: #cbd5e1 !important; }
 html.light .checklist-item.done .checklist-tick { background: #22c55e !important; border-color: #22c55e !important; }
 
-/* ── Bottom navigation bar ── */
-.bottom-nav {
-  position: fixed; bottom: 0; left: 0; right: 0;
-  display: flex;
-  background: #0d1b2a;
-  border-top: 1px solid #1e3a5f;
-  z-index: 300;
-}
-.bottom-nav-item {
-  flex: 1; display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  gap: 3px; padding: 10px 0 12px;
-  text-decoration: none; color: #546e7a;
-  font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
-  transition: color .15s;
-}
-.bottom-nav-item:hover { color: #90caf9; }
-.bottom-nav-item.active { color: #f59e0b; }
-.bnav-icon  { font-size: 22px; line-height: 1; }
-.bnav-label { font-size: 12px; line-height: 1; }
-
-html.light .bottom-nav { background: #ffffff !important; border-color: #e2e8f0 !important; }
-html.light .bottom-nav-item { color: #94a3b8 !important; }
-html.light .bottom-nav-item:hover { color: #475569 !important; }
-html.light .bottom-nav-item.active { color: #b45309 !important; }
-
 /* ── Toggle button ── */
 #theme-toggle {
   position: fixed;
