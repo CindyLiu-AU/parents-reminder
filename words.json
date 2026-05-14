@@ -1,5 +1,23 @@
 [
   {
+    "word": "Save $2",
+    "word_cn": "省 $2",
+    "desc": "优惠价，比原价便宜2块钱 🏷️<br>例如：Save $2 on this product（这个商品省2元）<br>超市标签上常见，表示打折优惠",
+    "audio": ""
+  },
+  {
+    "word": "Each",
+    "word_cn": "每个 / 每件",
+    "desc": "表示单件的价格 🛒<br>例如：$5 each（每个5块钱）<br>2 for $8, or $5 each（两件8元，或单买5元一件）",
+    "audio": ""
+  },
+  {
+    "word": "2 for $15",
+    "word_cn": "两件 $15",
+    "desc": "买两件只需15块钱的捆绑优惠 🛒<br>例如：2 for $15（两件15元）<br>比单买便宜，适合买常用商品",
+    "audio": ""
+  },
+  {
     "word": "Stop",
     "word_cn": "站 / 停",
     "desc": "公交站，也表示停下来 🚌<br>例如：Next stop, Kingston（下一站，金斯顿）<br>We get off in 2 stops（再过两站下车）",
