@@ -185,6 +185,90 @@
       padding: 14px 28px;
       box-shadow: 0 4px 16px rgba(245,158,11,0.4);
     }
+
+    /* ── Add Word Form ── */
+    .add-word-section {
+      background: #0d2137;
+      border: 1px solid #2e5f9e;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 28px;
+    }
+    .add-word-section h2 {
+      font-size: 17px; font-weight: 700; color: #90caf9;
+      margin-bottom: 18px;
+    }
+    .add-form-grid {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+    .img-upload-box {
+      width: 180px; height: 180px;
+      border: 2px dashed #2e5a8f;
+      border-radius: 12px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      cursor: pointer; color: #475569; font-size: 13px;
+      text-align: center; gap: 8px;
+      overflow: hidden; position: relative;
+      background: #112240;
+      transition: border-color 0.2s;
+    }
+    .img-upload-box:hover { border-color: #3b7dd8; color: #90caf9; }
+    .img-upload-box img {
+      position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+    }
+    .img-upload-box input[type=file] {
+      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+    }
+    .form-fields { display: flex; flex-direction: column; gap: 12px; }
+    .form-row { display: flex; gap: 10px; align-items: center; }
+    .form-label { font-size: 13px; color: #64748b; width: 80px; flex-shrink: 0; }
+    .form-input {
+      flex: 1; background: #112240; border: 1px solid #1e3a5f;
+      border-radius: 8px; padding: 10px 14px;
+      color: #f0f4f8; font-size: 15px; font-family: inherit;
+      outline: none;
+    }
+    .form-input:focus { border-color: #3b7dd8; }
+    textarea.form-input { resize: vertical; min-height: 72px; line-height: 1.6; }
+    .translate-btn {
+      background: #1e3a6e; border: 1px solid #2e5f9e;
+      color: #90caf9; font-size: 14px; font-weight: 600;
+      font-family: inherit; border-radius: 8px;
+      padding: 10px 16px; cursor: pointer; white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .translate-btn:hover { background: #2e5a8f; }
+    .translate-btn:disabled { opacity: 0.5; cursor: default; }
+    .gen-btn {
+      background: #f59e0b; border: none; color: #1a1000;
+      font-size: 15px; font-weight: 700; font-family: inherit;
+      border-radius: 10px; padding: 12px 24px; cursor: pointer;
+      align-self: flex-start; transition: opacity 0.2s;
+    }
+    .gen-btn:hover { opacity: 0.85; }
+    .output-box {
+      display: none;
+      background: #051224;
+      border: 1px solid #22c55e44;
+      border-radius: 10px;
+      padding: 16px;
+      margin-top: 16px;
+      font-size: 13px; color: #86efac;
+      font-family: monospace; line-height: 1.6;
+      white-space: pre-wrap; word-break: break-all;
+      position: relative;
+    }
+    .copy-btn {
+      position: absolute; top: 10px; right: 10px;
+      background: #1e3a6e; border: 1px solid #2e5f9e;
+      color: #90caf9; font-size: 12px; font-family: inherit;
+      border-radius: 6px; padding: 4px 10px; cursor: pointer;
+    }
+    .copy-btn:active { background: #22c55e; color: #000; }
   </style>
   <link rel="stylesheet" href="theme.css">
 </head>
@@ -201,6 +285,38 @@
     <a class="page-tab active" href="standby-admin.html">📋 备用队列</a>
   </div>
 </header>
+
+<div class="add-word-section">
+  <h2>➕ 添加新单词卡</h2>
+  <div class="add-form-grid">
+    <div class="img-upload-box" id="img-box" title="点击上传图片">
+      <span style="font-size:28px">📷</span>
+      <span>上传图片<br>（可选）</span>
+      <img id="img-preview" src="" alt="" style="display:none">
+      <input type="file" accept="image/*" onchange="handleImage(this)">
+    </div>
+    <div class="form-fields">
+      <div class="form-row">
+        <span class="form-label">英文单词</span>
+        <input class="form-input" id="inp-word" type="text" placeholder="e.g. Organic" onkeydown="if(event.key==='Enter')autoTranslate()">
+        <button class="translate-btn" id="trans-btn" onclick="autoTranslate()">🔄 自动翻译</button>
+      </div>
+      <div class="form-row">
+        <span class="form-label">中文翻译</span>
+        <input class="form-input" id="inp-cn" type="text" placeholder="中文意思（可编辑）">
+      </div>
+      <div class="form-row" style="align-items:flex-start">
+        <span class="form-label" style="margin-top:10px">说明</span>
+        <textarea class="form-input" id="inp-desc" placeholder="例子句子或说明（可选）"></textarea>
+      </div>
+      <button class="gen-btn" onclick="generateEntry()">生成条目 →</button>
+    </div>
+  </div>
+  <div class="output-box" id="output-box">
+    <button class="copy-btn" onclick="copyOutput()">复制</button>
+    <span id="output-text"></span>
+  </div>
+</div>
 
 <div class="info-bar">
   <div class="badge">
@@ -226,6 +342,69 @@
 <a class="back-btn" href="#" onclick="history.back();return false;">← 返回</a>
 
 <script>
+  /* ── Add Word Form ── */
+  let imgDataUrl = '';
+
+  function handleImage(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      imgDataUrl = e.target.result;
+      const preview = document.getElementById('img-preview');
+      preview.src = imgDataUrl;
+      preview.style.display = 'block';
+      const box = document.getElementById('img-box');
+      box.querySelector('span:first-child').style.display = 'none';
+      box.querySelector('span:last-of-type').style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+  }
+
+  async function autoTranslate() {
+    const word = document.getElementById('inp-word').value.trim();
+    if (!word) return;
+    const btn = document.getElementById('trans-btn');
+    btn.disabled = true;
+    btn.textContent = '翻译中…';
+    try {
+      const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(word)}&langpair=en|zh-CN`);
+      const data = await res.json();
+      const translated = data.responseData?.translatedText || '';
+      if (translated) document.getElementById('inp-cn').value = translated;
+    } catch {
+      alert('翻译失败，请手动输入中文');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = '🔄 自动翻译';
+    }
+  }
+
+  function generateEntry() {
+    const word = document.getElementById('inp-word').value.trim();
+    const cn   = document.getElementById('inp-cn').value.trim();
+    const desc = document.getElementById('inp-desc').value.trim();
+    if (!word || !cn) { alert('请填写英文单词和中文翻译'); return; }
+    const entry = { word, word_cn: cn, desc: desc || '', audio: '' };
+    if (imgDataUrl) entry.image = imgDataUrl;
+    const json = JSON.stringify(entry, null, 2);
+    const claudeCmd = `^wordlist standby\n单词：${word}\n中文：${cn}${desc ? '\n说明：' + desc : ''}`;
+    const outputEl = document.getElementById('output-text');
+    outputEl.textContent = claudeCmd + '\n\n──── JSON ────\n' + json;
+    const box = document.getElementById('output-box');
+    box.style.display = 'block';
+    box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function copyOutput() {
+    const text = document.getElementById('output-text').textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.querySelector('.copy-btn');
+      btn.textContent = '已复制 ✓';
+      setTimeout(() => btn.textContent = '复制', 1500);
+    });
+  }
+
   function nextMonday() {
     const d = new Date();
     const day = d.getDay(); // 0=Sun,1=Mon,...
