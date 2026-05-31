@@ -238,6 +238,73 @@ html.light .checklist-item.done {
 html.light .checklist-tick { border-color: #cbd5e1 !important; }
 html.light .checklist-item.done .checklist-tick { background: #22c55e !important; border-color: #22c55e !important; }
 
+/* ── Dictionary page ── */
+html.light .back-btn {
+  background: #dbeafe !important;
+  border-color: #93c5fd !important;
+  color: #1d4ed8 !important;
+}
+html.light .lang-btn {
+  background: #f1f5f9 !important;
+  border-color: #e2e8f0 !important;
+  color: #475569 !important;
+}
+html.light .lang-btn.active {
+  background: #fffbeb !important;
+  border-color: #f59e0b !important;
+  color: #b45309 !important;
+}
+html.light textarea {
+  background: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+  color: #1e293b !important;
+}
+html.light textarea::placeholder { color: #94a3b8 !important; }
+html.light textarea:focus { border-color: #f59e0b !important; }
+html.light .clear-btn {
+  background: #f1f5f9 !important;
+  border-color: #e2e8f0 !important;
+  color: #64748b !important;
+}
+html.light .mic-btn {
+  background: #dbeafe !important;
+  border-color: #93c5fd !important;
+  color: #1d4ed8 !important;
+}
+html.light .result-box {
+  background: #f1f5f9 !important;
+  border-color: #e2e8f0 !important;
+}
+html.light .result-placeholder { color: #94a3b8 !important; }
+html.light .result-text.zh     { color: #0d9488 !important; }
+html.light .result-text.en     { color: #b45309 !important; }
+html.light .result-loading     { color: #94a3b8 !important; }
+html.light .speak-btn {
+  background: #dbeafe !important;
+  border-color: #93c5fd !important;
+  color: #1d4ed8 !important;
+}
+html.light .repeat-btn {
+  background: #f1f5f9 !important;
+  border-color: #e2e8f0 !important;
+  color: #475569 !important;
+}
+html.light .repeat-btn.running {
+  background: #dcfce7 !important;
+  border-color: #86efac !important;
+  color: #15803d !important;
+}
+html.light .repeat-progress    { color: #64748b !important; }
+html.light .history-label      { color: #94a3b8 !important; }
+html.light .history-item {
+  background: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+html.light .hist-src           { color: #b45309 !important; }
+html.light .hist-res           { color: #0d9488 !important; }
+html.light .hist-res.en        { color: #b45309 !important; }
+html.light .hist-src.zh        { color: #0d9488 !important; }
+
 /* ── Toggle button ── */
 #theme-toggle {
   position: fixed;
