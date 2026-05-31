@@ -8,126 +8,129 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
+
     body {
       background: #0d1b2a;
       color: #f0f4f8;
       font-family: "Noto Sans SC", "PingFang SC", sans-serif;
-      min-height: 100vh;
       display: flex;
       flex-direction: column;
-      padding: 28px 24px 24px;
-      gap: 20px;
+      padding: 16px 20px 12px;
+      gap: 10px;
     }
 
-    header { display: flex; align-items: center; gap: 16px; }
+    /* ── Header ── */
+    header { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
     .back-btn {
       background: #1e3a6e; border: 1px solid #2e5f9e; border-radius: 50%;
-      width: 56px; height: 56px; font-size: 28px;
+      width: 48px; height: 48px; font-size: 24px;
       display: flex; align-items: center; justify-content: center;
       text-decoration: none; color: #90caf9; flex-shrink: 0;
     }
-    header h1 { font-size: 32px; font-weight: 900; color: #f59e0b; letter-spacing: 2px; }
+    header h1 { font-size: 26px; font-weight: 900; color: #f59e0b; letter-spacing: 2px; }
 
     /* ── Direction toggle ── */
-    .lang-toggle { display: flex; gap: 12px; }
+    .lang-toggle { display: flex; gap: 10px; flex-shrink: 0; }
     .lang-btn {
       flex: 1;
-      background: #112240;
-      border: 2px solid #2e5f9e;
-      border-radius: 18px;
-      padding: 18px 10px;
-      font-size: 28px;
-      font-family: inherit;
-      color: #546e7a;
-      cursor: pointer;
-      font-weight: 700;
-      transition: all 0.15s;
+      background: #112240; border: 2px solid #2e5f9e; border-radius: 14px;
+      padding: 12px 8px; font-size: 22px; font-family: inherit;
+      color: #546e7a; cursor: pointer; font-weight: 700; transition: all 0.15s;
     }
     .lang-btn:active { opacity: 0.7; }
     .lang-btn.active { background: #1e3a6e; border-color: #f59e0b; color: #f59e0b; }
 
     /* ── Input area ── */
-    .input-wrap { position: relative; }
+    .input-wrap { position: relative; flex-shrink: 0; }
     textarea {
       width: 100%;
-      background: #112240; border: 2px solid #2e5f9e; border-radius: 20px;
-      padding: 24px 28px; font-size: 42px; font-weight: 700; color: #f0f4f8;
+      background: #112240; border: 2px solid #2e5f9e; border-radius: 16px;
+      padding: 16px 20px; font-size: 34px; font-weight: 700; color: #f0f4f8;
       font-family: inherit; outline: none; resize: none;
-      line-height: 1.4; min-height: 160px; letter-spacing: 2px;
+      line-height: 1.35; height: 110px; letter-spacing: 1px;
       transition: border-color 0.2s;
     }
     textarea::placeholder { color: #334d66; font-weight: 400; }
     textarea:focus { border-color: #f59e0b; }
     .clear-btn {
-      position: absolute; top: 16px; right: 16px;
+      position: absolute; top: 12px; right: 12px;
       background: #1e3a6e; border: 1px solid #2e5f9e; border-radius: 50%;
-      width: 48px; height: 48px; font-size: 22px; color: #64748b; cursor: pointer;
+      width: 40px; height: 40px; font-size: 18px; color: #64748b; cursor: pointer;
       display: flex; align-items: center; justify-content: center;
     }
     .clear-btn:active { background: #2e5a8f; }
 
     /* ── Translate button ── */
     .translate-btn {
-      background: #f59e0b; border: none; border-radius: 20px; padding: 24px;
-      font-size: 36px; font-weight: 900; font-family: inherit; color: #1a1000;
-      cursor: pointer; width: 100%; letter-spacing: 4px;
+      background: #f59e0b; border: none; border-radius: 16px; padding: 16px;
+      font-size: 30px; font-weight: 900; font-family: inherit; color: #1a1000;
+      cursor: pointer; width: 100%; letter-spacing: 4px; flex-shrink: 0;
       transition: opacity 0.15s, transform 0.1s;
     }
     .translate-btn:active { opacity: 0.8; transform: scale(0.98); }
     .translate-btn:disabled { opacity: 0.4; }
 
+    /* ── Result box — fills all remaining space ── */
+    .result-box {
+      background: #0d2745; border: 2px solid #1e3a5f; border-radius: 16px;
+      padding: 16px; flex: 1; min-height: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; gap: 8px; overflow: hidden;
+    }
+    .result-placeholder { font-size: 24px; color: #1e3a5f; }
+    .result-text { font-size: 52px; font-weight: 900; line-height: 1.2; word-break: break-all; }
+    .result-text.zh { color: #2dd4bf; }
+    .result-text.en { color: #f59e0b; }
+    .result-loading { font-size: 26px; color: #475569; animation: blink 1s infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    .result-error { font-size: 24px; color: #f87171; }
+
     /* ── Speak button ── */
     .speak-btn {
-      background: #1e3a6e; border: 1px solid #2e5f9e; border-radius: 20px;
-      padding: 20px; font-size: 28px; font-family: inherit; color: #90caf9;
-      cursor: pointer; width: 100%; font-weight: 700; transition: opacity 0.15s;
+      background: #1e3a6e; border: 1px solid #2e5f9e; border-radius: 14px;
+      padding: 12px; font-size: 22px; font-family: inherit; color: #90caf9;
+      cursor: pointer; width: 100%; font-weight: 700; flex-shrink: 0;
+      transition: opacity 0.15s;
     }
     .speak-btn:active { opacity: 0.7; }
 
-    /* ── Result area ── */
-    .result-box {
-      background: #0d2745; border: 2px solid #1e3a5f; border-radius: 20px;
-      padding: 28px; min-height: 180px; display: flex; flex-direction: column;
-      align-items: center; justify-content: center; text-align: center; gap: 16px; flex: 1;
-    }
-    .result-placeholder { font-size: 28px; color: #1e3a5f; }
-    .result-text {
-      font-size: 64px; font-weight: 900; line-height: 1.3; word-break: break-all;
-    }
-    .result-text.zh { color: #2dd4bf; }
-    .result-text.en { color: #f59e0b; }
-    .result-loading { font-size: 32px; color: #475569; animation: blink 1s infinite; }
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
-    .result-error { font-size: 28px; color: #f87171; }
-
     /* ── Repeat section ── */
-    .repeat-section { display: flex; flex-direction: column; gap: 12px; }
-    .repeat-row { display: flex; gap: 12px; }
+    .repeat-section { display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+    .repeat-row { display: flex; gap: 10px; }
     .repeat-btn {
-      flex: 1; background: #112240; border: 2px solid #2e5f9e; border-radius: 18px;
-      padding: 18px 8px; font-size: 26px; font-family: inherit; color: #90caf9;
+      flex: 1; background: #112240; border: 2px solid #2e5f9e; border-radius: 14px;
+      padding: 12px 6px; font-size: 22px; font-family: inherit; color: #90caf9;
       cursor: pointer; font-weight: 700; transition: all 0.15s;
     }
     .repeat-btn:active { opacity: 0.7; }
     .repeat-btn.running { background: #1a3a1a; border-color: #22c55e; color: #86efac; }
-    .repeat-progress { text-align: center; font-size: 26px; color: #64748b; font-weight: 700; }
+    .repeat-progress { text-align: center; font-size: 20px; color: #64748b; font-weight: 700; }
     .stop-btn {
-      background: #450a0a; border: 2px solid #ef4444; border-radius: 18px;
-      padding: 18px; font-size: 28px; font-family: inherit; color: #fca5a5;
+      background: #450a0a; border: 2px solid #ef4444; border-radius: 14px;
+      padding: 12px; font-size: 22px; font-family: inherit; color: #fca5a5;
       cursor: pointer; font-weight: 700; width: 100%; transition: opacity 0.15s;
     }
     .stop-btn:active { opacity: 0.7; }
 
-    /* ── History ── */
-    .history-label { font-size: 18px; color: #334d66; letter-spacing: 1px; margin-top: 4px; }
-    .history-list { display: flex; flex-direction: column; gap: 10px; }
+    /* ── History — only shown when no result, scrolls internally ── */
+    .history-wrap {
+      flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 8px; overflow: hidden;
+    }
+    .history-label { font-size: 15px; color: #334d66; letter-spacing: 1px; flex-shrink: 0; }
+    .history-list { display: flex; flex-direction: column; gap: 8px; overflow-y: auto; }
     .history-item {
-      background: #112240; border: 1px solid #1e3a5f; border-radius: 14px;
-      padding: 14px 20px; display: flex; align-items: center; gap: 16px; cursor: pointer;
+      background: #112240; border: 1px solid #1e3a5f; border-radius: 12px;
+      padding: 12px 16px; display: flex; align-items: center; gap: 12px; cursor: pointer;
+      flex-shrink: 0;
     }
     .history-item:active { background: #1e3a5f; }
-    .hist-src { font-size: 24px; font-weight: 700; color: #f59e0b; flex: 1; }
-    .hist-res { font-size: 24px; font-weight: 700; color: #2dd4bf; }
+    .hist-src { font-size: 22px; font-weight: 700; color: #f59e0b; flex: 1; }
+    .hist-res { font-size: 22px; font-weight: 700; color: #2dd4bf; }
     .hist-res.en { color: #f59e0b; }
     .hist-src.zh { color: #2dd4bf; }
   </style>
@@ -139,7 +142,6 @@
   <h1>🔍 查词典</h1>
 </header>
 
-<!-- Direction toggle -->
 <div class="lang-toggle">
   <button class="lang-btn active" id="btn-en-zh" onclick="setDir('en-zh')">英文 → 中文</button>
   <button class="lang-btn"        id="btn-zh-en" onclick="setDir('zh-en')">中文 → 英文</button>
@@ -156,7 +158,7 @@
   <div class="result-placeholder">翻译结果显示在这里</div>
 </div>
 
-<button class="speak-btn" id="speak-btn" style="display:none" onclick="speakBoth()">🔊 再次朗读</button>
+<button class="speak-btn"     id="speak-btn"     style="display:none" onclick="speakBoth()">🔊 再次朗读</button>
 
 <div class="repeat-section" id="repeat-section" style="display:none">
   <div class="repeat-row">
@@ -168,14 +170,17 @@
   <button class="stop-btn" id="stop-btn" onclick="stopRepeat()" style="display:none">⏹ 停止朗读</button>
 </div>
 
-<div class="history-label" id="hist-label" style="display:none">最近查过的词</div>
-<div class="history-list" id="history-list"></div>
+<!-- History only shown when no result is displayed -->
+<div class="history-wrap" id="history-wrap" style="display:none">
+  <div class="history-label">最近查过的词</div>
+  <div class="history-list" id="history-list"></div>
+</div>
 
 <script>
   const HIST_KEY = 'dict_history';
-  let direction  = 'en-zh';   // 'en-zh' or 'zh-en'
-  let currentSrc = '';        // what user typed
-  let currentRes = '';        // translation result
+  let direction  = 'en-zh';
+  let currentSrc = '';
+  let currentRes = '';
 
   /* ── Direction toggle ── */
   function setDir(dir) {
@@ -222,7 +227,7 @@
     });
   }
 
-  /* ── Chinese TTS: device voice, then Google TTS audio fallback ── */
+  /* ── Chinese TTS: device voice → Google TTS audio fallback ── */
   async function sayChinese(text) {
     if (!text) return;
     const ok = await new Promise(resolve => {
@@ -247,18 +252,14 @@
     }
   }
 
-  /* ── Speak both: order depends on direction ── */
+  /* ── Speak both in correct order for direction ── */
   async function speakBoth() {
     if (!currentSrc && !currentRes) return;
     stopRepeat();
     if (direction === 'en-zh') {
-      await sayEnglish(currentSrc);
-      await delay(500);
-      await sayChinese(currentRes);
+      await sayEnglish(currentSrc); await delay(500); await sayChinese(currentRes);
     } else {
-      await sayChinese(currentSrc);
-      await delay(500);
-      await sayEnglish(currentRes);
+      await sayChinese(currentSrc); await delay(500); await sayEnglish(currentRes);
     }
   }
 
@@ -304,15 +305,27 @@
     document.getElementById('repeat-progress').style.display = 'none';
   }
 
+  /* ── Show / hide panels ── */
+  function showResultPanel() {
+    document.getElementById('speak-btn').style.display      = 'block';
+    document.getElementById('repeat-section').style.display = 'flex';
+    document.getElementById('history-wrap').style.display   = 'none';
+  }
+  function showHistoryPanel() {
+    document.getElementById('speak-btn').style.display      = 'none';
+    document.getElementById('repeat-section').style.display = 'none';
+    const hist = loadHistory();
+    document.getElementById('history-wrap').style.display   = hist.length ? 'flex' : 'none';
+  }
+
   /* ── Clear ── */
   function clearInput() {
     stopRepeat();
     document.getElementById('input').value = '';
-    showPlaceholder();
-    document.getElementById('speak-btn').style.display      = 'none';
-    document.getElementById('repeat-section').style.display = 'none';
-    document.getElementById('input').focus();
+    document.getElementById('result-box').innerHTML = '<div class="result-placeholder">翻译结果显示在这里</div>';
     currentSrc = ''; currentRes = '';
+    showHistoryPanel();
+    document.getElementById('input').focus();
   }
 
   /* ── Translate ── */
@@ -321,25 +334,22 @@
     if (!text) { showError('请先输入文字'); return; }
 
     stopRepeat();
-    showLoading();
+    document.getElementById('result-box').innerHTML = '<div class="result-loading">翻译中…</div>';
     const btn = document.getElementById('trans-btn');
     btn.disabled = true;
 
-    const isEnZh = direction === 'en-zh';
-    const apiFrom = isEnZh ? 'en'    : 'zh-CN';
-    const apiTo   = isEnZh ? 'zh-CN' : 'en';
-    const pair    = isEnZh ? 'en|zh-CN' : 'zh-CN|en';
+    const isEnZh  = direction === 'en-zh';
+    const pair     = isEnZh ? 'en|zh-CN' : 'zh-CN|en';
+    const apiFrom  = isEnZh ? 'en'        : 'zh-CN';
+    const apiTo    = isEnZh ? 'zh-CN'     : 'en';
 
     let result = '';
-
-    // Try 1: MyMemory
     try {
       const res  = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${pair}`);
       const data = await res.json();
       result = data.responseData?.translatedText || '';
     } catch(e) {}
 
-    // Try 2: Google Translate
     if (!result) {
       try {
         const res  = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=${apiFrom}&tl=${apiTo}&dt=t&q=${encodeURIComponent(text)}`);
@@ -351,7 +361,10 @@
     btn.disabled = false;
 
     if (result) {
-      showResult(text, result);
+      currentSrc = text; currentRes = result;
+      const cls = isEnZh ? 'zh' : 'en';
+      document.getElementById('result-box').innerHTML = `<div class="result-text ${cls}">${result}</div>`;
+      showResultPanel();
       saveHistory(text, result, direction);
       speakBoth();
     } else {
@@ -359,23 +372,6 @@
     }
   }
 
-  /* ── Result display ── */
-  function showPlaceholder() {
-    document.getElementById('result-box').innerHTML = `<div class="result-placeholder">翻译结果显示在这里</div>`;
-    currentSrc = ''; currentRes = '';
-  }
-  function showLoading() {
-    document.getElementById('result-box').innerHTML = `<div class="result-loading">翻译中…</div>`;
-  }
-  function showResult(src, res) {
-    currentSrc = src; currentRes = res;
-    const cls = direction === 'en-zh' ? 'zh' : 'en';
-    document.getElementById('result-box').innerHTML = `<div class="result-text ${cls}">${res}</div>`;
-    document.getElementById('speak-btn').style.display      = 'block';
-    document.getElementById('repeat-section').style.display = 'flex';
-    document.getElementById('repeat-progress').style.display = 'none';
-    document.getElementById('stop-btn').style.display       = 'none';
-  }
   function showError(msg) {
     document.getElementById('result-box').innerHTML = `<div class="result-error">${msg}</div>`;
   }
@@ -389,25 +385,18 @@
     hist.unshift({ src, res, dir: dir || 'en-zh' });
     if (hist.length > 20) hist = hist.slice(0, 20);
     localStorage.setItem(HIST_KEY, JSON.stringify(hist));
-    renderHistory();
   }
   function renderHistory() {
     const hist = loadHistory();
-    const label = document.getElementById('hist-label');
-    const list  = document.getElementById('history-list');
-    if (!hist.length) { label.style.display = 'none'; list.innerHTML = ''; return; }
-    label.style.display = 'block';
-
-    // Support old format {en,cn} and new format {src,res,dir}
+    const list = document.getElementById('history-list');
     list.innerHTML = hist.map(h => {
-      const src  = h.src  || h.en  || '';
-      const res  = h.res  || h.cn  || '';
-      const dir  = h.dir  || 'en-zh';
-      const srcCls = dir === 'en-zh' ? ''   : 'zh';
-      const resCls = dir === 'en-zh' ? ''   : 'en';
+      const src = h.src || h.en || '';
+      const res = h.res || h.cn || '';
+      const dir = h.dir || 'en-zh';
+      const srcCls = dir === 'zh-en' ? 'zh' : '';
+      const resCls = dir === 'zh-en' ? 'en' : '';
       const se = src.replace(/'/g,"\\'"); const re = res.replace(/'/g,"\\'");
-      return `
-      <div class="history-item" onclick="fillFromHistory('${se}','${re}','${dir}')">
+      return `<div class="history-item" onclick="fillFromHistory('${se}','${re}','${dir}')">
         <span class="hist-src ${srcCls}">${src}</span>
         <span class="hist-res ${resCls}">${res}</span>
       </div>`;
@@ -417,13 +406,17 @@
     stopRepeat();
     if (dir && dir !== direction) setDir(dir);
     document.getElementById('input').value = src;
-    showResult(src, res);
+    currentSrc = src; currentRes = res;
+    const cls = (dir || 'en-zh') === 'en-zh' ? 'zh' : 'en';
+    document.getElementById('result-box').innerHTML = `<div class="result-text ${cls}">${res}</div>`;
+    showResultPanel();
     window.scrollTo({ top: 0, behavior: 'smooth' });
     speakBoth();
   }
 
   /* ── Init ── */
   renderHistory();
+  showHistoryPanel();
 
   document.getElementById('input').addEventListener('keydown', e => {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); doTranslate(); }
