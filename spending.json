@@ -4,7 +4,7 @@
     "weekStart": "2026-04-27",
     "orderNumber": "256848279",
     "deliveryDate": "2026-05-03",
-    "transferred": false,
+    "transferred": true,
     "items": [
       { "name": "白吐司面包", "amount": 3.10, "forParents": true },
       { "name": "黄油微波爆米花（Poppin）", "amount": 4.95, "forParents": true },
@@ -70,7 +70,7 @@
     "weekStart": "2026-04-14",
     "orderNumber": "255124517",
     "deliveryDate": "2026-04-18",
-    "transferred": false,
+    "transferred": true,
     "items": [
       { "name": "麦片能量棒 5条装", "amount": 2.25 },
       { "name": "巧克力早餐饼干 6块装", "amount": 2.25 },
@@ -95,7 +95,7 @@
     "weekStart": "2026-04-20",
     "orderNumber": "256169013",
     "deliveryDate": "2026-04-24",
-    "transferred": false,
+    "transferred": true,
     "items": [
       { "name": "泉水三文鱼罐头 95g x2", "amount": 4.20 },
       { "name": "草莓酸奶夹心早餐饼干 5块装", "amount": 2.25 },
@@ -116,7 +116,7 @@
     "week": "2026年4月第2周",
     "weekStart": "2026-04-12",
     "note": "线下单独购买（非网上订单）",
-    "transferred": false,
+    "transferred": true,
     "items": [
       { "name": "黄芽白（大白菜）x2", "amount": 13.80, "forParents": true }
     ]
