@@ -343,7 +343,8 @@
       },
       {
         "name": "大包装牛肉末 2kg（Drovers Choice）",
-        "amount": 25
+        "amount": 25,
+        "forParents": true
       },
       {
         "name": "速食燕麦片 10包装（Uncle Tobys）",
