@@ -268,28 +268,11 @@
   }
 
   async function tryTranslate(text) {
-    const q = encodeURIComponent(text);
-    const errors = [];
-
-    // 1. MyMemory — dedicated web translation API, CORS always enabled
-    try {
-      const res  = await fetch(`https://api.mymemory.translated.net/get?q=${q}&langpair=en%7Czh`);
-      const data = await res.json();
-      const cn   = data?.responseData?.translatedText || '';
-      if (cn && cn.toLowerCase() !== text.toLowerCase()) return cn;
-      errors.push('MyMemory: empty');
-    } catch(e) { errors.push('MyMemory: ' + e.message); }
-
-    // 2. Google Translate unofficial
-    try {
-      const res  = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=zh-CN&dt=t&q=${q}`);
-      const data = await res.json();
-      const cn   = data[0].map(x => x[0]).join('');
-      if (cn) return cn;
-      errors.push('Google: empty');
-    } catch(e) { errors.push('Google: ' + e.message); }
-
-    throw new Error(errors.join(' | '));
+    const res  = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|zh-CN`);
+    const data = await res.json();
+    const cn   = data.responseData?.translatedText || '';
+    if (cn) return cn;
+    throw new Error('翻译结果为空');
   }
 
   /* ── Result display ── */
