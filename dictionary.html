@@ -19,77 +19,58 @@
       gap: 20px;
     }
 
-    header {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
+    header { display: flex; align-items: center; gap: 16px; }
     .back-btn {
-      background: #1e3a6e;
-      border: 1px solid #2e5f9e;
-      border-radius: 50%;
-      width: 56px; height: 56px;
-      font-size: 28px;
+      background: #1e3a6e; border: 1px solid #2e5f9e; border-radius: 50%;
+      width: 56px; height: 56px; font-size: 28px;
       display: flex; align-items: center; justify-content: center;
-      text-decoration: none; color: #90caf9;
-      flex-shrink: 0;
+      text-decoration: none; color: #90caf9; flex-shrink: 0;
     }
-    header h1 {
-      font-size: 32px;
-      font-weight: 900;
-      color: #f59e0b;
-      letter-spacing: 2px;
+    header h1 { font-size: 32px; font-weight: 900; color: #f59e0b; letter-spacing: 2px; }
+
+    /* ── Direction toggle ── */
+    .lang-toggle { display: flex; gap: 12px; }
+    .lang-btn {
+      flex: 1;
+      background: #112240;
+      border: 2px solid #2e5f9e;
+      border-radius: 18px;
+      padding: 18px 10px;
+      font-size: 28px;
+      font-family: inherit;
+      color: #546e7a;
+      cursor: pointer;
+      font-weight: 700;
+      transition: all 0.15s;
     }
+    .lang-btn:active { opacity: 0.7; }
+    .lang-btn.active { background: #1e3a6e; border-color: #f59e0b; color: #f59e0b; }
 
     /* ── Input area ── */
     .input-wrap { position: relative; }
     textarea {
       width: 100%;
-      background: #112240;
-      border: 2px solid #2e5f9e;
-      border-radius: 20px;
-      padding: 24px 28px;
-      font-size: 42px;
-      font-weight: 700;
-      color: #f0f4f8;
-      font-family: inherit;
-      outline: none;
-      resize: none;
-      line-height: 1.4;
-      min-height: 160px;
-      letter-spacing: 2px;
+      background: #112240; border: 2px solid #2e5f9e; border-radius: 20px;
+      padding: 24px 28px; font-size: 42px; font-weight: 700; color: #f0f4f8;
+      font-family: inherit; outline: none; resize: none;
+      line-height: 1.4; min-height: 160px; letter-spacing: 2px;
       transition: border-color 0.2s;
     }
     textarea::placeholder { color: #334d66; font-weight: 400; }
     textarea:focus { border-color: #f59e0b; }
-
     .clear-btn {
-      position: absolute;
-      top: 16px; right: 16px;
-      background: #1e3a6e;
-      border: 1px solid #2e5f9e;
-      border-radius: 50%;
-      width: 48px; height: 48px;
-      font-size: 22px;
-      color: #64748b;
-      cursor: pointer;
+      position: absolute; top: 16px; right: 16px;
+      background: #1e3a6e; border: 1px solid #2e5f9e; border-radius: 50%;
+      width: 48px; height: 48px; font-size: 22px; color: #64748b; cursor: pointer;
       display: flex; align-items: center; justify-content: center;
     }
     .clear-btn:active { background: #2e5a8f; }
 
     /* ── Translate button ── */
     .translate-btn {
-      background: #f59e0b;
-      border: none;
-      border-radius: 20px;
-      padding: 24px;
-      font-size: 36px;
-      font-weight: 900;
-      font-family: inherit;
-      color: #1a1000;
-      cursor: pointer;
-      width: 100%;
-      letter-spacing: 4px;
+      background: #f59e0b; border: none; border-radius: 20px; padding: 24px;
+      font-size: 36px; font-weight: 900; font-family: inherit; color: #1a1000;
+      cursor: pointer; width: 100%; letter-spacing: 4px;
       transition: opacity 0.15s, transform 0.1s;
     }
     .translate-btn:active { opacity: 0.8; transform: scale(0.98); }
@@ -97,122 +78,58 @@
 
     /* ── Speak button ── */
     .speak-btn {
-      background: #1e3a6e;
-      border: 1px solid #2e5f9e;
-      border-radius: 20px;
-      padding: 20px;
-      font-size: 30px;
-      font-family: inherit;
-      color: #90caf9;
-      cursor: pointer;
-      width: 100%;
-      font-weight: 700;
-      transition: opacity 0.15s;
+      background: #1e3a6e; border: 1px solid #2e5f9e; border-radius: 20px;
+      padding: 20px; font-size: 28px; font-family: inherit; color: #90caf9;
+      cursor: pointer; width: 100%; font-weight: 700; transition: opacity 0.15s;
     }
     .speak-btn:active { opacity: 0.7; }
 
     /* ── Result area ── */
     .result-box {
-      background: #0d2745;
-      border: 2px solid #1e3a5f;
-      border-radius: 20px;
-      padding: 28px;
-      min-height: 180px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      gap: 16px;
-      flex: 1;
+      background: #0d2745; border: 2px solid #1e3a5f; border-radius: 20px;
+      padding: 28px; min-height: 180px; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; text-align: center; gap: 16px; flex: 1;
     }
     .result-placeholder { font-size: 28px; color: #1e3a5f; }
-    .result-cn {
-      font-size: 64px;
-      font-weight: 900;
-      color: #2dd4bf;
-      line-height: 1.3;
-      word-break: break-all;
+    .result-text {
+      font-size: 64px; font-weight: 900; line-height: 1.3; word-break: break-all;
     }
-    .result-loading {
-      font-size: 32px;
-      color: #475569;
-      animation: blink 1s infinite;
-    }
+    .result-text.zh { color: #2dd4bf; }
+    .result-text.en { color: #f59e0b; }
+    .result-loading { font-size: 32px; color: #475569; animation: blink 1s infinite; }
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
     .result-error { font-size: 28px; color: #f87171; }
 
     /* ── Repeat section ── */
-    .repeat-section {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .repeat-row {
-      display: flex;
-      gap: 12px;
-    }
+    .repeat-section { display: flex; flex-direction: column; gap: 12px; }
+    .repeat-row { display: flex; gap: 12px; }
     .repeat-btn {
-      flex: 1;
-      background: #112240;
-      border: 2px solid #2e5f9e;
-      border-radius: 18px;
-      padding: 18px 8px;
-      font-size: 26px;
-      font-family: inherit;
-      color: #90caf9;
-      cursor: pointer;
-      font-weight: 700;
-      transition: all 0.15s;
+      flex: 1; background: #112240; border: 2px solid #2e5f9e; border-radius: 18px;
+      padding: 18px 8px; font-size: 26px; font-family: inherit; color: #90caf9;
+      cursor: pointer; font-weight: 700; transition: all 0.15s;
     }
     .repeat-btn:active { opacity: 0.7; }
-    .repeat-btn.running {
-      background: #1a3a1a;
-      border-color: #22c55e;
-      color: #86efac;
-    }
-    .repeat-progress {
-      text-align: center;
-      font-size: 26px;
-      color: #64748b;
-      font-weight: 700;
-    }
+    .repeat-btn.running { background: #1a3a1a; border-color: #22c55e; color: #86efac; }
+    .repeat-progress { text-align: center; font-size: 26px; color: #64748b; font-weight: 700; }
     .stop-btn {
-      background: #450a0a;
-      border: 2px solid #ef4444;
-      border-radius: 18px;
-      padding: 18px;
-      font-size: 28px;
-      font-family: inherit;
-      color: #fca5a5;
-      cursor: pointer;
-      font-weight: 700;
-      width: 100%;
-      transition: opacity 0.15s;
+      background: #450a0a; border: 2px solid #ef4444; border-radius: 18px;
+      padding: 18px; font-size: 28px; font-family: inherit; color: #fca5a5;
+      cursor: pointer; font-weight: 700; width: 100%; transition: opacity 0.15s;
     }
     .stop-btn:active { opacity: 0.7; }
 
     /* ── History ── */
-    .history-label {
-      font-size: 18px;
-      color: #334d66;
-      letter-spacing: 1px;
-      margin-top: 4px;
-    }
+    .history-label { font-size: 18px; color: #334d66; letter-spacing: 1px; margin-top: 4px; }
     .history-list { display: flex; flex-direction: column; gap: 10px; }
     .history-item {
-      background: #112240;
-      border: 1px solid #1e3a5f;
-      border-radius: 14px;
-      padding: 14px 20px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      cursor: pointer;
+      background: #112240; border: 1px solid #1e3a5f; border-radius: 14px;
+      padding: 14px 20px; display: flex; align-items: center; gap: 16px; cursor: pointer;
     }
     .history-item:active { background: #1e3a5f; }
-    .history-en { font-size: 26px; font-weight: 700; color: #f59e0b; flex: 1; }
-    .history-cn { font-size: 26px; font-weight: 700; color: #2dd4bf; }
+    .hist-src { font-size: 24px; font-weight: 700; color: #f59e0b; flex: 1; }
+    .hist-res { font-size: 24px; font-weight: 700; color: #2dd4bf; }
+    .hist-res.en { color: #f59e0b; }
+    .hist-src.zh { color: #2dd4bf; }
   </style>
 </head>
 <body>
@@ -221,6 +138,12 @@
   <a href="index.html" class="back-btn">←</a>
   <h1>🔍 查词典</h1>
 </header>
+
+<!-- Direction toggle -->
+<div class="lang-toggle">
+  <button class="lang-btn active" id="btn-en-zh" onclick="setDir('en-zh')">英文 → 中文</button>
+  <button class="lang-btn"        id="btn-zh-en" onclick="setDir('zh-en')">中文 → 英文</button>
+</div>
 
 <div class="input-wrap">
   <textarea id="input" placeholder="输入英文单词或句子…" rows="3"></textarea>
@@ -233,7 +156,7 @@
   <div class="result-placeholder">翻译结果显示在这里</div>
 </div>
 
-<button class="speak-btn" id="speak-btn" style="display:none" onclick="speakBoth()">🔊 再次朗读（英文 + 中文）</button>
+<button class="speak-btn" id="speak-btn" style="display:none" onclick="speakBoth()">🔊 再次朗读</button>
 
 <div class="repeat-section" id="repeat-section" style="display:none">
   <div class="repeat-row">
@@ -250,8 +173,19 @@
 
 <script>
   const HIST_KEY = 'dict_history';
-  let currentEn = '';
-  let currentCn = '';
+  let direction  = 'en-zh';   // 'en-zh' or 'zh-en'
+  let currentSrc = '';        // what user typed
+  let currentRes = '';        // translation result
+
+  /* ── Direction toggle ── */
+  function setDir(dir) {
+    direction = dir;
+    document.getElementById('btn-en-zh').classList.toggle('active', dir === 'en-zh');
+    document.getElementById('btn-zh-en').classList.toggle('active', dir === 'zh-en');
+    document.getElementById('input').placeholder =
+      dir === 'en-zh' ? '输入英文单词或句子…' : '输入中文词语或句子…';
+    clearInput();
+  }
 
   /* ── TTS voices ── */
   let ttsVoiceEn = null;
@@ -262,19 +196,17 @@
     ttsVoiceEn = v.find(x => x.lang === 'en-AU')
               || v.find(x => x.lang === 'en-GB')
               || v.find(x => x.lang.startsWith('en') && x.localService)
-              || v.find(x => x.lang.startsWith('en'))
-              || null;
+              || v.find(x => x.lang.startsWith('en')) || null;
     ttsVoiceCn = v.find(x => x.lang === 'zh-CN')
               || v.find(x => x.lang === 'zh-TW')
-              || v.find(x => x.lang.startsWith('zh'))
-              || null;
+              || v.find(x => x.lang.startsWith('zh')) || null;
   }
   if (speechSynthesis.onvoiceschanged !== undefined) speechSynthesis.addEventListener('voiceschanged', initVoices);
   initVoices();
 
   const delay = ms => new Promise(r => setTimeout(r, ms));
 
-  /* ── Speak English via Web Speech API ── */
+  /* ── English TTS ── */
   function sayEnglish(text) {
     return new Promise(resolve => {
       if (!text) { resolve(); return; }
@@ -290,11 +222,9 @@
     });
   }
 
-  /* ── Speak Chinese: device TTS first, Google TTS audio fallback ── */
+  /* ── Chinese TTS: device voice, then Google TTS audio fallback ── */
   async function sayChinese(text) {
     if (!text) return;
-
-    // Try device TTS — resolve(true) on success, resolve(false) on failure/timeout
     const ok = await new Promise(resolve => {
       const utt = new SpeechSynthesisUtterance(text);
       utt.lang = 'zh-CN';
@@ -305,28 +235,31 @@
       setTimeout(()  => { if (!done) { done = true; resolve(false); } }, 3000);
       speechSynthesis.speak(utt);
     });
-
     if (!ok) {
-      // Fallback: Google Translate TTS audio
       speechSynthesis.cancel();
       await new Promise(resolve => {
         const url = `https://translate.google.com/translate_tts?ie=UTF-8&tl=zh-CN&client=tw-ob&q=${encodeURIComponent(text.slice(0, 200))}`;
         const audio = new Audio(url);
-        audio.onended = resolve;
-        audio.onerror = resolve;
+        audio.onended = resolve; audio.onerror = resolve;
         setTimeout(resolve, 5000);
         audio.play().catch(resolve);
       });
     }
   }
 
-  /* ── Speak English then Chinese ── */
+  /* ── Speak both: order depends on direction ── */
   async function speakBoth() {
-    if (!currentEn && !currentCn) return;
+    if (!currentSrc && !currentRes) return;
     stopRepeat();
-    await sayEnglish(currentEn);
-    await delay(500);
-    await sayChinese(currentCn);
+    if (direction === 'en-zh') {
+      await sayEnglish(currentSrc);
+      await delay(500);
+      await sayChinese(currentRes);
+    } else {
+      await sayChinese(currentSrc);
+      await delay(500);
+      await sayEnglish(currentRes);
+    }
   }
 
   /* ── Repeat loop ── */
@@ -334,11 +267,9 @@
   let repeatMax   = 0;
 
   async function startRepeat(times) {
-    if (!currentEn && !currentCn) return;
+    if (!currentSrc && !currentRes) return;
     stopRepeat();
-    isRepeating = true;
-    repeatMax   = times;
-
+    isRepeating = true; repeatMax = times;
     document.querySelectorAll('.repeat-btn').forEach(b => b.classList.remove('running'));
     document.getElementById('rep' + times).classList.add('running');
     document.getElementById('stop-btn').style.display        = 'block';
@@ -346,18 +277,20 @@
 
     for (let i = 1; i <= repeatMax && isRepeating; i++) {
       document.getElementById('repeat-progress').textContent = `第 ${i} / ${repeatMax} 次`;
-      await sayEnglish(currentEn);
-      if (!isRepeating) break;
-      await delay(500);
-      if (!isRepeating) break;
-      await sayChinese(currentCn);
+      if (direction === 'en-zh') {
+        await sayEnglish(currentSrc); if (!isRepeating) break;
+        await delay(500);             if (!isRepeating) break;
+        await sayChinese(currentRes);
+      } else {
+        await sayChinese(currentSrc); if (!isRepeating) break;
+        await delay(500);             if (!isRepeating) break;
+        await sayEnglish(currentRes);
+      }
       if (!isRepeating) break;
       if (i < repeatMax) await delay(800);
     }
 
-    if (isRepeating) {
-      document.getElementById('repeat-progress').textContent = `✓ 已朗读 ${repeatMax} 次`;
-    }
+    if (isRepeating) document.getElementById('repeat-progress').textContent = `✓ 已朗读 ${repeatMax} 次`;
     isRepeating = false;
     document.querySelectorAll('.repeat-btn').forEach(b => b.classList.remove('running'));
     document.getElementById('stop-btn').style.display = 'none';
@@ -376,45 +309,50 @@
     stopRepeat();
     document.getElementById('input').value = '';
     showPlaceholder();
-    document.getElementById('speak-btn').style.display    = 'none';
+    document.getElementById('speak-btn').style.display      = 'none';
     document.getElementById('repeat-section').style.display = 'none';
     document.getElementById('input').focus();
-    currentEn = ''; currentCn = '';
+    currentSrc = ''; currentRes = '';
   }
 
   /* ── Translate ── */
   async function doTranslate() {
     const text = document.getElementById('input').value.trim();
-    if (!text) { showError('请先输入英文单词或句子'); return; }
+    if (!text) { showError('请先输入文字'); return; }
 
     stopRepeat();
     showLoading();
     const btn = document.getElementById('trans-btn');
     btn.disabled = true;
 
-    let cn = '';
+    const isEnZh = direction === 'en-zh';
+    const apiFrom = isEnZh ? 'en'    : 'zh-CN';
+    const apiTo   = isEnZh ? 'zh-CN' : 'en';
+    const pair    = isEnZh ? 'en|zh-CN' : 'zh-CN|en';
+
+    let result = '';
 
     // Try 1: MyMemory
     try {
-      const res  = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|zh-CN`);
+      const res  = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${pair}`);
       const data = await res.json();
-      cn = data.responseData?.translatedText || '';
+      result = data.responseData?.translatedText || '';
     } catch(e) {}
 
     // Try 2: Google Translate
-    if (!cn) {
+    if (!result) {
       try {
-        const res  = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=zh-CN&dt=t&q=${encodeURIComponent(text)}`);
+        const res  = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=${apiFrom}&tl=${apiTo}&dt=t&q=${encodeURIComponent(text)}`);
         const data = await res.json();
-        cn = data[0]?.map(x => x[0])?.join('') || '';
+        result = data[0]?.map(x => x[0])?.join('') || '';
       } catch(e) {}
     }
 
     btn.disabled = false;
 
-    if (cn) {
-      showResult(text, cn);
-      saveHistory(text, cn);
+    if (result) {
+      showResult(text, result);
+      saveHistory(text, result, direction);
       speakBoth();
     } else {
       showError('翻译失败，请检查网络后重试');
@@ -424,18 +362,19 @@
   /* ── Result display ── */
   function showPlaceholder() {
     document.getElementById('result-box').innerHTML = `<div class="result-placeholder">翻译结果显示在这里</div>`;
-    currentEn = ''; currentCn = '';
+    currentSrc = ''; currentRes = '';
   }
   function showLoading() {
     document.getElementById('result-box').innerHTML = `<div class="result-loading">翻译中…</div>`;
   }
-  function showResult(en, cn) {
-    currentEn = en; currentCn = cn;
-    document.getElementById('result-box').innerHTML = `<div class="result-cn">${cn}</div>`;
-    document.getElementById('speak-btn').style.display    = 'block';
+  function showResult(src, res) {
+    currentSrc = src; currentRes = res;
+    const cls = direction === 'en-zh' ? 'zh' : 'en';
+    document.getElementById('result-box').innerHTML = `<div class="result-text ${cls}">${res}</div>`;
+    document.getElementById('speak-btn').style.display      = 'block';
     document.getElementById('repeat-section').style.display = 'flex';
     document.getElementById('repeat-progress').style.display = 'none';
-    document.getElementById('stop-btn').style.display     = 'none';
+    document.getElementById('stop-btn').style.display       = 'none';
   }
   function showError(msg) {
     document.getElementById('result-box').innerHTML = `<div class="result-error">${msg}</div>`;
@@ -445,9 +384,9 @@
   function loadHistory() {
     try { return JSON.parse(localStorage.getItem(HIST_KEY) || '[]'); } catch { return []; }
   }
-  function saveHistory(en, cn) {
-    let hist = loadHistory().filter(h => h.en.toLowerCase() !== en.toLowerCase());
-    hist.unshift({ en, cn });
+  function saveHistory(src, res, dir) {
+    let hist = loadHistory().filter(h => !(h.src === src && h.dir === dir));
+    hist.unshift({ src, res, dir: dir || 'en-zh' });
     if (hist.length > 20) hist = hist.slice(0, 20);
     localStorage.setItem(HIST_KEY, JSON.stringify(hist));
     renderHistory();
@@ -458,16 +397,27 @@
     const list  = document.getElementById('history-list');
     if (!hist.length) { label.style.display = 'none'; list.innerHTML = ''; return; }
     label.style.display = 'block';
-    list.innerHTML = hist.map(h => `
-      <div class="history-item" onclick="fillFromHistory('${h.en.replace(/'/g,"\\'")}','${h.cn.replace(/'/g,"\\'")}')">
-        <span class="history-en">${h.en}</span>
-        <span class="history-cn">${h.cn}</span>
-      </div>`).join('');
+
+    // Support old format {en,cn} and new format {src,res,dir}
+    list.innerHTML = hist.map(h => {
+      const src  = h.src  || h.en  || '';
+      const res  = h.res  || h.cn  || '';
+      const dir  = h.dir  || 'en-zh';
+      const srcCls = dir === 'en-zh' ? ''   : 'zh';
+      const resCls = dir === 'en-zh' ? ''   : 'en';
+      const se = src.replace(/'/g,"\\'"); const re = res.replace(/'/g,"\\'");
+      return `
+      <div class="history-item" onclick="fillFromHistory('${se}','${re}','${dir}')">
+        <span class="hist-src ${srcCls}">${src}</span>
+        <span class="hist-res ${resCls}">${res}</span>
+      </div>`;
+    }).join('');
   }
-  function fillFromHistory(en, cn) {
+  function fillFromHistory(src, res, dir) {
     stopRepeat();
-    document.getElementById('input').value = en;
-    showResult(en, cn);
+    if (dir && dir !== direction) setDir(dir);
+    document.getElementById('input').value = src;
+    showResult(src, res);
     window.scrollTo({ top: 0, behavior: 'smooth' });
     speakBoth();
   }
