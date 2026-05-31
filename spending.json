@@ -49,7 +49,7 @@
     "weekStart": "2026-05-25",
     "orderNumber": "260090148",
     "deliveryDate": "2026-05-26",
-    "transferred": false,
+    "transferred": true,
     "items": [
       {
         "name": "散养鸡蛋 12个装",
