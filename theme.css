@@ -305,6 +305,128 @@ html.light .hist-res           { color: #0d9488 !important; }
 html.light .hist-res.en        { color: #b45309 !important; }
 html.light .hist-src.zh        { color: #0d9488 !important; }
 
+/* ── Index / home page ── */
+html.light .card {
+  background: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08) !important;
+}
+html.light .notice-card {
+  background: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+html.light .notice-card.pinned { border-color: #f59e0b !important; }
+html.light .notice-bar {
+  background: #fffbeb !important;
+  border-color: #f59e0b !important;
+}
+html.light #clock            { color: #b45309 !important; }
+html.light #date-display     { color: #2563eb !important; }
+html.light #weather-temp     { color: #1e293b !important; }
+html.light #weather-desc     { color: #475569 !important; }
+html.light #weather-range    { color: #2563eb !important; }
+html.light #weather-location { color: #64748b !important; }
+html.light .big-clock-time   { color: #b45309 !important; }
+html.light .big-clock-ampm   { color: #b45309 !important; }
+html.light .big-clock-date   { color: #2563eb !important; }
+html.light .nb-title         { color: #1e293b !important; }
+html.light .nb-time          { color: #b45309 !important; }
+html.light .label            { color: #2563eb !important; }
+html.light .title            { color: #1e293b !important; }
+html.light .subtitle         { color: #3b82f6 !important; }
+html.light .note             { color: #15803d !important; }
+html.light .word             { color: #b45309 !important; }
+html.light .question         { color: #3b82f6 !important; }
+html.light .answer-box {
+  background: #f0fdf4 !important;
+  border-color: #0d9488 !important;
+}
+html.light .answer-cn        { color: #0d9488 !important; }
+html.light .answer-desc      { color: #334155 !important; }
+html.light .tap-hint         { color: #94a3b8 !important; }
+html.light .custom-msg       { color: #1e293b !important; }
+html.light .nc-label         { color: #2563eb !important; }
+html.light .nc-title         { color: #1e293b !important; }
+html.light .nc-date          { color: #3b82f6 !important; }
+html.light .nc-note          { color: #15803d !important; }
+
+/* ── Spending page (additional) ── */
+html.light .toggle-btn {
+  border-color: #e2e8f0 !important;
+  color: #64748b !important;
+}
+html.light .toggle-btn:hover {
+  color: #2563eb !important;
+  border-color: #93c5fd !important;
+}
+html.light .item-name        { color: #334155 !important; }
+html.light .owed-amount      { color: #dc2626 !important; }
+
+/* ── Apps page (additional) ── */
+html.light #topbar .subtitle { color: #2563eb !important; }
+html.light .app-name-en      { color: #475569 !important; }
+
+/* ── Standby admin page (additional) ── */
+html.light .token-bar {
+  background: #f1f5f9 !important;
+  border-color: #e2e8f0 !important;
+}
+html.light .token-bar input {
+  background: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  color: #1e293b !important;
+}
+html.light .token-bar button {
+  background: #dbeafe !important;
+  border-color: #93c5fd !important;
+  color: #1d4ed8 !important;
+}
+html.light .badge {
+  background: #f1f5f9 !important;
+  color: #475569 !important;
+}
+html.light .badge strong     { color: #1e293b !important; }
+html.light .week-label       { color: #64748b !important; }
+html.light .push-batch-btn,
+html.light .push-word-btn {
+  background: #dcfce7 !important;
+  border-color: #86efac !important;
+  color: #15803d !important;
+}
+html.light .add-word-section {
+  background: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+html.light .add-word-section h2 { color: #2563eb !important; }
+html.light .form-input {
+  background: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  color: #1e293b !important;
+}
+html.light .form-label       { color: #475569 !important; }
+html.light .translate-btn {
+  background: #dbeafe !important;
+  border-color: #93c5fd !important;
+  color: #1d4ed8 !important;
+}
+html.light .speak-preview-btn {
+  background: #dbeafe !important;
+  border-color: #93c5fd !important;
+  color: #1d4ed8 !important;
+}
+html.light .form-feedback.ok  { background: #f0fdf4 !important; color: #15803d !important; border-color: #86efac !important; }
+html.light .form-feedback.err { background: #fef2f2 !important; color: #dc2626 !important; border-color: #fca5a5 !important; }
+
+/* ── Phonics page (additional) ── */
+html.light .prog-bar         { background: #e2e8f0 !important; }
+html.light .ph-word          { color: #334155 !important; }
+html.light .ph-word-cn       { color: #475569 !important; }
+
+/* ── Road rules page (additional) ── */
+html.light .sidebar-item.active    { color: #b45309 !important; }
+html.light .sidebar-subitem.active { color: #b45309 !important; }
+html.light .toc-row:hover          { background: #f1f5f9 !important; }
+
 /* ── Toggle button ── */
 #theme-toggle {
   position: fixed;
