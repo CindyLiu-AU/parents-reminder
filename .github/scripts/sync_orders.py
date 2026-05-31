@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
-"""Sync new Coles and Woolworths orders from Yahoo email into spending.json."""
+"""Sync Coles and Woolworths orders from Yahoo email into spending.json.
 
-import imaplib, email, email.header, re, json, os, sys
-from datetime import datetime, timedelta
+For each order number, the LATEST confirmation email wins — this handles
+order modifications which send a new email with the same order number.
+"""
+
+import imaplib, email, email.header, email.utils, re, json, os, sys
+from datetime import datetime, timezone, timedelta
 from math import ceil
 from urllib.request import urlopen
 from urllib.parse import quote
@@ -14,7 +18,6 @@ APP_PASSWORD  = os.environ.get("YAHOO_APP_PASSWORD", "")
 REPO_ROOT     = os.path.join(os.path.dirname(__file__), "..", "..")
 SPENDING_JSON = os.path.join(REPO_ROOT, "spending.json")
 
-# forParents detection — English product name patterns (shared across both stores)
 FOR_PARENTS_RULES = [
     r"30\s*pack\s*egg|egg.*30\s*pack",
     r"full\s*cream\s*milk.*3\s*l\b|3\s*l\b.*full\s*cream\s*milk",
@@ -84,20 +87,27 @@ def get_html_body(msg):
     return payload.decode(cs, errors="replace") if payload else ""
 
 
+def msg_date(msg):
+    """Return an aware datetime for an email message (UTC fallback)."""
+    try:
+        d = email.utils.parsedate_to_datetime(decode_hdr(msg.get("Date", "")))
+        if d.tzinfo is None:
+            d = d.replace(tzinfo=timezone.utc)
+        return d
+    except Exception:
+        return datetime.min.replace(tzinfo=timezone.utc)
+
+
 # ── Store detection ───────────────────────────────────────────────────────────
 
 def detect_store(subject, from_addr):
     """Return ('coles'|'woolworths', order_num) or (None, None)."""
-    subj_l = subject.lower()
     from_l = from_addr.lower()
 
-    # Woolworths — "Delivery order #299546481 - Confirmation"
+    # Woolworths — detected by sender; subject "Delivery order #XXXXXX - Confirmation"
     if "woolworths" in from_l:
-        m = re.search(r"[Dd]elivery order\s*#(\d+)", subject)
-        if m:
-            return "woolworths", m.group(1)
-        # Woolworths subject variants with order number
         for pat in [
+            r"[Dd]elivery order\s*#(\d+)",
             r"[Ww]oolworths.*order\s*#?(\d+)",
             r"order\s*#?(\d+).*[Cc]onfirm",
             r"#(\d{7,})",
@@ -107,13 +117,7 @@ def detect_store(subject, from_addr):
             if m:
                 return "woolworths", m.group(1)
 
-    # Coles — "Your order 260090148 has been confirmed"
-    if "coles" in from_l or "coles" in subj_l:
-        m = re.search(r"[Yy]our order (\d+) has been confirmed", subject)
-        if m:
-            return "coles", m.group(1)
-
-    # Coles fallback — generic "confirmed" subject, non-Woolworths sender
+    # Coles — "Your order XXXXXXXXX has been confirmed"
     m = re.search(r"[Yy]our order (\d+) has been confirmed", subject)
     if m:
         return "coles", m.group(1)
@@ -168,21 +172,17 @@ def parse_coles_items(text):
 
 # ── Woolworths item parser ────────────────────────────────────────────────────
 #
-# Woolworths table columns per item row: name | unit_price | qty | total
-# After HTML→text each cell is its own line, no $ sign on prices.
-# Example extracted lines:
+# Table columns per item: name | unit_price | qty | line_total  (no $ sign)
+# Example after HTML→text:
 #   Sunrice Hinata Short Grain Rice
-#   15.00          ← unit price  (skip)
-#   5.00           ← qty         (skip)
-#   75.00          ← line total  (use this)
-#
-# Stop at: Subtotal:, Delivery fee:, Paper bags:, Service fees:, Total payable
+#   15.00     ← unit price  (skip, num_count=1)
+#   5.00      ← qty         (skip, num_count=2)
+#   75.00     ← line total  (use, num_count=3)
 
 WW_NUMBER_RE  = re.compile(r"^(\d+(?:\.\d+)?)$")
 WW_SKIP_LINES = {
     "Item description", "Unit price", "Qty", "Price",
-    "Woolworths items", "Woolworths Everyday Market items",
-    "Everyday Market items",
+    "Woolworths items", "Woolworths Everyday Market items", "Everyday Market items",
 }
 WW_STOP_RE    = re.compile(
     r"^(?:Subtotal|Delivery fee|Paper bags?|Service fees?|Total payable|Paid with|GST)",
@@ -194,7 +194,7 @@ def parse_woolworths_items(text):
     lines        = [l.strip() for l in text.split("\n") if l.strip()]
     in_items     = False
     current_name = None
-    num_count    = 0   # counts numbers seen since last product name (1=unit, 2=qty, 3=total)
+    num_count    = 0
     items        = []
 
     for line in lines:
@@ -212,18 +212,15 @@ def parse_woolworths_items(text):
         m = WW_NUMBER_RE.match(line)
         if m:
             if current_name is None:
-                continue  # stray number before any product name
+                continue
             num_count += 1
             if num_count == 3:
-                # Third number is the line total
                 amount = float(m.group(1))
                 if amount > 0:
                     items.append({"name_en": current_name, "amount": amount})
                 current_name = None
                 num_count    = 0
-            # num_count 1 = unit_price, 2 = qty → skip
         else:
-            # Text line → new product name
             current_name = line
             num_count    = 0
 
@@ -281,54 +278,71 @@ def main():
 
     with open(SPENDING_JSON, encoding="utf-8") as f:
         spending = json.load(f)
-    known_orders = {str(e.get("orderNumber", "")) for e in spending}
+
+    # Index existing entries by order number for fast lookup
+    existing_by_order = {
+        str(e.get("orderNumber", "")): i
+        for i, e in enumerate(spending)
+        if e.get("orderNumber")
+    }
 
     print("Connecting to Yahoo IMAP…")
-    mail = imaplib.IMAP4_SSL(IMAP_HOST, 993)
-    mail.login(EMAIL_ADDR, APP_PASSWORD)
-    mail.select("Inbox")
+    imap = imaplib.IMAP4_SSL(IMAP_HOST, 993)
+    imap.login(EMAIL_ADDR, APP_PASSWORD)
+    imap.select("Inbox")
 
-    # Collect unique UIDs — broad net, detect_store() filters
+    # Broad search — detect_store() filters to real orders
     uid_set = set()
     for criterion in [
-        'SUBJECT "has been confirmed"',       # Coles
-        'FROM "woolworths.com.au"',            # Woolworths (any subject)
-        'SUBJECT "Delivery order"',            # Woolworths fallback
+        'SUBJECT "has been confirmed"',   # Coles
+        'FROM "woolworths.com.au"',        # Woolworths (any subject)
+        'SUBJECT "Delivery order"',        # Woolworths fallback
     ]:
-        _, ids = mail.search(None, criterion)
+        _, ids = imap.search(None, criterion)
         uid_set.update(ids[0].split())
 
-    print(f"Found {len(uid_set)} candidate emails to check.")
+    print(f"Found {len(uid_set)} candidate emails.")
 
-    new_entries = []
+    # Pass 1 — identify latest email per order number
+    # order_emails: order_num -> (datetime, msg, store)
+    order_emails = {}
 
     for uid in uid_set:
-        _, data = mail.fetch(uid, "(RFC822)")
-        msg       = email.message_from_bytes(data[0][1])
+        _, raw   = imap.fetch(uid, "(RFC822)")
+        msg       = email.message_from_bytes(raw[0][1])
         subject   = decode_hdr(msg.get("Subject", ""))
         from_addr = decode_hdr(msg.get("From", ""))
 
         store, order_num = detect_store(subject, from_addr)
         if not store or not order_num:
             continue
-        if order_num in known_orders:
-            continue
 
-        print(f"  New {store} order: #{order_num}")
+        date = msg_date(msg)
+        if order_num not in order_emails or date > order_emails[order_num][0]:
+            order_emails[order_num] = (date, msg, store)
+
+    imap.logout()
+    print(f"Identified {len(order_emails)} unique order(s).")
+
+    # Pass 2 — parse latest email for each order; update or add
+    new_entries  = []
+    changed      = False
+
+    for order_num, (date, msg, store) in order_emails.items():
         html = get_html_body(msg)
         text = html_to_text(html)
 
         delivery_date = parse_delivery_date(text)
         if not delivery_date:
-            print(f"    ⚠ Could not parse delivery date, skipping.")
+            print(f"  ⚠ #{order_num} [{store}]: could not parse delivery date, skipping.")
             continue
 
         raw_items = parse_coles_items(text) if store == "coles" else parse_woolworths_items(text)
         if not raw_items:
-            print(f"    ⚠ No items parsed, skipping.")
+            print(f"  ⚠ #{order_num} [{store}]: no items parsed, skipping.")
             continue
 
-        print(f"    Parsed {len(raw_items)} items, translating…")
+        print(f"  #{order_num} [{store}]: {len(raw_items)} items, translating…")
         items = []
         for item in raw_items:
             cn_name = translate_en_to_zh(item["name_en"])
@@ -338,7 +352,7 @@ def main():
             items.append(entry)
 
         week_str, week_start = week_info(delivery_date)
-        new_entries.append({
+        new_data = {
             "store":        store,
             "week":         week_str,
             "weekStart":    week_start,
@@ -346,22 +360,36 @@ def main():
             "deliveryDate": delivery_date.strftime("%Y-%m-%d"),
             "transferred":  False,
             "items":        items,
-        })
-        print(f"    ✓ [{store}] {week_str} — {len(items)} items")
+        }
 
-    mail.logout()
+        if order_num in existing_by_order:
+            idx = existing_by_order[order_num]
+            old = spending[idx]
+            # Preserve transferred status; replace everything else
+            new_data["transferred"] = old.get("transferred", False)
+            if new_data != old:
+                spending[idx] = new_data
+                changed = True
+                print(f"    ↺ Updated (latest email supersedes previous version)")
+            else:
+                print(f"    — No change")
+        else:
+            new_entries.append(new_data)
+            changed = True
+            print(f"    ✓ New entry — {week_str}")
 
-    if not new_entries:
-        print("No new orders found.")
+    if not changed:
+        print("No changes to spending.json.")
         return
 
+    # Prepend new entries newest-first, then existing
     new_entries.sort(key=lambda x: x["deliveryDate"], reverse=True)
     spending = new_entries + spending
 
     with open(SPENDING_JSON, "w", encoding="utf-8") as f:
         json.dump(spending, f, ensure_ascii=False, indent=2)
 
-    print(f"\nDone — added {len(new_entries)} new order(s) to spending.json.")
+    print(f"\nDone — {len(new_entries)} new, {sum(1 for o in order_emails if o in existing_by_order)} checked for updates.")
 
 
 if __name__ == "__main__":
