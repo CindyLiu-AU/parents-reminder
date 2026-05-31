@@ -87,40 +87,35 @@ def get_html_body(msg):
 # ── Store detection ───────────────────────────────────────────────────────────
 
 def detect_store(subject, from_addr):
-    """Return ('coles', order_num) or ('woolworths', order_num) or (None, None)."""
+    """Return ('coles'|'woolworths', order_num) or (None, None)."""
     subj_l = subject.lower()
     from_l = from_addr.lower()
 
-    # Coles
-    m = re.search(r"your order (\d+) has been confirmed", subject, re.I)
-    if m and "coles" in (subj_l + from_l):
-        return "coles", m.group(1)
-    # Coles without "coles" in subject — check from address
-    if m and "coles" in from_l:
-        return "coles", m.group(1)
-
-    # Woolworths — several known subject patterns
-    ww_patterns = [
-        r"woolworths\s+online\s+order\s+#?(\d+)",
-        r"woolworths\s+order\s+#?(\d+)",
-        r"your\s+woolworths.*order\s+#?(\d+)",
-        r"order\s+#?(\d+).*woolworths",
-        r"your order (\d+).*confirmed",  # generic, paired with ww from-addr
-    ]
-    if "woolworths" in subj_l or "woolworths" in from_l:
-        for pat in ww_patterns:
-            m = re.search(pat, subject, re.I)
-            if m:
-                return "woolworths", m.group(1)
-        # Try any long number in subject as fallback
-        m = re.search(r"\b(\d{7,})\b", subject)
+    # Woolworths — "Delivery order #299546481 - Confirmation"
+    if "woolworths" in from_l:
+        m = re.search(r"[Dd]elivery order\s*#(\d+)", subject)
         if m:
             return "woolworths", m.group(1)
+        # Woolworths subject variants with order number
+        for pat in [
+            r"[Ww]oolworths.*order\s*#?(\d+)",
+            r"order\s*#?(\d+).*[Cc]onfirm",
+            r"#(\d{7,})",
+            r"\b(\d{7,})\b",
+        ]:
+            m = re.search(pat, subject)
+            if m:
+                return "woolworths", m.group(1)
 
-    # Coles fallback — no "coles" in subject but coles in from
-    m = re.search(r"your order (\d+) has been confirmed", subject, re.I)
-    if m and "coles" not in from_l and "woolworths" not in from_l:
-        # Ambiguous — assume Coles (original behaviour)
+    # Coles — "Your order 260090148 has been confirmed"
+    if "coles" in from_l or "coles" in subj_l:
+        m = re.search(r"[Yy]our order (\d+) has been confirmed", subject)
+        if m:
+            return "coles", m.group(1)
+
+    # Coles fallback — generic "confirmed" subject, non-Woolworths sender
+    m = re.search(r"[Yy]our order (\d+) has been confirmed", subject)
+    if m:
         return "coles", m.group(1)
 
     return None, None
@@ -137,7 +132,7 @@ COLES_STOP    = ["Free Delivery", "Estimated total", "You've saved", "This is ou
 
 
 def parse_coles_items(text):
-    lines = [l.strip() for l in text.split("\n") if l.strip()]
+    lines    = [l.strip() for l in text.split("\n") if l.strip()]
     in_items = False
     pending  = []
     items    = []
@@ -172,47 +167,65 @@ def parse_coles_items(text):
 
 
 # ── Woolworths item parser ────────────────────────────────────────────────────
+#
+# Woolworths table columns per item row: name | unit_price | qty | total
+# After HTML→text each cell is its own line, no $ sign on prices.
+# Example extracted lines:
+#   Sunrice Hinata Short Grain Rice
+#   15.00          ← unit price  (skip)
+#   5.00           ← qty         (skip)
+#   75.00          ← line total  (use this)
+#
+# Stop at: Subtotal:, Delivery fee:, Paper bags:, Service fees:, Total payable
 
-WW_START   = re.compile(r"items in your order|your items|order (?:details|summary)|what you ordered", re.I)
-WW_STOP    = re.compile(r"delivery fee|service fee|bag fee|total savings|you(?:'ve)? saved|order total|subtotal|estimated total", re.I)
-WW_QTY_RE  = re.compile(r"^\d+\s*[×x]\s*\$|^qty\s*[:\-]?\s*\d", re.I)
+WW_NUMBER_RE  = re.compile(r"^(\d+(?:\.\d+)?)$")
+WW_SKIP_LINES = {
+    "Item description", "Unit price", "Qty", "Price",
+    "Woolworths items", "Woolworths Everyday Market items",
+    "Everyday Market items",
+}
+WW_STOP_RE    = re.compile(
+    r"^(?:Subtotal|Delivery fee|Paper bags?|Service fees?|Total payable|Paid with|GST)",
+    re.I,
+)
 
 
 def parse_woolworths_items(text):
-    lines    = [l.strip() for l in text.split("\n") if l.strip()]
-    in_items = False
-    pending  = []
-    items    = []
+    lines        = [l.strip() for l in text.split("\n") if l.strip()]
+    in_items     = False
+    current_name = None
+    num_count    = 0   # counts numbers seen since last product name (1=unit, 2=qty, 3=total)
+    items        = []
 
     for line in lines:
-        if WW_STOP.search(line):
+        if WW_STOP_RE.match(line):
             break
-        if WW_START.search(line):
-            in_items = True
-            continue
+
         if not in_items:
-            continue
-        # Skip quantity/unit-price lines
-        if WW_QTY_RE.match(line) or UNIT_PRICE_RE.match(line):
-            continue
-        if SAVINGS_RE.search(line):
-            continue
-        if line in SKIP_LINES:
-            pending = []
+            if re.search(r"Your Items|Item description", line, re.I):
+                in_items = True
             continue
 
-        m = PRICE_RE.match(line)
+        if line in WW_SKIP_LINES:
+            continue
+
+        m = WW_NUMBER_RE.match(line)
         if m:
-            amount = float(m.group(1))
-            if pending and amount > 0:
-                # Woolworths tends to have clean single-line product names
-                name = pending[-1]
-                items.append({"name_en": name.strip(), "amount": amount})
-            pending = []
+            if current_name is None:
+                continue  # stray number before any product name
+            num_count += 1
+            if num_count == 3:
+                # Third number is the line total
+                amount = float(m.group(1))
+                if amount > 0:
+                    items.append({"name_en": current_name, "amount": amount})
+                current_name = None
+                num_count    = 0
+            # num_count 1 = unit_price, 2 = qty → skip
         else:
-            pending.append(line)
-            if len(pending) > 3:
-                pending = pending[-3:]
+            # Text line → new product name
+            current_name = line
+            num_count    = 0
 
     return items
 
@@ -275,12 +288,12 @@ def main():
     mail.login(EMAIL_ADDR, APP_PASSWORD)
     mail.select("Inbox")
 
-    # Collect unique message UIDs from multiple searches
+    # Collect unique UIDs — broad net, detect_store() filters
     uid_set = set()
     for criterion in [
-        'SUBJECT "has been confirmed"',
-        'FROM "woolworths.com.au"',
-        'SUBJECT "Woolworths" SUBJECT "order"',
+        'SUBJECT "has been confirmed"',       # Coles
+        'FROM "woolworths.com.au"',            # Woolworths (any subject)
+        'SUBJECT "Delivery order"',            # Woolworths fallback
     ]:
         _, ids = mail.search(None, criterion)
         uid_set.update(ids[0].split())
