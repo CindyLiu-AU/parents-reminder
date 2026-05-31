@@ -36,7 +36,8 @@
       },
       {
         "name": "原味煎饼奶昔 1",
-        "amount": 1.75
+        "amount": 1.75,
+        "forParents": true
       },
       {
         "name": "短粒米 1",
