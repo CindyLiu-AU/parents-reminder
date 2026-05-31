@@ -146,7 +146,8 @@
     "items": [
       {
         "name": "茶蜡烛 100个装（Coles）",
-        "amount": 11
+        "amount": 11,
+        "forParents": true
       },
       {
         "name": "散养鸡蛋 12个装 x2",
