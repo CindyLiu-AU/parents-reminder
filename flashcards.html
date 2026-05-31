@@ -57,6 +57,25 @@
     /* ── card wrapper ── */
     .card-wrap { display: flex; flex-direction: column; gap: 10px; }
 
+    /* ── Empty slot ── */
+    .empty-slot .empty-card {
+      background: #0d1b2a;
+      border: 2px dashed #1e3a5f;
+      border-radius: 20px;
+      height: 300px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 12px; text-align: center; padding: 24px;
+    }
+    .empty-slot .empty-card span { font-size: 36px; }
+    .empty-slot .empty-card p { font-size: 14px; color: #475569; }
+    .add-link {
+      display: inline-block; background: #f59e0b; color: #1a1000;
+      font-weight: 700; font-size: 14px; padding: 10px 22px;
+      border-radius: 20px; text-decoration: none; transition: opacity .15s;
+    }
+    .add-link:hover { opacity: .85; }
+
     /* ── Flip card ── */
     .scene { perspective: 900px; height: 300px; cursor: pointer; user-select: none; flex-shrink: 0; }
     .flip-card { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.45s ease; }
@@ -208,6 +227,34 @@
     let mum = loadSet(KEY_MUM);
     let allWords = [], weeks = [], activeWeek = 0;
 
+    /* ── Week helpers ── */
+    function weekKey(w) {
+      if (!w.addedAt) return 'legacy';
+      const d = new Date(w.addedAt);
+      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${Math.ceil(d.getDate()/7)}`;
+    }
+    function weekLabel(key) {
+      if (key === 'legacy') return '历史单词';
+      const [, m, wk] = key.split('-');
+      return `${parseInt(m)}月第${wk}周`;
+    }
+    function buildWeeks(words) {
+      const map = new Map();
+      for (const w of words) {
+        const k = weekKey(w);
+        if (!map.has(k)) map.set(k, []);
+        map.get(k).push(w);
+      }
+      // newest first; 'legacy' always last
+      return [...map.entries()]
+        .sort(([a], [b]) => {
+          if (a === 'legacy') return 1;
+          if (b === 'legacy') return -1;
+          return b.localeCompare(a);
+        })
+        .map(([key, ws]) => ({ key, words: ws }));
+    }
+
     /* ── Counters ── */
     function updateCounters() {
       const dt = allWords.filter(w => dad.has(w.word)).length;
@@ -218,17 +265,13 @@
     }
 
     /* ── Tabs ── */
-    function weekLabel(ago) {
-      const d = new Date(); d.setDate(d.getDate() - ago * 7);
-      return `${d.getMonth()+1}月第${Math.ceil(d.getDate()/7)}周`;
-    }
     function renderTabs() {
-      document.getElementById('week-tabs').innerHTML = weeks.map((ws, i) => {
-        const d = ws.filter(w => dad.has(w.word)).length;
-        const m = ws.filter(w => mum.has(w.word)).length;
-        const n = ws.length;
+      document.getElementById('week-tabs').innerHTML = weeks.map((wk, i) => {
+        const d = wk.words.filter(w => dad.has(w.word)).length;
+        const m = wk.words.filter(w => mum.has(w.word)).length;
+        const n = wk.words.length;
         return `<button class="week-tab${i===activeWeek?' active':''}" onclick="switchWeek(${i})">
-          ${weekLabel(i)}<br>
+          ${weekLabel(wk.key)}<br>
           <span style="font-size:12px;font-weight:600;opacity:0.85;">👨${d}/${n} · 👩${m}/${n}</span>
         </button>`;
       }).join('');
@@ -236,9 +279,22 @@
 
     /* ── Cards ── */
     function renderCards() {
-      const words  = weeks[activeWeek] || [];
-      const offset = activeWeek * WEEK_SIZE;
-      document.getElementById('cards-row').innerHTML = words.map((w, i) => {
+      const wk     = weeks[activeWeek] || { key: '', words: [] };
+      const filled = wk.words;
+      // always show 3 slots; pad with nulls
+      const slots  = [...filled, null, null, null].slice(0, 3);
+      const offset = weeks.slice(0, activeWeek).reduce((s, w) => s + w.words.length, 0);
+
+      document.getElementById('cards-row').innerHTML = slots.map((w, i) => {
+        if (!w) return `
+        <div class="card-wrap empty-slot">
+          <div class="empty-card">
+            <span>➕</span>
+            <p>这周还没有单词</p>
+            <a href="standby-admin.html" class="add-link">去备用队列添加 →</a>
+          </div>
+        </div>`;
+
         const idx    = offset + i;
         const dKnown = dad.has(w.word);
         const mKnown = mum.has(w.word);
@@ -403,7 +459,7 @@
       .then(r => r.json())
       .then(words => {
         allWords = words;
-        for (let i = 0; i < words.length; i += WEEK_SIZE) weeks.push(words.slice(i, i + WEEK_SIZE));
+        weeks    = buildWeeks(words);
         renderTabs();
         renderCards();
       });

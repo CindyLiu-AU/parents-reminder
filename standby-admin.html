@@ -554,6 +554,7 @@
       const word = sb[idx];
       if (!word) throw new Error('单词不存在');
       sb.splice(idx, 1);
+      word.addedAt = new Date().toISOString();
       ws.unshift(word); // prepend to words.json (newest first)
 
       await ghPut('standby.json', sb, sbSha, `Remove "${word.word}" from standby`);
@@ -578,6 +579,8 @@
 
       const batch = sb.splice(startIdx, 3);
       if (!batch.length) throw new Error('没有可推送的单词');
+      const now = new Date().toISOString();
+      batch.forEach(w => { w.addedAt = now; });
       ws.unshift(...batch.reverse()); // prepend maintaining order
 
       await ghPut('standby.json', sb, sbSha, `Push batch starting at ${startIdx} to active`);
