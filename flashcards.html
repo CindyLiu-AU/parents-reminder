@@ -281,8 +281,10 @@
     function renderCards() {
       const wk     = weeks[activeWeek] || { key: '', words: [] };
       const filled = wk.words;
-      // always show 3 slots; pad with nulls
-      const slots  = [...filled, null, null, null].slice(0, 3);
+      // real calendar weeks: always 3 slots (pad with nulls if needed)
+      // legacy group: show all words, no padding
+      const isLegacy = wk.key === 'legacy';
+      const slots  = isLegacy ? filled : [...filled, null, null, null].slice(0, 3);
       const offset = weeks.slice(0, activeWeek).reduce((s, w) => s + w.words.length, 0);
 
       document.getElementById('cards-row').innerHTML = slots.map((w, i) => {
