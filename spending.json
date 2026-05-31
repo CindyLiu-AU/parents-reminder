@@ -303,7 +303,8 @@
       },
       {
         "name": "洗碗机洗涤片（Coles Ultra）",
-        "amount": 5.5
+        "amount": 5.5,
+        "forParents": true
       },
       {
         "name": "全脂牛奶 3L x2",
