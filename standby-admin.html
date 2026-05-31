@@ -387,6 +387,10 @@
   <div class="next-rotation" id="next-rotation-badge">
     <strong>下次推送：</strong> 计算中…
   </div>
+  <div class="badge" id="week-slots-badge" style="background:#1a2e1a;border:1px solid #22c55e44">
+    <strong id="week-slots" style="color:#22c55e">—</strong>
+    <span style="color:#86efac">本周剩余位置</span>
+  </div>
 </div>
 
 <div id="standby-list"></div>
@@ -541,30 +545,47 @@
     setTimeout(() => { el.style.display = 'none'; }, 4000);
   }
 
+  /* ── Week helpers ── */
+  const WEEK_LIMIT = 3;
+  function weekKey(isoStr) {
+    const d = isoStr ? new Date(isoStr) : new Date();
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${Math.ceil(d.getDate()/7)}`;
+  }
+  function thisWeekCount(words) {
+    const key = weekKey();
+    return words.filter(w => w.addedAt && weekKey(w.addedAt) === key).length;
+  }
+
   /* ── Push single word to learning ── */
   async function pushWord(idx) {
     const btn = document.querySelector(`[data-push="${idx}"]`);
     if (btn) { btn.disabled = true; btn.textContent = '推送中…'; }
     try {
-      // Fetch fresh SHAs each time to avoid conflicts
       const [sbResult, wResult] = await Promise.all([ghGet('standby.json'), ghGet('words.json')]);
       const sb = sbResult.data; const sbSha = sbResult.sha;
       const ws = wResult.data; const wsSha = wResult.sha;
+
+      const used = thisWeekCount(ws);
+      if (used >= WEEK_LIMIT) {
+        showToast(`这周已推送 ${used}/3 个单词，请下周再推送 🚫`, true);
+        if (btn) { btn.disabled = false; btn.textContent = '⬆ 推送到学习'; }
+        return;
+      }
 
       const word = sb[idx];
       if (!word) throw new Error('单词不存在');
       sb.splice(idx, 1);
       word.addedAt = new Date().toISOString();
-      ws.unshift(word); // prepend to words.json (newest first)
+      ws.unshift(word);
 
       await ghPut('standby.json', sb, sbSha, `Remove "${word.word}" from standby`);
       await ghPut('words.json',   ws, wsSha,  `Add "${word.word}" to active words`);
 
-      showToast(`"${word.word}" 已推送到学习页 ✓`);
+      showToast(`"${word.word}" 已推送 ✓（这周 ${used + 1}/3）`);
       await load();
     } catch(e) {
       showToast('推送失败：' + e.message, true);
-      if (btn) { btn.disabled = false; btn.textContent = '推送到学习'; }
+      if (btn) { btn.disabled = false; btn.textContent = '⬆ 推送到学习'; }
     }
   }
 
@@ -577,20 +598,35 @@
       const sb = sbResult.data; const sbSha = sbResult.sha;
       const ws = wResult.data; const wsSha = wResult.sha;
 
-      const batch = sb.splice(startIdx, 3);
+      const used      = thisWeekCount(ws);
+      const remaining = WEEK_LIMIT - used;
+      if (remaining <= 0) {
+        showToast(`这周已推送 ${used}/3 个单词，请下周再推送 🚫`, true);
+        if (btn) { btn.disabled = false; btn.textContent = '⬆ 推送本批'; }
+        return;
+      }
+
+      let batch = sb.splice(startIdx, 3);
       if (!batch.length) throw new Error('没有可推送的单词');
+      if (batch.length > remaining) {
+        // Push only what fits this week
+        sb.splice(startIdx, 0, ...batch.slice(remaining)); // put extras back
+        batch = batch.slice(0, remaining);
+        showToast(`这周还剩 ${remaining} 个位置，只推送前 ${remaining} 个`, true);
+      }
+
       const now = new Date().toISOString();
       batch.forEach(w => { w.addedAt = now; });
-      ws.unshift(...batch.reverse()); // prepend maintaining order
+      ws.unshift(...batch.reverse());
 
-      await ghPut('standby.json', sb, sbSha, `Push batch starting at ${startIdx} to active`);
+      await ghPut('standby.json', sb, sbSha, `Push ${batch.length} words to active`);
       await ghPut('words.json',   ws, wsSha,  `Add ${batch.length} words from standby`);
 
-      showToast(`${batch.length} 个单词已推送到学习页 ✓`);
+      showToast(`${batch.length} 个单词已推送 ✓（这周 ${used + batch.length}/3）`);
       await load();
     } catch(e) {
       showToast('推送失败：' + e.message, true);
-      if (btn) { btn.disabled = false; btn.textContent = '推送本批 (3个)'; }
+      if (btn) { btn.disabled = false; btn.textContent = '⬆ 推送本批'; }
     }
   }
 
@@ -644,6 +680,11 @@
     document.getElementById('standby-count').textContent = standbyData.length;
     document.getElementById('weeks-count').textContent   = Math.floor(standbyData.length / 3) + (standbyData.length % 3 ? '+' : '');
     document.getElementById('active-count').textContent  = wordsData.length;
+    const usedThisWeek = thisWeekCount(wordsData);
+    const slotsLeft    = Math.max(0, WEEK_LIMIT - usedThisWeek);
+    const slotsEl      = document.getElementById('week-slots');
+    slotsEl.textContent = slotsLeft;
+    slotsEl.style.color = slotsLeft === 0 ? '#ef4444' : '#22c55e';
 
     const mon = nextMonday();
     const monStr = formatDate(mon);
