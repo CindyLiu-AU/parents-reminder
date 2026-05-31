@@ -28,6 +28,37 @@
     header h1 { font-size: 26px; font-weight: 700; color: #f59e0b; }
     header .sub { font-size: 14px; color: #64748b; margin-top: 4px; line-height: 1.5; }
 
+    /* ── Token bar ── */
+    .token-bar {
+      background: #0d2137;
+      border: 1px solid #2e5f9e;
+      border-radius: 12px;
+      padding: 14px 18px;
+      margin-bottom: 22px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .token-bar .tok-label { font-size: 13px; color: #64748b; flex-shrink: 0; }
+    .token-bar input {
+      flex: 1; min-width: 180px; background: #112240;
+      border: 1px solid #1e3a5f; border-radius: 8px;
+      padding: 8px 12px; color: #f0f4f8; font-size: 13px;
+      font-family: monospace; outline: none;
+    }
+    .token-bar input:focus { border-color: #3b7dd8; }
+    .token-bar button {
+      background: #1e3a6e; border: 1px solid #2e5f9e;
+      color: #90caf9; font-size: 13px; font-weight: 600;
+      font-family: inherit; border-radius: 8px;
+      padding: 8px 16px; cursor: pointer; white-space: nowrap;
+    }
+    .token-bar button:hover { background: #2e5a8f; }
+    .tok-status { font-size: 12px; flex-shrink: 0; }
+    .tok-ok   { color: #22c55e; }
+    .tok-none { color: #f59e0b; }
+
     .info-bar {
       display: flex;
       gap: 12px;
@@ -69,6 +100,9 @@
       letter-spacing: 0.05em;
       margin-bottom: 10px;
       padding-left: 4px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
     .week-label span {
       background: #1e3a5f;
@@ -77,6 +111,16 @@
       padding: 2px 10px;
       font-size: 12px;
     }
+    .push-batch-btn {
+      background: #064e3b;
+      border: 1px solid #059669;
+      color: #6ee7b7;
+      font-size: 12px; font-weight: 700; font-family: inherit;
+      border-radius: 8px; padding: 4px 12px; cursor: pointer;
+      transition: all 0.15s;
+    }
+    .push-batch-btn:hover { background: #065f46; }
+    .push-batch-btn:disabled { opacity: 0.4; cursor: default; }
 
     .word-row {
       background: #112240;
@@ -133,6 +177,17 @@
     .audio-btn:hover { background: #2e5a8f; }
     .audio-btn.no-audio { color: #2e4a6f; cursor: default; }
 
+    .push-word-btn {
+      background: #064e3b;
+      border: 1px solid #059669;
+      color: #6ee7b7;
+      font-size: 12px; font-weight: 700; font-family: inherit;
+      border-radius: 8px; padding: 6px 12px; cursor: pointer;
+      flex-shrink: 0; transition: all 0.15s; white-space: nowrap;
+    }
+    .push-word-btn:hover { background: #065f46; }
+    .push-word-btn:disabled { opacity: 0.4; cursor: default; }
+
     .active-section {
       margin-top: 36px;
       padding-top: 24px;
@@ -173,17 +228,6 @@
     .page-tab:hover { border-color: #3b7dd8; color: #90caf9; }
     .page-tab.active {
       background: #f59e0b22; border-color: #f59e0b; color: #f59e0b;
-    }
-
-    /* ── Back button ── */
-    .back-btn {
-      position: fixed; bottom: 32px; right: 28px; z-index: 100;
-      text-decoration: none; font-weight: 700;
-      border-radius: 24px;
-      font-size: 18px; color: #1a1000;
-      background: #f59e0b; border: 2px solid #f59e0b;
-      padding: 14px 28px;
-      box-shadow: 0 4px 16px rgba(245,158,11,0.4);
     }
 
     /* ── Add Word Form ── */
@@ -243,32 +287,30 @@
     }
     .translate-btn:hover { background: #2e5a8f; }
     .translate-btn:disabled { opacity: 0.5; cursor: default; }
-    .gen-btn {
+    .save-btn {
       background: #f59e0b; border: none; color: #1a1000;
       font-size: 15px; font-weight: 700; font-family: inherit;
       border-radius: 10px; padding: 12px 24px; cursor: pointer;
       align-self: flex-start; transition: opacity 0.2s;
     }
-    .gen-btn:hover { opacity: 0.85; }
-    .output-box {
-      display: none;
-      background: #051224;
-      border: 1px solid #22c55e44;
-      border-radius: 10px;
-      padding: 16px;
-      margin-top: 16px;
-      font-size: 13px; color: #86efac;
-      font-family: monospace; line-height: 1.6;
-      white-space: pre-wrap; word-break: break-all;
-      position: relative;
+    .save-btn:hover { opacity: 0.85; }
+    .save-btn:disabled { opacity: 0.5; cursor: default; }
+
+    .form-feedback {
+      font-size: 13px; padding: 10px 14px; border-radius: 8px;
+      display: none; margin-top: 4px;
     }
-    .copy-btn {
-      position: absolute; top: 10px; right: 10px;
-      background: #1e3a6e; border: 1px solid #2e5f9e;
-      color: #90caf9; font-size: 12px; font-family: inherit;
-      border-radius: 6px; padding: 4px 10px; cursor: pointer;
+    .form-feedback.ok  { background: #064e3b; color: #6ee7b7; border: 1px solid #059669; }
+    .form-feedback.err { background: #450a0a; color: #fca5a5; border: 1px solid #dc2626; }
+
+    /* ── Toast ── */
+    #toast {
+      position: fixed; bottom: 36px; left: 50%; transform: translateX(-50%);
+      background: #064e3b; border: 1px solid #059669; color: #6ee7b7;
+      font-size: 14px; font-weight: 700; padding: 12px 24px; border-radius: 24px;
+      display: none; z-index: 999; box-shadow: 0 4px 20px rgba(0,0,0,.4);
     }
-    .copy-btn:active { background: #22c55e; color: #000; }
+    #toast.err { background: #450a0a; border-color: #dc2626; color: #fca5a5; }
   </style>
   <link rel="stylesheet" href="theme.css">
 </head>
@@ -286,8 +328,17 @@
   </div>
 </header>
 
+<!-- GitHub token bar -->
+<div class="token-bar">
+  <span class="tok-label">🔑 GitHub Token</span>
+  <input type="password" id="tok-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" oninput="onTokenInput()">
+  <button onclick="saveToken()">保存</button>
+  <span class="tok-status" id="tok-status"></span>
+</div>
+
+<!-- Add word form -->
 <div class="add-word-section">
-  <h2>➕ 添加新单词卡</h2>
+  <h2>➕ 添加新单词到备用队列</h2>
   <div class="add-form-grid">
     <div class="img-upload-box" id="img-box" title="点击上传图片">
       <span style="font-size:28px">📷</span>
@@ -299,7 +350,7 @@
       <div class="form-row">
         <span class="form-label">英文单词</span>
         <input class="form-input" id="inp-word" type="text" placeholder="e.g. Organic" onkeydown="if(event.key==='Enter')autoTranslate()">
-        <button class="translate-btn" id="trans-btn" onclick="autoTranslate()">🔄 自动翻译</button>
+        <button class="translate-btn" id="trans-btn" onclick="autoTranslate()">🔄 翻译</button>
       </div>
       <div class="form-row">
         <span class="form-label">中文翻译</span>
@@ -309,12 +360,9 @@
         <span class="form-label" style="margin-top:10px">说明</span>
         <textarea class="form-input" id="inp-desc" placeholder="例子句子或说明（可选）"></textarea>
       </div>
-      <button class="gen-btn" onclick="generateEntry()">生成条目 →</button>
+      <button class="save-btn" id="save-standby-btn" onclick="saveToStandby()">保存到备用队列 →</button>
+      <div class="form-feedback" id="form-feedback"></div>
     </div>
-  </div>
-  <div class="output-box" id="output-box">
-    <button class="copy-btn" onclick="copyOutput()">复制</button>
-    <span id="output-text"></span>
   </div>
 </div>
 
@@ -339,12 +387,78 @@
   <div id="active-list"></div>
 </div>
 
-<a class="back-btn" href="#" onclick="history.back();return false;">← 返回</a>
+<div id="toast"></div>
 
 <script>
-  /* ── Add Word Form ── */
-  let imgDataUrl = '';
+  const GH_REPO = 'CindyLiu-AU/parents-reminder';
+  const TOK_KEY = 'parents_gh_token';
 
+  let standbyData = [];
+  let wordsData   = [];
+  let standbySha  = null;
+  let wordsSha    = null;
+
+  /* ── Token ── */
+  function token() { return localStorage.getItem(TOK_KEY) || ''; }
+
+  function onTokenInput() {}
+
+  function saveToken() {
+    const val = document.getElementById('tok-input').value.trim();
+    if (!val) return;
+    localStorage.setItem(TOK_KEY, val);
+    document.getElementById('tok-input').value = '••••••••••••••••••••';
+    refreshTokStatus();
+    showToast('Token 已保存 ✓');
+  }
+
+  function refreshTokStatus() {
+    const el = document.getElementById('tok-status');
+    if (token()) { el.textContent = '✅ 已连接'; el.className = 'tok-status tok-ok'; }
+    else          { el.textContent = '⚠️ 未设置'; el.className = 'tok-status tok-none'; }
+  }
+
+  /* ── GitHub API ── */
+  async function ghGet(file) {
+    const tok = token();
+    const headers = tok ? { Authorization: `Bearer ${tok}` } : {};
+    const res = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${file}`, { headers });
+    if (res.status === 404) return { data: [], sha: null };
+    if (!res.ok) throw new Error(`GitHub ${res.status}`);
+    const json = await res.json();
+    const data = JSON.parse(decodeURIComponent(escape(atob(json.content.replace(/\n/g,'')))));
+    return { data, sha: json.sha };
+  }
+
+  async function ghPut(file, data, sha, message) {
+    const tok = token();
+    if (!tok) throw new Error('没有 GitHub Token，请先填写');
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
+    const body = { message, content, branch: 'main' };
+    if (sha) body.sha = sha;
+    const res = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${file}`, {
+      method: 'PUT',
+      headers: { Authorization: `Bearer ${tok}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    if (!res.ok) { const t = await res.text(); throw new Error(t); }
+    const json = await res.json();
+    return json.content.sha;
+  }
+
+  /* ── Toast ── */
+  let toastTimer;
+  function showToast(msg, isErr) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.className = isErr ? 'err' : '';
+    el.style.display = 'block';
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { el.style.display = 'none'; }, 3000);
+  }
+
+  /* ── Image upload ── */
+  let imgDataUrl = '';
   function handleImage(input) {
     const file = input.files[0];
     if (!file) return;
@@ -354,128 +468,188 @@
       const preview = document.getElementById('img-preview');
       preview.src = imgDataUrl;
       preview.style.display = 'block';
-      const box = document.getElementById('img-box');
-      box.querySelector('span:first-child').style.display = 'none';
-      box.querySelector('span:last-of-type').style.display = 'none';
+      document.getElementById('img-box').querySelector('span:first-child').style.display = 'none';
+      document.getElementById('img-box').querySelector('span:last-of-type').style.display = 'none';
     };
     reader.readAsDataURL(file);
   }
 
+  /* ── Auto-translate ── */
   async function autoTranslate() {
     const word = document.getElementById('inp-word').value.trim();
     if (!word) return;
     const btn = document.getElementById('trans-btn');
-    btn.disabled = true;
-    btn.textContent = '翻译中…';
+    btn.disabled = true; btn.textContent = '翻译中…';
     try {
       const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(word)}&langpair=en|zh-CN`);
       const data = await res.json();
       const translated = data.responseData?.translatedText || '';
       if (translated) document.getElementById('inp-cn').value = translated;
-    } catch {
-      alert('翻译失败，请手动输入中文');
-    } finally {
-      btn.disabled = false;
-      btn.textContent = '🔄 自动翻译';
-    }
+    } catch { alert('翻译失败，请手动输入中文'); }
+    finally { btn.disabled = false; btn.textContent = '🔄 翻译'; }
   }
 
-  function generateEntry() {
+  /* ── Save to standby ── */
+  async function saveToStandby() {
     const word = document.getElementById('inp-word').value.trim();
     const cn   = document.getElementById('inp-cn').value.trim();
     const desc = document.getElementById('inp-desc').value.trim();
-    if (!word || !cn) { alert('请填写英文单词和中文翻译'); return; }
-    const entry = { word, word_cn: cn, desc: desc || '', audio: '' };
-    if (imgDataUrl) entry.image = imgDataUrl;
-    const json = JSON.stringify(entry, null, 2);
-    const claudeCmd = `^wordlist standby\n单词：${word}\n中文：${cn}${desc ? '\n说明：' + desc : ''}`;
-    const outputEl = document.getElementById('output-text');
-    outputEl.textContent = claudeCmd + '\n\n──── JSON ────\n' + json;
-    const box = document.getElementById('output-box');
-    box.style.display = 'block';
-    box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    if (!word || !cn) { showFeedback('请填写英文单词和中文翻译', true); return; }
+
+    const btn = document.getElementById('save-standby-btn');
+    btn.disabled = true; btn.textContent = '保存中…';
+    try {
+      const { data, sha } = await ghGet('standby.json');
+      const entry = { word, word_cn: cn, desc: desc || '', audio: '' };
+      if (imgDataUrl) entry.image = imgDataUrl;
+      data.push(entry);
+      await ghPut('standby.json', data, sha, `Add "${word}" to standby`);
+
+      // Reset form
+      document.getElementById('inp-word').value = '';
+      document.getElementById('inp-cn').value   = '';
+      document.getElementById('inp-desc').value  = '';
+      imgDataUrl = '';
+      document.getElementById('img-preview').style.display = 'none';
+      document.getElementById('img-preview').src = '';
+
+      showFeedback(`"${word}" 已保存到备用队列 ✓`, false);
+      showToast(`"${word}" 已加入备用队列 ✓`);
+      await load();
+    } catch(e) {
+      showFeedback('保存失败：' + e.message, true);
+      showToast('保存失败 ✗', true);
+    } finally {
+      btn.disabled = false; btn.textContent = '保存到备用队列 →';
+    }
   }
 
-  function copyOutput() {
-    const text = document.getElementById('output-text').textContent;
-    navigator.clipboard.writeText(text).then(() => {
-      const btn = document.querySelector('.copy-btn');
-      btn.textContent = '已复制 ✓';
-      setTimeout(() => btn.textContent = '复制', 1500);
-    });
+  function showFeedback(msg, isErr) {
+    const el = document.getElementById('form-feedback');
+    el.textContent = msg;
+    el.className = 'form-feedback ' + (isErr ? 'err' : 'ok');
+    el.style.display = 'block';
+    setTimeout(() => { el.style.display = 'none'; }, 4000);
   }
 
+  /* ── Push single word to learning ── */
+  async function pushWord(idx) {
+    const btn = document.querySelector(`[data-push="${idx}"]`);
+    if (btn) { btn.disabled = true; btn.textContent = '推送中…'; }
+    try {
+      // Fetch fresh SHAs each time to avoid conflicts
+      const [sbResult, wResult] = await Promise.all([ghGet('standby.json'), ghGet('words.json')]);
+      const sb = sbResult.data; const sbSha = sbResult.sha;
+      const ws = wResult.data; const wsSha = wResult.sha;
+
+      const word = sb[idx];
+      if (!word) throw new Error('单词不存在');
+      sb.splice(idx, 1);
+      ws.unshift(word); // prepend to words.json (newest first)
+
+      await ghPut('standby.json', sb, sbSha, `Remove "${word.word}" from standby`);
+      await ghPut('words.json',   ws, wsSha,  `Add "${word.word}" to active words`);
+
+      showToast(`"${word.word}" 已推送到学习页 ✓`);
+      await load();
+    } catch(e) {
+      showToast('推送失败：' + e.message, true);
+      if (btn) { btn.disabled = false; btn.textContent = '推送到学习'; }
+    }
+  }
+
+  /* ── Push entire batch (3 words) ── */
+  async function pushBatch(startIdx) {
+    const btn = document.querySelector(`[data-batch="${startIdx}"]`);
+    if (btn) { btn.disabled = true; btn.textContent = '推送中…'; }
+    try {
+      const [sbResult, wResult] = await Promise.all([ghGet('standby.json'), ghGet('words.json')]);
+      const sb = sbResult.data; const sbSha = sbResult.sha;
+      const ws = wResult.data; const wsSha = wResult.sha;
+
+      const batch = sb.splice(startIdx, 3);
+      if (!batch.length) throw new Error('没有可推送的单词');
+      ws.unshift(...batch.reverse()); // prepend maintaining order
+
+      await ghPut('standby.json', sb, sbSha, `Push batch starting at ${startIdx} to active`);
+      await ghPut('words.json',   ws, wsSha,  `Add ${batch.length} words from standby`);
+
+      showToast(`${batch.length} 个单词已推送到学习页 ✓`);
+      await load();
+    } catch(e) {
+      showToast('推送失败：' + e.message, true);
+      if (btn) { btn.disabled = false; btn.textContent = '推送本批 (3个)'; }
+    }
+  }
+
+  /* ── Utils ── */
   function nextMonday() {
     const d = new Date();
-    const day = d.getDay(); // 0=Sun,1=Mon,...
+    const day = d.getDay();
     const daysUntil = day === 1 ? 7 : (8 - day) % 7;
     d.setDate(d.getDate() + daysUntil);
     d.setHours(11, 0, 0, 0);
     return d;
   }
-
   function formatDate(d) {
     return `${d.getMonth()+1}月${d.getDate()}日（${['日','一','二','三','四','五','六'][d.getDay()]}）`;
   }
-
   function playAudio(path) {
     if (!path) return;
     new Audio(path + '?v=1').play().catch(() => {});
   }
 
+  /* ── Load ── */
   async function load() {
-    const [standbyRes, wordsRes] = await Promise.all([
-      fetch('standby.json?v=' + Date.now()),
-      fetch('words.json?v='   + Date.now())
-    ]);
-    const standby = await standbyRes.json();
-    const words   = await wordsRes.json();
+    const [sbResult, wResult] = await Promise.all([ghGet('standby.json'), ghGet('words.json')]);
+    standbyData = sbResult.data; standbySha = sbResult.sha;
+    wordsData   = wResult.data;  wordsSha   = wResult.sha;
 
-    // Info bar
-    document.getElementById('standby-count').textContent = standby.length;
-    document.getElementById('weeks-count').textContent   = Math.floor(standby.length / 3) + (standby.length % 3 ? '+' : '');
-    document.getElementById('active-count').textContent  = words.length;
+    document.getElementById('standby-count').textContent = standbyData.length;
+    document.getElementById('weeks-count').textContent   = Math.floor(standbyData.length / 3) + (standbyData.length % 3 ? '+' : '');
+    document.getElementById('active-count').textContent  = wordsData.length;
 
     const mon = nextMonday();
     const monStr = formatDate(mon);
-    document.getElementById('next-rotation-badge').innerHTML =
-      `<strong>下次推送：</strong> 周一 ${monStr} 上午11点`;
-    document.getElementById('next-info').innerHTML =
-      `下次自动推送<br><strong style="color:#22c55e">${monStr}</strong>`;
+    document.getElementById('next-rotation-badge').innerHTML = `<strong>下次推送：</strong> 周一 ${monStr} 上午11点`;
+    document.getElementById('next-info').innerHTML = `下次自动推送<br><strong style="color:#22c55e">${monStr}</strong>`;
 
     // Standby list
     const container = document.getElementById('standby-list');
-    if (standby.length === 0) {
+    if (!standbyData.length) {
       container.innerHTML = `
         <div class="empty-state">
           <div class="icon">📭</div>
           <p>备用队列是空的</p>
-          <p style="margin-top:8px;font-size:14px">告诉 Claude "<strong>^wordlist standby 单词</strong>" 来添加</p>
+          <p style="margin-top:8px;font-size:14px">在上方表单添加新单词</p>
         </div>`;
     } else {
-      // Group into batches of 3
       let html = '';
-      for (let i = 0; i < standby.length; i += 3) {
-        const batch = standby.slice(i, i + 3);
+      for (let i = 0; i < standbyData.length; i += 3) {
+        const batch = standbyData.slice(i, i + 3);
         const weekNum = Math.floor(i / 3) + 1;
         const weekDate = new Date(mon);
         weekDate.setDate(weekDate.getDate() + (weekNum - 1) * 7);
         html += `<div class="week-group">
-          <div class="week-label"><span>第 ${weekNum} 批 · ${weekDate.getMonth()+1}月${weekDate.getDate()}日推送</span></div>`;
+          <div class="week-label">
+            <span>第 ${weekNum} 批 · ${weekDate.getMonth()+1}月${weekDate.getDate()}日推送</span>
+            <button class="push-batch-btn" data-batch="${i}" onclick="pushBatch(${i})">⬆ 推送本批 (${batch.length}个)</button>
+          </div>`;
         batch.forEach((w, j) => {
-          const num = i + j + 1;
+          const idx = i + j;
           const hasAudio = !!w.audio;
           html += `
           <div class="word-row">
-            <div class="queue-num">${num}</div>
+            <div class="queue-num">${idx + 1}</div>
             <div class="word-main">
               <div class="word-en">${w.word}</div>
               <div class="word-cn">${w.word_cn || ''}</div>
-              <div class="word-desc">${w.desc || ''}</div>
+              ${w.desc ? `<div class="word-desc">${w.desc}</div>` : ''}
             </div>
             <button class="audio-btn ${hasAudio ? '' : 'no-audio'}"
               onclick="${hasAudio ? `playAudio('${w.audio}')` : ''}"
               title="${hasAudio ? '播放发音' : '无音频'}">🔊</button>
+            <button class="push-word-btn" data-push="${idx}" onclick="pushWord(${idx})">⬆ 推送到学习</button>
           </div>`;
         });
         html += '</div>';
@@ -483,12 +657,12 @@
       container.innerHTML = html;
     }
 
-    // Active words (just names, collapsed)
+    // Active words
     const activeContainer = document.getElementById('active-list');
-    if (words.length === 0) {
+    if (!wordsData.length) {
       activeContainer.innerHTML = '<div style="color:#475569;font-size:14px">暂无</div>';
     } else {
-      activeContainer.innerHTML = words.map(w => `
+      activeContainer.innerHTML = wordsData.map(w => `
         <div class="active-word">
           <span class="aw-en">${w.word}</span>
           <span class="aw-cn">${w.word_cn || ''}</span>
@@ -496,6 +670,10 @@
     }
   }
 
+  /* ── Init ── */
+  refreshTokStatus();
+  const existing = token();
+  if (existing) document.getElementById('tok-input').value = '••••••••••••••••••••';
   load();
 </script>
 <script src="theme.js"></script>
