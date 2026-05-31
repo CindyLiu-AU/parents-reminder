@@ -267,9 +267,11 @@
     /* ── Tabs ── */
     function renderTabs() {
       document.getElementById('week-tabs').innerHTML = weeks.map((wk, i) => {
-        const d = wk.words.filter(w => dad.has(w.word)).length;
-        const m = wk.words.filter(w => mum.has(w.word)).length;
-        const n = wk.words.length;
+        const isLegacy = wk.key === 'legacy';
+        const slots = isLegacy ? wk.words : wk.words.slice(0, WEEK_SIZE);
+        const d = slots.filter(w => dad.has(w.word)).length;
+        const m = slots.filter(w => mum.has(w.word)).length;
+        const n = slots.length;
         return `<button class="week-tab${i===activeWeek?' active':''}" onclick="switchWeek(${i})">
           ${weekLabel(wk.key)}<br>
           <span style="font-size:12px;font-weight:600;opacity:0.85;">👨${d}/${n} · 👩${m}/${n}</span>
