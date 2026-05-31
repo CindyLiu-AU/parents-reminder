@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>查词典</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      background: #0d1b2a;
+      color: #f0f4f8;
+      font-family: "Noto Sans SC", "PingFang SC", sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 28px 24px 24px;
+      gap: 20px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .back-btn {
+      background: #1e3a6e;
+      border: 1px solid #2e5f9e;
+      border-radius: 50%;
+      width: 56px; height: 56px;
+      font-size: 28px;
+      display: flex; align-items: center; justify-content: center;
+      text-decoration: none; color: #90caf9;
+      flex-shrink: 0;
+    }
+    header h1 {
+      font-size: 32px;
+      font-weight: 900;
+      color: #f59e0b;
+      letter-spacing: 2px;
+    }
+
+    /* ── Input area ── */
+    .input-wrap {
+      position: relative;
+    }
+    textarea {
+      width: 100%;
+      background: #112240;
+      border: 2px solid #2e5f9e;
+      border-radius: 20px;
+      padding: 24px 28px;
+      font-size: 42px;
+      font-weight: 700;
+      color: #f0f4f8;
+      font-family: inherit;
+      outline: none;
+      resize: none;
+      line-height: 1.4;
+      min-height: 160px;
+      letter-spacing: 2px;
+      transition: border-color 0.2s;
+    }
+    textarea::placeholder { color: #334d66; font-weight: 400; }
+    textarea:focus { border-color: #f59e0b; }
+
+    .clear-btn {
+      position: absolute;
+      top: 16px; right: 16px;
+      background: #1e3a6e;
+      border: 1px solid #2e5f9e;
+      border-radius: 50%;
+      width: 48px; height: 48px;
+      font-size: 22px;
+      color: #64748b;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .clear-btn:active { background: #2e5a8f; }
+
+    /* ── Translate button ── */
+    .translate-btn {
+      background: #f59e0b;
+      border: none;
+      border-radius: 20px;
+      padding: 24px;
+      font-size: 36px;
+      font-weight: 900;
+      font-family: inherit;
+      color: #1a1000;
+      cursor: pointer;
+      width: 100%;
+      letter-spacing: 4px;
+      transition: opacity 0.15s, transform 0.1s;
+      active-scale: 0.98;
+    }
+    .translate-btn:active { opacity: 0.8; transform: scale(0.98); }
+    .translate-btn:disabled { opacity: 0.4; }
+
+    /* ── Speak button ── */
+    .speak-btn {
+      background: #1e3a6e;
+      border: 1px solid #2e5f9e;
+      border-radius: 20px;
+      padding: 20px;
+      font-size: 32px;
+      font-family: inherit;
+      color: #90caf9;
+      cursor: pointer;
+      width: 100%;
+      font-weight: 700;
+      transition: opacity 0.15s;
+    }
+    .speak-btn:active { opacity: 0.7; }
+
+    /* ── Result area ── */
+    .result-box {
+      background: #0d2745;
+      border: 2px solid #1e3a5f;
+      border-radius: 20px;
+      padding: 28px;
+      min-height: 180px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 16px;
+      flex: 1;
+    }
+    .result-placeholder {
+      font-size: 28px;
+      color: #1e3a5f;
+    }
+    .result-cn {
+      font-size: 64px;
+      font-weight: 900;
+      color: #2dd4bf;
+      line-height: 1.3;
+      word-break: break-all;
+    }
+    .result-loading {
+      font-size: 32px;
+      color: #475569;
+      animation: blink 1s infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    .result-error {
+      font-size: 28px;
+      color: #f87171;
+    }
+
+    /* ── History ── */
+    .history-label {
+      font-size: 18px;
+      color: #334d66;
+      letter-spacing: 1px;
+      margin-top: 4px;
+    }
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .history-item {
+      background: #112240;
+      border: 1px solid #1e3a5f;
+      border-radius: 14px;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      cursor: pointer;
+    }
+    .history-item:active { background: #1e3a5f; }
+    .history-en {
+      font-size: 26px;
+      font-weight: 700;
+      color: #f59e0b;
+      flex: 1;
+    }
+    .history-cn {
+      font-size: 26px;
+      font-weight: 700;
+      color: #2dd4bf;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="back-btn">←</a>
+  <h1>📖 查词典</h1>
+</header>
+
+<div class="input-wrap">
+  <textarea id="input" placeholder="输入英文单词或句子…" rows="3" oninput="onInput()"></textarea>
+  <button class="clear-btn" onclick="clearInput()">✕</button>
+</div>
+
+<button class="translate-btn" id="trans-btn" onclick="translate()">翻 译</button>
+
+<div class="result-box" id="result-box">
+  <div class="result-placeholder">翻译结果显示在这里</div>
+</div>
+
+<button class="speak-btn" id="speak-btn" style="display:none" onclick="speakInput()">🔊 朗读英文</button>
+
+<div class="history-label" id="hist-label" style="display:none">最近查过的词</div>
+<div class="history-list" id="history-list"></div>
+
+<script>
+  const HIST_KEY = 'dict_history';
+  let lastResult = '';
+
+  /* ── TTS ── */
+  let ttsVoice = null;
+  function initVoices() {
+    const voices = speechSynthesis.getVoices();
+    ttsVoice = voices.find(v => v.lang === 'en-AU')
+            || voices.find(v => v.lang === 'en-GB')
+            || voices.find(v => v.lang.startsWith('en') && v.localService)
+            || voices.find(v => v.lang.startsWith('en'))
+            || null;
+  }
+  if (speechSynthesis.onvoiceschanged !== undefined) speechSynthesis.addEventListener('voiceschanged', initVoices);
+  initVoices();
+
+  function speakInput() {
+    const text = document.getElementById('input').value.trim();
+    if (!text || !window.speechSynthesis) return;
+    speechSynthesis.cancel();
+    const utt = new SpeechSynthesisUtterance(text);
+    utt.lang = 'en-AU'; utt.rate = 0.85;
+    if (ttsVoice) utt.voice = ttsVoice;
+    speechSynthesis.speak(utt);
+  }
+
+  /* ── Input ── */
+  function onInput() {
+    const val = document.getElementById('input').value.trim();
+    document.getElementById('trans-btn').disabled = !val;
+  }
+
+  function clearInput() {
+    document.getElementById('input').value = '';
+    document.getElementById('trans-btn').disabled = true;
+    showPlaceholder();
+    document.getElementById('speak-btn').style.display = 'none';
+    document.getElementById('input').focus();
+  }
+
+  /* ── Translate ── */
+  async function translate() {
+    const text = document.getElementById('input').value.trim();
+    if (!text) return;
+
+    showLoading();
+    document.getElementById('trans-btn').disabled = true;
+
+    try {
+      // Try MyMemory API (free, no key needed)
+      const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|zh-CN`;
+      const res  = await fetch(url);
+      const data = await res.json();
+      const cn   = data.responseData?.translatedText || '';
+      if (!cn || cn === text) throw new Error('no result');
+
+      showResult(cn);
+      saveHistory(text, cn);
+    } catch {
+      showError('翻译失败，请检查网络后重试');
+    } finally {
+      document.getElementById('trans-btn').disabled = false;
+    }
+  }
+
+  /* ── Result display ── */
+  function showPlaceholder() {
+    document.getElementById('result-box').innerHTML = `<div class="result-placeholder">翻译结果显示在这里</div>`;
+    lastResult = '';
+  }
+  function showLoading() {
+    document.getElementById('result-box').innerHTML = `<div class="result-loading">翻译中…</div>`;
+  }
+  function showResult(cn) {
+    lastResult = cn;
+    document.getElementById('result-box').innerHTML = `<div class="result-cn">${cn}</div>`;
+    document.getElementById('speak-btn').style.display = 'block';
+  }
+  function showError(msg) {
+    document.getElementById('result-box').innerHTML = `<div class="result-error">${msg}</div>`;
+  }
+
+  /* ── History ── */
+  function loadHistory() {
+    try { return JSON.parse(localStorage.getItem(HIST_KEY) || '[]'); } catch { return []; }
+  }
+  function saveHistory(en, cn) {
+    let hist = loadHistory().filter(h => h.en.toLowerCase() !== en.toLowerCase());
+    hist.unshift({ en, cn });
+    if (hist.length > 20) hist = hist.slice(0, 20);
+    localStorage.setItem(HIST_KEY, JSON.stringify(hist));
+    renderHistory();
+  }
+  function renderHistory() {
+    const hist = loadHistory();
+    const label = document.getElementById('hist-label');
+    const list  = document.getElementById('history-list');
+    if (!hist.length) { label.style.display = 'none'; list.innerHTML = ''; return; }
+    label.style.display = 'block';
+    list.innerHTML = hist.map(h => `
+      <div class="history-item" onclick="fillFromHistory('${h.en.replace(/'/g,"\\'")}','${h.cn.replace(/'/g,"\\'")}')">
+        <span class="history-en">${h.en}</span>
+        <span class="history-cn">${h.cn}</span>
+      </div>`).join('');
+  }
+  function fillFromHistory(en, cn) {
+    document.getElementById('input').value = en;
+    showResult(cn);
+    document.getElementById('trans-btn').disabled = false;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  /* ── Init ── */
+  document.getElementById('trans-btn').disabled = true;
+  renderHistory();
+
+  // Allow Enter key to translate (Shift+Enter for newline)
+  document.getElementById('input').addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); translate(); }
+  });
+</script>
+</body>
+</html>
