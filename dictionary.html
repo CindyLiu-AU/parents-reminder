@@ -42,9 +42,7 @@
     }
 
     /* ── Input area ── */
-    .input-wrap {
-      position: relative;
-    }
+    .input-wrap { position: relative; }
     textarea {
       width: 100%;
       background: #112240;
@@ -93,7 +91,6 @@
       width: 100%;
       letter-spacing: 4px;
       transition: opacity 0.15s, transform 0.1s;
-      active-scale: 0.98;
     }
     .translate-btn:active { opacity: 0.8; transform: scale(0.98); }
     .translate-btn:disabled { opacity: 0.4; }
@@ -104,7 +101,7 @@
       border: 1px solid #2e5f9e;
       border-radius: 20px;
       padding: 20px;
-      font-size: 32px;
+      font-size: 30px;
       font-family: inherit;
       color: #90caf9;
       cursor: pointer;
@@ -129,10 +126,7 @@
       gap: 16px;
       flex: 1;
     }
-    .result-placeholder {
-      font-size: 28px;
-      color: #1e3a5f;
-    }
+    .result-placeholder { font-size: 28px; color: #1e3a5f; }
     .result-cn {
       font-size: 64px;
       font-weight: 900;
@@ -146,10 +140,57 @@
       animation: blink 1s infinite;
     }
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
-    .result-error {
-      font-size: 28px;
-      color: #f87171;
+    .result-error { font-size: 28px; color: #f87171; }
+
+    /* ── Repeat section ── */
+    .repeat-section {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
+    .repeat-row {
+      display: flex;
+      gap: 12px;
+    }
+    .repeat-btn {
+      flex: 1;
+      background: #112240;
+      border: 2px solid #2e5f9e;
+      border-radius: 18px;
+      padding: 18px 8px;
+      font-size: 26px;
+      font-family: inherit;
+      color: #90caf9;
+      cursor: pointer;
+      font-weight: 700;
+      transition: all 0.15s;
+    }
+    .repeat-btn:active { opacity: 0.7; }
+    .repeat-btn.running {
+      background: #1a3a1a;
+      border-color: #22c55e;
+      color: #86efac;
+    }
+    .repeat-progress {
+      text-align: center;
+      font-size: 26px;
+      color: #64748b;
+      font-weight: 700;
+    }
+    .stop-btn {
+      background: #450a0a;
+      border: 2px solid #ef4444;
+      border-radius: 18px;
+      padding: 18px;
+      font-size: 28px;
+      font-family: inherit;
+      color: #fca5a5;
+      cursor: pointer;
+      font-weight: 700;
+      width: 100%;
+      transition: opacity 0.15s;
+    }
+    .stop-btn:active { opacity: 0.7; }
 
     /* ── History ── */
     .history-label {
@@ -158,11 +199,7 @@
       letter-spacing: 1px;
       margin-top: 4px;
     }
-    .history-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
+    .history-list { display: flex; flex-direction: column; gap: 10px; }
     .history-item {
       background: #112240;
       border: 1px solid #1e3a5f;
@@ -174,28 +211,19 @@
       cursor: pointer;
     }
     .history-item:active { background: #1e3a5f; }
-    .history-en {
-      font-size: 26px;
-      font-weight: 700;
-      color: #f59e0b;
-      flex: 1;
-    }
-    .history-cn {
-      font-size: 26px;
-      font-weight: 700;
-      color: #2dd4bf;
-    }
+    .history-en { font-size: 26px; font-weight: 700; color: #f59e0b; flex: 1; }
+    .history-cn { font-size: 26px; font-weight: 700; color: #2dd4bf; }
   </style>
 </head>
 <body>
 
 <header>
   <a href="index.html" class="back-btn">←</a>
-  <h1>📖 查词典</h1>
+  <h1>🔍 查词典</h1>
 </header>
 
 <div class="input-wrap">
-  <textarea id="input" placeholder="输入英文单词或句子…" rows="3" oninput="onInput()"></textarea>
+  <textarea id="input" placeholder="输入英文单词或句子…" rows="3"></textarea>
   <button class="clear-btn" onclick="clearInput()">✕</button>
 </div>
 
@@ -205,46 +233,121 @@
   <div class="result-placeholder">翻译结果显示在这里</div>
 </div>
 
-<button class="speak-btn" id="speak-btn" style="display:none" onclick="speakInput()">🔊 朗读英文</button>
+<button class="speak-btn" id="speak-btn" style="display:none" onclick="speakBoth()">🔊 再次朗读（英文 + 中文）</button>
+
+<div class="repeat-section" id="repeat-section" style="display:none">
+  <div class="repeat-row">
+    <button class="repeat-btn" id="rep3"  onclick="startRepeat(3)">🔁 3次</button>
+    <button class="repeat-btn" id="rep5"  onclick="startRepeat(5)">🔁 5次</button>
+    <button class="repeat-btn" id="rep10" onclick="startRepeat(10)">🔁 10次</button>
+  </div>
+  <div class="repeat-progress" id="repeat-progress" style="display:none"></div>
+  <button class="stop-btn" id="stop-btn" onclick="stopRepeat()" style="display:none">⏹ 停止朗读</button>
+</div>
 
 <div class="history-label" id="hist-label" style="display:none">最近查过的词</div>
 <div class="history-list" id="history-list"></div>
 
 <script>
   const HIST_KEY = 'dict_history';
-  let lastResult = '';
+  let currentEn = '';
+  let currentCn = '';
 
-  /* ── TTS ── */
-  let ttsVoice = null;
+  /* ── TTS voices ── */
+  let ttsVoiceEn = null;
+  let ttsVoiceCn = null;
+
   function initVoices() {
-    const voices = speechSynthesis.getVoices();
-    ttsVoice = voices.find(v => v.lang === 'en-AU')
-            || voices.find(v => v.lang === 'en-GB')
-            || voices.find(v => v.lang.startsWith('en') && v.localService)
-            || voices.find(v => v.lang.startsWith('en'))
-            || null;
+    const v = speechSynthesis.getVoices();
+    ttsVoiceEn = v.find(x => x.lang === 'en-AU')
+              || v.find(x => x.lang === 'en-GB')
+              || v.find(x => x.lang.startsWith('en') && x.localService)
+              || v.find(x => x.lang.startsWith('en'))
+              || null;
+    ttsVoiceCn = v.find(x => x.lang === 'zh-CN')
+              || v.find(x => x.lang === 'zh-TW')
+              || v.find(x => x.lang.startsWith('zh'))
+              || null;
   }
   if (speechSynthesis.onvoiceschanged !== undefined) speechSynthesis.addEventListener('voiceschanged', initVoices);
   initVoices();
 
-  function speakInput() {
-    const text = document.getElementById('input').value.trim();
-    if (!text || !window.speechSynthesis) return;
-    speechSynthesis.cancel();
-    const utt = new SpeechSynthesisUtterance(text);
-    utt.lang = 'en-AU'; utt.rate = 0.85;
-    if (ttsVoice) utt.voice = ttsVoice;
-    speechSynthesis.speak(utt);
+  /* ── Speak one utterance, returns Promise ── */
+  function sayOne(text, lang, voice) {
+    return new Promise(resolve => {
+      if (!text) { resolve(); return; }
+      const utt = new SpeechSynthesisUtterance(text);
+      utt.lang  = lang;
+      utt.rate  = 0.88;
+      if (voice) utt.voice = voice;
+      utt.onend   = resolve;
+      utt.onerror = resolve;
+      speechSynthesis.speak(utt);
+    });
   }
 
-  /* ── Input ── */
-  function onInput() {}   // button always enabled; guard is inside translate()
+  /* ── Speak English then Chinese ── */
+  async function speakBoth() {
+    if (!currentEn && !currentCn) return;
+    stopRepeat();
+    speechSynthesis.cancel();
+    await sayOne(currentEn, 'en-AU', ttsVoiceEn);
+    await new Promise(r => setTimeout(r, 500));
+    await sayOne(currentCn, 'zh-CN', ttsVoiceCn);
+  }
 
+  /* ── Repeat loop ── */
+  let isRepeating = false;
+  let repeatMax   = 0;
+
+  async function startRepeat(times) {
+    if (!currentEn && !currentCn) return;
+    stopRepeat();
+    isRepeating = true;
+    repeatMax   = times;
+
+    document.querySelectorAll('.repeat-btn').forEach(b => b.classList.remove('running'));
+    document.getElementById('rep' + times).classList.add('running');
+    document.getElementById('stop-btn').style.display     = 'block';
+    document.getElementById('repeat-progress').style.display = 'block';
+
+    for (let i = 1; i <= repeatMax && isRepeating; i++) {
+      document.getElementById('repeat-progress').textContent = `第 ${i} / ${repeatMax} 次`;
+      speechSynthesis.cancel();
+      await sayOne(currentEn, 'en-AU', ttsVoiceEn);
+      if (!isRepeating) break;
+      await new Promise(r => setTimeout(r, 500));
+      if (!isRepeating) break;
+      await sayOne(currentCn, 'zh-CN', ttsVoiceCn);
+      if (!isRepeating) break;
+      if (i < repeatMax) await new Promise(r => setTimeout(r, 800));
+    }
+
+    if (isRepeating) {
+      document.getElementById('repeat-progress').textContent = `✓ 已朗读 ${repeatMax} 次`;
+    }
+    isRepeating = false;
+    document.querySelectorAll('.repeat-btn').forEach(b => b.classList.remove('running'));
+    document.getElementById('stop-btn').style.display = 'none';
+  }
+
+  function stopRepeat() {
+    isRepeating = false;
+    speechSynthesis.cancel();
+    document.querySelectorAll('.repeat-btn').forEach(b => b.classList.remove('running'));
+    document.getElementById('stop-btn').style.display     = 'none';
+    document.getElementById('repeat-progress').style.display = 'none';
+  }
+
+  /* ── Clear ── */
   function clearInput() {
+    stopRepeat();
     document.getElementById('input').value = '';
     showPlaceholder();
-    document.getElementById('speak-btn').style.display = 'none';
+    document.getElementById('speak-btn').style.display    = 'none';
+    document.getElementById('repeat-section').style.display = 'none';
     document.getElementById('input').focus();
+    currentEn = ''; currentCn = '';
   }
 
   /* ── Translate ── */
@@ -252,6 +355,7 @@
     const text = document.getElementById('input').value.trim();
     if (!text) { showError('请先输入英文单词或句子'); return; }
 
+    stopRepeat();
     showLoading();
     const btn = document.getElementById('trans-btn');
     btn.disabled = true;
@@ -274,28 +378,32 @@
       } catch(e) {}
     }
 
+    btn.disabled = false;
+
     if (cn) {
-      showResult(cn);
+      showResult(text, cn);
       saveHistory(text, cn);
+      speakBoth();
     } else {
       showError('翻译失败，请检查网络后重试');
     }
-
-    btn.disabled = false;
   }
 
   /* ── Result display ── */
   function showPlaceholder() {
     document.getElementById('result-box').innerHTML = `<div class="result-placeholder">翻译结果显示在这里</div>`;
-    lastResult = '';
+    currentEn = ''; currentCn = '';
   }
   function showLoading() {
     document.getElementById('result-box').innerHTML = `<div class="result-loading">翻译中…</div>`;
   }
-  function showResult(cn) {
-    lastResult = cn;
+  function showResult(en, cn) {
+    currentEn = en; currentCn = cn;
     document.getElementById('result-box').innerHTML = `<div class="result-cn">${cn}</div>`;
-    document.getElementById('speak-btn').style.display = 'block';
+    document.getElementById('speak-btn').style.display    = 'block';
+    document.getElementById('repeat-section').style.display = 'flex';
+    document.getElementById('repeat-progress').style.display = 'none';
+    document.getElementById('stop-btn').style.display     = 'none';
   }
   function showError(msg) {
     document.getElementById('result-box').innerHTML = `<div class="result-error">${msg}</div>`;
@@ -325,16 +433,16 @@
       </div>`).join('');
   }
   function fillFromHistory(en, cn) {
+    stopRepeat();
     document.getElementById('input').value = en;
-    showResult(cn);
-    document.getElementById('trans-btn').disabled = false;
+    showResult(en, cn);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    speakBoth();
   }
 
   /* ── Init ── */
   renderHistory();
 
-  // Allow Enter key to translate (Shift+Enter for newline)
   document.getElementById('input').addEventListener('keydown', e => {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); doTranslate(); }
   });
