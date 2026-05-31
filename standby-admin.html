@@ -430,8 +430,7 @@
   /* ── GitHub API ── */
   async function ghGet(file) {
     const tok = token();
-    const headers = { 'Cache-Control': 'no-cache' };
-    if (tok) headers.Authorization = `Bearer ${tok}`;
+    const headers = tok ? { Authorization: `Bearer ${tok}` } : {};
     const res = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${file}?t=${Date.now()}`, { headers });
     if (res.status === 404) return { data: [], sha: null };
     if (!res.ok) throw new Error(`GitHub ${res.status}`);
