@@ -305,10 +305,30 @@
       saveSet(key, set); updateCounters(); renderTabs();
     }
 
-    /* ── Speak: audio file (Karen voice, pre-generated) ── */
+    /* ── TTS ── */
+    let ttsVoice = null;
+    function initVoices() {
+      const voices = speechSynthesis.getVoices();
+      ttsVoice = voices.find(v => v.lang === 'en-AU')
+              || voices.find(v => v.lang === 'en-GB')
+              || voices.find(v => v.lang.startsWith('en') && v.localService)
+              || voices.find(v => v.lang.startsWith('en'))
+              || null;
+    }
+    if (speechSynthesis.onvoiceschanged !== undefined) speechSynthesis.addEventListener('voiceschanged', initVoices);
+    initVoices();
+
     function speak(audioPath, word, event) {
       event.stopPropagation();
-      if (audioPath) { new Audio(audioPath + '?v=1').play().catch(() => {}); return; }
+      speechSynthesis.cancel();
+      const text = word || audioPath;
+      if (!text) return;
+      const utt = new SpeechSynthesisUtterance(text.trim());
+      utt.lang  = 'en-AU';
+      utt.rate  = 0.88;
+      utt.pitch = 1;
+      if (ttsVoice) utt.voice = ttsVoice;
+      speechSynthesis.speak(utt);
     }
 
     /* ── Play recording ── */

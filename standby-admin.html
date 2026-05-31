@@ -175,7 +175,15 @@
       justify-content: center;
     }
     .audio-btn:hover { background: #2e5a8f; }
-    .audio-btn.no-audio { color: #2e4a6f; cursor: default; }
+    .audio-btn.speaking { color: #f59e0b; background: #2e3a1f; }
+    .speak-preview-btn {
+      background: #1e3a6e; border: 1px solid #2e5f9e;
+      color: #90caf9; font-size: 14px; font-weight: 600;
+      font-family: inherit; border-radius: 8px;
+      padding: 10px 14px; cursor: pointer; white-space: nowrap;
+      transition: all 0.2s; flex-shrink: 0;
+    }
+    .speak-preview-btn:hover { background: #2e5a8f; }
 
     .push-word-btn {
       background: #064e3b;
@@ -350,6 +358,7 @@
       <div class="form-row">
         <span class="form-label">英文单词</span>
         <input class="form-input" id="inp-word" type="text" placeholder="e.g. Organic" onkeydown="if(event.key==='Enter')autoTranslate()">
+        <button class="speak-preview-btn" onclick="tts(document.getElementById('inp-word').value)" title="听发音">🔊</button>
         <button class="translate-btn" id="trans-btn" onclick="autoTranslate()">🔄 翻译</button>
       </div>
       <div class="form-row">
@@ -582,6 +591,30 @@
     }
   }
 
+  /* ── TTS ── */
+  let ttsVoice = null;
+  function initVoices() {
+    const voices = speechSynthesis.getVoices();
+    ttsVoice = voices.find(v => v.lang === 'en-AU')
+            || voices.find(v => v.lang === 'en-GB')
+            || voices.find(v => v.lang.startsWith('en') && v.localService)
+            || voices.find(v => v.lang.startsWith('en'))
+            || null;
+  }
+  if (speechSynthesis.onvoiceschanged !== undefined) speechSynthesis.addEventListener('voiceschanged', initVoices);
+  initVoices();
+
+  function tts(text) {
+    if (!text || !window.speechSynthesis) return;
+    speechSynthesis.cancel();
+    const utt = new SpeechSynthesisUtterance(text.trim());
+    utt.lang  = 'en-AU';
+    utt.rate  = 0.88;
+    utt.pitch = 1;
+    if (ttsVoice) utt.voice = ttsVoice;
+    speechSynthesis.speak(utt);
+  }
+
   /* ── Utils ── */
   function nextMonday() {
     const d = new Date();
@@ -637,7 +670,6 @@
           </div>`;
         batch.forEach((w, j) => {
           const idx = i + j;
-          const hasAudio = !!w.audio;
           html += `
           <div class="word-row">
             <div class="queue-num">${idx + 1}</div>
@@ -646,9 +678,7 @@
               <div class="word-cn">${w.word_cn || ''}</div>
               ${w.desc ? `<div class="word-desc">${w.desc}</div>` : ''}
             </div>
-            <button class="audio-btn ${hasAudio ? '' : 'no-audio'}"
-              onclick="${hasAudio ? `playAudio('${w.audio}')` : ''}"
-              title="${hasAudio ? '播放发音' : '无音频'}">🔊</button>
+            <button class="audio-btn" onclick="tts('${w.word.replace(/'/g,"\\'")}')">🔊</button>
             <button class="push-word-btn" data-push="${idx}" onclick="pushWord(${idx})">⬆ 推送到学习</button>
           </div>`;
         });
