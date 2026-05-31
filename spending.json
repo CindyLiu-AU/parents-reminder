@@ -283,7 +283,8 @@
       },
       {
         "name": "黄油微波爆米花（Poppin）",
-        "amount": 4.95
+        "amount": 4.95,
+        "forParents": true
       },
       {
         "name": "黄油微波爆米花（Coles）",
