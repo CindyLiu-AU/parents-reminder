@@ -251,6 +251,63 @@
       font-weight: 700;
       box-shadow: 0 4px 16px rgba(245,158,11,0.4);
     }
+
+    /* ── Sync button ── */
+    #sync-btn {
+      position: fixed;
+      bottom: 32px;
+      left: 28px;
+      background: #1e3a6e;
+      border: 1px solid #2e5f9e;
+      border-radius: 50%;
+      width: 48px; height: 48px;
+      font-size: 22px;
+      color: #90caf9;
+      cursor: pointer;
+      z-index: 200;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+      transition: background 0.2s;
+    }
+    #sync-btn:hover { background: #2e5a8f; }
+    #sync-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 300;
+      align-items: center; justify-content: center;
+    }
+    #sync-overlay.show { display: flex; }
+    #sync-box {
+      background: #112240;
+      border: 1px solid #2e5f9e;
+      border-radius: 20px;
+      padding: 28px 32px;
+      width: 360px;
+      display: flex; flex-direction: column; gap: 14px;
+    }
+    #sync-box h3 { font-size: 18px; color: #f59e0b; margin: 0; }
+    #sync-box p  { font-size: 13px; color: #64748b; margin: 0; line-height: 1.5; }
+    #sync-token {
+      background: #0d1b2a; border: 1px solid #2e5f9e;
+      border-radius: 8px; padding: 10px 14px;
+      color: #f0f4f8; font-size: 14px; font-family: monospace;
+      width: 100%;
+    }
+    #sync-token::placeholder { color: #334d66; }
+    #sync-go {
+      background: #f59e0b; border: none; border-radius: 10px;
+      padding: 12px; font-size: 16px; font-weight: 700;
+      color: #1a1000; cursor: pointer; font-family: inherit;
+    }
+    #sync-go:disabled { opacity: 0.5; cursor: default; }
+    #sync-cancel {
+      background: none; border: 1px solid #2e5f9e; border-radius: 10px;
+      padding: 10px; font-size: 14px; color: #64748b;
+      cursor: pointer; font-family: inherit;
+    }
+    #sync-status { font-size: 14px; color: #22c55e; text-align: center; display: none; }
+    #sync-error  { font-size: 14px; color: #f87171; text-align: center; display: none; }
   </style>
   <link rel="stylesheet" href="theme.css">
 </head>
@@ -270,6 +327,22 @@
 
   <div id="list">加载中...</div>
   <a class="back-btn" href="index.html">← 返回</a>
+
+  <!-- Sync button -->
+  <button id="sync-btn" title="同步新订单" onclick="openSync()">📧</button>
+
+  <!-- Sync overlay -->
+  <div id="sync-overlay">
+    <div id="sync-box">
+      <h3>📧 同步新订单</h3>
+      <p>从邮件自动读取最新 Coles 订单，需要 GitHub Personal Access Token（<code>workflow</code> 权限）。</p>
+      <input id="sync-token" type="password" placeholder="ghp_xxxxxxxxxxxx" />
+      <div id="sync-status"></div>
+      <div id="sync-error"></div>
+      <button id="sync-go" onclick="runSync()">🚀 开始同步</button>
+      <button id="sync-cancel" onclick="closeSync()">取消</button>
+    </div>
+  </div>
 
   <script>
     fetch('spending.json?t=' + Date.now())
@@ -356,6 +429,76 @@
         btn.textContent = '展开 ▼';
       }
     }
+
+    // ── Sync orders ──────────────────────────────────────────────────────────
+    const REPO  = 'CindyLiu-AU/parents-reminder';
+    const WF_ID = 'sync-orders.yml';
+    const TOKEN_KEY = 'gh_sync_token';
+
+    function openSync() {
+      document.getElementById('sync-overlay').classList.add('show');
+      document.getElementById('sync-status').style.display = 'none';
+      document.getElementById('sync-error').style.display  = 'none';
+      const saved = localStorage.getItem(TOKEN_KEY) || '';
+      document.getElementById('sync-token').value = saved;
+    }
+
+    function closeSync() {
+      document.getElementById('sync-overlay').classList.remove('show');
+    }
+
+    async function runSync() {
+      const token = document.getElementById('sync-token').value.trim();
+      if (!token) { showSyncError('请输入 GitHub Token'); return; }
+
+      localStorage.setItem(TOKEN_KEY, token);
+      const btn = document.getElementById('sync-go');
+      btn.disabled = true;
+
+      showSyncStatus('正在触发同步…');
+
+      try {
+        const res = await fetch(
+          `https://api.github.com/repos/${REPO}/actions/workflows/${WF_ID}/dispatches`,
+          {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Accept': 'application/vnd.github+json',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ ref: 'main' }),
+          }
+        );
+
+        if (res.status === 204) {
+          showSyncStatus('✅ 已触发！GitHub Action 正在运行（约1分钟），完成后请刷新页面查看新订单。');
+        } else {
+          const body = await res.json().catch(() => ({}));
+          showSyncError(`失败 (${res.status})：${body.message || '请检查 Token 权限'}`);
+          btn.disabled = false;
+        }
+      } catch (e) {
+        showSyncError('网络错误：' + e.message);
+        btn.disabled = false;
+      }
+    }
+
+    function showSyncStatus(msg) {
+      const el = document.getElementById('sync-status');
+      el.textContent = msg; el.style.display = 'block';
+      document.getElementById('sync-error').style.display = 'none';
+    }
+    function showSyncError(msg) {
+      const el = document.getElementById('sync-error');
+      el.textContent = msg; el.style.display = 'block';
+      document.getElementById('sync-status').style.display = 'none';
+    }
+
+    // Close overlay when clicking outside
+    document.getElementById('sync-overlay').addEventListener('click', e => {
+      if (e.target === document.getElementById('sync-overlay')) closeSync();
+    });
   </script>
   <script src="theme.js"></script>
 </body>
