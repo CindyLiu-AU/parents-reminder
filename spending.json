@@ -151,7 +151,8 @@
       },
       {
         "name": "散养鸡蛋 12个装 x2",
-        "amount": 11.4
+        "amount": 11.4,
+        "forParents": true
       },
       {
         "name": "全脂牛奶 3L x2",
