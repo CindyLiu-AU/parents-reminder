@@ -297,7 +297,7 @@
 
           const allItemsHTML = items.map(i => `
             <div class="item-row">
-              <span class="item-name">${i.name}${i.forParents ? ' <span style="font-size:11px;color:#f59e0b44">★</span>' : ''}</span>
+              <span class="item-name">${i.name}${i.forParents ? ' <span style="font-size:20px;color:#f59e0b;text-shadow:0 0 6px #f59e0b80">★</span>' : ''}</span>
               <span class="item-amount">$${i.amount.toFixed(2)}</span>
             </div>`).join('');
 
