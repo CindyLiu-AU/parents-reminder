@@ -47,26 +47,10 @@
       margin-top: 6px;
     }
 
-    .owed-badge {
-      text-align: right;
-      flex-shrink: 0;
-    }
-    .owed-label {
-      font-size: 14px;
-      color: #64748b;
-      margin-bottom: 4px;
-    }
-    .owed-amount {
-      font-size: 36px;
-      font-weight: 800;
-      color: #f87171;
-      line-height: 1;
-    }
-    .owed-sub {
-      font-size: 13px;
-      color: #64748b;
-      margin-top: 3px;
-    }
+    .owed-badge { text-align: right; flex-shrink: 0; }
+    .owed-label { font-size: 14px; color: #64748b; margin-bottom: 4px; }
+    .owed-amount { font-size: 36px; font-weight: 800; color: #f87171; line-height: 1; }
+    .owed-sub { font-size: 13px; color: #64748b; margin-top: 3px; }
 
     .week-card {
       background: #112240;
@@ -84,13 +68,8 @@
       margin-bottom: 4px;
     }
 
-    .order-meta {
-      font-size: 18px;
-      color: #546e7a;
-      margin-bottom: 18px;
-    }
+    .order-meta { font-size: 18px; color: #546e7a; margin-bottom: 18px; }
 
-    /* Full order section */
     .section-label {
       font-size: 18px;
       font-weight: 700;
@@ -121,14 +100,24 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 7px 0;
+      padding: 7px 6px;
       border-bottom: 1px solid #0d1b2a;
       font-size: 20px;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: background 0.15s;
     }
 
     .item-row:last-of-type { border-bottom: none; }
+    .item-row:hover { background: #1a2d42; }
+    .item-row.fp { background: #0d2137; }
+    .item-row.fp:hover { background: #102840; }
+
     .item-name { color: #cfd8e3; flex: 1; padding-right: 12px; }
     .item-amount { color: #90a4ae; font-weight: 600; white-space: nowrap; }
+
+    .star-tag { font-size: 20px; color: #f59e0b; text-shadow: 0 0 6px #f59e0b80; margin-left: 4px; }
+    .star-empty { font-size: 14px; color: #253a52; margin-left: 4px; }
 
     .total-row {
       display: flex;
@@ -139,17 +128,8 @@
       border-top: 1px solid #1e3a5f;
     }
 
-    .total-label {
-      font-size: 20px;
-      font-weight: 700;
-      color: #90caf9;
-    }
-
-    .total-amount {
-      font-size: 28px;
-      font-weight: 800;
-      color: #90caf9;
-    }
+    .total-label { font-size: 20px; font-weight: 700; color: #90caf9; }
+    .total-amount { font-size: 28px; font-weight: 800; color: #90caf9; }
 
     /* Parent section */
     .parent-section {
@@ -174,14 +154,22 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 7px 0;
+      padding: 7px 6px;
       border-bottom: 1px solid #1e3a5f44;
       font-size: 20px;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: background 0.15s;
     }
 
     .parent-item-row:last-of-type { border-bottom: none; }
-    .parent-item-name { color: #e2e8f0; flex: 1; padding-right: 12px; }
+    .parent-item-row:hover { background: #152a40; }
+    .parent-item-name { color: #e2e8f0; flex: 1; padding-right: 8px; }
     .parent-item-amount { color: #f59e0b; font-weight: 700; white-space: nowrap; }
+    .parent-item-remove { color: #334155; font-size: 13px; margin-left: 8px; flex-shrink: 0; }
+    .parent-item-row:hover .parent-item-remove { color: #f87171; }
+
+    .parent-empty { color: #334155; font-size: 16px; padding: 6px 0 8px; }
 
     .parent-total-row {
       display: flex;
@@ -192,23 +180,10 @@
       border-top: 2px solid #f59e0b44;
     }
 
-    .parent-total-label {
-      font-size: 20px;
-      font-weight: 700;
-      color: #fbbf24;
-    }
+    .parent-total-label { font-size: 20px; font-weight: 700; color: #fbbf24; }
+    .parent-total-amount { font-size: 34px; font-weight: 800; color: #4ade80; }
 
-    .parent-total-amount {
-      font-size: 34px;
-      font-weight: 800;
-      color: #4ade80;
-    }
-
-    .parent-note {
-      font-size: 18px;
-      color: #546e7a;
-      margin-top: 8px;
-    }
+    .parent-note { font-size: 18px; color: #546e7a; margin-top: 8px; }
 
     .transfer-badge {
       display: block;
@@ -222,16 +197,54 @@
       letter-spacing: 2px;
     }
 
-    .badge-pending {
-      background: #ff4d4d22;
-      border: 2px solid #ff4d4d;
-      color: #ff6b6b;
-    }
+    .badge-pending { background: #ff4d4d22; border: 2px solid #ff4d4d; color: #ff6b6b; }
+    .badge-done    { background: #4ade8022; border: 2px solid #4ade80; color: #4ade80; }
 
-    .badge-done {
-      background: #4ade8022;
-      border: 2px solid #4ade80;
-      color: #4ade80;
+    /* Add item controls */
+    .add-parent-btn {
+      display: block;
+      width: 100%;
+      margin-top: 12px;
+      padding: 8px;
+      background: none;
+      border: 1px dashed #2e5f9e;
+      border-radius: 8px;
+      color: #475569;
+      font-size: 15px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .add-parent-btn:hover { color: #90caf9; border-color: #90caf9; }
+
+    .add-item-form {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      align-items: center;
+    }
+    .add-input {
+      background: #0d1b2a;
+      border: 1px solid #2e5f9e;
+      border-radius: 8px;
+      color: #f0f4f8;
+      padding: 8px 10px;
+      font-size: 15px;
+      font-family: inherit;
+      outline: none;
+    }
+    .add-input:focus { border-color: #f59e0b; }
+    .add-input.name { flex: 1; }
+    .add-input.amt  { width: 84px; }
+    .add-confirm {
+      background: #f59e0b; border: none; border-radius: 8px;
+      padding: 8px 14px; font-size: 16px; font-weight: 700;
+      color: #1a1000; cursor: pointer; font-family: inherit; flex-shrink: 0;
+    }
+    .add-cancel {
+      background: #1e3a5f; border: none; border-radius: 8px;
+      padding: 8px 12px; font-size: 16px; color: #64748b;
+      cursor: pointer; font-family: inherit; flex-shrink: 0;
     }
 
     .collapsible { overflow: hidden; transition: max-height 0.3s ease; }
@@ -252,7 +265,7 @@
       box-shadow: 0 4px 16px rgba(245,158,11,0.4);
     }
 
-    /* ── Sync button ── */
+    /* Sync button */
     #sync-btn {
       position: fixed;
       bottom: 32px;
@@ -270,6 +283,7 @@
       transition: background 0.2s;
     }
     #sync-btn:hover { background: #2e5a8f; }
+
     #sync-overlay {
       display: none;
       position: fixed; inset: 0;
@@ -283,7 +297,7 @@
       border: 1px solid #2e5f9e;
       border-radius: 20px;
       padding: 28px 32px;
-      width: 360px;
+      width: 380px;
       display: flex; flex-direction: column; gap: 14px;
     }
     #sync-box h3 { font-size: 18px; color: #f59e0b; margin: 0; }
@@ -292,9 +306,9 @@
       background: #0d1b2a; border: 1px solid #2e5f9e;
       border-radius: 8px; padding: 10px 14px;
       color: #f0f4f8; font-size: 14px; font-family: monospace;
-      width: 100%;
+      width: 100%; outline: none;
     }
-    #sync-token::placeholder { color: #334d66; }
+    #sync-token:focus { border-color: #f59e0b; }
     #sync-go {
       background: #f59e0b; border: none; border-radius: 10px;
       padding: 12px; font-size: 16px; font-weight: 700;
@@ -308,6 +322,26 @@
     }
     #sync-status { font-size: 14px; color: #22c55e; text-align: center; display: none; }
     #sync-error  { font-size: 14px; color: #f87171; text-align: center; display: none; }
+
+    /* Save toast */
+    #save-toast {
+      position: fixed;
+      bottom: 92px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #112240;
+      border: 1px solid #2e5f9e;
+      border-radius: 12px;
+      padding: 10px 22px;
+      font-size: 15px;
+      color: #90caf9;
+      z-index: 400;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    #save-toast.visible { opacity: 1; }
   </style>
   <link rel="stylesheet" href="theme.css">
 </head>
@@ -335,7 +369,7 @@
   <div id="sync-overlay">
     <div id="sync-box">
       <h3>📧 同步新订单</h3>
-      <p>从邮件自动读取最新 Coles 订单，需要 GitHub Personal Access Token（<code>workflow</code> 权限）。</p>
+      <p>从邮件自动读取最新 Coles 订单。需要 GitHub Personal Access Token（<code>workflow</code> + <code>contents</code> 权限）。输入后自动记住。</p>
       <input id="sync-token" type="password" placeholder="ghp_xxxxxxxxxxxx" />
       <div id="sync-status"></div>
       <div id="sync-error"></div>
@@ -344,103 +378,269 @@
     </div>
   </div>
 
+  <!-- Save toast -->
+  <div id="save-toast"></div>
+
   <script>
-    fetch('spending.json?t=' + Date.now())
-      .then(r => r.json())
-      .then(data => {
-        if (!data.length) {
-          document.getElementById('list').innerHTML = '<p style="color:#546e7a">暂无记录</p>';
-          return;
+    // ── State ──────────────────────────────────────────────────────────────────
+    let data = [];
+    let fileSha = '';
+    let addingFor = null;          // di index of week with open add-item form
+    const expandedSections = new Set(); // track which order-N divs are open
+
+    const REPO      = 'CindyLiu-AU/parents-reminder';
+    const WF_ID     = 'sync-orders.yml';
+    const TOKEN_KEY = 'gh_sync_token';
+
+    function getToken() { return localStorage.getItem(TOKEN_KEY) || ''; }
+
+    // ── Encoding helpers ───────────────────────────────────────────────────────
+    function decodeB64(str) {
+      const bytes = Uint8Array.from(atob(str.replace(/\n/g, '')), c => c.charCodeAt(0));
+      return new TextDecoder().decode(bytes);
+    }
+    function encodeB64(str) {
+      const bytes = new TextEncoder().encode(str);
+      let bin = '';
+      bytes.forEach(b => bin += String.fromCharCode(b));
+      return btoa(bin);
+    }
+
+    // ── Load ───────────────────────────────────────────────────────────────────
+    async function init() {
+      const token = getToken();
+      if (token) {
+        try {
+          const res = await fetch(
+            `https://api.github.com/repos/${REPO}/contents/spending.json`,
+            { headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' } }
+          );
+          if (res.ok) {
+            const meta = await res.json();
+            fileSha = meta.sha;
+            data = JSON.parse(decodeB64(meta.content));
+            render();
+            return;
+          }
+        } catch(e) {}
+      }
+      // Fallback — no GitHub API (no token), can still view but not save
+      const res = await fetch('spending.json?t=' + Date.now());
+      data = await res.json();
+      render();
+    }
+
+    // ── Save to GitHub ─────────────────────────────────────────────────────────
+    async function saveData(msg) {
+      const token = getToken();
+      if (!token) {
+        showToast('❌ 需要 GitHub Token，请点击 📧 按钮设置');
+        return;
+      }
+      showToast('保存中…');
+      try {
+        if (!fileSha) {
+          const metaRes = await fetch(
+            `https://api.github.com/repos/${REPO}/contents/spending.json`,
+            { headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' } }
+          );
+          const meta = await metaRes.json();
+          fileSha = meta.sha;
         }
-
-        // Owed total
-        const unpaid = data.filter(w => !w.transferred);
-        const owedTotal = unpaid.reduce((s, w) =>
-          s + (w.items || []).filter(i => i.forParents).reduce((t, i) => t + (i.amount || 0), 0), 0);
-        document.getElementById('owed-total').textContent = '$' + owedTotal.toFixed(2);
-        document.getElementById('owed-orders').textContent = `共 ${unpaid.length} 笔未转账`;
-
-        const sorted = [...data].sort((a, b) => b.weekStart.localeCompare(a.weekStart));
-
-        document.getElementById('list').innerHTML = sorted.map((week, wi) => {
-          const items = week.items || [];
-          const parentItems = items.filter(i => i.forParents);
-          const orderTotal = items.reduce((s, i) => s + (i.amount || 0), 0);
-          const parentTotal = parentItems.reduce((s, i) => s + (i.amount || 0), 0);
-
-          const allItemsHTML = items.map(i => `
-            <div class="item-row">
-              <span class="item-name">${i.name}${i.forParents ? ' <span style="font-size:20px;color:#f59e0b;text-shadow:0 0 6px #f59e0b80">★</span>' : ''}</span>
-              <span class="item-amount">$${i.amount.toFixed(2)}</span>
-            </div>`).join('');
-
-          const parentItemsHTML = parentItems.map(i => `
-            <div class="parent-item-row">
-              <span class="parent-item-name">${i.name}</span>
-              <span class="parent-item-amount">$${i.amount.toFixed(2)}</span>
-            </div>`).join('');
-
-          const colId = `order-${wi}`;
-          const metaParts = [];
-          if (week.orderNumber) metaParts.push(`订单 #${week.orderNumber}`);
-          if (week.deliveryDate) metaParts.push(`送达 ${week.deliveryDate}`);
-          if (week.note) metaParts.push(week.note);
-
-          return `
-            <div class="week-card">
-              <div class="week-title">📅 ${week.week}</div>
-              ${metaParts.length ? `<div class="order-meta">${metaParts.join(' · ')}</div>` : ''}
-
-              <div class="section-label">
-                全部商品
-                <button class="toggle-btn" onclick="toggleOrder('${colId}', this)">展开 ▼</button>
-              </div>
-              <div class="collapsible" id="${colId}" style="max-height:0px">
-                ${allItemsHTML}
-                <div class="total-row">
-                  <span class="total-label">订单合计</span>
-                  <span class="total-amount">$${orderTotal.toFixed(2)}</span>
-                </div>
-              </div>
-
-              ${parentItems.length ? `
-              <div class="parent-section">
-                <div class="parent-section-title">🧧 爸妈的部分</div>
-                ${parentItemsHTML}
-                <div class="parent-total-row">
-                  <span class="parent-total-label">爸妈转账金额</span>
-                  <span class="parent-total-amount">$${parentTotal.toFixed(2)}</span>
-                </div>
-                ${week.transferred
-                  ? `<div class="transfer-badge badge-done">✅ 已转账</div>`
-                  : `<div class="transfer-badge badge-pending">⏳ 未转账</div>`}
-              </div>` : ''}
-            </div>`;
-        }).join('');
-      });
-
-    function toggleOrder(id, btn) {
-      const el = document.getElementById(id);
-      if (el.style.maxHeight === '0px') {
-        el.style.maxHeight = '2000px';
-        btn.textContent = '收起 ▲';
-      } else {
-        el.style.maxHeight = '0px';
-        btn.textContent = '展开 ▼';
+        const res = await fetch(
+          `https://api.github.com/repos/${REPO}/contents/spending.json`,
+          {
+            method: 'PUT',
+            headers: {
+              Authorization: `Bearer ${token}`,
+              Accept: 'application/vnd.github+json',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              message: '✏️ Update spending.json',
+              content: encodeB64(JSON.stringify(data, null, 2)),
+              sha: fileSha,
+            }),
+          }
+        );
+        if (res.ok) {
+          const result = await res.json();
+          fileSha = result.content.sha;
+          showToast(msg || '✅ 已保存');
+        } else {
+          const err = await res.json().catch(() => ({}));
+          showToast('❌ 保存失败：' + (err.message || res.status));
+        }
+      } catch(e) {
+        showToast('❌ 网络错误：' + e.message);
       }
     }
 
-    // ── Sync orders ──────────────────────────────────────────────────────────
-    const REPO  = 'CindyLiu-AU/parents-reminder';
-    const WF_ID = 'sync-orders.yml';
-    const TOKEN_KEY = 'gh_sync_token';
+    // ── Render ─────────────────────────────────────────────────────────────────
+    function render() {
+      // Header totals
+      const unpaid = data.filter(w => !w.transferred);
+      const owedTotal = unpaid.reduce((s, w) =>
+        s + (w.items || []).filter(i => i.forParents).reduce((t, i) => t + (i.amount || 0), 0), 0);
+      document.getElementById('owed-total').textContent = '$' + owedTotal.toFixed(2);
+      document.getElementById('owed-orders').textContent = `共 ${unpaid.length} 笔未转账`;
 
+      const sortedIdxs = data.map((_, i) => i).sort((a, b) =>
+        (data[b].weekStart || '').localeCompare(data[a].weekStart || ''));
+
+      document.getElementById('list').innerHTML = sortedIdxs.map((di, wi) => {
+        const week  = data[di];
+        const items = week.items || [];
+        const pItems = items.filter(i => i.forParents);
+        const orderTotal  = items.reduce((s, i) => s + (i.amount || 0), 0);
+        const parentTotal = pItems.reduce((s, i) => s + (i.amount || 0), 0);
+        const colId = `order-${wi}`;
+
+        // Full order item rows (clickable to toggle ★)
+        const allItemsHTML = items.map((item, ii) => `
+          <div class="item-row${item.forParents ? ' fp' : ''}"
+               onclick="toggleFP(${di},${ii})" title="点击切换爸妈项目">
+            <span class="item-name">${item.name}${
+              item.forParents
+                ? '<span class="star-tag">★</span>'
+                : '<span class="star-empty">☆</span>'
+            }</span>
+            <span class="item-amount">$${item.amount.toFixed(2)}</span>
+          </div>`).join('');
+
+        // Parent item rows (click to remove ★)
+        const parentRowsHTML = pItems.map(item => {
+          const ii = items.indexOf(item);
+          return `
+          <div class="parent-item-row" onclick="toggleFP(${di},${ii})" title="点击取消爸妈标记">
+            <span class="parent-item-name">${item.name}</span>
+            <span class="parent-item-amount">$${item.amount.toFixed(2)}</span>
+            <span class="parent-item-remove">✕</span>
+          </div>`;
+        }).join('');
+
+        // Add-item form or button
+        const addSection = addingFor === di ? `
+          <div class="add-item-form">
+            <input id="add-name-${di}" class="add-input name" placeholder="商品名称"
+                   onkeydown="if(event.key==='Enter')confirmAdd(${di})" />
+            <input id="add-amt-${di}"  class="add-input amt"  placeholder="金额" type="number" step="0.01" min="0"
+                   onkeydown="if(event.key==='Enter')confirmAdd(${di})" />
+            <button class="add-confirm" onclick="confirmAdd(${di})">✓</button>
+            <button class="add-cancel"  onclick="cancelAdd()">✗</button>
+          </div>` : `
+          <button class="add-parent-btn" onclick="startAdd(${di})">➕ 手动添加项目</button>`;
+
+        const metaParts = [];
+        if (week.orderNumber) metaParts.push(`订单 #${week.orderNumber}`);
+        if (week.deliveryDate) metaParts.push(`送达 ${week.deliveryDate}`);
+        if (week.note)         metaParts.push(week.note);
+
+        return `
+          <div class="week-card">
+            <div class="week-title">📅 ${week.week}</div>
+            ${metaParts.length ? `<div class="order-meta">${metaParts.join(' · ')}</div>` : ''}
+
+            <div class="section-label">
+              全部商品
+              <button class="toggle-btn" onclick="toggleOrder('${colId}',this)">展开 ▼</button>
+            </div>
+            <div class="collapsible" id="${colId}" style="max-height:0px">
+              ${allItemsHTML}
+              <div class="total-row">
+                <span class="total-label">订单合计</span>
+                <span class="total-amount">$${orderTotal.toFixed(2)}</span>
+              </div>
+            </div>
+
+            <div class="parent-section">
+              <div class="parent-section-title">🧧 爸妈的部分</div>
+              ${pItems.length ? parentRowsHTML : '<div class="parent-empty">暂无爸妈项目</div>'}
+              ${pItems.length ? `
+              <div class="parent-total-row">
+                <span class="parent-total-label">爸妈转账金额</span>
+                <span class="parent-total-amount">$${parentTotal.toFixed(2)}</span>
+              </div>` : ''}
+              ${week.transferred
+                ? `<div class="transfer-badge badge-done">✅ 已转账</div>`
+                : `<div class="transfer-badge badge-pending">⏳ 未转账</div>`}
+              ${addSection}
+            </div>
+          </div>`;
+      }).join('');
+
+      // Restore expanded sections after re-render
+      expandedSections.forEach(id => {
+        const el  = document.getElementById(id);
+        const btn = el && el.previousElementSibling && el.previousElementSibling.querySelector('.toggle-btn');
+        if (el)  el.style.maxHeight = '3000px';
+        if (btn) btn.textContent = '收起 ▲';
+      });
+
+      // Focus name input if add-form just opened
+      if (addingFor !== null) {
+        setTimeout(() => {
+          const el = document.getElementById(`add-name-${addingFor}`);
+          if (el) el.focus();
+        }, 30);
+      }
+    }
+
+    // ── Toggle forParents ──────────────────────────────────────────────────────
+    function toggleFP(di, ii) {
+      const item = data[di].items[ii];
+      item.forParents = !item.forParents;
+      if (!item.forParents) delete item.forParents;
+      render();
+      saveData(item.forParents ? '★ 已标为爸妈项目' : '已取消爸妈标记');
+    }
+
+    // ── Add item ───────────────────────────────────────────────────────────────
+    function startAdd(di) { addingFor = di; render(); }
+    function cancelAdd()  { addingFor = null; render(); }
+
+    function confirmAdd(di) {
+      const name   = (document.getElementById(`add-name-${di}`).value || '').trim();
+      const amount = parseFloat(document.getElementById(`add-amt-${di}`).value);
+      if (!name || isNaN(amount) || amount <= 0) {
+        document.getElementById(`add-name-${di}`).style.borderColor = '#f87171';
+        return;
+      }
+      data[di].items.push({ name, amount: Math.round(amount * 100) / 100, forParents: true });
+      addingFor = null;
+      render();
+      saveData('✅ 已添加：' + name);
+    }
+
+    // ── Toggle order collapsible ───────────────────────────────────────────────
+    function toggleOrder(id, btn) {
+      const el = document.getElementById(id);
+      if (el.style.maxHeight === '0px') {
+        el.style.maxHeight = '3000px';
+        btn.textContent = '收起 ▲';
+        expandedSections.add(id);
+      } else {
+        el.style.maxHeight = '0px';
+        btn.textContent = '展开 ▼';
+        expandedSections.delete(id);
+      }
+    }
+
+    // ── Toast ──────────────────────────────────────────────────────────────────
+    function showToast(msg) {
+      const el = document.getElementById('save-toast');
+      el.textContent = msg;
+      el.classList.add('visible');
+      clearTimeout(el._t);
+      el._t = setTimeout(() => el.classList.remove('visible'), 3000);
+    }
+
+    // ── Sync overlay ───────────────────────────────────────────────────────────
     function openSync() {
       document.getElementById('sync-overlay').classList.add('show');
       document.getElementById('sync-status').style.display = 'none';
       document.getElementById('sync-error').style.display  = 'none';
-      const saved = localStorage.getItem(TOKEN_KEY) || '';
-      document.getElementById('sync-token').value = saved;
+      document.getElementById('sync-token').value = getToken();
     }
 
     function closeSync() {
@@ -449,13 +649,15 @@
 
     async function runSync() {
       const token = document.getElementById('sync-token').value.trim();
-      if (!token) { showSyncError('请输入 GitHub Token'); return; }
-
+      if (!token) { showSyncErr('请输入 GitHub Token'); return; }
       localStorage.setItem(TOKEN_KEY, token);
+
+      // Also reload fileSha with new token
+      fileSha = '';
+
       const btn = document.getElementById('sync-go');
       btn.disabled = true;
-
-      showSyncStatus('正在触发同步…');
+      showSyncMsg('正在触发同步…');
 
       try {
         const res = await fetch(
@@ -463,42 +665,43 @@
           {
             method: 'POST',
             headers: {
-              'Authorization': `Bearer ${token}`,
-              'Accept': 'application/vnd.github+json',
+              Authorization: `Bearer ${token}`,
+              Accept: 'application/vnd.github+json',
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({ ref: 'main' }),
           }
         );
-
         if (res.status === 204) {
-          showSyncStatus('✅ 已触发！GitHub Action 正在运行（约1分钟），完成后请刷新页面查看新订单。');
+          showSyncMsg('✅ 已触发！GitHub Action 正在运行（约1分钟），完成后请刷新页面查看新订单。');
         } else {
           const body = await res.json().catch(() => ({}));
-          showSyncError(`失败 (${res.status})：${body.message || '请检查 Token 权限'}`);
+          showSyncErr(`失败 (${res.status})：${body.message || '请检查 Token 权限'}`);
           btn.disabled = false;
         }
-      } catch (e) {
-        showSyncError('网络错误：' + e.message);
+      } catch(e) {
+        showSyncErr('网络错误：' + e.message);
         btn.disabled = false;
       }
     }
 
-    function showSyncStatus(msg) {
+    function showSyncMsg(msg) {
       const el = document.getElementById('sync-status');
       el.textContent = msg; el.style.display = 'block';
       document.getElementById('sync-error').style.display = 'none';
     }
-    function showSyncError(msg) {
+    function showSyncErr(msg) {
       const el = document.getElementById('sync-error');
       el.textContent = msg; el.style.display = 'block';
       document.getElementById('sync-status').style.display = 'none';
     }
 
-    // Close overlay when clicking outside
     document.getElementById('sync-overlay').addEventListener('click', e => {
       if (e.target === document.getElementById('sync-overlay')) closeSync();
     });
+
+    // ── Boot ───────────────────────────────────────────────────────────────────
+    init();
   </script>
   <script src="theme.js"></script>
 </body>
