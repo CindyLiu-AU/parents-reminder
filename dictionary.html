@@ -199,7 +199,7 @@
   <button class="clear-btn" onclick="clearInput()">✕</button>
 </div>
 
-<button class="translate-btn" id="trans-btn" onclick="translate()">翻 译</button>
+<button class="translate-btn" id="trans-btn" onclick="doTranslate()">翻 译</button>
 
 <div class="result-box" id="result-box">
   <div class="result-placeholder">翻译结果显示在这里</div>
@@ -248,7 +248,7 @@
   }
 
   /* ── Translate ── */
-  async function translate() {
+  async function doTranslate() {
     const text = document.getElementById('input').value.trim();
     if (!text) { showError('请先输入英文单词或句子'); return; }
 
@@ -256,23 +256,32 @@
     const btn = document.getElementById('trans-btn');
     btn.disabled = true;
 
+    let cn = '';
+
+    // Try 1: MyMemory
     try {
-      const cn = await tryTranslate(text);
+      const res  = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|zh-CN`);
+      const data = await res.json();
+      cn = data.responseData?.translatedText || '';
+    } catch(e) {}
+
+    // Try 2: Google Translate
+    if (!cn) {
+      try {
+        const res  = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=zh-CN&dt=t&q=${encodeURIComponent(text)}`);
+        const data = await res.json();
+        cn = data[0]?.map(x => x[0])?.join('') || '';
+      } catch(e) {}
+    }
+
+    if (cn) {
       showResult(cn);
       saveHistory(text, cn);
-    } catch(e) {
+    } else {
       showError('翻译失败，请检查网络后重试');
-    } finally {
-      btn.disabled = false;
     }
-  }
 
-  async function tryTranslate(text) {
-    const res  = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|zh-CN`);
-    const data = await res.json();
-    const cn   = data.responseData?.translatedText || '';
-    if (cn) return cn;
-    throw new Error('翻译结果为空');
+    btn.disabled = false;
   }
 
   /* ── Result display ── */
@@ -327,7 +336,7 @@
 
   // Allow Enter key to translate (Shift+Enter for newline)
   document.getElementById('input').addEventListener('keydown', e => {
-    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); translate(); }
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); doTranslate(); }
   });
 </script>
 </body>
