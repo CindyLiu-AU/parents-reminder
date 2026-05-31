@@ -64,15 +64,29 @@
     }
     .clear-btn:active { background: #2e5a8f; }
 
-    /* ── Translate button ── */
+    /* ── Translate + mic row ── */
+    .action-row { display: flex; gap: 10px; flex-shrink: 0; }
     .translate-btn {
       background: #f59e0b; border: none; border-radius: 16px; padding: 16px;
       font-size: 30px; font-weight: 900; font-family: inherit; color: #1a1000;
-      cursor: pointer; width: 100%; letter-spacing: 4px; flex-shrink: 0;
+      cursor: pointer; flex: 1; letter-spacing: 4px;
       transition: opacity 0.15s, transform 0.1s;
     }
     .translate-btn:active { opacity: 0.8; transform: scale(0.98); }
     .translate-btn:disabled { opacity: 0.4; }
+
+    .mic-btn {
+      background: #1e3a6e; border: 2px solid #2e5f9e; border-radius: 16px;
+      width: 72px; font-size: 30px; color: #90caf9; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s; flex-shrink: 0;
+    }
+    .mic-btn:active { opacity: 0.7; }
+    .mic-btn.recording {
+      background: #450a0a; border-color: #ef4444; color: #fca5a5;
+      animation: pulse 1s infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
 
     /* ── Result box — fills all remaining space ── */
     .result-box {
@@ -152,7 +166,10 @@
   <button class="clear-btn" onclick="clearInput()">✕</button>
 </div>
 
-<button class="translate-btn" id="trans-btn" onclick="doTranslate()">翻 译</button>
+<div class="action-row">
+  <button class="translate-btn" id="trans-btn" onclick="doTranslate()">翻 译</button>
+  <button class="mic-btn" id="mic-btn" onclick="toggleVoice()">🎤</button>
+</div>
 
 <div class="result-box" id="result-box">
   <div class="result-placeholder">翻译结果显示在这里</div>
@@ -412,6 +429,41 @@
     showResultPanel();
     window.scrollTo({ top: 0, behavior: 'smooth' });
     speakBoth();
+  }
+
+  /* ── Voice input ── */
+  let recognition = null;
+
+  function toggleVoice() {
+    if (recognition) { stopVoice(); return; }
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) { showError('此设备不支持语音输入'); return; }
+
+    recognition = new SR();
+    recognition.lang        = direction === 'en-zh' ? 'en-AU' : 'zh-CN';
+    recognition.continuous  = false;
+    recognition.interimResults = false;
+
+    recognition.onresult = e => {
+      const text = e.results[0][0].transcript.trim();
+      document.getElementById('input').value = text;
+      stopVoice();
+      doTranslate();
+    };
+    recognition.onerror = () => stopVoice();
+    recognition.onend   = () => stopVoice();
+
+    recognition.start();
+    const btn = document.getElementById('mic-btn');
+    btn.textContent = '🔴';
+    btn.classList.add('recording');
+  }
+
+  function stopVoice() {
+    if (recognition) { try { recognition.stop(); } catch(e) {} recognition = null; }
+    const btn = document.getElementById('mic-btn');
+    btn.textContent = '🎤';
+    btn.classList.remove('recording');
   }
 
   /* ── Init ── */
