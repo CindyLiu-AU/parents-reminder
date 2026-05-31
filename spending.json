@@ -8,15 +8,15 @@
     "items": [
       {
         "name": "方便餐 泰式绿咖喱鸡 1",
-        "amount": 4.0
+        "amount": 4
       },
       {
         "name": "冷冻方便餐肉酱意大利面 1",
-        "amount": 4.0
+        "amount": 4
       },
       {
         "name": "绿咖喱鸡饭 1",
-        "amount": 5.0
+        "amount": 5
       },
       {
         "name": "印度椰子咖喱鸡碗 1",
@@ -28,11 +28,11 @@
       },
       {
         "name": "羊肉迷迭香火锅1",
-        "amount": 5.0
+        "amount": 5
       },
       {
         "name": "餐食 沙爹鸡 1",
-        "amount": 4.0
+        "amount": 4
       },
       {
         "name": "原味煎饼奶昔 1",
@@ -40,7 +40,7 @@
       },
       {
         "name": "短粒米 1",
-        "amount": 15.0
+        "amount": 15
       }
     ]
   },
@@ -53,7 +53,8 @@
     "items": [
       {
         "name": "散养鸡蛋 12个装",
-        "amount": 5.7
+        "amount": 5.7,
+        "forParents": true
       },
       {
         "name": "低脂软黄油（Devondale）",
@@ -81,7 +82,7 @@
       },
       {
         "name": "棕洋葱 1kg",
-        "amount": 2.0
+        "amount": 2
       },
       {
         "name": "散装胡萝卜",
@@ -109,15 +110,15 @@
       },
       {
         "name": "面巾纸 6层装（Kleenex）",
-        "amount": 1.0
+        "amount": 1
       },
       {
         "name": "牛肉嫩煎片",
-        "amount": 11.0
+        "amount": 11
       },
       {
         "name": "羊腿肉丁",
-        "amount": 13.0
+        "amount": 13
       },
       {
         "name": "人道认证鸡大腿肉 大包装（RSPCA）",
@@ -146,7 +147,7 @@
     "items": [
       {
         "name": "茶蜡烛 100个装（Coles）",
-        "amount": 11.0
+        "amount": 11
       },
       {
         "name": "散养鸡蛋 12个装 x2",
@@ -163,7 +164,7 @@
       },
       {
         "name": "大包装牛肉末 2kg（Drovers Choice）",
-        "amount": 24.0,
+        "amount": 24,
         "forParents": true
       }
     ]
@@ -187,11 +188,11 @@
       },
       {
         "name": "香肠土豆泥冷冻餐 x2（Core PowerFoods）",
-        "amount": 13.0
+        "amount": 13
       },
       {
         "name": "牛肉肉酱千层面（Coles Kitchen）",
-        "amount": 5.0
+        "amount": 5
       },
       {
         "name": "意式牛肉小饺子（Core PowerFoods）",
@@ -227,7 +228,7 @@
       },
       {
         "name": "韩式烤牛肉冷冻餐 x2（Core PowerFoods）",
-        "amount": 13.0
+        "amount": 13
       },
       {
         "name": "韩式烤牛肉丸碗 x3（On The Menu）",
@@ -235,7 +236,7 @@
       },
       {
         "name": "羊肉炖菜（Coles Kitchen）",
-        "amount": 5.0
+        "amount": 5
       },
       {
         "name": "芝士通心粉（Core PowerFoods）",
@@ -251,7 +252,7 @@
       },
       {
         "name": "烟熏肉丸冷冻餐 x2（Core PowerFoods）",
-        "amount": 13.0
+        "amount": 13
       },
       {
         "name": "托斯卡纳焗鸡肉（Core PowerFoods）",
@@ -314,7 +315,7 @@
       },
       {
         "name": "牛肉肉酱千层面（Coles Kitchen）",
-        "amount": 5.0
+        "amount": 5
       },
       {
         "name": "韩式烤牛肉冷冻餐",
@@ -322,7 +323,7 @@
       },
       {
         "name": "羊肉炖菜（Coles Kitchen）",
-        "amount": 5.0
+        "amount": 5
       },
       {
         "name": "烟熏肉丸冷冻餐",
@@ -335,12 +336,12 @@
       },
       {
         "name": "羊肉末 500g",
-        "amount": 9.0,
+        "amount": 9,
         "forParents": true
       },
       {
         "name": "大包装牛肉末 2kg（Drovers Choice）",
-        "amount": 25.0,
+        "amount": 25,
         "forParents": true
       },
       {
@@ -363,7 +364,7 @@
     "items": [
       {
         "name": "芝士白米饼 100g",
-        "amount": 1.0
+        "amount": 1
       },
       {
         "name": "花生腰果坚果棒 6条装",
@@ -371,7 +372,7 @@
       },
       {
         "name": "原味米饼 100g",
-        "amount": 1.0
+        "amount": 1
       },
       {
         "name": "笼养鸡蛋 30个装 1.8kg",
@@ -398,7 +399,7 @@
       },
       {
         "name": "石烤蒜香法棍 400g",
-        "amount": 4.0
+        "amount": 4
       },
       {
         "name": "12种蔬菜汤料 375g",
@@ -406,7 +407,7 @@
       },
       {
         "name": "天然希腊酸奶 170g",
-        "amount": 2.0
+        "amount": 2
       },
       {
         "name": "香肠薯泥便当 350g",
@@ -486,7 +487,7 @@
       },
       {
         "name": "普通白面粉 2kg x2",
-        "amount": 5.0,
+        "amount": 5,
         "forParents": true
       }
     ]
@@ -530,11 +531,11 @@
       },
       {
         "name": "天然希腊酸奶 170g",
-        "amount": 2.0
+        "amount": 2
       },
       {
         "name": "速冻豌豆玉米粒 1kg x2",
-        "amount": 10.0
+        "amount": 10
       },
       {
         "name": "新鲜羽衣甘蓝",
@@ -547,7 +548,7 @@
       },
       {
         "name": "牛肉末 2kg",
-        "amount": 24.0,
+        "amount": 24,
         "forParents": true
       },
       {
@@ -556,7 +557,7 @@
       },
       {
         "name": "特级初榨橄榄油 375mL",
-        "amount": 11.0
+        "amount": 11
       },
       {
         "name": "美禄全谷物早餐麦片 350g",
@@ -564,7 +565,7 @@
       },
       {
         "name": "普通白面粉 2kg x2",
-        "amount": 5.0,
+        "amount": 5,
         "forParents": true
       }
     ]
@@ -586,7 +587,7 @@
       },
       {
         "name": "松木深层洁厕凝胶 750mL x2",
-        "amount": 7.0
+        "amount": 7
       },
       {
         "name": "笼养鸡蛋 30个装 1.8kg x2",
@@ -613,7 +614,7 @@
       },
       {
         "name": "天然希腊酸奶 170g",
-        "amount": 2.0
+        "amount": 2
       },
       {
         "name": "新鲜羽衣甘蓝",
