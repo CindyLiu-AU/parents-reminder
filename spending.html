@@ -249,6 +249,15 @@
       cursor: pointer; font-family: inherit; flex-shrink: 0;
     }
 
+    .item-row.locked        { cursor: default; }
+    .item-row.locked:hover  { background: transparent; }
+    .item-row.fp.locked:hover { background: rgba(245,158,11,0.13); }
+    .parent-item-row.locked       { cursor: default; }
+    .parent-item-row.locked:hover { background: transparent; }
+
+    .transfer-badge { cursor: pointer; transition: filter 0.15s; }
+    .transfer-badge:hover { filter: brightness(1.15); }
+
     .collapsible { overflow: hidden; transition: max-height 0.3s ease; }
 
     .back-btn {
@@ -498,31 +507,34 @@
         const parentTotal = pItems.reduce((s, i) => s + (i.amount || 0), 0);
         const colId = `order-${wi}`;
 
-        // Full order item rows (clickable to toggle ★)
+        const locked = !!week.transferred;
+
+        // Full order item rows (clickable to toggle ★ unless locked)
         const allItemsHTML = items.map((item, ii) => `
-          <div class="item-row${item.forParents ? ' fp' : ''}"
-               onclick="toggleFP(${di},${ii})" title="点击切换爸妈项目">
+          <div class="item-row${item.forParents ? ' fp' : ''}${locked ? ' locked' : ''}"
+               ${locked ? '' : `onclick="toggleFP(${di},${ii})" title="点击切换爸妈项目"`}>
             <span class="item-name">${item.name}${
               item.forParents
                 ? '<span class="star-tag">★</span>'
-                : '<span class="star-empty">☆</span>'
+                : (locked ? '' : '<span class="star-empty">☆</span>')
             }</span>
             <span class="item-amount">$${item.amount.toFixed(2)}</span>
           </div>`).join('');
 
-        // Parent item rows (click to remove ★)
+        // Parent item rows (click to remove ★ unless locked)
         const parentRowsHTML = pItems.map(item => {
           const ii = items.indexOf(item);
           return `
-          <div class="parent-item-row" onclick="toggleFP(${di},${ii})" title="点击取消爸妈标记">
+          <div class="parent-item-row${locked ? ' locked' : ''}"
+               ${locked ? '' : `onclick="toggleFP(${di},${ii})" title="点击取消爸妈标记"`}>
             <span class="parent-item-name">${item.name}</span>
             <span class="parent-item-amount">$${item.amount.toFixed(2)}</span>
-            <span class="parent-item-remove">✕</span>
+            ${locked ? '' : '<span class="parent-item-remove">✕</span>'}
           </div>`;
         }).join('');
 
-        // Add-item form or button
-        const addSection = addingFor === di ? `
+        // Add-item form or button — hidden when locked
+        const addSection = locked ? '' : addingFor === di ? `
           <div class="add-item-form">
             <input id="add-name-${di}" class="add-input name" placeholder="商品名称"
                    onkeydown="if(event.key==='Enter')confirmAdd(${di})" />
@@ -563,9 +575,11 @@
                 <span class="parent-total-label">爸妈转账金额</span>
                 <span class="parent-total-amount">$${parentTotal.toFixed(2)}</span>
               </div>` : ''}
-              ${week.transferred
-                ? `<div class="transfer-badge badge-done">✅ 已转账</div>`
-                : `<div class="transfer-badge badge-pending">⏳ 未转账</div>`}
+              <div class="transfer-badge ${week.transferred ? 'badge-done' : 'badge-pending'}"
+                   onclick="toggleTransferred(${di})"
+                   title="${week.transferred ? '点击撤销，标记为未转账' : '点击标记为已转账'}">
+                ${week.transferred ? '✅ 已转账' : '⏳ 未转账 — 点击确认'}
+              </div>
               ${addSection}
             </div>
           </div>`;
@@ -595,6 +609,14 @@
       if (!item.forParents) delete item.forParents;
       render();
       saveData(item.forParents ? '★ 已标为爸妈项目' : '已取消爸妈标记');
+    }
+
+    // ── Toggle transferred ─────────────────────────────────────────────────────
+    function toggleTransferred(di) {
+      data[di].transferred = !data[di].transferred;
+      if (data[di].transferred && addingFor === di) addingFor = null;
+      render();
+      saveData(data[di].transferred ? '✅ 已标记为转账' : '⏳ 已撤销转账状态');
     }
 
     // ── Add item ───────────────────────────────────────────────────────────────
