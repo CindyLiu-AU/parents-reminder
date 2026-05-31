@@ -353,6 +353,89 @@
       white-space: nowrap;
     }
     #save-toast.visible { opacity: 1; }
+
+    /* Manual entry button + overlay */
+    #manual-btn {
+      position: fixed;
+      bottom: 92px;
+      left: 28px;
+      background: #1a3a1a;
+      border: 1px solid #2e6e2e;
+      border-radius: 50%;
+      width: 48px; height: 48px;
+      font-size: 22px;
+      color: #86efac;
+      cursor: pointer;
+      z-index: 200;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+      transition: background 0.2s;
+    }
+    #manual-btn:hover { background: #254d25; }
+
+    #manual-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.65);
+      z-index: 300;
+      align-items: center; justify-content: center;
+    }
+    #manual-overlay.show { display: flex; }
+    #manual-box {
+      background: #112240;
+      border: 1px solid #2e5f9e;
+      border-radius: 20px;
+      padding: 26px 30px;
+      width: 420px;
+      max-height: 85vh;
+      overflow-y: auto;
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    #manual-box h3 { font-size: 18px; color: #86efac; margin: 0; }
+    .mf-label { font-size: 13px; color: #64748b; margin-bottom: 2px; }
+    .mf-input {
+      background: #0d1b2a; border: 1px solid #2e5f9e;
+      border-radius: 8px; padding: 9px 12px;
+      color: #f0f4f8; font-size: 15px; font-family: inherit;
+      width: 100%; outline: none;
+    }
+    .mf-input:focus { border-color: #86efac; }
+    .mf-row { display: flex; gap: 8px; align-items: center; }
+    .mf-item-row {
+      display: flex; gap: 8px; align-items: center;
+      padding: 6px 0; border-bottom: 1px solid #1e3a5f44;
+    }
+    .mf-item-row:last-of-type { border-bottom: none; }
+    .mf-name { flex: 1; }
+    .mf-amt  { width: 90px; }
+    .mi-star {
+      background: none; border: 1px solid #2e5f9e; border-radius: 6px;
+      color: #334155; font-size: 18px; padding: 4px 8px; cursor: pointer;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .mi-star.on { color: #f59e0b; border-color: #f59e0b; }
+    .mi-del {
+      background: none; border: 1px solid #2e3a4e; border-radius: 6px;
+      color: #475569; font-size: 14px; padding: 4px 8px; cursor: pointer;
+    }
+    .mi-del:hover { color: #f87171; border-color: #f87171; }
+    #manual-add-row {
+      background: none; border: 1px dashed #2e5f9e; border-radius: 8px;
+      color: #475569; font-size: 14px; padding: 8px; cursor: pointer;
+      font-family: inherit; width: 100%; margin-top: 4px;
+    }
+    #manual-add-row:hover { color: #86efac; border-color: #86efac; }
+    #manual-confirm {
+      background: #22c55e; border: none; border-radius: 10px;
+      padding: 12px; font-size: 16px; font-weight: 700;
+      color: #052e16; cursor: pointer; font-family: inherit;
+    }
+    #manual-cancel-btn {
+      background: none; border: 1px solid #2e5f9e; border-radius: 10px;
+      padding: 10px; font-size: 14px; color: #64748b;
+      cursor: pointer; font-family: inherit;
+    }
+    #manual-err { font-size: 13px; color: #f87171; display: none; }
   </style>
   <link rel="stylesheet" href="theme.css">
 </head>
@@ -375,6 +458,32 @@
 
   <!-- Sync button -->
   <button id="sync-btn" title="同步新订单" onclick="openSync()">📧</button>
+
+  <!-- Manual entry button -->
+  <button id="manual-btn" title="线下单独购买" onclick="openManual()">🛍️</button>
+
+  <!-- Manual entry overlay -->
+  <div id="manual-overlay">
+    <div id="manual-box">
+      <h3>🛍️ 线下单独购买</h3>
+      <div>
+        <div class="mf-label">购买日期</div>
+        <input id="mf-date" class="mf-input" type="date" />
+      </div>
+      <div>
+        <div class="mf-label">备注</div>
+        <input id="mf-note" class="mf-input" value="线下单独购买（非网上订单）" />
+      </div>
+      <div>
+        <div class="mf-label" style="margin-bottom:8px">商品清单</div>
+        <div id="mf-items"></div>
+        <button id="manual-add-row" onclick="addManualRow()">➕ 添加商品</button>
+      </div>
+      <div id="manual-err"></div>
+      <button id="manual-confirm" onclick="confirmManual()">✓ 确认添加</button>
+      <button id="manual-cancel-btn" onclick="closeManual()">取消</button>
+    </div>
+  </div>
 
   <!-- Sync overlay -->
   <div id="sync-overlay">
@@ -658,6 +767,100 @@
       clearTimeout(el._t);
       el._t = setTimeout(() => el.classList.remove('visible'), 3000);
     }
+
+    // ── Manual entry overlay ───────────────────────────────────────────────────
+    let manualRows = [];
+
+    function weekInfoFromDate(dateStr) {
+      const d = new Date(dateStr + 'T00:00:00');
+      const weekNum  = Math.ceil(d.getDate() / 7);
+      const week     = `${d.getFullYear()}年${d.getMonth()+1}月第${weekNum}周`;
+      const dow      = d.getDay();
+      const monday   = new Date(d);
+      monday.setDate(d.getDate() + (dow === 0 ? -6 : 1 - dow));
+      const weekStart = monday.toISOString().split('T')[0];
+      return { week, weekStart };
+    }
+
+    function openManual() {
+      manualRows = [{ name: '', amount: '', forParents: true }];
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('mf-date').value = today;
+      document.getElementById('mf-note').value = '线下单独购买（非网上订单）';
+      document.getElementById('manual-err').style.display = 'none';
+      renderManualRows();
+      document.getElementById('manual-overlay').classList.add('show');
+    }
+
+    function closeManual() {
+      document.getElementById('manual-overlay').classList.remove('show');
+    }
+
+    function renderManualRows() {
+      document.getElementById('mf-items').innerHTML = manualRows.map((r, i) => `
+        <div class="mf-item-row">
+          <input class="mf-input mf-name" placeholder="商品名称" value="${r.name.replace(/"/g,'&quot;')}"
+                 oninput="manualRows[${i}].name=this.value" />
+          <input class="mf-input mf-amt" placeholder="金额" type="number" step="0.01" min="0" value="${r.amount}"
+                 oninput="manualRows[${i}].amount=this.value" />
+          <button class="mi-star${r.forParents?' on':''}" onclick="toggleManualFP(${i})"
+                  title="爸妈项目">★</button>
+          <button class="mi-del" onclick="removeManualRow(${i})">✕</button>
+        </div>`).join('');
+    }
+
+    function addManualRow() {
+      manualRows.push({ name: '', amount: '', forParents: true });
+      renderManualRows();
+      const inputs = document.querySelectorAll('.mf-name');
+      if (inputs.length) inputs[inputs.length - 1].focus();
+    }
+
+    function removeManualRow(i) {
+      manualRows.splice(i, 1);
+      renderManualRows();
+    }
+
+    function toggleManualFP(i) {
+      manualRows[i].forParents = !manualRows[i].forParents;
+      renderManualRows();
+    }
+
+    function confirmManual() {
+      const dateStr = document.getElementById('mf-date').value;
+      const note    = document.getElementById('mf-note').value.trim();
+      const errEl   = document.getElementById('manual-err');
+
+      if (!dateStr) { errEl.textContent = '请选择购买日期'; errEl.style.display='block'; return; }
+
+      const validRows = manualRows.filter(r => r.name.trim() && parseFloat(r.amount) > 0);
+      if (!validRows.length) { errEl.textContent = '请至少添加一件商品'; errEl.style.display='block'; return; }
+      errEl.style.display = 'none';
+
+      const { week, weekStart } = weekInfoFromDate(dateStr);
+      const entry = {
+        week,
+        weekStart,
+        deliveryDate: dateStr,
+        note: note || '线下单独购买（非网上订单）',
+        transferred: false,
+        items: validRows.map(r => {
+          const item = { name: r.name.trim(), amount: Math.round(parseFloat(r.amount) * 100) / 100 };
+          if (r.forParents) item.forParents = true;
+          return item;
+        }),
+      };
+
+      // Prepend (newest first)
+      data.unshift(entry);
+      closeManual();
+      render();
+      saveData('✅ 已添加线下记录');
+    }
+
+    document.getElementById('manual-overlay').addEventListener('click', e => {
+      if (e.target === document.getElementById('manual-overlay')) closeManual();
+    });
 
     // ── Sync overlay ───────────────────────────────────────────────────────────
     function openSync() {
