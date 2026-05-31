@@ -238,14 +238,10 @@
   }
 
   /* ── Input ── */
-  function onInput() {
-    const val = document.getElementById('input').value.trim();
-    document.getElementById('trans-btn').disabled = !val;
-  }
+  function onInput() {}   // button always enabled; guard is inside translate()
 
   function clearInput() {
     document.getElementById('input').value = '';
-    document.getElementById('trans-btn').disabled = true;
     showPlaceholder();
     document.getElementById('speak-btn').style.display = 'none';
     document.getElementById('input').focus();
@@ -254,10 +250,11 @@
   /* ── Translate ── */
   async function translate() {
     const text = document.getElementById('input').value.trim();
-    if (!text) return;
+    if (!text) { showError('请先输入英文单词或句子'); return; }
 
     showLoading();
-    document.getElementById('trans-btn').disabled = true;
+    const btn = document.getElementById('trans-btn');
+    btn.disabled = true;
 
     try {
       const cn = await tryTranslate(text);
@@ -266,28 +263,52 @@
     } catch(e) {
       showError('翻译失败，请检查网络后重试');
     } finally {
-      document.getElementById('trans-btn').disabled = false;
+      btn.disabled = false;
     }
   }
 
+  function fetchWithTimeout(url, ms) {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), ms);
+    return fetch(url, { signal: ctrl.signal }).finally(() => clearTimeout(timer));
+  }
+
   async function tryTranslate(text) {
-    // Primary: Google Translate (unofficial, no key needed)
+    const q = encodeURIComponent(text);
+
+    // 1. Google Translate unofficial endpoint
     try {
-      const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=zh-CN&dt=t&q=${encodeURIComponent(text)}`;
-      const res  = await fetch(url);
-      const data = await res.json();
-      const cn   = data[0].map(x => x[0]).join('');
-      if (cn) return cn;
+      const res  = await fetchWithTimeout(
+        `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=zh-CN&dt=t&q=${q}`, 5000);
+      if (res.ok) {
+        const data = await res.json();
+        const cn = data[0].map(x => x[0]).join('');
+        if (cn) return cn;
+      }
     } catch {}
 
-    // Fallback: MyMemory
-    const url2 = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|zh-CN`;
-    const res2  = await fetch(url2);
-    const data2 = await res2.json();
-    const cn2   = data2.responseData?.translatedText || '';
-    if (cn2 && cn2 !== text) return cn2;
+    // 2. Lingva (open-source Google Translate proxy)
+    try {
+      const res  = await fetchWithTimeout(
+        `https://lingva.ml/api/v1/en/zh_CN/${q}`, 5000);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.translation) return data.translation;
+      }
+    } catch {}
 
-    throw new Error('no result');
+    // 3. MyMemory fallback
+    try {
+      const res  = await fetchWithTimeout(
+        `https://api.mymemory.translated.net/get?q=${q}&langpair=en|zh-CN`, 6000);
+      if (res.ok) {
+        const data = await res.json();
+        const cn = data.responseData?.translatedText || '';
+        if (cn && cn !== text) return cn;
+      }
+    } catch {}
+
+    throw new Error('all APIs failed');
   }
 
   /* ── Result display ── */
@@ -338,7 +359,6 @@
   }
 
   /* ── Init ── */
-  document.getElementById('trans-btn').disabled = true;
   renderHistory();
 
   // Allow Enter key to translate (Shift+Enter for newline)
