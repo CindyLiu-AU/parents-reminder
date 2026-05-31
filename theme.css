@@ -321,11 +321,11 @@ html.light .notice-bar {
   border-color: #f59e0b !important;
 }
 html.light #clock            { color: #b45309 !important; }
-html.light #date-display     { color: #2563eb !important; }
+html.light #date-display     { color: #1d4ed8 !important; }
 html.light #weather-temp     { color: #1e293b !important; }
-html.light #weather-desc     { color: #475569 !important; }
-html.light #weather-range    { color: #2563eb !important; }
-html.light #weather-location { color: #64748b !important; }
+html.light #weather-desc     { color: #334155 !important; }
+html.light #weather-range    { color: #1d4ed8 !important; }
+html.light #weather-location { color: #475569 !important; }
 html.light .big-clock-time   { color: #b45309 !important; }
 html.light .big-clock-ampm   { color: #b45309 !important; }
 html.light .big-clock-date   { color: #2563eb !important; }

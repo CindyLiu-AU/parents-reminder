@@ -42,14 +42,14 @@
     }
 
     #clock {
-      font-size: 28px;
+      font-size: 36px;
       font-weight: 700;
       color: #f59e0b;
       letter-spacing: 2px;
     }
 
     #date-display {
-      font-size: 17px;
+      font-size: 22px;
       color: #64b5f6;
       margin-top: 2px;
     }
@@ -61,28 +61,28 @@
       text-align: right;
     }
 
-    #weather-icon { font-size: 28px; }
+    #weather-icon { font-size: 34px; }
 
     #weather-temp {
-      font-size: 24px;
+      font-size: 32px;
       font-weight: 700;
       color: #f1f5f9;
     }
 
     #weather-desc {
-      font-size: 12px;
+      font-size: 17px;
       color: #94a3b8;
       margin-top: 1px;
     }
 
     #weather-range {
-      font-size: 12px;
+      font-size: 17px;
       color: #64b5f6;
       margin-top: 1px;
     }
 
     #weather-location {
-      font-size: 11px;
+      font-size: 15px;
       color: #546e7a;
     }
 
@@ -110,15 +110,15 @@
       vertical-align: 20px;
     }
     .big-clock-date {
-      font-size: 24px;
+      font-size: 30px;
       color: #64b5f6;
-      margin-top: 20px;
+      margin-top: 16px;
       letter-spacing: 1px;
     }
 
     /* ── Notice bar (inside clock card) ── */
     .notice-bar {
-      margin-top: 28px;
+      margin-top: 20px;
       background: #0a1e35;
       border: 2px solid #f59e0b;
       border-radius: 16px;
@@ -129,9 +129,9 @@
       gap: 16px;
       flex-wrap: wrap;
     }
-    .nb-icon { font-size: 30px; }
-    .nb-title { font-size: 22px; font-weight: 700; color: #ffffff; }
-    .nb-time  { font-size: 28px; font-weight: 800; color: #f59e0b; }
+    .nb-icon { font-size: 36px; }
+    .nb-title { font-size: 28px; font-weight: 700; color: #ffffff; }
+    .nb-time  { font-size: 36px; font-weight: 800; color: #f59e0b; }
 
     /* ── Main card ── */
     .card {
@@ -387,6 +387,14 @@
     }
 
     function analogClockSVG(hourAngle, minAngle, secAngle) {
+      const light     = document.documentElement.classList.contains('light');
+      const faceBg    = light ? '#e8edf2' : '#091525';
+      const innerRing = light ? '#cbd5e1' : '#1a3050';
+      const numColor  = light ? '#1d4ed8' : '#64b5f6';
+      const handColor = light ? '#1e293b' : '#f1f5f9';
+      const hourTick  = light ? '#94a3b8' : '#546e7a';
+      const minTick   = light ? '#d1d5db' : '#1e3a5f';
+
       const hand = (angle, length, width, color, tail = 10) => {
         const rad = (angle - 90) * Math.PI / 180;
         const x2 = (100 + length * Math.cos(rad)).toFixed(1);
@@ -407,7 +415,7 @@
         const y1 = (100 + r1 * Math.sin(rad)).toFixed(1);
         const x2 = (100 + r2 * Math.cos(rad)).toFixed(1);
         const y2 = (100 + r2 * Math.sin(rad)).toFixed(1);
-        markers += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${isMain ? '#f59e0b' : isHour ? '#546e7a' : '#1e3a5f'}" stroke-width="${isMain ? 3 : isHour ? 2 : 1}" stroke-linecap="round"/>`;
+        markers += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${isMain ? '#f59e0b' : isHour ? hourTick : minTick}" stroke-width="${isMain ? 3 : isHour ? 2 : 1}" stroke-linecap="round"/>`;
       }
 
       let nums = '';
@@ -415,19 +423,19 @@
         const rad = (deg - 90) * Math.PI / 180;
         const x = (100 + 62 * Math.cos(rad)).toFixed(1);
         const y = (100 + 62 * Math.sin(rad)).toFixed(1);
-        nums += `<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="central" fill="#64b5f6" font-size="15" font-weight="700" font-family="Arial,sans-serif">${n}</text>`;
+        nums += `<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="central" fill="${numColor}" font-size="15" font-weight="700" font-family="Arial,sans-serif">${n}</text>`;
       });
 
-      return `<svg viewBox="0 0 200 200" width="260" height="260" style="display:block;margin:0 auto 4px">
-        <circle cx="100" cy="100" r="97" fill="#091525" stroke="#f59e0b" stroke-width="3"/>
-        <circle cx="100" cy="100" r="90" fill="none" stroke="#1a3050" stroke-width="0.5"/>
+      return `<svg viewBox="0 0 200 200" width="300" height="300" style="display:block;margin:0 auto 4px">
+        <circle cx="100" cy="100" r="97" fill="${faceBg}" stroke="#f59e0b" stroke-width="3"/>
+        <circle cx="100" cy="100" r="90" fill="none" stroke="${innerRing}" stroke-width="0.5"/>
         ${markers}
         ${nums}
-        ${hand(hourAngle,  52, 5.5, '#f1f5f9', 12)}
-        ${hand(minAngle,   70, 3.5, '#f1f5f9', 12)}
+        ${hand(hourAngle,  52, 5.5, handColor, 12)}
+        ${hand(minAngle,   70, 3.5, handColor, 12)}
         ${hand(secAngle,   78, 1.5, '#f59e0b',  14)}
         <circle cx="100" cy="100" r="5" fill="#f59e0b"/>
-        <circle cx="100" cy="100" r="2" fill="#091525"/>
+        <circle cx="100" cy="100" r="2" fill="${faceBg}"/>
       </svg>`;
     }
 
