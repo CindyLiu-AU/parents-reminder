@@ -66,7 +66,23 @@
       color: #64b5f6;
       letter-spacing: 1px;
       margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
     }
+
+    .store-badge {
+      font-size: 13px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+      flex-shrink: 0;
+    }
+    .store-coles       { background: #c8102e; color: #fff; }
+    .store-woolworths  { background: #007b3e; color: #fff; }
+    .store-offline     { background: #334155; color: #94a3b8; }
 
     .order-meta { font-size: 18px; color: #546e7a; margin-bottom: 18px; }
 
@@ -659,9 +675,17 @@
         if (week.deliveryDate) metaParts.push(`送达 ${week.deliveryDate}`);
         if (week.note)         metaParts.push(week.note);
 
+        // Store badge
+        const store = week.store || (week.note && week.note.includes('线下') ? 'offline' : 'coles');
+        const storeBadge = store === 'woolworths'
+          ? '<span class="store-badge store-woolworths">Woolworths</span>'
+          : store === 'offline'
+            ? '<span class="store-badge store-offline">线下</span>'
+            : '<span class="store-badge store-coles">Coles</span>';
+
         return `
           <div class="week-card">
-            <div class="week-title">📅 ${week.week}</div>
+            <div class="week-title">📅 ${week.week} ${storeBadge}</div>
             ${metaParts.length ? `<div class="order-meta">${metaParts.join(' · ')}</div>` : ''}
 
             <div class="section-label">

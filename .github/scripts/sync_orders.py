@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Sync new Coles orders from Yahoo email into spending.json."""
+"""Sync new Coles and Woolworths orders from Yahoo email into spending.json."""
 
 import imaplib, email, email.header, re, json, os, sys
 from datetime import datetime, timedelta
@@ -8,13 +8,13 @@ from urllib.request import urlopen
 from urllib.parse import quote
 from html.parser import HTMLParser
 
-IMAP_HOST    = "imap.mail.yahoo.com"
-EMAIL_ADDR   = "cindy_melbourne@yahoo.com"
-APP_PASSWORD = os.environ.get("YAHOO_APP_PASSWORD", "")
-REPO_ROOT    = os.path.join(os.path.dirname(__file__), "..", "..")
+IMAP_HOST     = "imap.mail.yahoo.com"
+EMAIL_ADDR    = "cindy_melbourne@yahoo.com"
+APP_PASSWORD  = os.environ.get("YAHOO_APP_PASSWORD", "")
+REPO_ROOT     = os.path.join(os.path.dirname(__file__), "..", "..")
 SPENDING_JSON = os.path.join(REPO_ROOT, "spending.json")
 
-# forParents detection — English product name patterns
+# forParents detection — English product name patterns (shared across both stores)
 FOR_PARENTS_RULES = [
     r"30\s*pack\s*egg|egg.*30\s*pack",
     r"full\s*cream\s*milk.*3\s*l\b|3\s*l\b.*full\s*cream\s*milk",
@@ -84,24 +84,66 @@ def get_html_body(msg):
     return payload.decode(cs, errors="replace") if payload else ""
 
 
-# ── Order parser ──────────────────────────────────────────────────────────────
+# ── Store detection ───────────────────────────────────────────────────────────
+
+def detect_store(subject, from_addr):
+    """Return ('coles', order_num) or ('woolworths', order_num) or (None, None)."""
+    subj_l = subject.lower()
+    from_l = from_addr.lower()
+
+    # Coles
+    m = re.search(r"your order (\d+) has been confirmed", subject, re.I)
+    if m and "coles" in (subj_l + from_l):
+        return "coles", m.group(1)
+    # Coles without "coles" in subject — check from address
+    if m and "coles" in from_l:
+        return "coles", m.group(1)
+
+    # Woolworths — several known subject patterns
+    ww_patterns = [
+        r"woolworths\s+online\s+order\s+#?(\d+)",
+        r"woolworths\s+order\s+#?(\d+)",
+        r"your\s+woolworths.*order\s+#?(\d+)",
+        r"order\s+#?(\d+).*woolworths",
+        r"your order (\d+).*confirmed",  # generic, paired with ww from-addr
+    ]
+    if "woolworths" in subj_l or "woolworths" in from_l:
+        for pat in ww_patterns:
+            m = re.search(pat, subject, re.I)
+            if m:
+                return "woolworths", m.group(1)
+        # Try any long number in subject as fallback
+        m = re.search(r"\b(\d{7,})\b", subject)
+        if m:
+            return "woolworths", m.group(1)
+
+    # Coles fallback — no "coles" in subject but coles in from
+    m = re.search(r"your order (\d+) has been confirmed", subject, re.I)
+    if m and "coles" not in from_l and "woolworths" not in from_l:
+        # Ambiguous — assume Coles (original behaviour)
+        return "coles", m.group(1)
+
+    return None, None
+
+
+# ── Coles item parser ─────────────────────────────────────────────────────────
 
 PRICE_RE      = re.compile(r"^\$(\d+\.\d{2})$")
 UNIT_PRICE_RE = re.compile(r"^\$[\d.]+\s*/")
 SAVINGS_RE    = re.compile(r"\$[\d.]+ saved")
 CATEGORY_RE   = re.compile(r"^.+\(\d+\)$")
 SKIP_LINES    = {"Quantity", "Price", "Track order", "Track Order"}
-STOP_WORDS    = ["Free Delivery", "Estimated total", "You've saved", "This is our best"]
+COLES_STOP    = ["Free Delivery", "Estimated total", "You've saved", "This is our best"]
 
 
-def parse_items(text):
+def parse_coles_items(text):
     lines = [l.strip() for l in text.split("\n") if l.strip()]
     in_items = False
-    pending = []
-    items = []
+    pending  = []
+    items    = []
 
     for line in lines:
-        if any(s in line for s in STOP_WORDS):
+        if any(s in line for s in COLES_STOP):
             break
         if "Order summary" in line or "Order Summary" in line:
             in_items = True
@@ -129,6 +171,54 @@ def parse_items(text):
     return items
 
 
+# ── Woolworths item parser ────────────────────────────────────────────────────
+
+WW_START   = re.compile(r"items in your order|your items|order (?:details|summary)|what you ordered", re.I)
+WW_STOP    = re.compile(r"delivery fee|service fee|bag fee|total savings|you(?:'ve)? saved|order total|subtotal|estimated total", re.I)
+WW_QTY_RE  = re.compile(r"^\d+\s*[×x]\s*\$|^qty\s*[:\-]?\s*\d", re.I)
+
+
+def parse_woolworths_items(text):
+    lines    = [l.strip() for l in text.split("\n") if l.strip()]
+    in_items = False
+    pending  = []
+    items    = []
+
+    for line in lines:
+        if WW_STOP.search(line):
+            break
+        if WW_START.search(line):
+            in_items = True
+            continue
+        if not in_items:
+            continue
+        # Skip quantity/unit-price lines
+        if WW_QTY_RE.match(line) or UNIT_PRICE_RE.match(line):
+            continue
+        if SAVINGS_RE.search(line):
+            continue
+        if line in SKIP_LINES:
+            pending = []
+            continue
+
+        m = PRICE_RE.match(line)
+        if m:
+            amount = float(m.group(1))
+            if pending and amount > 0:
+                # Woolworths tends to have clean single-line product names
+                name = pending[-1]
+                items.append({"name_en": name.strip(), "amount": amount})
+            pending = []
+        else:
+            pending.append(line)
+            if len(pending) > 3:
+                pending = pending[-3:]
+
+    return items
+
+
+# ── Shared helpers ────────────────────────────────────────────────────────────
+
 def parse_delivery_date(text):
     m = re.search(
         r"(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)[,‚\s]+"
@@ -144,14 +234,12 @@ def parse_delivery_date(text):
 
 
 def week_info(d):
-    week_num  = ceil(d.day / 7)
-    week_str  = f"{d.year}年{d.month}月第{week_num}周"
-    monday    = d - timedelta(days=d.weekday())
+    week_num   = ceil(d.day / 7)
+    week_str   = f"{d.year}年{d.month}月第{week_num}周"
+    monday     = d - timedelta(days=d.weekday())
     week_start = monday.strftime("%Y-%m-%d")
     return week_str, week_start
 
-
-# ── Translation ───────────────────────────────────────────────────────────────
 
 def translate_en_to_zh(text):
     try:
@@ -166,8 +254,6 @@ def translate_en_to_zh(text):
         return text
 
 
-# ── forParents detection ──────────────────────────────────────────────────────
-
 def is_for_parents(name_en):
     nl = name_en.lower()
     return any(re.search(p, nl) for p in FOR_PARENTS_RULES)
@@ -180,47 +266,51 @@ def main():
         print("ERROR: YAHOO_APP_PASSWORD secret not set.")
         sys.exit(1)
 
-    # Load existing orders
     with open(SPENDING_JSON, encoding="utf-8") as f:
         spending = json.load(f)
     known_orders = {str(e.get("orderNumber", "")) for e in spending}
 
-    # Connect to IMAP
     print("Connecting to Yahoo IMAP…")
     mail = imaplib.IMAP4_SSL(IMAP_HOST, 993)
     mail.login(EMAIL_ADDR, APP_PASSWORD)
     mail.select("Inbox")
 
-    # Find Coles order confirmation emails
-    _, ids = mail.search(None, 'SUBJECT "has been confirmed"')
-    all_ids = ids[0].split()
-    print(f"Found {len(all_ids)} 'confirmed' emails to check.")
+    # Collect unique message UIDs from multiple searches
+    uid_set = set()
+    for criterion in [
+        'SUBJECT "has been confirmed"',
+        'FROM "woolworths.com.au"',
+        'SUBJECT "Woolworths" SUBJECT "order"',
+    ]:
+        _, ids = mail.search(None, criterion)
+        uid_set.update(ids[0].split())
+
+    print(f"Found {len(uid_set)} candidate emails to check.")
 
     new_entries = []
 
-    for uid in all_ids:
+    for uid in uid_set:
         _, data = mail.fetch(uid, "(RFC822)")
-        msg = email.message_from_bytes(data[0][1])
-        subject = decode_hdr(msg.get("Subject", ""))
+        msg       = email.message_from_bytes(data[0][1])
+        subject   = decode_hdr(msg.get("Subject", ""))
+        from_addr = decode_hdr(msg.get("From", ""))
 
-        m = re.search(r"Your order (\d+) has been confirmed", subject)
-        if not m:
+        store, order_num = detect_store(subject, from_addr)
+        if not store or not order_num:
             continue
-
-        order_num = m.group(1)
         if order_num in known_orders:
             continue
 
-        print(f"  New order found: #{order_num}")
-        html  = get_html_body(msg)
-        text  = html_to_text(html)
+        print(f"  New {store} order: #{order_num}")
+        html = get_html_body(msg)
+        text = html_to_text(html)
 
         delivery_date = parse_delivery_date(text)
         if not delivery_date:
             print(f"    ⚠ Could not parse delivery date, skipping.")
             continue
 
-        raw_items = parse_items(text)
+        raw_items = parse_coles_items(text) if store == "coles" else parse_woolworths_items(text)
         if not raw_items:
             print(f"    ⚠ No items parsed, skipping.")
             continue
@@ -229,13 +319,14 @@ def main():
         items = []
         for item in raw_items:
             cn_name = translate_en_to_zh(item["name_en"])
-            entry = {"name": cn_name, "amount": item["amount"]}
+            entry   = {"name": cn_name, "amount": item["amount"]}
             if is_for_parents(item["name_en"]):
                 entry["forParents"] = True
             items.append(entry)
 
         week_str, week_start = week_info(delivery_date)
         new_entries.append({
+            "store":        store,
             "week":         week_str,
             "weekStart":    week_start,
             "orderNumber":  order_num,
@@ -243,7 +334,7 @@ def main():
             "transferred":  False,
             "items":        items,
         })
-        print(f"    ✓ {week_str} — {len(items)} items")
+        print(f"    ✓ [{store}] {week_str} — {len(items)} items")
 
     mail.logout()
 
@@ -251,7 +342,6 @@ def main():
         print("No new orders found.")
         return
 
-    # Prepend newest-first
     new_entries.sort(key=lambda x: x["deliveryDate"], reverse=True)
     spending = new_entries + spending
 
