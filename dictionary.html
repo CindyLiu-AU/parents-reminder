@@ -272,28 +272,61 @@
   if (speechSynthesis.onvoiceschanged !== undefined) speechSynthesis.addEventListener('voiceschanged', initVoices);
   initVoices();
 
-  /* ── Speak one utterance, returns Promise ── */
-  function sayOne(text, lang, voice) {
+  const delay = ms => new Promise(r => setTimeout(r, ms));
+
+  /* ── Speak English via Web Speech API ── */
+  function sayEnglish(text) {
     return new Promise(resolve => {
       if (!text) { resolve(); return; }
+      speechSynthesis.cancel();
       const utt = new SpeechSynthesisUtterance(text);
-      utt.lang  = lang;
-      utt.rate  = 0.88;
-      if (voice) utt.voice = voice;
-      utt.onend   = resolve;
-      utt.onerror = resolve;
+      utt.lang = 'en-AU'; utt.rate = 0.85;
+      if (ttsVoiceEn) utt.voice = ttsVoiceEn;
+      let done = false;
+      const finish = () => { if (!done) { done = true; resolve(); } };
+      utt.onend = finish; utt.onerror = finish;
+      setTimeout(finish, Math.max(3000, text.length * 120));
       speechSynthesis.speak(utt);
     });
+  }
+
+  /* ── Speak Chinese: device TTS first, Google TTS audio fallback ── */
+  async function sayChinese(text) {
+    if (!text) return;
+
+    // Try device TTS — resolve(true) on success, resolve(false) on failure/timeout
+    const ok = await new Promise(resolve => {
+      const utt = new SpeechSynthesisUtterance(text);
+      utt.lang = 'zh-CN';
+      if (ttsVoiceCn) utt.voice = ttsVoiceCn;
+      let done = false;
+      utt.onend   = () => { if (!done) { done = true; resolve(true);  } };
+      utt.onerror = () => { if (!done) { done = true; resolve(false); } };
+      setTimeout(()  => { if (!done) { done = true; resolve(false); } }, 3000);
+      speechSynthesis.speak(utt);
+    });
+
+    if (!ok) {
+      // Fallback: Google Translate TTS audio
+      speechSynthesis.cancel();
+      await new Promise(resolve => {
+        const url = `https://translate.google.com/translate_tts?ie=UTF-8&tl=zh-CN&client=tw-ob&q=${encodeURIComponent(text.slice(0, 200))}`;
+        const audio = new Audio(url);
+        audio.onended = resolve;
+        audio.onerror = resolve;
+        setTimeout(resolve, 5000);
+        audio.play().catch(resolve);
+      });
+    }
   }
 
   /* ── Speak English then Chinese ── */
   async function speakBoth() {
     if (!currentEn && !currentCn) return;
     stopRepeat();
-    speechSynthesis.cancel();
-    await sayOne(currentEn, 'en-AU', ttsVoiceEn);
-    await new Promise(r => setTimeout(r, 500));
-    await sayOne(currentCn, 'zh-CN', ttsVoiceCn);
+    await sayEnglish(currentEn);
+    await delay(500);
+    await sayChinese(currentCn);
   }
 
   /* ── Repeat loop ── */
@@ -308,19 +341,18 @@
 
     document.querySelectorAll('.repeat-btn').forEach(b => b.classList.remove('running'));
     document.getElementById('rep' + times).classList.add('running');
-    document.getElementById('stop-btn').style.display     = 'block';
+    document.getElementById('stop-btn').style.display        = 'block';
     document.getElementById('repeat-progress').style.display = 'block';
 
     for (let i = 1; i <= repeatMax && isRepeating; i++) {
       document.getElementById('repeat-progress').textContent = `第 ${i} / ${repeatMax} 次`;
-      speechSynthesis.cancel();
-      await sayOne(currentEn, 'en-AU', ttsVoiceEn);
+      await sayEnglish(currentEn);
       if (!isRepeating) break;
-      await new Promise(r => setTimeout(r, 500));
+      await delay(500);
       if (!isRepeating) break;
-      await sayOne(currentCn, 'zh-CN', ttsVoiceCn);
+      await sayChinese(currentCn);
       if (!isRepeating) break;
-      if (i < repeatMax) await new Promise(r => setTimeout(r, 800));
+      if (i < repeatMax) await delay(800);
     }
 
     if (isRepeating) {
@@ -335,7 +367,7 @@
     isRepeating = false;
     speechSynthesis.cancel();
     document.querySelectorAll('.repeat-btn').forEach(b => b.classList.remove('running'));
-    document.getElementById('stop-btn').style.display     = 'none';
+    document.getElementById('stop-btn').style.display        = 'none';
     document.getElementById('repeat-progress').style.display = 'none';
   }
 
