@@ -299,15 +299,8 @@
 
     for (let i = 1; i <= repeatMax && isRepeating; i++) {
       document.getElementById('repeat-progress').textContent = `第 ${i} / ${repeatMax} 次`;
-      if (direction === 'en-zh') {
-        await sayEnglish(currentSrc); if (!isRepeating) break;
-        await delay(500);             if (!isRepeating) break;
-        await sayChinese(currentRes);
-      } else {
-        await sayChinese(currentSrc); if (!isRepeating) break;
-        await delay(500);             if (!isRepeating) break;
-        await sayEnglish(currentRes);
-      }
+      const englishText = direction === 'en-zh' ? currentSrc : currentRes;
+      await sayEnglish(englishText);
       if (!isRepeating) break;
       if (i < repeatMax) await delay(800);
     }
