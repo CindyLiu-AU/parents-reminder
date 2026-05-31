@@ -244,25 +244,29 @@
     });
   }
 
-  /* ── Chinese TTS: device voice → Google TTS audio fallback ── */
+  /* ── Chinese TTS ── */
   async function sayChinese(text) {
     if (!text) return;
-    const ok = await new Promise(resolve => {
-      const utt = new SpeechSynthesisUtterance(text);
-      utt.lang = 'zh-CN';
-      if (ttsVoiceCn) utt.voice = ttsVoiceCn;
-      let done = false;
-      utt.onend   = () => { if (!done) { done = true; resolve(true);  } };
-      utt.onerror = () => { if (!done) { done = true; resolve(false); } };
-      setTimeout(()  => { if (!done) { done = true; resolve(false); } }, 3000);
-      speechSynthesis.speak(utt);
-    });
-    if (!ok) {
-      speechSynthesis.cancel();
+
+    if (ttsVoiceCn) {
+      // Device has a Chinese voice — use Web Speech API
+      await new Promise(resolve => {
+        speechSynthesis.cancel();
+        const utt = new SpeechSynthesisUtterance(text);
+        utt.lang = 'zh-CN'; utt.voice = ttsVoiceCn;
+        let done = false;
+        const finish = () => { if (!done) { done = true; resolve(); } };
+        utt.onend = finish; utt.onerror = finish;
+        setTimeout(finish, Math.max(3000, text.length * 300));
+        speechSynthesis.speak(utt);
+      });
+    } else {
+      // No Chinese voice on device — use Google Translate TTS audio directly
       await new Promise(resolve => {
         const url = `https://translate.google.com/translate_tts?ie=UTF-8&tl=zh-CN&client=tw-ob&q=${encodeURIComponent(text.slice(0, 200))}`;
         const audio = new Audio(url);
-        audio.onended = resolve; audio.onerror = resolve;
+        audio.onended = resolve;
+        audio.onerror = resolve;
         setTimeout(resolve, 5000);
         audio.play().catch(resolve);
       });
