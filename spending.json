@@ -288,7 +288,8 @@
       },
       {
         "name": "黄油微波爆米花（Coles）",
-        "amount": 0.95
+        "amount": 0.95,
+        "forParents": true
       },
       {
         "name": "盐味微波爆米花（Coles）",
