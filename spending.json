@@ -1,5 +1,19 @@
 [
   {
+    "week": "2026年5月第5周",
+    "weekStart": "2026-05-24",
+    "deliveryDate": "2026-05-29",
+    "note": "线下单独购买（非网上订单）",
+    "transferred": false,
+    "items": [
+      {
+        "name": "电池",
+        "amount": 5,
+        "forParents": true
+      }
+    ]
+  },
+  {
     "week": "2026年4月第1周",
     "weekStart": "2026-04-06",
     "orderNumber": "254549816",
