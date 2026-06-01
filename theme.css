@@ -84,10 +84,13 @@ html.light #reminders-btn,
 html.light #spending-btn,
 html.light #apps-btn,
 html.light #flashcards-btn,
-html.light #roadrules-btn {
+html.light #roadrules-btn,
+html.light #dict-btn,
+html.light #podcast-btn {
   background: #dbeafe !important;
   border-color: #93c5fd !important;
 }
+html.light .nav-label { color: #1e293b !important; }
 
 /* ── Borders ── */
 html.light .item-row,
@@ -348,6 +351,7 @@ html.light .custom-msg       { color: #1e293b !important; }
 html.light .nc-label         { color: #2563eb !important; }
 html.light .nc-title         { color: #1e293b !important; }
 html.light .nc-date          { color: #3b82f6 !important; }
+html.light .nc-time          { color: #b45309 !important; }
 html.light .nc-note          { color: #15803d !important; }
 
 /* ── Spending page (additional) ── */
