@@ -311,6 +311,59 @@
     .form-feedback.ok  { background: #064e3b; color: #6ee7b7; border: 1px solid #059669; }
     .form-feedback.err { background: #450a0a; color: #fca5a5; border: 1px solid #dc2626; }
 
+    .edit-btn {
+      background: #1e3a6e; border: 1px solid #2e5a8f; border-radius: 8px;
+      color: #90caf9; font-size: 13px; font-weight: 600; font-family: inherit;
+      padding: 6px 10px; cursor: pointer; flex-shrink: 0; transition: all 0.15s;
+    }
+    .edit-btn:hover { background: #2e5a8f; }
+    .delete-btn {
+      background: #450a0a; border: 1px solid #dc2626; border-radius: 8px;
+      color: #fca5a5; font-size: 13px; font-weight: 600; font-family: inherit;
+      padding: 6px 10px; cursor: pointer; flex-shrink: 0; transition: all 0.15s;
+    }
+    .delete-btn:hover { background: #7f1d1d; }
+
+    /* ── Edit modal ── */
+    #edit-modal {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.65); z-index: 500;
+      align-items: center; justify-content: center; padding: 20px;
+    }
+    #edit-modal.open { display: flex; }
+    #edit-modal-box {
+      background: #0d2137; border: 1px solid #2e5f9e;
+      border-radius: 16px; padding: 28px; width: 100%; max-width: 560px;
+    }
+    #edit-modal-box h2 { font-size: 17px; font-weight: 700; color: #90caf9; margin-bottom: 20px; }
+    .modal-row { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; }
+    .modal-label { font-size: 13px; color: #64748b; width: 80px; flex-shrink: 0; }
+    .modal-input {
+      flex: 1; background: #112240; border: 1px solid #1e3a5f;
+      border-radius: 8px; padding: 10px 14px;
+      color: #f0f4f8; font-size: 15px; font-family: inherit; outline: none;
+    }
+    .modal-input:focus { border-color: #3b7dd8; }
+    textarea.modal-input { resize: vertical; min-height: 72px; line-height: 1.6; }
+    .modal-actions { display: flex; gap: 10px; margin-top: 18px; }
+    .modal-save {
+      background: #f59e0b; border: none; color: #1a1000;
+      font-size: 15px; font-weight: 700; font-family: inherit;
+      border-radius: 10px; padding: 12px 24px; cursor: pointer; flex: 1;
+    }
+    .modal-save:hover { opacity: 0.85; }
+    .modal-save:disabled { opacity: 0.5; cursor: default; }
+    .modal-cancel {
+      background: #1e3a6e; border: 1px solid #2e5a8f; color: #90caf9;
+      font-size: 15px; font-weight: 600; font-family: inherit;
+      border-radius: 10px; padding: 12px 20px; cursor: pointer;
+    }
+    .modal-cancel:hover { background: #2e5a8f; }
+
+    /* ── Active word row (with edit/delete) ── */
+    .active-word { justify-content: space-between; }
+    .aw-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
     /* ── Toast ── */
     #toast {
       position: fixed; bottom: 36px; left: 50%; transform: translateX(-50%);
@@ -398,6 +451,30 @@
 <div class="active-section">
   <div class="section-title">已激活单词（words.json，共 <span id="active-count">—</span> 个）</div>
   <div id="active-list"></div>
+</div>
+
+<!-- Edit modal -->
+<div id="edit-modal">
+  <div id="edit-modal-box">
+    <h2 id="edit-modal-title">✏️ 编辑单词</h2>
+    <div class="modal-row">
+      <span class="modal-label">英文单词</span>
+      <input class="modal-input" id="edit-word" type="text" placeholder="e.g. Organic">
+      <button class="speak-preview-btn" onclick="tts(document.getElementById('edit-word').value)" title="听发音">🔊</button>
+    </div>
+    <div class="modal-row">
+      <span class="modal-label">中文翻译</span>
+      <input class="modal-input" id="edit-cn" type="text" placeholder="中文意思">
+    </div>
+    <div class="modal-row" style="align-items:flex-start">
+      <span class="modal-label" style="margin-top:10px">说明</span>
+      <textarea class="modal-input" id="edit-desc" placeholder="例子句子或说明（可选）"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-save" id="save-edit-btn" onclick="saveEdit()">保存更改</button>
+      <button class="modal-cancel" onclick="closeEditModal()">取消</button>
+    </div>
+  </div>
 </div>
 
 <div id="toast"></div>
@@ -714,6 +791,7 @@
           </div>`;
         batch.forEach((w, j) => {
           const idx = i + j;
+          const esc = w.word.replace(/'/g,"\\'");
           html += `
           <div class="word-row">
             <div class="queue-num">${idx + 1}</div>
@@ -722,7 +800,9 @@
               <div class="word-cn">${w.word_cn || ''}</div>
               ${w.desc ? `<div class="word-desc">${w.desc}</div>` : ''}
             </div>
-            <button class="audio-btn" onclick="tts('${w.word.replace(/'/g,"\\'")}')">🔊</button>
+            <button class="audio-btn" onclick="tts('${esc}')">🔊</button>
+            <button class="edit-btn" onclick="openEditModal('standby',${idx})">✏️ 编辑</button>
+            <button class="delete-btn" onclick="deleteWord('standby',${idx})">🗑️ 删除</button>
             <button class="push-word-btn" data-push="${idx}" onclick="pushWord(${idx})">⬆ 推送到学习</button>
           </div>`;
         });
@@ -736,11 +816,74 @@
     if (!wordsData.length) {
       activeContainer.innerHTML = '<div style="color:#475569;font-size:14px">暂无</div>';
     } else {
-      activeContainer.innerHTML = wordsData.map(w => `
+      activeContainer.innerHTML = wordsData.map((w, i) => `
         <div class="active-word">
           <span class="aw-en">${w.word}</span>
           <span class="aw-cn">${w.word_cn || ''}</span>
+          <div class="aw-actions">
+            <button class="edit-btn" onclick="openEditModal('active',${i})" style="padding:4px 8px;font-size:12px">✏️</button>
+            <button class="delete-btn" onclick="deleteWord('active',${i})" style="padding:4px 8px;font-size:12px">🗑️</button>
+          </div>
         </div>`).join('');
+    }
+  }
+
+  /* ── Edit / Delete ── */
+  let editSource = ''; // 'standby' | 'active'
+  let editIdx    = -1;
+
+  function openEditModal(source, idx) {
+    editSource = source;
+    editIdx    = idx;
+    const w = source === 'standby' ? standbyData[idx] : wordsData[idx];
+    document.getElementById('edit-modal-title').textContent =
+      source === 'standby' ? '✏️ 编辑备用单词' : '✏️ 编辑已激活单词';
+    document.getElementById('edit-word').value = w.word     || '';
+    document.getElementById('edit-cn').value   = w.word_cn  || '';
+    document.getElementById('edit-desc').value = w.desc     || '';
+    document.getElementById('edit-modal').classList.add('open');
+  }
+
+  function closeEditModal() {
+    document.getElementById('edit-modal').classList.remove('open');
+    editIdx = -1;
+  }
+
+  async function saveEdit() {
+    const word = document.getElementById('edit-word').value.trim();
+    const cn   = document.getElementById('edit-cn').value.trim();
+    const desc = document.getElementById('edit-desc').value.trim();
+    if (!word || !cn) { showToast('请填写英文单词和中文翻译', true); return; }
+    const btn = document.getElementById('save-edit-btn');
+    btn.disabled = true; btn.textContent = '保存中…';
+    try {
+      const file = editSource === 'standby' ? 'standby.json' : 'words.json';
+      const { data, sha } = await ghGet(file);
+      data[editIdx] = { ...data[editIdx], word, word_cn: cn, desc };
+      await ghPut(file, data, sha, `Edit "${word}" in ${editSource}`);
+      closeEditModal();
+      showToast(`"${word}" 已更新 ✓`);
+      await load();
+    } catch(e) {
+      showToast('保存失败：' + e.message, true);
+    } finally {
+      btn.disabled = false; btn.textContent = '保存更改';
+    }
+  }
+
+  async function deleteWord(source, idx) {
+    const list = source === 'standby' ? standbyData : wordsData;
+    const word = list[idx]?.word;
+    if (!confirm(`确定删除 "${word}"？`)) return;
+    try {
+      const file = source === 'standby' ? 'standby.json' : 'words.json';
+      const { data, sha } = await ghGet(file);
+      data.splice(idx, 1);
+      await ghPut(file, data, sha, `Delete "${word}" from ${source}`);
+      showToast(`"${word}" 已删除 ✓`);
+      await load();
+    } catch(e) {
+      showToast('删除失败：' + e.message, true);
     }
   }
 
