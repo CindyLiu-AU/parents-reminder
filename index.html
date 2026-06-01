@@ -824,19 +824,11 @@
     function podcastZoomOut() { podcastZoom = Math.max(0.5, +(podcastZoom - 0.25).toFixed(2)); applyPodcastZoom(); }
 
     function setPodcastPage(n) {
-      _podNavSrcSet   = true;
-      _podNavDir      = null;
-      podcastNavDepth = 0;
-      podcastNavMax   = 0;
       document.getElementById('podcast-frame').src = PODCAST_BASE + n;
       [1,2,3].forEach(i => document.getElementById('pp'+i).classList.toggle('active', i === n));
-      updatePodNavBtns();
     }
     function openPodcast() {
-      podcastNavDepth = 0;
-      podcastNavMax   = 0;
-      _podNavDir      = null;
-      podcastZoom     = 1.0;
+      podcastZoom = 1.0;
       applyPodcastZoom();
       const themeBtn = document.getElementById('theme-toggle');
       if (themeBtn) themeBtn.style.display = 'none';
