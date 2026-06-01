@@ -57,34 +57,101 @@
     #weather {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 14px;
       text-align: right;
+      cursor: pointer;
+      border-radius: 14px;
+      padding: 6px 10px;
+      transition: background 0.2s;
     }
+    #weather:hover { background: rgba(100,181,246,0.08); }
 
-    #weather-icon { font-size: 34px; }
+    #weather-icon { font-size: 52px; }
 
     #weather-temp {
-      font-size: 32px;
-      font-weight: 700;
+      font-size: 48px;
+      font-weight: 800;
       color: #f1f5f9;
+      line-height: 1;
     }
 
     #weather-desc {
-      font-size: 17px;
+      font-size: 20px;
       color: #94a3b8;
-      margin-top: 1px;
+      margin-top: 3px;
     }
 
     #weather-range {
-      font-size: 17px;
+      font-size: 20px;
       color: #64b5f6;
-      margin-top: 1px;
+      margin-top: 2px;
     }
 
     #weather-location {
-      font-size: 15px;
+      font-size: 16px;
       color: #546e7a;
+      margin-top: 2px;
     }
+
+    /* ── Weather detail overlay ── */
+    #weather-overlay {
+      display: none; position: fixed; inset: 0; z-index: 1000;
+      flex-direction: column; background: #0a1628;
+    }
+    #weather-overlay.open { display: flex; }
+    #weather-top-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 24px; background: #091525;
+      border-bottom: 2px solid #64b5f6; flex-shrink: 0;
+    }
+    #weather-top-bar span { font-size: 22px; color: #64b5f6; font-weight: 700; }
+    #weather-close-btn {
+      background: none; border: 1px solid #2e5a8f; border-radius: 10px;
+      color: #90caf9; font-size: 15px; font-weight: 700; padding: 8px 18px;
+      cursor: pointer; font-family: inherit;
+    }
+    #weather-close-btn:hover { background: #1e3a6e; }
+    #weather-detail-content {
+      flex: 1; overflow-y: auto; padding: 24px 28px;
+    }
+    .weather-today-card {
+      background: #112240; border: 1px solid #1e3a5f; border-radius: 18px;
+      padding: 24px 28px; margin-bottom: 24px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+    }
+    .weather-today-big {
+      display: flex; align-items: center; gap: 20px;
+      grid-column: 1 / -1; margin-bottom: 8px;
+    }
+    .w-big-icon { font-size: 72px; line-height: 1; }
+    .w-big-right {}
+    .w-big-temp { font-size: 80px; font-weight: 800; color: #f59e0b; line-height: 1; }
+    .w-big-desc { font-size: 26px; color: #f1f5f9; margin-top: 6px; }
+    .w-detail-row { font-size: 20px; color: #94a3b8; padding: 4px 0; }
+    .w-detail-row strong { color: #f0f4f8; font-weight: 700; }
+    .weather-week-title {
+      font-size: 20px; color: #64b5f6; font-weight: 700;
+      margin-bottom: 14px; letter-spacing: 1px;
+    }
+    .weather-week-scroll { overflow-x: auto; padding-bottom: 8px; }
+    .weather-week-grid {
+      display: grid; grid-template-columns: repeat(7, minmax(120px, 1fr)); gap: 10px;
+      min-width: 700px;
+    }
+    .weather-day-card {
+      background: #112240; border: 1px solid #1e3a5f; border-radius: 14px;
+      padding: 16px 10px; text-align: center;
+      display: flex; flex-direction: column; align-items: center; gap: 7px;
+    }
+    .weather-day-card.today { border-color: #f59e0b; }
+    .wdc-day  { font-size: 16px; color: #64b5f6; font-weight: 700; }
+    .wdc-icon { font-size: 36px; line-height: 1; }
+    .wdc-desc { font-size: 13px; color: #64748b; }
+    .wdc-high { font-size: 22px; font-weight: 700; color: #f59e0b; }
+    .wdc-low  { font-size: 18px; color: #64b5f6; }
+    .wdc-rain { font-size: 14px; color: #7dd3fc; }
+    .wdc-wind { font-size: 14px; color: #94a3b8; }
+    .wdc-sun  { font-size: 12px; color: #546e7a; }
 
     #countdown {
       font-size: 13px;
@@ -338,9 +405,10 @@
       #topbar { padding: 6px 12px; }
       #clock { font-size: 22px; letter-spacing: 1px; }
       #date-display { font-size: 12px; margin-top: 1px; }
-      #weather-icon { font-size: 22px; }
-      #weather-temp { font-size: 20px; }
-      #weather-desc, #weather-range { font-size: 11px; }
+      #weather { gap: 8px; padding: 4px 6px; }
+      #weather-icon { font-size: 28px; }
+      #weather-temp { font-size: 26px; }
+      #weather-desc, #weather-range { font-size: 13px; }
       #weather-location { display: none; }
 
       /* Analog clock */
@@ -428,7 +496,7 @@
       <div id="clock">--:--</div>
       <div id="date-display">--</div>
     </div>
-    <div id="weather">
+    <div id="weather" onclick="openWeather();event.stopPropagation()" title="点击查看详细天气">
       <div id="weather-icon">🌤</div>
       <div>
         <div id="weather-temp">--°C</div>
@@ -472,6 +540,17 @@
     </div>
     <iframe id="podcast-frame" src="" allowfullscreen
       sandbox="allow-scripts allow-same-origin allow-forms"></iframe>
+  </div>
+
+  <!-- Weather detail overlay -->
+  <div id="weather-overlay">
+    <div id="weather-top-bar">
+      <span>🌤 Kingston, TAS — 天气详情</span>
+      <button id="weather-close-btn" onclick="closeWeather()">✕ 关闭</button>
+    </div>
+    <div id="weather-detail-content">
+      <p style="color:#64748b;padding:24px">加载中…</p>
+    </div>
   </div>
 
   <script>
@@ -605,16 +684,19 @@
     }
 
     // ── Weather (Open-Meteo, Kingston TAS) ───────────────────
+    let weatherDetailData = null;
+
     async function fetchWeather() {
       try {
         const url = 'https://api.open-meteo.com/v1/forecast' +
           '?latitude=-42.983&longitude=147.067' +
-          '&current=temperature_2m,weather_code,wind_speed_10m' +
-          '&daily=temperature_2m_max,temperature_2m_min' +
-          '&forecast_days=1' +
+          '&current=temperature_2m,weather_code,wind_speed_10m,relative_humidity_2m,apparent_temperature' +
+          '&daily=temperature_2m_max,temperature_2m_min,weather_code,precipitation_sum,wind_speed_10m_max,sunrise,sunset' +
+          '&forecast_days=7' +
           '&timezone=Australia%2FHobart';
         const res = await fetch(url);
         const d = await res.json();
+        weatherDetailData = d;
         const code = d.current.weather_code;
         const temp = Math.round(d.current.temperature_2m);
         const high = Math.round(d.daily.temperature_2m_max[0]);
@@ -627,6 +709,86 @@
       } catch(e) {
         document.getElementById('weather-desc').textContent = '天气获取失败';
       }
+    }
+
+    function openWeather() {
+      document.getElementById('weather-overlay').classList.add('open');
+      const themeBtn = document.getElementById('theme-toggle');
+      if (themeBtn) themeBtn.style.display = 'none';
+      renderWeatherDetail();
+    }
+
+    function closeWeather() {
+      document.getElementById('weather-overlay').classList.remove('open');
+      const themeBtn = document.getElementById('theme-toggle');
+      if (themeBtn) themeBtn.style.display = '';
+    }
+
+    function renderWeatherDetail() {
+      const el = document.getElementById('weather-detail-content');
+      if (!weatherDetailData) {
+        el.innerHTML = '<p style="color:#64748b;padding:24px">天气数据加载中…</p>';
+        return;
+      }
+      const d    = weatherDetailData;
+      const curr = d.current;
+      const day  = d.daily;
+      const [currIcon, currDesc] = WMO[curr.weather_code] || ['🌡','未知'];
+      const temp      = Math.round(curr.temperature_2m);
+      const feelsLike = Math.round(curr.apparent_temperature);
+      const humidity  = Math.round(curr.relative_humidity_2m);
+      const wind      = Math.round(curr.wind_speed_10m);
+      const high      = Math.round(day.temperature_2m_max[0]);
+      const low       = Math.round(day.temperature_2m_min[0]);
+      const sunrise   = (day.sunrise[0] || '').slice(11, 16);
+      const sunset    = (day.sunset[0]  || '').slice(11, 16);
+
+      let html = `
+      <div class="weather-today-card">
+        <div class="weather-today-big">
+          <span class="w-big-icon">${currIcon}</span>
+          <div class="w-big-right">
+            <div class="w-big-temp">${temp}°</div>
+            <div class="w-big-desc">${currDesc}</div>
+          </div>
+        </div>
+        <div class="w-detail-row">🌡 体感 <strong>${feelsLike}°C</strong></div>
+        <div class="w-detail-row">💧 湿度 <strong>${humidity}%</strong></div>
+        <div class="w-detail-row">💨 风速 <strong>${wind} km/h</strong></div>
+        <div class="w-detail-row">🌅 日出 <strong>${sunrise}</strong></div>
+        <div class="w-detail-row">🌇 日落 <strong>${sunset}</strong></div>
+        <div class="w-detail-row">⬆ 今日最高 <strong>${high}°C</strong></div>
+        <div class="w-detail-row">⬇ 今日最低 <strong>${low}°C</strong></div>
+      </div>`;
+
+      const DAYS = ['周日','周一','周二','周三','周四','周五','周六'];
+      html += `<div class="weather-week-title">📅 未来 7 天预报</div>
+      <div class="weather-week-scroll"><div class="weather-week-grid">`;
+
+      for (let i = 0; i < day.time.length; i++) {
+        const dt      = new Date(day.time[i] + 'T12:00:00');
+        const dayName = i === 0 ? '今天' : i === 1 ? '明天' : DAYS[dt.getDay()];
+        const [ico, dsc] = WMO[day.weather_code[i]] || ['🌡','--'];
+        const hi   = Math.round(day.temperature_2m_max[i]);
+        const lo   = Math.round(day.temperature_2m_min[i]);
+        const rain = day.precipitation_sum[i] > 0.1 ? `🌧 ${day.precipitation_sum[i].toFixed(1)}mm` : '';
+        const wnd  = Math.round(day.wind_speed_10m_max[i]);
+        const sr   = (day.sunrise[i] || '').slice(11, 16);
+        const ss   = (day.sunset[i]  || '').slice(11, 16);
+
+        html += `<div class="weather-day-card${i === 0 ? ' today' : ''}">
+          <div class="wdc-day">${dayName}</div>
+          <div class="wdc-icon">${ico}</div>
+          <div class="wdc-desc">${dsc}</div>
+          <div class="wdc-high">↑ ${hi}°</div>
+          <div class="wdc-low">↓ ${lo}°</div>
+          ${rain ? `<div class="wdc-rain">${rain}</div>` : '<div class="wdc-rain" style="visibility:hidden">-</div>'}
+          <div class="wdc-wind">💨 ${wnd} km/h</div>
+          ${sr ? `<div class="wdc-sun">🌅 ${sr} / ${ss}</div>` : ''}
+        </div>`;
+      }
+      html += '</div></div>';
+      el.innerHTML = html;
     }
 
     let audioCtx = null;
