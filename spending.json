@@ -28,7 +28,8 @@
       },
       {
         "name": "Sunrice 日向短粒米",
-        "amount": 75
+        "amount": 75,
+        "forParents": true
       }
     ]
   },
