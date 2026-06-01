@@ -28,10 +28,13 @@
     /* ── Header ── */
     header { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
     .back-btn {
-      background: #1e3a6e; border: 1px solid #2e5f9e; border-radius: 50%;
-      width: 48px; height: 48px; font-size: 24px;
-      display: flex; align-items: center; justify-content: center;
-      text-decoration: none; color: #90caf9; flex-shrink: 0;
+      position: fixed;
+      bottom: 32px; right: 28px;
+      font-size: 18px; color: #1a1000;
+      text-decoration: none;
+      background: #f59e0b; border: 2px solid #f59e0b; border-radius: 24px;
+      padding: 14px 28px; z-index: 100; font-weight: 700;
+      box-shadow: 0 4px 16px rgba(245,158,11,0.4);
     }
     header h1 { font-size: 26px; font-weight: 900; color: #f59e0b; letter-spacing: 2px; }
 
@@ -162,7 +165,6 @@
       body { padding: 12px 14px 90px; gap: 8px; }
 
       header h1 { font-size: 20px; letter-spacing: 1px; }
-      .back-btn  { width: 40px; height: 40px; font-size: 20px; }
 
       .lang-btn  { padding: 8px 4px; font-size: 20px; }
 
@@ -194,9 +196,9 @@
 <body>
 
 <header>
-  <a href="index.html" class="back-btn">←</a>
   <h1>🔍 查词典</h1>
 </header>
+<a href="index.html" class="back-btn">← 返回</a>
 
 <div class="lang-toggle">
   <button class="lang-btn active" id="btn-en-zh" onclick="setDir('en-zh', true)">英文 → 中文</button>
