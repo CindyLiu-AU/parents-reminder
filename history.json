@@ -1,6 +1,15 @@
 [
   {
     "type": "custom",
+    "icon": "📋",
+    "label": "test",
+    "fulldate": "2026年6月1日（星期一）",
+    "time": "09:00",
+    "pin_from": "23:14",
+    "pin_until": "12:00"
+  },
+  {
+    "type": "custom",
     "icon": "😊",
     "label": "大绿送货到家",
     "fulldate": "2026年6月4日（星期四）",
