@@ -203,9 +203,11 @@
       right: 20px;
       background: #1e3a6e;
       border: 1px solid #2e3a52;
-      border-radius: 50%;
-      width: 52px;
+      border-radius: 26px;
+      width: auto;
       height: 52px;
+      padding: 0 14px 0 12px;
+      gap: 8px;
       font-size: 24px;
       display: flex;
       align-items: center;
@@ -213,6 +215,13 @@
       text-decoration: none;
       z-index: 200;
       box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+
+    .nav-label {
+      font-size: 14px;
+      font-weight: 700;
+      color: #f0f4f8;
+      white-space: nowrap;
     }
 
     #reminders-btn  { bottom: 60px; }
@@ -359,10 +368,14 @@
         padding: 10px 8px;
         z-index: 200;
       }
+      .nav-label { display: none; }
       #bottom-nav > * {
         position: static !important;
         width: 64px !important;
         height: 64px !important;
+        padding: 0 !important;
+        gap: 0 !important;
+        border-radius: 50% !important;
         font-size: 28px !important;
         bottom: auto !important;
         right: auto !important;
@@ -405,13 +418,13 @@
   <div id="bottombar"></div>
   <button id="refresh-btn" onclick="manualRefresh();event.stopPropagation()">↻</button>
   <nav id="bottom-nav">
-    <a href="dictionary.html" id="dict-btn" onclick="event.stopPropagation()">🔍</a>
-    <a href="roadrules.html" id="roadrules-btn" onclick="event.stopPropagation()">🚗</a>
-    <a href="flashcards.html" id="flashcards-btn" onclick="event.stopPropagation()">📖</a>
-    <a href="apps.html" id="apps-btn" onclick="event.stopPropagation()">📱</a>
-    <a href="spending.html" id="spending-btn" onclick="event.stopPropagation()">🛒</a>
-    <a href="reminders.html" id="reminders-btn" onclick="event.stopPropagation()">📋</a>
-    <button id="podcast-btn" onclick="openPodcast();event.stopPropagation()">📻</button>
+    <a href="dictionary.html" id="dict-btn" onclick="event.stopPropagation()"><span class="nav-label">词典</span>🔍</a>
+    <a href="roadrules.html" id="roadrules-btn" onclick="event.stopPropagation()"><span class="nav-label">驾驶规则</span>🚗</a>
+    <a href="flashcards.html" id="flashcards-btn" onclick="event.stopPropagation()"><span class="nav-label">英语单词</span>📖</a>
+    <a href="apps.html" id="apps-btn" onclick="event.stopPropagation()"><span class="nav-label">应用指南</span>📱</a>
+    <a href="spending.html" id="spending-btn" onclick="event.stopPropagation()"><span class="nav-label">购物账单</span>🛒</a>
+    <a href="reminders.html" id="reminders-btn" onclick="event.stopPropagation()"><span class="nav-label">通知提醒</span>📋</a>
+    <button id="podcast-btn" onclick="openPodcast();event.stopPropagation()"><span class="nav-label">中文广播</span>📻</button>
   </nav>
 
   <!-- SBS Chinese podcast overlay -->
