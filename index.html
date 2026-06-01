@@ -244,6 +244,13 @@
       border-bottom: 2px solid #f59e0b; flex-shrink: 0;
     }
     #podcast-bar span { font-size: 22px; color: #f59e0b; font-weight: 700; }
+    .podcast-page-btn {
+      background: #1e3a6e; border: 1px solid #2e5a8f; border-radius: 8px;
+      color: #90caf9; font-size: 15px; font-weight: 700; padding: 6px 14px;
+      cursor: pointer; font-family: inherit; transition: all .15s;
+    }
+    .podcast-page-btn.active { background: #f59e0b; border-color: #f59e0b; color: #1a1000; }
+    .podcast-page-btn:hover:not(.active) { background: #2e5a8f; }
     #podcast-close {
       background: none; border: none; color: #f1f5f9;
       font-size: 32px; cursor: pointer; line-height: 1; padding: 0 4px;
@@ -431,7 +438,10 @@
   <div id="podcast-overlay">
     <div id="podcast-bar">
       <span>📻 SBS 普通话广播</span>
-      <div style="display:flex;gap:10px;align-items:center;">
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button class="podcast-page-btn active" id="pp1" onclick="setPodcastPage(1)">第1页</button>
+        <button class="podcast-page-btn"        id="pp2" onclick="setPodcastPage(2)">第2页</button>
+        <button class="podcast-page-btn"        id="pp3" onclick="setPodcastPage(3)">第3页</button>
         <button class="secondary-theme-toggle" onclick="toggleColorTheme();event.stopPropagation()" title="切换亮色/暗色"></button>
         <button id="podcast-close" onclick="closePodcast()">✕</button>
       </div>
@@ -779,9 +789,14 @@
     }
 
     // ── SBS Podcast overlay ───────────────────────────────────
+    const PODCAST_BASE = 'https://www.sbs.com.au/language/chinese/zh-hans/collection/%E6%9B%B4%E5%A4%9Asbs%E6%99%AE%E9%80%9A%E8%AF%9D%E6%92%AD%E5%AE%A2?page=';
+
+    function setPodcastPage(n) {
+      document.getElementById('podcast-frame').src = PODCAST_BASE + n;
+      [1,2,3].forEach(i => document.getElementById('pp'+i).classList.toggle('active', i === n));
+    }
     function openPodcast() {
-      document.getElementById('podcast-frame').src =
-        'https://www.sbs.com.au/language/chinese/zh-hans/listen';
+      setPodcastPage(1);
       document.getElementById('podcast-overlay').classList.add('open');
     }
     function closePodcast() {
