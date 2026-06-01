@@ -39,7 +39,7 @@
     "weekStart": "2026-06-01",
     "orderNumber": "299546481",
     "deliveryDate": "2026-06-02",
-    "transferred": false,
+    "transferred": true,
     "items": [
       {
         "name": "Sunrice 日向短粒米",
