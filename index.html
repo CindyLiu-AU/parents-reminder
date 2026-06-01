@@ -288,6 +288,61 @@
     .nc-date { font-size: 16px; color: #90caf9; margin-bottom: 8px; }
     .nc-time { font-size: 36px; font-weight: 800; color: #f59e0b; margin-bottom: 8px; }
     .nc-note { font-size: 18px; color: #81c784; line-height: 1.6; }
+
+    .analog-clock-svg { width: 300px; height: 300px; }
+
+    @media (max-width: 480px) {
+      /* Topbar */
+      #topbar { padding: 6px 12px; }
+      #clock { font-size: 22px; letter-spacing: 1px; }
+      #date-display { font-size: 12px; margin-top: 1px; }
+      #weather-icon { font-size: 22px; }
+      #weather-temp { font-size: 20px; }
+      #weather-desc, #weather-range { font-size: 11px; }
+      #weather-location { display: none; }
+
+      /* Analog clock */
+      .analog-clock-svg { width: 180px; height: 180px; }
+
+      /* Big clock date */
+      .big-clock-date { font-size: 16px; margin-top: 8px; }
+
+      /* Notice bar inside clock card */
+      .notice-bar { padding: 10px 14px; gap: 10px; margin-top: 12px; }
+      .nb-icon  { font-size: 22px; }
+      .nb-title { font-size: 18px; }
+      .nb-time  { font-size: 24px; }
+
+      /* Main card */
+      .card { padding: 12px 18px; margin-top: 52px; margin-bottom: 62px; max-height: calc(100vh - 118px); }
+
+      /* Notice text inside card */
+      .icon  { font-size: 32px; }
+      .title { font-size: 26px; }
+      .time  { font-size: 32px; }
+      .note  { font-size: 16px; }
+      .custom-msg { font-size: 20px; }
+      .time-box { padding: 10px 20px; }
+
+      /* Word card */
+      .word { font-size: 42px; letter-spacing: 2px; }
+      .answer-cn { font-size: 22px; }
+      .answer-desc { font-size: 14px; }
+
+      /* Nav buttons — horizontal row along the bottom */
+      #reminders-btn, #spending-btn, #apps-btn, #flashcards-btn, #roadrules-btn, #dict-btn {
+        width: 40px; height: 40px; font-size: 18px; bottom: 10px;
+      }
+      #reminders-btn  { right: 8px; }
+      #spending-btn   { right: 56px; }
+      #apps-btn       { right: 104px; }
+      #flashcards-btn { right: 152px; }
+      #roadrules-btn  { right: 200px; }
+      #dict-btn       { right: 248px; }
+
+      /* Refresh button */
+      #refresh-btn { top: 52px; }
+    }
   </style>
   <link rel="stylesheet" href="theme.css">
 </head>
@@ -426,7 +481,7 @@
         nums += `<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="central" fill="${numColor}" font-size="15" font-weight="700" font-family="Arial,sans-serif">${n}</text>`;
       });
 
-      return `<svg viewBox="0 0 200 200" width="300" height="300" style="display:block;margin:0 auto 4px">
+      return `<svg viewBox="0 0 200 200" class="analog-clock-svg" style="display:block;margin:0 auto 4px">
         <circle cx="100" cy="100" r="97" fill="${faceBg}" stroke="#f59e0b" stroke-width="3"/>
         <circle cx="100" cy="100" r="90" fill="none" stroke="${innerRing}" stroke-width="0.5"/>
         ${markers}
