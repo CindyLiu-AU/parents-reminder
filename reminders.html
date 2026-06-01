@@ -156,6 +156,56 @@
     .checklist-item.done .checklist-tick {
       background: #22c55e; border-color: #22c55e; color: #fff;
     }
+
+    /* ── Add button ── */
+    #add-btn {
+      background: #f59e0b; color: #1a1000; border: none;
+      border-radius: 12px; padding: 10px 22px;
+      font-size: 16px; font-weight: 800; cursor: pointer; font-family: inherit;
+      box-shadow: 0 2px 8px rgba(245,158,11,0.3);
+    }
+    #add-btn:active { opacity: 0.8; }
+
+    /* ── Add modal ── */
+    #add-modal {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.65);
+      display: none; align-items: center; justify-content: center;
+      z-index: 500; padding: 20px;
+    }
+    #add-modal.open { display: flex; }
+    #add-card {
+      background: #112240; border: 1px solid #2e5f9e; border-radius: 20px;
+      padding: 28px 32px; width: 100%; max-width: 500px;
+      display: flex; flex-direction: column; gap: 14px;
+      max-height: 90vh; overflow-y: auto;
+    }
+    #add-card h2 { font-size: 22px; font-weight: 800; color: #f59e0b; margin-bottom: 4px; }
+    .f-row { display: flex; flex-direction: column; gap: 6px; }
+    .f-row label { font-size: 13px; color: #64b5f6; letter-spacing: 1px; font-weight: 700; }
+    .f-row input, .f-row textarea, .f-row select {
+      background: #0a1e35; border: 1px solid #1e3a5f; border-radius: 10px;
+      padding: 10px 14px; color: #f0f4f8; font-size: 16px; font-family: inherit;
+      outline: none; width: 100%;
+    }
+    .f-row input:focus, .f-row textarea:focus, .f-row select:focus { border-color: #f59e0b; }
+    .f-row textarea { min-height: 72px; resize: vertical; }
+    .f-row select option { background: #0a1e35; }
+    .pin-pair { display: flex; gap: 8px; align-items: center; }
+    .pin-pair input { flex: 1; }
+    .pin-pair span { color: #64b5f6; font-size: 14px; white-space: nowrap; }
+    .f-hint { font-size: 12px; color: #475569; margin-top: -8px; }
+    #modal-status { font-size: 14px; min-height: 18px; }
+    #modal-status.ok    { color: #4ade80; }
+    #modal-status.error { color: #f87171; }
+    #modal-status.loading { color: #94a3b8; }
+    .modal-btns { display: flex; gap: 12px; justify-content: flex-end; margin-top: 4px; }
+    .modal-btns button {
+      padding: 11px 28px; border-radius: 12px; font-size: 16px; font-weight: 700;
+      cursor: pointer; border: none; font-family: inherit;
+    }
+    .modal-btns .btn-cancel { background: #1e3a5f; color: #90caf9; }
+    .modal-btns .btn-save   { background: #f59e0b; color: #1a1000; }
+    .modal-btns .btn-save:disabled { background: #78450a; color: #94a3b8; cursor: not-allowed; }
   </style>
   <link rel="stylesheet" href="theme.css">
 </head>
@@ -163,8 +213,52 @@
 
   <header>
     <h1>📋 即将到来的通知</h1>
+    <button id="add-btn" onclick="openAddModal()">＋ 新增通知</button>
   </header>
   <a class="back-btn" href="index.html">← 返回</a>
+
+  <!-- Add notification modal -->
+  <div id="add-modal">
+    <div id="add-card">
+      <h2>＋ 新增通知</h2>
+
+      <div class="f-row">
+        <label>📅 日期</label>
+        <input type="date" id="f-date">
+      </div>
+      <div class="f-row">
+        <label>⏰ 时间</label>
+        <input type="time" id="f-time">
+      </div>
+      <div class="f-row">
+        <label>🎨 图标（emoji）</label>
+        <input type="text" id="f-icon" placeholder="📋" maxlength="4" style="max-width:80px">
+      </div>
+      <div class="f-row">
+        <label>📝 标题</label>
+        <input type="text" id="f-label" placeholder="例：Cindy 来访">
+      </div>
+      <div class="f-row">
+        <label>💬 内容（可选）</label>
+        <textarea id="f-message" placeholder="通知正文，留空则不显示"></textarea>
+      </div>
+      <div class="f-row">
+        <label>📌 固定显示时间段（可选）</label>
+        <div class="pin-pair">
+          <input type="time" id="f-pin-from">
+          <span>至</span>
+          <input type="time" id="f-pin-until">
+        </div>
+        <div class="f-hint">设置后该时段内主页会优先显示此通知（支持跨夜）</div>
+      </div>
+
+      <div id="modal-status"></div>
+      <div class="modal-btns">
+        <button class="btn-cancel" onclick="closeAddModal()">取消</button>
+        <button class="btn-save" id="modal-save-btn" onclick="saveNotice()">💾 保存</button>
+      </div>
+    </div>
+  </div>
 
   <div id="list">加载中...</div>
 
@@ -301,6 +395,117 @@
           ? upcoming.map(renderItem).join('')
           : '<p style="color:#546e7a">暂无即将到来的通知</p>';
       });
+
+    // ── Add notification modal ────────────────────────────────
+    const TOKEN_KEY = 'gh_sync_token';
+    const API = 'https://api.github.com/repos/CindyLiu-AU/parents-reminder/contents/history.json';
+
+    function encodeB64(str) {
+      const bytes = new TextEncoder().encode(str);
+      let bin = '';
+      bytes.forEach(b => bin += String.fromCharCode(b));
+      return btoa(bin);
+    }
+    function decodeB64(b64) {
+      const bin = atob(b64.replace(/\n/g, ''));
+      return new TextDecoder().decode(Uint8Array.from(bin, c => c.charCodeAt(0)));
+    }
+
+    function toFulldate(dateStr) {
+      const [y, m, d] = dateStr.split('-').map(Number);
+      const dt = new Date(y, m - 1, d);
+      const days = ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
+      return `${y}年${m}月${d}日（${days[dt.getDay()]}）`;
+    }
+
+    function setModalStatus(msg, cls) {
+      const el = document.getElementById('modal-status');
+      el.textContent = msg;
+      el.className = cls || '';
+    }
+
+    function openAddModal() {
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('f-date').value = today;
+      document.getElementById('f-time').value = '09:00';
+      document.getElementById('f-icon').value = '';
+      document.getElementById('f-label').value = '';
+      document.getElementById('f-message').value = '';
+      document.getElementById('f-pin-from').value = '';
+      document.getElementById('f-pin-until').value = '';
+      document.getElementById('modal-save-btn').disabled = false;
+      setModalStatus('');
+      document.getElementById('add-modal').classList.add('open');
+    }
+
+    function closeAddModal() {
+      document.getElementById('add-modal').classList.remove('open');
+    }
+
+    async function saveNotice() {
+      const dateStr  = document.getElementById('f-date').value;
+      const timeStr  = document.getElementById('f-time').value;
+      const icon     = document.getElementById('f-icon').value.trim() || '📋';
+      const label    = document.getElementById('f-label').value.trim();
+      const message  = document.getElementById('f-message').value.trim();
+      const pinFrom  = document.getElementById('f-pin-from').value;
+      const pinUntil = document.getElementById('f-pin-until').value;
+
+      if (!dateStr) { setModalStatus('请选择日期', 'error'); return; }
+      if (!timeStr) { setModalStatus('请选择时间', 'error'); return; }
+      if (!label)   { setModalStatus('请填写标题', 'error'); return; }
+
+      const notice = { type: 'custom', icon, label, fulldate: toFulldate(dateStr), time: timeStr };
+      if (message) notice.message = message;
+      if (pinFrom && pinUntil) { notice.pin_from = pinFrom; notice.pin_until = pinUntil; }
+
+      let token = localStorage.getItem(TOKEN_KEY);
+      if (!token) {
+        token = prompt('请输入 GitHub PAT（只需输入一次，之后自动保存）：');
+        if (!token) return;
+        localStorage.setItem(TOKEN_KEY, token.trim());
+        token = token.trim();
+      }
+
+      setModalStatus('正在保存…', 'loading');
+      document.getElementById('modal-save-btn').disabled = true;
+
+      try {
+        const getRes = await fetch(API, { headers: { Authorization: `token ${token}` } });
+        if (getRes.status === 401) {
+          localStorage.removeItem(TOKEN_KEY);
+          throw new Error('PAT 无效，请刷新页面重试');
+        }
+        if (!getRes.ok) throw new Error(`GitHub ${getRes.status}`);
+        const info    = await getRes.json();
+        const current = JSON.parse(decodeB64(info.content));
+        current.unshift(notice);
+
+        const putRes = await fetch(API, {
+          method: 'PUT',
+          headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message: `新增通知：${label}`,
+            content: encodeB64(JSON.stringify(current, null, 2)),
+            sha: info.sha
+          })
+        });
+        if (!putRes.ok) {
+          const err = await putRes.json().catch(() => ({}));
+          throw new Error(err.message || `GitHub ${putRes.status}`);
+        }
+        setModalStatus('✓ 已保存！', 'ok');
+        setTimeout(() => { closeAddModal(); location.reload(); }, 1000);
+      } catch (e) {
+        setModalStatus(`❌ ${e.message}`, 'error');
+        document.getElementById('modal-save-btn').disabled = false;
+      }
+    }
+
+    // Close modal on backdrop click
+    document.getElementById('add-modal').addEventListener('click', function(e) {
+      if (e.target === this) closeAddModal();
+    });
   </script>
   <script src="theme.js"></script>
 </body>
