@@ -388,8 +388,9 @@
           document.getElementById('list').innerHTML = '<p style="color:#546e7a">暂无通知记录</p>';
           return;
         }
-        const now = new Date();
-        const upcoming = data.filter(d => parseItemDateTime(d) >= now)
+        const todayStart = new Date();
+        todayStart.setHours(0, 0, 0, 0);
+        const upcoming = data.filter(d => parseItemDateTime(d) >= todayStart || d.pin_from)
                              .sort((a, b) => parseItemDateTime(a) - parseItemDateTime(b));
         document.getElementById('list').innerHTML = upcoming.length
           ? upcoming.map(renderItem).join('')
