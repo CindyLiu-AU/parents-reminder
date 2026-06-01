@@ -1,5 +1,201 @@
 [
   {
+    "store": "woolworths",
+    "week": "2026年6月第1周",
+    "weekStart": "2026-06-01",
+    "orderNumber": "309160077",
+    "deliveryDate": "2026-06-04",
+    "transferred": false,
+    "items": [
+      {
+        "name": "Woolworths 12 个超大谷仓产蛋",
+        "amount": 11.4
+      },
+      {
+        "name": "Woolworths 全脂牛奶",
+        "amount": 10.3
+      },
+      {
+        "name": "Milo 麦芽巧克力粉热饮或冷饮",
+        "amount": 5.35
+      },
+      {
+        "name": "整颗白菜 Wombok",
+        "amount": 5.9
+      },
+      {
+        "name": "Sunrice 日向短粒米",
+        "amount": 75.0
+      }
+    ]
+  },
+  {
+    "store": "woolworths",
+    "week": "2026年6月第1周",
+    "weekStart": "2026-06-01",
+    "orderNumber": "299546481",
+    "deliveryDate": "2026-06-02",
+    "transferred": false,
+    "items": [
+      {
+        "name": "Sunrice 日向短粒米",
+        "amount": 75.0
+      }
+    ]
+  },
+  {
+    "store": "woolworths",
+    "week": "2020年7月第1周",
+    "weekStart": "2020-07-06",
+    "orderNumber": "55002401",
+    "deliveryDate": "2020-07-07",
+    "transferred": false,
+    "items": [
+      {
+        "name": "Sanitarium Weet-bix 早餐麦片",
+        "amount": 3.8
+      },
+      {
+        "name": "Sunny Queen 12 颗超大散养鸡蛋",
+        "amount": 6.0
+      },
+      {
+        "name": "Saxa 食盐野餐包",
+        "amount": 2.0
+      },
+      {
+        "name": "A2全脂牛奶",
+        "amount": 5.3
+      },
+      {
+        "name": "努迪除了果肉橙子什么都没有",
+        "amount": 8.0
+      },
+      {
+        "name": "卡文迪什香蕉",
+        "amount": 2.16
+      },
+      {
+        "name": "德里斯科尔的新鲜蓝莓",
+        "amount": 4.5
+      },
+      {
+        "name": "羡慕苹果",
+        "amount": 3.84
+      },
+      {
+        "name": "新鲜帕克汉梨",
+        "amount": 4.05
+      },
+      {
+        "name": "红葡萄无核",
+        "amount": 3.8
+      },
+      {
+        "name": "奇异果绿",
+        "amount": 5.5
+      },
+      {
+        "name": "木瓜红整粒",
+        "amount": 5.9
+      },
+      {
+        "name": "萝卜新鲜",
+        "amount": 3.0
+      },
+      {
+        "name": "Woolworths Beanette 预装包",
+        "amount": 2.5
+      },
+      {
+        "name": "Woolworths 西兰花束",
+        "amount": 3.0
+      },
+      {
+        "name": "Woolworths 玉米饼",
+        "amount": 4.5
+      },
+      {
+        "name": "Sunrice 白米 低GI",
+        "amount": 3.5
+      }
+    ]
+  },
+  {
+    "store": "woolworths",
+    "week": "2020年7月第1周",
+    "weekStart": "2020-07-06",
+    "orderNumber": "54869815",
+    "deliveryDate": "2020-07-07",
+    "transferred": false,
+    "items": [
+      {
+        "name": "Sunny Queen 12 颗超大散养鸡蛋",
+        "amount": 6.0
+      },
+      {
+        "name": "A2全脂牛奶",
+        "amount": 5.3
+      },
+      {
+        "name": "努迪除了果肉橙子什么都没有",
+        "amount": 8.0
+      },
+      {
+        "name": "卡文迪什香蕉",
+        "amount": 2.16
+      },
+      {
+        "name": "德里斯科尔的新鲜蓝莓",
+        "amount": 4.5
+      },
+      {
+        "name": "羡慕苹果",
+        "amount": 3.84
+      },
+      {
+        "name": "新鲜帕克汉梨",
+        "amount": 4.05
+      },
+      {
+        "name": "红葡萄无核",
+        "amount": 3.8
+      },
+      {
+        "name": "奇异果绿",
+        "amount": 5.5
+      },
+      {
+        "name": "小白菜亚洲绿色蔬菜",
+        "amount": 2.5
+      },
+      {
+        "name": "木瓜红整粒",
+        "amount": 5.9
+      },
+      {
+        "name": "萝卜新鲜",
+        "amount": 3.0
+      },
+      {
+        "name": "Woolworths Beanette 预装包",
+        "amount": 2.5
+      },
+      {
+        "name": "Woolworths 西兰花束",
+        "amount": 3.0
+      },
+      {
+        "name": "Woolworths 玉米饼",
+        "amount": 4.5
+      },
+      {
+        "name": "Dettol 2 合 1 抗菌湿巾",
+        "amount": 8.5
+      }
+    ]
+  },
+  {
     "week": "2026年5月第5周",
     "weekStart": "2026-05-24",
     "deliveryDate": "2026-05-29",
@@ -14,6 +210,7 @@
     ]
   },
   {
+    "store": "coles",
     "week": "2026年4月第1周",
     "weekStart": "2026-04-06",
     "orderNumber": "254549816",
@@ -22,15 +219,15 @@
     "items": [
       {
         "name": "方便餐 泰式绿咖喱鸡 1",
-        "amount": 4
+        "amount": 4.0
       },
       {
         "name": "冷冻方便餐肉酱意大利面 1",
-        "amount": 4
+        "amount": 4.0
       },
       {
         "name": "绿咖喱鸡饭 1",
-        "amount": 5
+        "amount": 5.0
       },
       {
         "name": "印度椰子咖喱鸡碗 1",
@@ -42,11 +239,11 @@
       },
       {
         "name": "羊肉迷迭香火锅1",
-        "amount": 5
+        "amount": 5.0
       },
       {
         "name": "餐食 沙爹鸡 1",
-        "amount": 4
+        "amount": 4.0
       },
       {
         "name": "原味煎饼奶昔 1",
@@ -54,105 +251,106 @@
       },
       {
         "name": "短粒米 1",
-        "amount": 15,
-        "forParents": true
+        "amount": 15.0
       }
     ]
   },
   {
+    "store": "coles",
     "week": "2026年5月第4周",
     "weekStart": "2026-05-25",
     "orderNumber": "260090148",
-    "deliveryDate": "2026-05-26",
+    "deliveryDate": "2026-05-25",
     "transferred": true,
     "items": [
       {
-        "name": "散养鸡蛋 12个装",
+        "name": "散养鸡蛋 12 包 1",
         "amount": 5.7
       },
       {
-        "name": "低脂软黄油（Devondale）",
+        "name": "特软黄油 低脂 1",
         "amount": 10.9
       },
       {
-        "name": "全脂牛奶 2L（Ashgrove）",
+        "name": "全脂牛奶 1",
         "amount": 5.45
       },
       {
-        "name": "猪肉韭菜煎饺（Bibigo）",
+        "name": "满都猪肉韭菜饺子 1",
         "amount": 5.7
       },
       {
-        "name": "小白菜",
+        "name": "亚洲蔡白 1",
         "amount": 2.9
       },
       {
-        "name": "嫩茎西兰花",
+        "name": "小西兰花 1",
         "amount": 3.5
       },
       {
-        "name": "西兰花",
+        "name": "西兰花中等 1",
         "amount": 2.04
       },
       {
-        "name": "棕洋葱 1kg",
-        "amount": 2
+        "name": "棕色洋葱 1",
+        "amount": 2.0
       },
       {
-        "name": "散装胡萝卜",
+        "name": "胡萝卜散 1",
         "amount": 0.44
       },
       {
-        "name": "荷兰奶油土豆",
+        "name": "荷兰奶油拉丝土豆散装 1",
         "amount": 0.7
       },
       {
-        "name": "散装口蘑",
+        "name": "新鲜散装杯状蘑菇 1",
         "amount": 2.7
       },
       {
-        "name": "大蒜",
+        "name": "大蒜预包装 1",
         "amount": 4.2
       },
       {
-        "name": "红洋葱",
+        "name": "洋葱红当地 1",
         "amount": 1.18
       },
       {
-        "name": "葱",
+        "name": "葱 1个",
         "amount": 2.9
       },
       {
-        "name": "面巾纸 6层装（Kleenex）",
-        "amount": 1
+        "name": "面巾纸 6 层软包 1",
+        "amount": 1.0
       },
       {
-        "name": "牛肉嫩煎片",
-        "amount": 11
+        "name": "铁板牛排 1",
+        "amount": 11.0
       },
       {
-        "name": "羊腿肉丁",
-        "amount": 13
+        "name": "羊腿切丁 1",
+        "amount": 13.0
       },
       {
-        "name": "人道认证鸡大腿肉 大包装（RSPCA）",
+        "name": "RSPCA 批准鸡腿肉大包 1",
         "amount": 17.4
       },
       {
-        "name": "奶油鸡肉面条杯汤（Continental）",
+        "name": "一杯汤奶油鸡肉配大量面条 2 1",
         "amount": 1.4
       },
       {
-        "name": "冻干豆腐味噌汤（Ajishima）",
+        "name": "冻干豆腐味噌汤 1",
         "amount": 1.55
       },
       {
-        "name": "油豆腐即食味噌汤 2包装（Ajishima）",
+        "name": "日式即食味噌汤炸豆腐2包1",
         "amount": 1.55
       }
     ]
   },
   {
+    "store": "coles",
     "week": "2026年5月第3周",
     "weekStart": "2026-05-18",
     "orderNumber": "259187713",
@@ -160,32 +358,30 @@
     "transferred": false,
     "items": [
       {
-        "name": "茶蜡烛 100个装（Coles）",
-        "amount": 11,
-        "forParents": true
+        "name": "小圆蜡烛 1",
+        "amount": 11.0
       },
       {
-        "name": "散养鸡蛋 12个装 x2",
-        "amount": 11.4,
-        "forParents": true
+        "name": "散养鸡蛋 12 包 2",
+        "amount": 11.4
       },
       {
-        "name": "全脂牛奶 3L x2",
-        "amount": 10.3,
-        "forParents": true
+        "name": "全脂牛奶2",
+        "amount": 10.3
       },
       {
-        "name": "韩式烤牛肉丸碗 x2（On The Menu）",
+        "name": "韩式烧烤肉丸碗 6",
         "amount": 37.8
       },
       {
-        "name": "大包装牛肉末 2kg（Drovers Choice）",
-        "amount": 24,
+        "name": "大包超值牛肉碎 1",
+        "amount": 24.0,
         "forParents": true
       }
     ]
   },
   {
+    "store": "coles",
     "week": "2026年5月第2周",
     "weekStart": "2026-05-11",
     "orderNumber": "257679783",
@@ -193,461 +389,448 @@
     "transferred": false,
     "items": [
       {
-        "name": "黄油微波爆米花（Coles）",
-        "amount": 1.9,
-        "forParents": true
+        "name": "微波炉爆米花黄油 2",
+        "amount": 1.9
       },
       {
-        "name": "盐味微波爆米花（Coles）",
-        "amount": 1.9,
-        "forParents": true
+        "name": "咸味微波炉爆米花 2",
+        "amount": 1.9
       },
       {
-        "name": "香肠土豆泥冷冻餐 x2（Core PowerFoods）",
-        "amount": 13
+        "name": "香肠与土豆泥 2",
+        "amount": 13.0
       },
       {
-        "name": "牛肉肉酱千层面（Coles Kitchen）",
-        "amount": 5
+        "name": "牛肉拉古千层面 1",
+        "amount": 5.0
       },
       {
-        "name": "意式牛肉小饺子（Core PowerFoods）",
+        "name": "牛肉托尔托莱尼 1",
         "amount": 6.5
       },
       {
-        "name": "印度黄油鸡冷冻餐（Core PowerFoods）",
+        "name": "黄油鸡1只",
         "amount": 6.5
       },
       {
-        "name": "鸡肉培根通心粉（Core PowerFoods）",
+        "name": "鸡肉培根通心粉 1",
         "amount": 6.5
       },
       {
-        "name": "鸡肉炒饭（Core PowerFoods）",
+        "name": "鸡肉炒饭 1",
         "amount": 6.5
       },
       {
-        "name": "奶油蘑菇鸡肉（Core PowerFoods）",
+        "name": "奶油蘑菇鸡 1",
         "amount": 6.5
       },
       {
-        "name": "花生酱沙爹鸡肉（Core PowerFoods）",
+        "name": "疯狂脆脆沙爹鸡 1",
         "amount": 6.5
       },
       {
-        "name": "精瘦牛肉丸（Core PowerFoods）",
+        "name": "圣肉丸 瘦牛肉 1",
         "amount": 6.5
       },
       {
-        "name": "日式鸡肉咖喱（Core PowerFoods）",
+        "name": "日式咖喱鸡1",
         "amount": 6.5
       },
       {
-        "name": "韩式烤牛肉冷冻餐 x2（Core PowerFoods）",
-        "amount": 13
+        "name": "韩式烧烤牛肉 2",
+        "amount": 13.0
       },
       {
-        "name": "韩式烤牛肉丸碗 x3（On The Menu）",
+        "name": "韩式烧烤肉丸碗 3",
         "amount": 18.9
       },
       {
-        "name": "羊肉炖菜（Coles Kitchen）",
-        "amount": 5
+        "name": "羊肉砂锅1",
+        "amount": 5.0
       },
       {
-        "name": "芝士通心粉（Core PowerFoods）",
+        "name": "装满 Mac N 奶酪 1",
         "amount": 6.5
       },
       {
-        "name": "鸡肉帕玛森配土豆泥（Core PowerFoods）",
+        "name": "帕尔马和马什 1",
         "amount": 6.5
       },
       {
-        "name": "烤鸡肉（Core PowerFoods）",
+        "name": "烤鸡 1",
         "amount": 6.5
       },
       {
-        "name": "烟熏肉丸冷冻餐 x2（Core PowerFoods）",
-        "amount": 13
+        "name": "烟山肉丸 2",
+        "amount": 13.0
       },
       {
-        "name": "托斯卡纳焗鸡肉（Core PowerFoods）",
+        "name": "托斯卡纳烤鸡 1",
         "amount": 6.5
       },
       {
-        "name": "九州黑蒜拉面（Nissin）",
+        "name": "拉面九州黑面1",
         "amount": 6.8
       },
       {
-        "name": "东京酱油拉面 5包装（Nissin）",
+        "name": "拉面东京酱油面 5 包 1",
         "amount": 6.8
       }
     ]
   },
   {
+    "store": "coles",
     "week": "2026年5月第1周",
     "weekStart": "2026-04-27",
     "orderNumber": "256848279",
-    "deliveryDate": "2026-05-03",
+    "deliveryDate": "2026-05-02",
     "transferred": true,
     "items": [
       {
-        "name": "白吐司面包",
+        "name": "白三明治面包 1",
         "amount": 3.1,
         "forParents": true
       },
       {
-        "name": "黄油微波爆米花（Poppin）",
-        "amount": 4.95,
-        "forParents": true
+        "name": "黄油微波炉爆米花 1",
+        "amount": 4.95
       },
       {
-        "name": "黄油微波爆米花（Coles）",
-        "amount": 0.95,
-        "forParents": true
+        "name": "微波炉爆米花黄油 1",
+        "amount": 0.95
       },
       {
-        "name": "盐味微波爆米花（Coles）",
-        "amount": 0.95,
-        "forParents": true
+        "name": "咸味微波爆米花 1",
+        "amount": 0.95
       },
       {
-        "name": "三倍黄油微波爆米花（Poppin）",
-        "amount": 4.95,
-        "forParents": true
+        "name": "三层黄油微波炉爆米花 1",
+        "amount": 4.95
       },
       {
-        "name": "洗碗机洗涤片（Coles Ultra）",
-        "amount": 5.5,
-        "forParents": true
+        "name": "洗碗机片 1",
+        "amount": 5.5
       },
       {
-        "name": "全脂牛奶 3L x2",
-        "amount": 10.3,
-        "forParents": true
+        "name": "全脂牛奶2",
+        "amount": 10.3
       },
       {
-        "name": "香肠土豆泥冷冻餐",
+        "name": "香肠和土豆泥 1",
         "amount": 7.5
       },
       {
-        "name": "牛肉肉酱千层面（Coles Kitchen）",
-        "amount": 5
+        "name": "牛肉拉古千层面 1",
+        "amount": 5.0
       },
       {
-        "name": "韩式烤牛肉冷冻餐",
+        "name": "韩式烧烤牛肉 1",
         "amount": 7.5
       },
       {
-        "name": "羊肉炖菜（Coles Kitchen）",
-        "amount": 5
+        "name": "羊肉砂锅1",
+        "amount": 5.0
       },
       {
-        "name": "烟熏肉丸冷冻餐",
+        "name": "烟山肉丸 1",
         "amount": 7.5
       },
       {
-        "name": "棕洋葱",
-        "amount": 3.8,
+        "name": "棕色洋葱 1",
+        "amount": 3.8
+      },
+      {
+        "name": "3星羊肉碎 1",
+        "amount": 9.0,
         "forParents": true
       },
       {
-        "name": "羊肉末 500g",
-        "amount": 9,
+        "name": "大包超值牛肉碎 1",
+        "amount": 25.0,
         "forParents": true
       },
       {
-        "name": "大包装牛肉末 2kg（Drovers Choice）",
-        "amount": 25,
-        "forParents": true
-      },
-      {
-        "name": "速食燕麦片 10包装（Uncle Tobys）",
+        "name": "袋装燕麦速食 10 包 1",
         "amount": 3.5
       },
       {
-        "name": "甜辣酱（Mae Ploy）",
-        "amount": 4.1,
-        "forParents": true
+        "name": "甜辣酱1",
+        "amount": 4.1
       }
     ]
   },
   {
+    "store": "coles",
     "week": "2026年4月第2周",
-    "weekStart": "2026-04-07",
+    "weekStart": "2026-04-06",
     "orderNumber": "100793544",
-    "deliveryDate": "2026-04-12",
+    "deliveryDate": "2026-04-11",
     "transferred": true,
     "items": [
       {
-        "name": "芝士白米饼 100g",
-        "amount": 1
+        "name": "芝士白米果 1",
+        "amount": 1.0
       },
       {
-        "name": "花生腰果坚果棒 6条装",
+        "name": "坚果棒花生腰果加牛奶巧克力多件装零食 6 包 1",
         "amount": 2.75
       },
       {
-        "name": "原味米饼 100g",
-        "amount": 1
+        "name": "原味米果 1",
+        "amount": 1.0
       },
       {
-        "name": "笼养鸡蛋 30个装 1.8kg",
+        "name": "笼养鸡蛋30包1",
         "amount": 15.55,
         "forParents": true
       },
       {
-        "name": "散养鸡蛋 12个装 700g",
+        "name": "散养鸡蛋 12 包 1",
         "amount": 5.7
       },
       {
-        "name": "椰子酸奶 香草味 900g",
+        "name": "椰子酸奶香草 1",
         "amount": 9.5,
         "forParents": true
       },
       {
-        "name": "全脂牛奶 3L x2",
-        "amount": 9.3,
-        "forParents": true
+        "name": "全脂牛奶2",
+        "amount": 9.3
       },
       {
-        "name": "原味泡菜 330g",
+        "name": "原味泡菜 1",
         "amount": 7.1
       },
       {
-        "name": "石烤蒜香法棍 400g",
-        "amount": 4
+        "name": "石烤大蒜法棍 1",
+        "amount": 4.0
       },
       {
-        "name": "12种蔬菜汤料 375g",
+        "name": "12 混合汤料 1",
         "amount": 2.3
       },
       {
-        "name": "天然希腊酸奶 170g",
-        "amount": 2
+        "name": "锅装酸奶天然希腊 1",
+        "amount": 2.0
       },
       {
-        "name": "香肠薯泥便当 350g",
+        "name": "香肠和土豆泥 1",
         "amount": 7.5
       },
       {
-        "name": "沙爹鸡便当 350g",
+        "name": "疯狂脆脆沙爹鸡 1",
         "amount": 7.5
       },
       {
-        "name": "日式鸡肉咖喱便当 350g",
+        "name": "日式咖喱鸡1",
         "amount": 7.5
       },
       {
-        "name": "韩式烤牛肉便当 350g",
+        "name": "韩式烧烤牛肉 1",
         "amount": 7.5
       },
       {
-        "name": "有机嫩菠菜 100g",
+        "name": "小菠菜 1",
         "amount": 4.9
       },
       {
-        "name": "布茹斯克梨 约230g",
+        "name": "博斯克梨 1",
         "amount": 1.04
       },
       {
-        "name": "新鲜羽衣甘蓝",
+        "name": "羽衣甘蓝束绿色 1",
         "amount": 4.5
       },
       {
-        "name": "脐橙 约250g",
+        "name": "橙色肚脐1",
         "amount": 1.73
       },
       {
-        "name": "黄桃 约120g",
+        "name": "桃子黄1",
         "amount": 0.83
       },
       {
-        "name": "黄金番薯 约500g",
+        "name": "土豆甜金1",
         "amount": 1.75
       },
       {
-        "name": "皇家嘎啦苹果 约170g",
+        "name": "皇家嘎拉苹果散装 1",
         "amount": 1.17
       },
       {
-        "name": "威廉斯梨 约180g",
+        "name": "威廉·巴特利特梨中号 1",
         "amount": 0.63
       },
       {
-        "name": "塔斯马尼亚三文鱼排 约200g",
+        "name": "新鲜塔斯马尼亚三文鱼带皮部分 1",
         "amount": 7.6
       },
       {
-        "name": "奶油鸡肉杯汤 60g",
+        "name": "一杯汤奶油鸡肉配大量面条 2 1",
         "amount": 1.4
       },
       {
-        "name": "冻干豆腐味噌汤 12g",
+        "name": "冻干豆腐味噌汤 1",
         "amount": 1.55
       },
       {
-        "name": "油豆腐即食味噌汤 2包装",
+        "name": "日式即食味噌汤炸豆腐2包1",
         "amount": 1.55
       },
       {
-        "name": "油醋汁金枪鱼 95g",
+        "name": "诱惑者热情醋汁金枪鱼 1",
         "amount": 1.45
       },
       {
-        "name": "橄榄油金枪鱼 95g",
+        "name": "金枪鱼橄榄油混合物 1",
         "amount": 1.45
       },
       {
-        "name": "裙带菜即食味噌汤 12包装",
+        "name": "裙带菜即食味噌汤 12 包 1",
         "amount": 4.2
       },
       {
-        "name": "普通白面粉 2kg x2",
-        "amount": 5,
+        "name": "白普通面粉 2",
+        "amount": 5.0,
         "forParents": true
       }
     ]
   },
   {
+    "store": "coles",
     "week": "2026年4月第3周",
-    "weekStart": "2026-04-14",
+    "weekStart": "2026-04-13",
     "orderNumber": "255124517",
     "deliveryDate": "2026-04-18",
     "transferred": true,
     "items": [
       {
-        "name": "麦片能量棒 5条装",
+        "name": "Nutri 谷物原味棒 5 包 1",
         "amount": 2.25
       },
       {
-        "name": "巧克力早餐饼干 6块装",
+        "name": "巧克力早餐饼干 6 包 1",
         "amount": 2.25
       },
       {
-        "name": "原味玉米薄饼 150g",
+        "name": "原味玉米片 1",
         "amount": 1.05
       },
       {
-        "name": "厨房纸巾 2卷装",
+        "name": "纸巾白色 1",
         "amount": 2.25
       },
       {
-        "name": "笼养鸡蛋 30个装 1.8kg",
+        "name": "笼养鸡蛋30包1",
         "amount": 15.55,
         "forParents": true
       },
       {
-        "name": "散养鸡蛋 12个装 700g",
+        "name": "散养鸡蛋 12 包 1",
         "amount": 5.7
       },
       {
-        "name": "椰子酸奶 香草味 900g",
+        "name": "椰子酸奶香草 1",
         "amount": 9.5,
         "forParents": true
       },
       {
-        "name": "天然希腊酸奶 170g",
-        "amount": 2
+        "name": "锅装酸奶天然希腊 1",
+        "amount": 2.0
       },
       {
-        "name": "速冻豌豆玉米粒 1kg x2",
-        "amount": 10
+        "name": "速冻豌豆和玉米 2",
+        "amount": 10.0
       },
       {
-        "name": "新鲜羽衣甘蓝",
+        "name": "羽衣甘蓝束绿色 1",
         "amount": 4.5
       },
       {
-        "name": "羊肉末 500g",
+        "name": "3星羊肉碎 1",
         "amount": 8.5,
         "forParents": true
       },
       {
-        "name": "牛肉末 2kg",
-        "amount": 24,
+        "name": "大包超值牛肉碎 1",
+        "amount": 24.0,
         "forParents": true
       },
       {
-        "name": "塔斯马尼亚三文鱼排 约200g x2",
+        "name": "新鲜塔斯马尼亚三文鱼 带皮 2 份",
         "amount": 15.2
       },
       {
-        "name": "特级初榨橄榄油 375mL",
-        "amount": 11
+        "name": "特级初榨橄榄油经典 1",
+        "amount": 11.0
       },
       {
-        "name": "美禄全谷物早餐麦片 350g",
+        "name": "Milo 全谷物能量和纤维早餐麦片 1",
         "amount": 3.5
       },
       {
-        "name": "普通白面粉 2kg x2",
-        "amount": 5,
+        "name": "白普通面粉 2",
+        "amount": 5.0,
         "forParents": true
       }
     ]
   },
   {
+    "store": "coles",
     "week": "2026年4月第4周",
     "weekStart": "2026-04-20",
     "orderNumber": "256169013",
-    "deliveryDate": "2026-04-24",
+    "deliveryDate": "2026-04-23",
     "transferred": true,
     "items": [
       {
-        "name": "泉水三文鱼罐头 95g x2",
+        "name": "三文鱼泉水2",
         "amount": 4.2
       },
       {
-        "name": "草莓酸奶夹心早餐饼干 5块装",
+        "name": "草莓酸奶三明治早餐饼干5包1",
         "amount": 2.25
       },
       {
-        "name": "松木深层洁厕凝胶 750mL x2",
-        "amount": 7
+        "name": "深层功效凝胶厕所清洁剂松 2",
+        "amount": 7.0
       },
       {
-        "name": "笼养鸡蛋 30个装 1.8kg x2",
+        "name": "笼养鸡蛋30包2",
         "amount": 31.1,
         "forParents": true
       },
       {
-        "name": "散养鸡蛋 12个装 700g",
+        "name": "散养鸡蛋 12 包 1",
         "amount": 5.7
       },
       {
-        "name": "椰子酸奶 香草味 900g",
+        "name": "椰子酸奶香草 1",
         "amount": 9.5,
         "forParents": true
       },
       {
-        "name": "全脂牛奶 3L x2",
-        "amount": 9.3,
-        "forParents": true
+        "name": "全脂牛奶2",
+        "amount": 9.3
       },
       {
-        "name": "12种蔬菜汤料 375g",
+        "name": "12 混合汤料 1",
         "amount": 2.3
       },
       {
-        "name": "天然希腊酸奶 170g",
-        "amount": 2
+        "name": "锅装酸奶天然希腊 1",
+        "amount": 2.0
       },
       {
-        "name": "新鲜羽衣甘蓝",
+        "name": "羽衣甘蓝束绿色 1",
         "amount": 4.5
       },
       {
-        "name": "防蛀牙膏 180g",
-        "amount": 3.45,
-        "forParents": true
+        "name": "防蛀牙膏 普通口味 2",
+        "amount": 6.9
       },
       {
-        "name": "防蛀牙膏 180g",
-        "amount": 3.45
-      },
-      {
-        "name": "奶油南瓜汤罐头 535g",
+        "name": "经典奶油南瓜汤罐头1",
         "amount": 2.2
       }
     ]
