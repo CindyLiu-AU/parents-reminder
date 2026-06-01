@@ -221,6 +221,25 @@
     #flashcards-btn { bottom: 252px; }
     #roadrules-btn  { bottom: 316px; }
     #dict-btn       { bottom: 380px; }
+    #podcast-btn    { bottom: 444px; }
+
+    /* Podcast overlay */
+    #podcast-overlay {
+      display: none; position: fixed; inset: 0; z-index: 1000;
+      flex-direction: column; background: #000d1a;
+    }
+    #podcast-overlay.open { display: flex; }
+    #podcast-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 20px; background: #091525;
+      border-bottom: 2px solid #f59e0b; flex-shrink: 0;
+    }
+    #podcast-bar span { font-size: 22px; color: #f59e0b; font-weight: 700; }
+    #podcast-close {
+      background: none; border: none; color: #f1f5f9;
+      font-size: 32px; cursor: pointer; line-height: 1; padding: 0 4px;
+    }
+    #podcast-frame { flex: 1; border: none; width: 100%; background: #fff; }
 
     #bottombar { display: none; }
 
@@ -330,7 +349,7 @@
       .answer-desc { font-size: 14px; }
 
       /* Nav buttons — horizontal row along the bottom */
-      #reminders-btn, #spending-btn, #apps-btn, #flashcards-btn, #roadrules-btn, #dict-btn {
+      #reminders-btn, #spending-btn, #apps-btn, #flashcards-btn, #roadrules-btn, #dict-btn, #podcast-btn {
         width: 40px; height: 40px; font-size: 18px; bottom: 10px;
       }
       #reminders-btn  { right: 8px; }
@@ -339,6 +358,7 @@
       #flashcards-btn { right: 152px; }
       #roadrules-btn  { right: 200px; }
       #dict-btn       { right: 248px; }
+      #podcast-btn    { right: 296px; }
 
       /* Refresh button */
       #refresh-btn { top: 52px; }
@@ -377,6 +397,16 @@
   <a href="apps.html" id="apps-btn" onclick="event.stopPropagation()">📱</a>
   <a href="spending.html" id="spending-btn" onclick="event.stopPropagation()">🛒</a>
   <a href="reminders.html" id="reminders-btn" onclick="event.stopPropagation()">📋</a>
+  <button id="podcast-btn" onclick="openPodcast();event.stopPropagation()">📻</button>
+
+  <!-- SBS Chinese podcast overlay -->
+  <div id="podcast-overlay">
+    <div id="podcast-bar">
+      <span>📻 SBS 普通话广播</span>
+      <button id="podcast-close" onclick="closePodcast()">✕</button>
+    </div>
+    <iframe id="podcast-frame" src="" allowfullscreen></iframe>
+  </div>
 
   <script>
     // ── Weather code → emoji + description ───────────────────
@@ -715,6 +745,17 @@
     // ── Manual refresh ───────────────────────────────────────
     function manualRefresh() {
       location.reload();
+    }
+
+    // ── SBS Podcast overlay ───────────────────────────────────
+    function openPodcast() {
+      document.getElementById('podcast-frame').src =
+        'https://www.sbs.com.au/language/chinese/zh-hans/listen';
+      document.getElementById('podcast-overlay').classList.add('open');
+    }
+    function closePodcast() {
+      document.getElementById('podcast-overlay').classList.remove('open');
+      document.getElementById('podcast-frame').src = '';
     }
 
     // ── Countdown ─────────────────────────────────────────────
