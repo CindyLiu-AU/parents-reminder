@@ -84,12 +84,12 @@
     }
     @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
 
-    /* ── Translate row ── */
-    .action-row { display: flex; gap: 10px; flex-shrink: 0; }
+    /* ── Action row: translate + repeat buttons all on one line ── */
+    .action-row { display: flex; gap: 8px; flex-shrink: 0; }
     .translate-btn {
-      background: #f59e0b; border: none; border-radius: 16px; padding: 16px;
-      font-size: 30px; font-weight: 900; font-family: inherit; color: #1a1000;
-      cursor: pointer; flex: 1; letter-spacing: 4px;
+      background: #f59e0b; border: none; border-radius: 16px; padding: 14px 8px;
+      font-size: 24px; font-weight: 900; font-family: inherit; color: #1a1000;
+      cursor: pointer; flex: 1; letter-spacing: 2px;
       transition: opacity 0.15s, transform 0.1s;
     }
     .translate-btn:active { opacity: 0.8; transform: scale(0.98); }
@@ -120,12 +120,11 @@
     }
     .speak-btn:active { opacity: 0.7; }
 
-    /* ── Repeat section ── */
+    /* ── Repeat section — progress + stop only ── */
     .repeat-section { display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
-    .repeat-row { display: flex; gap: 10px; }
     .repeat-btn {
       flex: 1; background: #112240; border: 2px solid #2e5f9e; border-radius: 14px;
-      padding: 12px 6px; font-size: 22px; font-family: inherit; color: #90caf9;
+      padding: 14px 4px; font-size: 20px; font-family: inherit; color: #90caf9;
       cursor: pointer; font-weight: 700; transition: all 0.15s;
     }
     .repeat-btn:active { opacity: 0.7; }
@@ -177,7 +176,10 @@
 </div>
 
 <div class="action-row">
-  <button class="translate-btn" id="trans-btn" onclick="doTranslate()">翻 译</button>
+  <button class="translate-btn" id="trans-btn" onclick="doTranslate()">翻译</button>
+  <button class="repeat-btn" id="rep3"  onclick="startRepeat(3)">🔁 3次</button>
+  <button class="repeat-btn" id="rep5"  onclick="startRepeat(5)">🔁 5次</button>
+  <button class="repeat-btn" id="rep10" onclick="startRepeat(10)">🔁 10次</button>
 </div>
 
 <div class="result-box" id="result-box">
@@ -187,11 +189,6 @@
 <button class="speak-btn"     id="speak-btn"     style="display:none" onclick="speakBoth()">🔊 再次朗读</button>
 
 <div class="repeat-section" id="repeat-section" style="display:none">
-  <div class="repeat-row">
-    <button class="repeat-btn" id="rep3"  onclick="startRepeat(3)">🔁 3次</button>
-    <button class="repeat-btn" id="rep5"  onclick="startRepeat(5)">🔁 5次</button>
-    <button class="repeat-btn" id="rep10" onclick="startRepeat(10)">🔁 10次</button>
-  </div>
   <div class="repeat-progress" id="repeat-progress" style="display:none"></div>
   <button class="stop-btn" id="stop-btn" onclick="stopRepeat()" style="display:none">⏹ 停止朗读</button>
 </div>
