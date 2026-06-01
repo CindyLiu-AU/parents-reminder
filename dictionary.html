@@ -45,39 +45,35 @@
     .lang-btn.active { background: #1e3a6e; border-color: #f59e0b; color: #f59e0b; }
 
     /* ── Input area ── */
-    .input-wrap { position: relative; flex-shrink: 0; }
+    .input-wrap {
+      flex-shrink: 0;
+      display: flex;
+      gap: 10px;
+      align-items: stretch;
+    }
+    .textarea-wrap { flex: 1; position: relative; }
     textarea {
       width: 100%;
       background: #112240; border: 2px solid #2e5f9e; border-radius: 16px;
-      padding: 16px 20px; font-size: 34px; font-weight: 700; color: #f0f4f8;
+      padding: 14px 52px 14px 16px; font-size: 30px; font-weight: 700; color: #f0f4f8;
       font-family: inherit; outline: none; resize: none;
-      line-height: 1.35; height: 110px; letter-spacing: 1px;
+      line-height: 1.35; height: 80px; letter-spacing: 1px;
       transition: border-color 0.2s;
     }
     textarea::placeholder { color: #334d66; font-weight: 400; }
     textarea:focus { border-color: #f59e0b; }
     .clear-btn {
-      position: absolute; top: 12px; right: 12px;
+      position: absolute; top: 10px; right: 10px;
       background: #1e3a6e; border: 1px solid #2e5f9e; border-radius: 50%;
-      width: 40px; height: 40px; font-size: 18px; color: #64748b; cursor: pointer;
+      width: 36px; height: 36px; font-size: 16px; color: #64748b; cursor: pointer;
       display: flex; align-items: center; justify-content: center;
     }
     .clear-btn:active { background: #2e5a8f; }
 
-    /* ── Translate + mic row ── */
-    .action-row { display: flex; gap: 10px; flex-shrink: 0; }
-    .translate-btn {
-      background: #f59e0b; border: none; border-radius: 16px; padding: 16px;
-      font-size: 30px; font-weight: 900; font-family: inherit; color: #1a1000;
-      cursor: pointer; flex: 1; letter-spacing: 4px;
-      transition: opacity 0.15s, transform 0.1s;
-    }
-    .translate-btn:active { opacity: 0.8; transform: scale(0.98); }
-    .translate-btn:disabled { opacity: 0.4; }
-
+    /* ── Mic button — right of input, large tap target ── */
     .mic-btn {
       background: #1e3a6e; border: 2px solid #2e5f9e; border-radius: 16px;
-      width: 72px; font-size: 30px; color: #90caf9; cursor: pointer;
+      width: 80px; font-size: 40px; color: #90caf9; cursor: pointer;
       display: flex; align-items: center; justify-content: center;
       transition: all 0.15s; flex-shrink: 0;
     }
@@ -87,6 +83,17 @@
       animation: pulse 1s infinite;
     }
     @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+
+    /* ── Translate row ── */
+    .action-row { display: flex; gap: 10px; flex-shrink: 0; }
+    .translate-btn {
+      background: #f59e0b; border: none; border-radius: 16px; padding: 16px;
+      font-size: 30px; font-weight: 900; font-family: inherit; color: #1a1000;
+      cursor: pointer; flex: 1; letter-spacing: 4px;
+      transition: opacity 0.15s, transform 0.1s;
+    }
+    .translate-btn:active { opacity: 0.8; transform: scale(0.98); }
+    .translate-btn:disabled { opacity: 0.4; }
 
     /* ── Result box — fills all remaining space ── */
     .result-box {
@@ -162,13 +169,15 @@
 </div>
 
 <div class="input-wrap">
-  <textarea id="input" placeholder="输入英文单词或句子…" rows="3"></textarea>
-  <button class="clear-btn" onclick="clearInput()">✕</button>
+  <div class="textarea-wrap">
+    <textarea id="input" placeholder="输入英文单词或句子…" rows="2"></textarea>
+    <button class="clear-btn" onclick="clearInput()">✕</button>
+  </div>
+  <button class="mic-btn" id="mic-btn" onclick="toggleVoice()">🎤</button>
 </div>
 
 <div class="action-row">
   <button class="translate-btn" id="trans-btn" onclick="doTranslate()">翻 译</button>
-  <button class="mic-btn" id="mic-btn" onclick="toggleVoice()">🎤</button>
 </div>
 
 <div class="result-box" id="result-box">
