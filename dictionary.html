@@ -111,16 +111,7 @@
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
     .result-error { font-size: 24px; color: #f87171; }
 
-    /* ── Speak button ── */
-    .speak-btn {
-      background: #1e3a6e; border: 1px solid #2e5f9e; border-radius: 14px;
-      padding: 12px; font-size: 22px; font-family: inherit; color: #90caf9;
-      cursor: pointer; width: 100%; font-weight: 700; flex-shrink: 0;
-      transition: opacity 0.15s;
-    }
-    .speak-btn:active { opacity: 0.7; }
-
-    /* ── Repeat section — progress + stop only ── */
+/* ── Repeat section — progress + stop only ── */
     .repeat-section { display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
     .repeat-btn {
       flex: 1; background: #112240; border: 2px solid #2e5f9e; border-radius: 14px;
@@ -177,6 +168,7 @@
 
 <div class="action-row">
   <button class="translate-btn" id="trans-btn" onclick="doTranslate()">翻译</button>
+  <button class="repeat-btn" id="rep1"  onclick="startRepeat(1)">🔁 1次</button>
   <button class="repeat-btn" id="rep3"  onclick="startRepeat(3)">🔁 3次</button>
   <button class="repeat-btn" id="rep5"  onclick="startRepeat(5)">🔁 5次</button>
   <button class="repeat-btn" id="rep10" onclick="startRepeat(10)">🔁 10次</button>
@@ -186,7 +178,6 @@
   <div class="result-placeholder">翻译结果显示在这里</div>
 </div>
 
-<button class="speak-btn"     id="speak-btn"     style="display:none" onclick="speakBoth()">🔊 再次朗读</button>
 
 <div class="repeat-section" id="repeat-section" style="display:none">
   <div class="repeat-progress" id="repeat-progress" style="display:none"></div>
@@ -327,12 +318,10 @@
 
   /* ── Show / hide panels ── */
   function showResultPanel() {
-    document.getElementById('speak-btn').style.display      = 'block';
     document.getElementById('repeat-section').style.display = 'flex';
     document.getElementById('history-wrap').style.display   = 'none';
   }
   function showHistoryPanel() {
-    document.getElementById('speak-btn').style.display      = 'none';
     document.getElementById('repeat-section').style.display = 'none';
     const hist = loadHistory();
     document.getElementById('history-wrap').style.display   = hist.length ? 'flex' : 'none';
