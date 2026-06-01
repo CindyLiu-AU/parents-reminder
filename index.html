@@ -418,7 +418,10 @@
   <div id="podcast-overlay">
     <div id="podcast-bar">
       <span>📻 SBS 普通话广播</span>
-      <button id="podcast-close" onclick="closePodcast()">✕</button>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <button class="secondary-theme-toggle" onclick="toggleColorTheme();event.stopPropagation()" title="切换亮色/暗色"></button>
+        <button id="podcast-close" onclick="closePodcast()">✕</button>
+      </div>
     </div>
     <iframe id="podcast-frame" src="" allowfullscreen></iframe>
   </div>
