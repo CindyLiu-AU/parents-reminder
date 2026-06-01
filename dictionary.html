@@ -375,7 +375,7 @@
   }
 
   /* ── Clear ── */
-  function clearInput(noFocus = false) {
+  function clearInput(noFocus = true) {
     stopRepeat();
     document.getElementById('input').value = '';
     document.getElementById('result-box').innerHTML = '<div class="result-placeholder">翻译结果显示在这里</div>';
