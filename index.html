@@ -449,10 +449,10 @@
         <button class="podcast-page-btn active" id="pp1" onclick="setPodcastPage(1)">第1页</button>
         <button class="podcast-page-btn"        id="pp2" onclick="setPodcastPage(2)">第2页</button>
         <button class="podcast-page-btn"        id="pp3" onclick="setPodcastPage(3)">第3页</button>
-        <button class="pod-nav-btn" id="pod-back" onclick="podcastBack()" disabled title="后退">◀</button>
-        <button class="pod-nav-btn" id="pod-fwd"  onclick="podcastForward()" disabled title="前进">▶</button>
-        <button class="pod-nav-btn" onclick="podcastZoomOut()" title="缩小">A－</button>
-        <button class="pod-nav-btn" onclick="podcastZoomIn()"  title="放大">A＋</button>
+        <button class="pod-nav-btn" id="pod-back" onclick="podcastBack()" title="后退">后退</button>
+        <button class="pod-nav-btn" id="pod-fwd"  onclick="podcastForward()" title="前进">前进</button>
+        <button class="pod-nav-btn" onclick="podcastZoomOut()" title="缩小">缩小</button>
+        <button class="pod-nav-btn" onclick="podcastZoomIn()"  title="放大">放大</button>
         <button id="podcast-close" onclick="closePodcast()">✕</button>
       </div>
     </div>
@@ -802,51 +802,15 @@
     // ── SBS Podcast overlay ───────────────────────────────────
     const PODCAST_BASE = 'https://www.sbs.com.au/language/chinese/zh-hans/collection/%E6%9B%B4%E5%A4%9Asbs%E6%99%AE%E9%80%9A%E8%AF%9D%E6%92%AD%E5%AE%A2?page=';
 
-    let podcastNavDepth = 0; // how many pages forward from the starting page
-    let podcastNavMax   = 0; // furthest depth reached (enables forward button)
-    let _podNavDir      = null;  // 'back' | 'fwd' | null — set before calling history.back/forward
-    let _podNavSrcSet   = false; // true when we just changed src (don't count as user nav)
-    let podcastZoom     = 1.0;
-
-    document.addEventListener('DOMContentLoaded', function () {
-      document.getElementById('podcast-frame').addEventListener('load', function () {
-        if (_podNavSrcSet) {
-          _podNavSrcSet = false;
-          updatePodNavBtns();
-          return;
-        }
-        if (_podNavDir === 'back') {
-          podcastNavDepth = Math.max(0, podcastNavDepth - 1);
-        } else if (_podNavDir === 'fwd') {
-          podcastNavDepth = Math.min(podcastNavMax, podcastNavDepth + 1);
-        } else {
-          // User clicked a link inside the iframe
-          podcastNavDepth++;
-          podcastNavMax = podcastNavDepth;
-        }
-        _podNavDir = null;
-        updatePodNavBtns();
-      });
-    });
-
-    function updatePodNavBtns() {
-      document.getElementById('pod-back').disabled = podcastNavDepth <= 0;
-      document.getElementById('pod-fwd').disabled  = podcastNavDepth >= podcastNavMax;
-    }
+    let podcastZoom = 1.0;
 
     function podcastBack() {
-      if (podcastNavDepth > 0) {
-        _podNavDir = 'back';
-        try { document.getElementById('podcast-frame').contentWindow.history.back(); }
-        catch(e) { _podNavDir = null; }
-      }
+      try { document.getElementById('podcast-frame').contentWindow.history.back(); }
+      catch(e) {}
     }
     function podcastForward() {
-      if (podcastNavDepth < podcastNavMax) {
-        _podNavDir = 'fwd';
-        try { document.getElementById('podcast-frame').contentWindow.history.forward(); }
-        catch(e) { _podNavDir = null; }
-      }
+      try { document.getElementById('podcast-frame').contentWindow.history.forward(); }
+      catch(e) {}
     }
 
     function applyPodcastZoom() {
