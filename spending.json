@@ -23,7 +23,8 @@
       },
       {
         "name": "整颗白菜 Wombok",
-        "amount": 5.9
+        "amount": 5.9,
+        "forParents": true
       },
       {
         "name": "Sunrice 日向短粒米",
