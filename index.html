@@ -198,7 +198,7 @@
 
     #timeslot-badge { display: none; }
 
-    #reminders-btn, #spending-btn, #apps-btn, #flashcards-btn, #roadrules-btn, #dict-btn {
+    #reminders-btn, #spending-btn, #apps-btn, #flashcards-btn, #roadrules-btn, #dict-btn, #podcast-btn {
       position: fixed;
       right: 20px;
       background: #1e3a6e;
@@ -332,9 +332,6 @@
       .nb-title { font-size: 18px; }
       .nb-time  { font-size: 24px; }
 
-      /* Main card */
-      .card { padding: 12px 18px; margin-top: 52px; margin-bottom: 62px; max-height: calc(100vh - 118px); }
-
       /* Notice text inside card */
       .icon  { font-size: 32px; }
       .title { font-size: 26px; }
@@ -348,17 +345,29 @@
       .answer-cn { font-size: 22px; }
       .answer-desc { font-size: 14px; }
 
-      /* Nav buttons — horizontal row along the bottom */
-      #reminders-btn, #spending-btn, #apps-btn, #flashcards-btn, #roadrules-btn, #dict-btn, #podcast-btn {
-        width: 40px; height: 40px; font-size: 18px; bottom: 10px;
+      /* Nav — full-width bottom bar */
+      #bottom-nav {
+        position: fixed !important;
+        bottom: 0; left: 0; right: 0;
+        height: 80px;
+        background: #091525;
+        border-top: 2px solid #1e3a5f;
+        display: flex !important;
+        justify-content: space-evenly;
+        align-items: center;
+        padding: 0 6px;
+        z-index: 200;
       }
-      #reminders-btn  { right: 8px; }
-      #spending-btn   { right: 56px; }
-      #apps-btn       { right: 104px; }
-      #flashcards-btn { right: 152px; }
-      #roadrules-btn  { right: 200px; }
-      #dict-btn       { right: 248px; }
-      #podcast-btn    { right: 296px; }
+      #bottom-nav > * {
+        position: static !important;
+        width: 54px !important;
+        height: 54px !important;
+        font-size: 26px !important;
+        bottom: auto !important;
+        right: auto !important;
+        flex-shrink: 0;
+      }
+      .card { padding: 12px 18px; margin-top: 52px; margin-bottom: 88px; max-height: calc(100vh - 136px); }
 
       /* Refresh button */
       #refresh-btn { top: 52px; }
@@ -391,13 +400,15 @@
   <div id="timeslot-badge"></div>
   <div id="bottombar"></div>
   <button id="refresh-btn" onclick="manualRefresh();event.stopPropagation()">↻</button>
-  <a href="dictionary.html" id="dict-btn" onclick="event.stopPropagation()">🔍</a>
-  <a href="roadrules.html" id="roadrules-btn" onclick="event.stopPropagation()">🚗</a>
-  <a href="flashcards.html" id="flashcards-btn" onclick="event.stopPropagation()">📖</a>
-  <a href="apps.html" id="apps-btn" onclick="event.stopPropagation()">📱</a>
-  <a href="spending.html" id="spending-btn" onclick="event.stopPropagation()">🛒</a>
-  <a href="reminders.html" id="reminders-btn" onclick="event.stopPropagation()">📋</a>
-  <button id="podcast-btn" onclick="openPodcast();event.stopPropagation()">📻</button>
+  <nav id="bottom-nav">
+    <a href="dictionary.html" id="dict-btn" onclick="event.stopPropagation()">🔍</a>
+    <a href="roadrules.html" id="roadrules-btn" onclick="event.stopPropagation()">🚗</a>
+    <a href="flashcards.html" id="flashcards-btn" onclick="event.stopPropagation()">📖</a>
+    <a href="apps.html" id="apps-btn" onclick="event.stopPropagation()">📱</a>
+    <a href="spending.html" id="spending-btn" onclick="event.stopPropagation()">🛒</a>
+    <a href="reminders.html" id="reminders-btn" onclick="event.stopPropagation()">📋</a>
+    <button id="podcast-btn" onclick="openPodcast();event.stopPropagation()">📻</button>
+  </nav>
 
   <!-- SBS Chinese podcast overlay -->
   <div id="podcast-overlay">
