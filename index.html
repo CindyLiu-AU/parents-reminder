@@ -453,7 +453,6 @@
         <button class="pod-nav-btn" id="pod-fwd"  onclick="podcastForward()" disabled title="前进">▶</button>
         <button class="pod-nav-btn" onclick="podcastZoomOut()" title="缩小">A－</button>
         <button class="pod-nav-btn" onclick="podcastZoomIn()"  title="放大">A＋</button>
-        <button class="secondary-theme-toggle" onclick="toggleColorTheme();event.stopPropagation()" title="切换亮色/暗色"></button>
         <button id="podcast-close" onclick="closePodcast()">✕</button>
       </div>
     </div>
@@ -852,6 +851,8 @@
       podcastHistIdx = -1;
       podcastZoom = 1.0;
       applyPodcastZoom();
+      const themeBtn = document.getElementById('theme-toggle');
+      if (themeBtn) themeBtn.style.display = 'none';
       setPodcastPage(1);
       document.getElementById('podcast-overlay').classList.add('open');
     }
@@ -860,6 +861,8 @@
       document.getElementById('podcast-frame').src = '';
       podcastZoom = 1.0;
       applyPodcastZoom();
+      const themeBtn = document.getElementById('theme-toggle');
+      if (themeBtn) themeBtn.style.display = '';
     }
 
     // ── Countdown ─────────────────────────────────────────────
