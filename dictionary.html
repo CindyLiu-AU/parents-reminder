@@ -147,11 +147,11 @@
     .history-item {
       background: #112240; border: 1px solid #1e3a5f; border-radius: 12px;
       padding: 12px 16px; display: flex; align-items: center; gap: 12px; cursor: pointer;
-      flex-shrink: 0;
+      flex-shrink: 0; min-width: 0; overflow: hidden;
     }
     .history-item:active { background: #1e3a5f; }
-    .hist-src { font-size: 22px; font-weight: 700; color: #f59e0b; flex: 1; }
-    .hist-res { font-size: 22px; font-weight: 700; color: #2dd4bf; }
+    .hist-src { font-size: 22px; font-weight: 700; color: #f59e0b; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .hist-res { font-size: 22px; font-weight: 700; color: #2dd4bf; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .hist-res.en { color: #f59e0b; }
     .hist-src.zh { color: #2dd4bf; }
 
