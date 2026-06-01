@@ -97,10 +97,18 @@
     .translate-btn:active { opacity: 0.8; transform: scale(0.98); }
     .translate-btn:disabled { opacity: 0.4; }
 
-    /* ── Result box — fills all remaining space ── */
+    /* ── Main area: result (left) + history (right) ── */
+    .main-area {
+      display: flex;
+      gap: 12px;
+      flex: 1;
+      min-height: 0;
+    }
+
+    /* ── Result box ── */
     .result-box {
       background: #0d2745; border: 2px solid #1e3a5f; border-radius: 16px;
-      padding: 16px; flex: 1; min-height: 0;
+      padding: 16px; flex: 1.4; min-height: 0;
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
       text-align: center; gap: 8px; overflow: hidden;
@@ -130,7 +138,7 @@
     }
     .stop-btn:active { opacity: 0.7; }
 
-    /* ── History — only shown when no result, scrolls internally ── */
+    /* ── History — right column, always visible when entries exist ── */
     .history-wrap {
       flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 8px; overflow: hidden;
     }
@@ -176,20 +184,19 @@
   <button class="repeat-btn" id="rep10" onclick="startRepeat(10)">🔁 10次</button>
 </div>
 
-<div class="result-box" id="result-box">
-  <div class="result-placeholder">翻译结果显示在这里</div>
+<div class="main-area">
+  <div class="result-box" id="result-box">
+    <div class="result-placeholder">翻译结果显示在这里</div>
+  </div>
+  <div class="history-wrap" id="history-wrap" style="display:none">
+    <div class="history-label">最近查过的词</div>
+    <div class="history-list" id="history-list"></div>
+  </div>
 </div>
-
 
 <div class="repeat-section" id="repeat-section" style="display:none">
   <div class="repeat-progress" id="repeat-progress" style="display:none"></div>
   <button class="stop-btn" id="stop-btn" onclick="stopRepeat()" style="display:none">⏹ 停止朗读</button>
-</div>
-
-<!-- History only shown when no result is displayed -->
-<div class="history-wrap" id="history-wrap" style="display:none">
-  <div class="history-label">最近查过的词</div>
-  <div class="history-list" id="history-list"></div>
 </div>
 
 <script>
@@ -321,12 +328,16 @@
   /* ── Show / hide panels ── */
   function showResultPanel() {
     document.getElementById('repeat-section').style.display = 'flex';
-    document.getElementById('history-wrap').style.display   = 'none';
+    refreshHistory();
   }
   function showHistoryPanel() {
     document.getElementById('repeat-section').style.display = 'none';
+    refreshHistory();
+  }
+  function refreshHistory() {
     const hist = loadHistory();
-    document.getElementById('history-wrap').style.display   = hist.length ? 'flex' : 'none';
+    document.getElementById('history-wrap').style.display = hist.length ? 'flex' : 'none';
+    renderHistory();
   }
 
   /* ── Clear ── */
@@ -461,8 +472,7 @@
   }
 
   /* ── Init ── */
-  renderHistory();
-  showHistoryPanel();
+  refreshHistory();
 
   document.getElementById('input').addEventListener('keydown', e => {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); doTranslate(); }
