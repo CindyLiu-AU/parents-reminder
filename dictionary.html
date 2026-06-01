@@ -240,13 +240,13 @@
   let currentRes = '';
 
   /* ── Direction toggle ── */
-  function setDir(dir) {
+  function setDir(dir, noFocus = false) {
     direction = dir;
     document.getElementById('btn-en-zh').classList.toggle('active', dir === 'en-zh');
     document.getElementById('btn-zh-en').classList.toggle('active', dir === 'zh-en');
     document.getElementById('input').placeholder =
       dir === 'en-zh' ? '输入英文单词或句子…' : '输入中文词语或句子…';
-    clearInput();
+    clearInput(noFocus);
   }
 
   /* ── TTS voices ── */
@@ -375,13 +375,13 @@
   }
 
   /* ── Clear ── */
-  function clearInput() {
+  function clearInput(noFocus = false) {
     stopRepeat();
     document.getElementById('input').value = '';
     document.getElementById('result-box').innerHTML = '<div class="result-placeholder">翻译结果显示在这里</div>';
     currentSrc = ''; currentRes = '';
     showHistoryPanel();
-    document.getElementById('input').focus();
+    if (!noFocus) document.getElementById('input').focus();
   }
 
   /* ── Translate ── */
@@ -460,8 +460,9 @@
   }
   function fillFromHistory(src, res, dir) {
     stopRepeat();
-    if (dir && dir !== direction) setDir(dir);
+    if (dir && dir !== direction) setDir(dir, true);
     document.getElementById('input').value = src;
+    document.getElementById('input').blur();
     currentSrc = src; currentRes = res;
     const cls = (dir || 'en-zh') === 'en-zh' ? 'zh' : 'en';
     document.getElementById('result-box').innerHTML = `<div class="result-text ${cls}">${res}</div>`;
