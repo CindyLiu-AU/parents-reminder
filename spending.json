@@ -19,7 +19,8 @@
       },
       {
         "name": "Milo 麦芽巧克力粉热饮或冷饮",
-        "amount": 5.35
+        "amount": 5.35,
+        "forParents": true
       },
       {
         "name": "整颗白菜 Wombok",
