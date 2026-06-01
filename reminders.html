@@ -157,6 +157,21 @@
       background: #22c55e; border-color: #22c55e; color: #fff;
     }
 
+    /* ── Item action bar ── */
+    .item-actions {
+      display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px;
+    }
+    .item-actions button {
+      background: transparent; border: 1px solid #1e3a5f; border-radius: 8px;
+      color: #64b5f6; font-size: 13px; padding: 5px 12px; cursor: pointer;
+      font-family: inherit; transition: all .15s; white-space: nowrap;
+    }
+    .item-actions button:hover { border-color: #3b7dd8; background: rgba(59,125,216,.08); }
+    .item-actions .btn-delete  { color: #f87171; border-color: #3d1515; }
+    .item-actions .btn-delete:hover { border-color: #ef4444; background: rgba(239,68,68,.1); }
+    .item-actions .btn-archive { color: #a78bfa; border-color: #2d1f4a; }
+    .item-actions .btn-archive:hover { border-color: #7c3aed; background: rgba(124,58,237,.1); }
+
     /* ── Add button ── */
     #add-btn {
       background: #f59e0b; color: #1a1000; border: none;
@@ -263,12 +278,11 @@
   <div id="list">加载中...</div>
 
   <script>
-    const ICONS = {
-      coles: '🚚', visit: '🏠', power: '⚡', custom: '📝', trip: '🧳'
-    };
-    const LABELS = {
-      coles: 'Coles 送货', visit: '家庭通知', power: '免费用电', custom: '通知', trip: '家庭旅行'
-    };
+    const ICONS  = { coles: '🚚', visit: '🏠', power: '⚡', custom: '📝', trip: '🧳' };
+    const LABELS = { coles: 'Coles 送货', visit: '家庭通知', power: '免费用电', custom: '通知', trip: '家庭旅行' };
+
+    let allData        = [];
+    let currentEditIdx = -1;
 
     function relativeDay(d) {
       const now = new Date();
@@ -330,6 +344,7 @@
             </div>`).join('')}
         </div>` : '';
 
+      const idx = d._idx;
       return `
         <div class="item">
           <div class="item-icon">${icon}</div>
@@ -340,6 +355,11 @@
             ${date ? `<div class="item-date">${date}</div>` : ''}
             ${note ? `<div class="item-note">${note}</div>` : ''}
             ${clHTML}
+            <div class="item-actions">
+              <button onclick="openEditModal(${idx})">✏️ 编辑</button>
+              <button class="btn-archive" onclick="archiveNotice(${idx})">📦 归档</button>
+              <button class="btn-delete"  onclick="deleteNotice(${idx})">🗑️ 删除</button>
+            </div>
           </div>
         </div>`;
     }
@@ -384,27 +404,29 @@
     fetch('history.json?t=' + Date.now())
       .then(r => r.json())
       .then(data => {
+        allData = data;
         if (!data.length) {
           document.getElementById('list').innerHTML = '<p style="color:#546e7a">暂无通知记录</p>';
           return;
         }
         const todayStart = new Date();
         todayStart.setHours(0, 0, 0, 0);
-        const upcoming = data.filter(d => parseItemDateTime(d) >= todayStart || d.pin_from)
-                             .sort((a, b) => parseItemDateTime(a) - parseItemDateTime(b));
+        const upcoming = data
+          .map((d, i) => ({ ...d, _idx: i }))
+          .filter(d => !d.archived && (parseItemDateTime(d) >= todayStart || d.pin_from))
+          .sort((a, b) => parseItemDateTime(a) - parseItemDateTime(b));
         document.getElementById('list').innerHTML = upcoming.length
           ? upcoming.map(renderItem).join('')
           : '<p style="color:#546e7a">暂无即将到来的通知</p>';
       });
 
-    // ── Add notification modal ────────────────────────────────
+    // ── GitHub helpers ────────────────────────────────────────
     const TOKEN_KEY = 'gh_sync_token';
     const API = 'https://api.github.com/repos/CindyLiu-AU/parents-reminder/contents/history.json';
 
     function encodeB64(str) {
       const bytes = new TextEncoder().encode(str);
-      let bin = '';
-      bytes.forEach(b => bin += String.fromCharCode(b));
+      let bin = ''; bytes.forEach(b => bin += String.fromCharCode(b));
       return btoa(bin);
     }
     function decodeB64(b64) {
@@ -412,28 +434,77 @@
       return new TextDecoder().decode(Uint8Array.from(bin, c => c.charCodeAt(0)));
     }
 
+    async function modifyData(mutateFn, commitMsg) {
+      let token = localStorage.getItem(TOKEN_KEY);
+      if (!token) {
+        token = prompt('请输入 GitHub PAT（只需输入一次）：');
+        if (!token) return false;
+        localStorage.setItem(TOKEN_KEY, token.trim());
+        token = token.trim();
+      }
+      try {
+        const getRes = await fetch(API, { headers: { Authorization: `token ${token}` } });
+        if (getRes.status === 401) { localStorage.removeItem(TOKEN_KEY); throw new Error('PAT 无效，请刷新重试'); }
+        if (!getRes.ok) throw new Error(`GitHub ${getRes.status}`);
+        const info    = await getRes.json();
+        const current = JSON.parse(decodeB64(info.content));
+        mutateFn(current);
+        const putRes = await fetch(API, {
+          method: 'PUT',
+          headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: commitMsg, content: encodeB64(JSON.stringify(current, null, 2)), sha: info.sha })
+        });
+        if (!putRes.ok) { const e = await putRes.json().catch(() => ({})); throw new Error(e.message || `GitHub ${putRes.status}`); }
+        return true;
+      } catch(e) { return e; }
+    }
+
+    // ── Date helpers ──────────────────────────────────────────
     function toFulldate(dateStr) {
       const [y, m, d] = dateStr.split('-').map(Number);
       const dt = new Date(y, m - 1, d);
       const days = ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
       return `${y}年${m}月${d}日（${days[dt.getDay()]}）`;
     }
+    function fulldateToInput(fulldate) {
+      const m = (fulldate || '').match(/(\d{4})年(\d{1,2})月(\d{1,2})日/);
+      if (!m) return '';
+      return `${m[1]}-${String(m[2]).padStart(2,'0')}-${String(m[3]).padStart(2,'0')}`;
+    }
 
+    // ── Modal helpers ─────────────────────────────────────────
     function setModalStatus(msg, cls) {
       const el = document.getElementById('modal-status');
-      el.textContent = msg;
-      el.className = cls || '';
+      el.textContent = msg; el.className = cls || '';
     }
 
     function openAddModal() {
+      currentEditIdx = -1;
+      document.getElementById('add-card').querySelector('h2').textContent = '＋ 新增通知';
       const today = new Date().toISOString().split('T')[0];
-      document.getElementById('f-date').value = today;
-      document.getElementById('f-time').value = '09:00';
-      document.getElementById('f-icon').value = '';
-      document.getElementById('f-label').value = '';
+      document.getElementById('f-date').value    = today;
+      document.getElementById('f-time').value    = '09:00';
+      document.getElementById('f-icon').value    = '';
+      document.getElementById('f-label').value   = '';
       document.getElementById('f-message').value = '';
-      document.getElementById('f-pin-from').value = '';
+      document.getElementById('f-pin-from').value  = '';
       document.getElementById('f-pin-until').value = '';
+      document.getElementById('modal-save-btn').disabled = false;
+      setModalStatus('');
+      document.getElementById('add-modal').classList.add('open');
+    }
+
+    function openEditModal(idx) {
+      currentEditIdx = idx;
+      const d = allData[idx];
+      document.getElementById('add-card').querySelector('h2').textContent = '✏️ 编辑通知';
+      document.getElementById('f-date').value    = fulldateToInput(d.fulldate);
+      document.getElementById('f-time').value    = d.time || '';
+      document.getElementById('f-icon').value    = d.icon || ICONS[d.type] || '📋';
+      document.getElementById('f-label').value   = d.label || LABELS[d.type] || '';
+      document.getElementById('f-message').value = d.message || d.note || '';
+      document.getElementById('f-pin-from').value  = d.pin_from  || '';
+      document.getElementById('f-pin-until').value = d.pin_until || '';
       document.getElementById('modal-save-btn').disabled = false;
       setModalStatus('');
       document.getElementById('add-modal').classList.add('open');
@@ -456,51 +527,57 @@
       if (!timeStr) { setModalStatus('请选择时间', 'error'); return; }
       if (!label)   { setModalStatus('请填写标题', 'error'); return; }
 
-      const notice = { type: 'custom', icon, label, fulldate: toFulldate(dateStr), time: timeStr };
-      if (message) notice.message = message;
-      if (pinFrom && pinUntil) { notice.pin_from = pinFrom; notice.pin_until = pinUntil; }
-
-      let token = localStorage.getItem(TOKEN_KEY);
-      if (!token) {
-        token = prompt('请输入 GitHub PAT（只需输入一次，之后自动保存）：');
-        if (!token) return;
-        localStorage.setItem(TOKEN_KEY, token.trim());
-        token = token.trim();
+      let notice;
+      if (currentEditIdx >= 0) {
+        notice = { ...allData[currentEditIdx] };
+        notice.fulldate = toFulldate(dateStr);
+        notice.time     = timeStr;
+        notice.icon     = icon;
+        notice.label    = label;
+        if (message) { notice.message = message; notice.note = message; }
+        else { delete notice.message; delete notice.note; }
+        if (pinFrom && pinUntil) { notice.pin_from = pinFrom; notice.pin_until = pinUntil; }
+        else { delete notice.pin_from; delete notice.pin_until; }
+      } else {
+        notice = { type: 'custom', icon, label, fulldate: toFulldate(dateStr), time: timeStr };
+        if (message) notice.message = message;
+        if (pinFrom && pinUntil) { notice.pin_from = pinFrom; notice.pin_until = pinUntil; }
       }
 
       setModalStatus('正在保存…', 'loading');
       document.getElementById('modal-save-btn').disabled = true;
 
-      try {
-        const getRes = await fetch(API, { headers: { Authorization: `token ${token}` } });
-        if (getRes.status === 401) {
-          localStorage.removeItem(TOKEN_KEY);
-          throw new Error('PAT 无效，请刷新页面重试');
-        }
-        if (!getRes.ok) throw new Error(`GitHub ${getRes.status}`);
-        const info    = await getRes.json();
-        const current = JSON.parse(decodeB64(info.content));
-        current.unshift(notice);
+      const commitMsg = currentEditIdx >= 0 ? `编辑通知：${label}` : `新增通知：${label}`;
+      const result = await modifyData(current => {
+        if (currentEditIdx >= 0) current[currentEditIdx] = notice;
+        else current.unshift(notice);
+      }, commitMsg);
 
-        const putRes = await fetch(API, {
-          method: 'PUT',
-          headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            message: `新增通知：${label}`,
-            content: encodeB64(JSON.stringify(current, null, 2)),
-            sha: info.sha
-          })
-        });
-        if (!putRes.ok) {
-          const err = await putRes.json().catch(() => ({}));
-          throw new Error(err.message || `GitHub ${putRes.status}`);
-        }
+      if (result === true) {
         setModalStatus('✓ 已保存！', 'ok');
         setTimeout(() => { closeAddModal(); location.reload(); }, 1000);
-      } catch (e) {
-        setModalStatus(`❌ ${e.message}`, 'error');
+      } else {
+        setModalStatus(`❌ ${result?.message || '保存失败'}`, 'error');
         document.getElementById('modal-save-btn').disabled = false;
       }
+    }
+
+    // ── Delete / Archive ──────────────────────────────────────
+    async function deleteNotice(idx) {
+      const d = allData[idx];
+      const name = d.label || d.date || '此通知';
+      if (!window.confirm(`确认删除「${name}」？此操作无法撤销。`)) return;
+      const result = await modifyData(c => c.splice(idx, 1), `删除通知：${name}`);
+      if (result === true) location.reload();
+      else alert(`删除失败：${result?.message || ''}`);
+    }
+
+    async function archiveNotice(idx) {
+      const d = allData[idx];
+      const name = d.label || d.date || '此通知';
+      const result = await modifyData(c => { c[idx].archived = true; }, `归档通知：${name}`);
+      if (result === true) location.reload();
+      else alert(`归档失败：${result?.message || ''}`);
     }
 
     // Close modal on backdrop click
