@@ -14,7 +14,8 @@
       },
       {
         "name": "Woolworths 全脂牛奶",
-        "amount": 10.3
+        "amount": 10.3,
+        "forParents": true
       },
       {
         "name": "Milo 麦芽巧克力粉热饮或冷饮",
