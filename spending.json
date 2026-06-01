@@ -9,7 +9,8 @@
     "items": [
       {
         "name": "Woolworths 12 个超大谷仓产蛋",
-        "amount": 11.4
+        "amount": 11.4,
+        "forParents": true
       },
       {
         "name": "Woolworths 全脂牛奶",
@@ -25,7 +26,7 @@
       },
       {
         "name": "Sunrice 日向短粒米",
-        "amount": 75.0
+        "amount": 75
       }
     ]
   },
@@ -39,7 +40,7 @@
     "items": [
       {
         "name": "Sunrice 日向短粒米",
-        "amount": 75.0
+        "amount": 75
       }
     ]
   },
@@ -57,11 +58,11 @@
       },
       {
         "name": "Sunny Queen 12 颗超大散养鸡蛋",
-        "amount": 6.0
+        "amount": 6
       },
       {
         "name": "Saxa 食盐野餐包",
-        "amount": 2.0
+        "amount": 2
       },
       {
         "name": "A2全脂牛奶",
@@ -69,7 +70,7 @@
       },
       {
         "name": "努迪除了果肉橙子什么都没有",
-        "amount": 8.0
+        "amount": 8
       },
       {
         "name": "卡文迪什香蕉",
@@ -101,7 +102,7 @@
       },
       {
         "name": "萝卜新鲜",
-        "amount": 3.0
+        "amount": 3
       },
       {
         "name": "Woolworths Beanette 预装包",
@@ -109,7 +110,7 @@
       },
       {
         "name": "Woolworths 西兰花束",
-        "amount": 3.0
+        "amount": 3
       },
       {
         "name": "Woolworths 玉米饼",
@@ -131,7 +132,7 @@
     "items": [
       {
         "name": "Sunny Queen 12 颗超大散养鸡蛋",
-        "amount": 6.0
+        "amount": 6
       },
       {
         "name": "A2全脂牛奶",
@@ -139,7 +140,7 @@
       },
       {
         "name": "努迪除了果肉橙子什么都没有",
-        "amount": 8.0
+        "amount": 8
       },
       {
         "name": "卡文迪什香蕉",
@@ -175,7 +176,7 @@
       },
       {
         "name": "萝卜新鲜",
-        "amount": 3.0
+        "amount": 3
       },
       {
         "name": "Woolworths Beanette 预装包",
@@ -183,7 +184,7 @@
       },
       {
         "name": "Woolworths 西兰花束",
-        "amount": 3.0
+        "amount": 3
       },
       {
         "name": "Woolworths 玉米饼",
@@ -219,15 +220,15 @@
     "items": [
       {
         "name": "方便餐 泰式绿咖喱鸡 1",
-        "amount": 4.0
+        "amount": 4
       },
       {
         "name": "冷冻方便餐肉酱意大利面 1",
-        "amount": 4.0
+        "amount": 4
       },
       {
         "name": "绿咖喱鸡饭 1",
-        "amount": 5.0
+        "amount": 5
       },
       {
         "name": "印度椰子咖喱鸡碗 1",
@@ -239,11 +240,11 @@
       },
       {
         "name": "羊肉迷迭香火锅1",
-        "amount": 5.0
+        "amount": 5
       },
       {
         "name": "餐食 沙爹鸡 1",
-        "amount": 4.0
+        "amount": 4
       },
       {
         "name": "原味煎饼奶昔 1",
@@ -251,7 +252,7 @@
       },
       {
         "name": "短粒米 1",
-        "amount": 15.0
+        "amount": 15
       }
     ]
   },
@@ -293,7 +294,7 @@
       },
       {
         "name": "棕色洋葱 1",
-        "amount": 2.0
+        "amount": 2
       },
       {
         "name": "胡萝卜散 1",
@@ -321,15 +322,15 @@
       },
       {
         "name": "面巾纸 6 层软包 1",
-        "amount": 1.0
+        "amount": 1
       },
       {
         "name": "铁板牛排 1",
-        "amount": 11.0
+        "amount": 11
       },
       {
         "name": "羊腿切丁 1",
-        "amount": 13.0
+        "amount": 13
       },
       {
         "name": "RSPCA 批准鸡腿肉大包 1",
@@ -359,7 +360,7 @@
     "items": [
       {
         "name": "小圆蜡烛 1",
-        "amount": 11.0
+        "amount": 11
       },
       {
         "name": "散养鸡蛋 12 包 2",
@@ -375,7 +376,7 @@
       },
       {
         "name": "大包超值牛肉碎 1",
-        "amount": 24.0,
+        "amount": 24,
         "forParents": true
       }
     ]
@@ -398,11 +399,11 @@
       },
       {
         "name": "香肠与土豆泥 2",
-        "amount": 13.0
+        "amount": 13
       },
       {
         "name": "牛肉拉古千层面 1",
-        "amount": 5.0
+        "amount": 5
       },
       {
         "name": "牛肉托尔托莱尼 1",
@@ -438,7 +439,7 @@
       },
       {
         "name": "韩式烧烤牛肉 2",
-        "amount": 13.0
+        "amount": 13
       },
       {
         "name": "韩式烧烤肉丸碗 3",
@@ -446,7 +447,7 @@
       },
       {
         "name": "羊肉砂锅1",
-        "amount": 5.0
+        "amount": 5
       },
       {
         "name": "装满 Mac N 奶酪 1",
@@ -462,7 +463,7 @@
       },
       {
         "name": "烟山肉丸 2",
-        "amount": 13.0
+        "amount": 13
       },
       {
         "name": "托斯卡纳烤鸡 1",
@@ -521,7 +522,7 @@
       },
       {
         "name": "牛肉拉古千层面 1",
-        "amount": 5.0
+        "amount": 5
       },
       {
         "name": "韩式烧烤牛肉 1",
@@ -529,7 +530,7 @@
       },
       {
         "name": "羊肉砂锅1",
-        "amount": 5.0
+        "amount": 5
       },
       {
         "name": "烟山肉丸 1",
@@ -541,12 +542,12 @@
       },
       {
         "name": "3星羊肉碎 1",
-        "amount": 9.0,
+        "amount": 9,
         "forParents": true
       },
       {
         "name": "大包超值牛肉碎 1",
-        "amount": 25.0,
+        "amount": 25,
         "forParents": true
       },
       {
@@ -569,7 +570,7 @@
     "items": [
       {
         "name": "芝士白米果 1",
-        "amount": 1.0
+        "amount": 1
       },
       {
         "name": "坚果棒花生腰果加牛奶巧克力多件装零食 6 包 1",
@@ -577,7 +578,7 @@
       },
       {
         "name": "原味米果 1",
-        "amount": 1.0
+        "amount": 1
       },
       {
         "name": "笼养鸡蛋30包1",
@@ -603,7 +604,7 @@
       },
       {
         "name": "石烤大蒜法棍 1",
-        "amount": 4.0
+        "amount": 4
       },
       {
         "name": "12 混合汤料 1",
@@ -611,7 +612,7 @@
       },
       {
         "name": "锅装酸奶天然希腊 1",
-        "amount": 2.0
+        "amount": 2
       },
       {
         "name": "香肠和土豆泥 1",
@@ -691,7 +692,7 @@
       },
       {
         "name": "白普通面粉 2",
-        "amount": 5.0,
+        "amount": 5,
         "forParents": true
       }
     ]
@@ -736,11 +737,11 @@
       },
       {
         "name": "锅装酸奶天然希腊 1",
-        "amount": 2.0
+        "amount": 2
       },
       {
         "name": "速冻豌豆和玉米 2",
-        "amount": 10.0
+        "amount": 10
       },
       {
         "name": "羽衣甘蓝束绿色 1",
@@ -753,7 +754,7 @@
       },
       {
         "name": "大包超值牛肉碎 1",
-        "amount": 24.0,
+        "amount": 24,
         "forParents": true
       },
       {
@@ -762,7 +763,7 @@
       },
       {
         "name": "特级初榨橄榄油经典 1",
-        "amount": 11.0
+        "amount": 11
       },
       {
         "name": "Milo 全谷物能量和纤维早餐麦片 1",
@@ -770,7 +771,7 @@
       },
       {
         "name": "白普通面粉 2",
-        "amount": 5.0,
+        "amount": 5,
         "forParents": true
       }
     ]
@@ -793,7 +794,7 @@
       },
       {
         "name": "深层功效凝胶厕所清洁剂松 2",
-        "amount": 7.0
+        "amount": 7
       },
       {
         "name": "笼养鸡蛋30包2",
@@ -819,7 +820,7 @@
       },
       {
         "name": "锅装酸奶天然希腊 1",
-        "amount": 2.0
+        "amount": 2
       },
       {
         "name": "羽衣甘蓝束绿色 1",
