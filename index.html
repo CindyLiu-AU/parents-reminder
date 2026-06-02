@@ -292,6 +292,16 @@
     }
 
     #reminders-btn  { bottom: 60px; }
+    .nav-badge {
+      position: absolute; top: -7px; right: -7px;
+      background: #ef4444; color: #fff;
+      font-size: 12px; font-weight: 800;
+      min-width: 20px; height: 20px;
+      border-radius: 10px; padding: 0 5px;
+      display: flex; align-items: center; justify-content: center;
+      pointer-events: none; box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+      border: 2px solid #0d1b2a;
+    }
     #spending-btn   { bottom: 124px; }
     #apps-btn       { bottom: 188px; }
     #flashcards-btn { bottom: 252px; }
@@ -521,7 +531,7 @@
     <a href="flashcards.html" id="flashcards-btn" onclick="event.stopPropagation()"><span class="nav-label">英语单词</span>📖</a>
     <a href="apps.html" id="apps-btn" onclick="event.stopPropagation()"><span class="nav-label">应用指南</span>📱</a>
     <a href="spending.html" id="spending-btn" onclick="event.stopPropagation()"><span class="nav-label">购物账单</span>🛒</a>
-    <a href="reminders.html" id="reminders-btn" onclick="event.stopPropagation()"><span class="nav-label">通知提醒</span>📋</a>
+    <a href="reminders.html" id="reminders-btn" onclick="markRemindersSeen();event.stopPropagation()"><span class="nav-label">通知提醒</span>📋<span class="nav-badge" id="reminder-badge" style="display:none;"></span></a>
     <button id="podcast-btn" onclick="openPodcast();event.stopPropagation()"><span class="nav-label">中文广播</span>📻</button>
   </nav>
 
@@ -949,8 +959,23 @@
       ]);
       words = w;
       notices = n;
+      updateReminderBadge();
       const el = document.getElementById('fetch-time');
       if (el) el.textContent = 'fetched ' + new Date().toLocaleTimeString();
+    }
+
+    function updateReminderBadge() {
+      const count = upcomingNotices().length;
+      const seen  = parseInt(localStorage.getItem('seen_notice_count') || '0');
+      const badge = document.getElementById('reminder-badge');
+      const newCount = Math.max(0, count - seen);
+      badge.textContent = newCount;
+      badge.style.display = newCount > 0 ? 'flex' : 'none';
+    }
+    function markRemindersSeen() {
+      localStorage.setItem('seen_notice_count', upcomingNotices().length);
+      const badge = document.getElementById('reminder-badge');
+      if (badge) badge.style.display = 'none';
     }
 
     function upcomingNotices() {
