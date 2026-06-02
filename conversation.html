@@ -209,7 +209,10 @@
     <div id="result-original"></div>
     <div id="result-arrow">↓</div>
     <div id="result-translation"></div>
-    <button class="replay-btn" id="replay-btn" onclick="replayLast()">🔊 再听一遍</button>
+    <div style="display:flex;gap:14px;margin-top:8px;flex-wrap:wrap;justify-content:center;">
+      <button class="replay-btn" onclick="replayZH()">🔊 朗读中文</button>
+      <button class="replay-btn" onclick="replayEN()">🔊 朗读英文</button>
+    </div>
   </div>
 
 </div>
@@ -237,9 +240,9 @@
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   let recognition = null;
   let isRecording = false;
-  let lastTranslated = '';
-  let lastTransLang  = '';
-  let ttsUnlocked    = false;
+  let lastZhText  = '';
+  let lastEnText  = '';
+  let ttsUnlocked = false;
 
   /* ── State display ───────────────────────────────────────── */
   function showState(name) {
@@ -307,9 +310,8 @@
     }, 5000);
   }
 
-  function replayLast() {
-    if (lastTranslated) speakTTS(lastTranslated, lastTransLang);
-  }
+  function replayZH() { if (lastZhText) speakTTS(lastZhText, 'zh-CN'); }
+  function replayEN() { if (lastEnText) speakTTS(lastEnText, 'en-AU'); }
 
   /* ── Recording ───────────────────────────────────────────── */
   function toggleRec(mode) {
@@ -400,8 +402,8 @@
       translated = mode === 'zh' ? '（翻译失败，请检查网络）' : '(Translation failed)';
     }
 
-    lastTranslated = translated;
-    lastTransLang  = transLang;
+    lastZhText = mode === 'zh' ? original   : translated;
+    lastEnText = mode === 'zh' ? translated : original;
 
     document.getElementById('result-original').textContent    = original;
     const transEl = document.getElementById('result-translation');
@@ -417,8 +419,8 @@
     speechSynthesis.cancel();
     if (recognition) { try { recognition.stop(); } catch(_) {} }
     finishRec();
-    lastTranslated = '';
-    lastTransLang  = '';
+    lastZhText = '';
+    lastEnText = '';
     showState('idle-state');
   }
 </script>
