@@ -239,6 +239,7 @@
   let isRecording = false;
   let lastTranslated = '';
   let lastTransLang  = '';
+  let ttsUnlocked    = false;
 
   /* ── State display ───────────────────────────────────────── */
   function showState(name) {
@@ -273,16 +274,37 @@
     speechSynthesis.addEventListener('voiceschanged', initVoices);
   initVoices();
 
+  /* Unlock TTS on first user gesture (Android Chrome requirement) */
+  function unlockTTS() {
+    if (ttsUnlocked || !window.speechSynthesis) return;
+    ttsUnlocked = true;
+    const silent = new SpeechSynthesisUtterance('');
+    silent.volume = 0;
+    speechSynthesis.speak(silent);
+  }
+
+  let ttsPing;
   function speakTTS(text, lang) {
     if (!text || !window.speechSynthesis) return;
+    clearInterval(ttsPing);
     speechSynthesis.cancel();
+
     const utt = new SpeechSynthesisUtterance(text);
     utt.lang  = lang;
     utt.rate  = lang.startsWith('zh') ? 0.85 : 0.9;
     if (lang.startsWith('zh') && voiceZH) utt.voice = voiceZH;
     if (lang.startsWith('en') && voiceEN) utt.voice = voiceEN;
+    utt.onend = utt.onerror = () => clearInterval(ttsPing);
+
     speechSynthesis.resume();
     speechSynthesis.speak(utt);
+
+    /* Android Chrome bug: synthesis suspends itself — keep nudging it */
+    ttsPing = setInterval(() => {
+      if (!speechSynthesis.speaking) { clearInterval(ttsPing); return; }
+      speechSynthesis.pause();
+      speechSynthesis.resume();
+    }, 5000);
   }
 
   function replayLast() {
@@ -291,6 +313,7 @@
 
   /* ── Recording ───────────────────────────────────────────── */
   function toggleRec(mode) {
+    unlockTTS(); /* must be called inside a user-gesture handler */
     if (isRecording) { stopRec(); return; }
     startRec(mode);
   }
@@ -386,7 +409,7 @@
     transEl.className   = transClass;
 
     showState('result-state');
-    setTimeout(() => speakTTS(translated, transLang), 400);
+    setTimeout(() => speakTTS(translated, transLang), 600);
   }
 
   /* ── Clear ───────────────────────────────────────────────── */
