@@ -210,8 +210,7 @@
     <div id="result-arrow">↓</div>
     <div id="result-translation"></div>
     <div style="display:flex;gap:14px;margin-top:8px;flex-wrap:wrap;justify-content:center;">
-      <button class="replay-btn" onclick="replayZH()">🔊 朗读中文</button>
-      <button class="replay-btn" onclick="replayEN()">🔊 朗读英文</button>
+      <button class="replay-btn" id="replay-btn">🔊 朗读</button>
     </div>
   </div>
 
@@ -412,6 +411,16 @@
     const transEl = document.getElementById('result-translation');
     transEl.textContent = translated;
     transEl.className   = transClass;
+
+    // Show only the button for the translated language
+    const btn = document.getElementById('replay-btn');
+    if (mode === 'zh') {
+      btn.textContent = '🔊 朗读英文';
+      btn.onclick = replayEN;
+    } else {
+      btn.textContent = '🔊 朗读中文';
+      btn.onclick = replayZH;
+    }
 
     showState('result-state');
     setTimeout(() => speakTTS(translated, transLang), 600);
