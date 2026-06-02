@@ -337,7 +337,7 @@
       setBtn(mode, true);
       document.getElementById('listen-label').textContent =
         mode === 'zh' ? '正在听… 请说中文' : 'Listening… speak English';
-      document.getElementById('listen-sub').textContent = '说完自动停止，或再次点击停止';
+      document.getElementById('listen-sub').textContent = '说完自动停止';
       showState('listening-state');
     };
 
@@ -374,10 +374,8 @@
   }
 
   function setBtn(mode, active) {
-    const btn  = document.getElementById(mode + '-btn');
-    const hint = document.getElementById(mode + '-hint');
+    const btn = document.getElementById(mode + '-btn');
     btn.classList.toggle('active', active);
-    hint.textContent = active ? '点击停止' : '点击开始';
   }
 
   /* ── Translation (Google Translate public endpoint) ─────── */
