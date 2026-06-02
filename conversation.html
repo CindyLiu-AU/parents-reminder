@@ -275,6 +275,8 @@
     utt.rate   = lang.startsWith('zh') ? 0.85 : 0.9;
     if (lang.startsWith('zh') && voiceZH) utt.voice = voiceZH;
     if (lang.startsWith('en') && voiceEN) utt.voice = voiceEN;
+    // Resume in case the synthesis engine was suspended
+    speechSynthesis.resume();
     speechSynthesis.speak(utt);
   }
 
@@ -371,7 +373,8 @@
 
     setStatus('', '');
     addBubble(mode, original, translated, ttsOrig, transTTS);
-    speakTTS(translated, transTTS);
+    // Small delay lets the browser release audio from speech recognition before TTS starts
+    setTimeout(() => speakTTS(translated, transTTS), 400);
   }
 
   /* ── Bubble ──────────────────────────────────────────────── */
