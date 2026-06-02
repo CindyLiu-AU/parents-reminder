@@ -279,6 +279,7 @@
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   let recognition = null;
   let isRecording = false;
+  let recTimeout  = null;
   let lastZhText  = '';
   let lastEnText  = '';
   let currentAudio = null;
@@ -362,6 +363,13 @@
         mode === 'zh' ? '正在听… 请说中文' : 'Listening… speak English';
       document.getElementById('listen-sub').textContent = '说完自动停止';
       showState('listening-state');
+      /* Safety: auto-stop after 12s in case browser never fires onend */
+      recTimeout = setTimeout(() => stopRec(), 12000);
+    };
+
+    /* Stop as soon as the user goes silent — don't wait for browser delay */
+    recognition.onspeechend = () => {
+      try { recognition.stop(); } catch(_) {}
     };
 
     recognition.onresult = async (e) => {
@@ -392,6 +400,7 @@
 
   function finishRec() {
     isRecording = false;
+    if (recTimeout) { clearTimeout(recTimeout); recTimeout = null; }
     setBtn('zh', false);
     setBtn('en', false);
   }
