@@ -262,7 +262,7 @@
   let isRecording = false;
   let lastZhText  = '';
   let lastEnText  = '';
-  let ttsUnlocked = false;
+  let currentAudio = null;
 
   /* ── State display ───────────────────────────────────────── */
   function showState(name) {
@@ -281,53 +281,29 @@
     errTimer = setTimeout(() => { el.style.display = 'none'; }, 4000);
   }
 
-  /* ── TTS voices ──────────────────────────────────────────── */
-  let voiceEN = null, voiceZH = null;
-  function initVoices() {
-    const vv = speechSynthesis.getVoices();
-    voiceEN = vv.find(v => v.lang === 'en-AU')
-           || vv.find(v => v.lang === 'en-GB')
-           || vv.find(v => v.lang.startsWith('en') && v.localService)
-           || vv.find(v => v.lang.startsWith('en')) || null;
-    voiceZH = vv.find(v => v.lang === 'zh-CN')
-           || vv.find(v => v.lang === 'zh-TW')
-           || vv.find(v => v.lang.startsWith('zh')) || null;
-  }
-  if (speechSynthesis.onvoiceschanged !== undefined)
-    speechSynthesis.addEventListener('voiceschanged', initVoices);
-  initVoices();
-
-  /* Unlock TTS on first user gesture (Android Chrome requirement) */
-  function unlockTTS() {
-    if (ttsUnlocked || !window.speechSynthesis) return;
-    ttsUnlocked = true;
-    const silent = new SpeechSynthesisUtterance('');
-    silent.volume = 0;
-    speechSynthesis.speak(silent);
+  /* ── TTS (OpenAI tts-1-hd) ───────────────────────────────── */
+  function stopAudio() {
+    if (currentAudio) { currentAudio.pause(); currentAudio = null; }
   }
 
-  let ttsPing;
-  function speakTTS(text, lang) {
-    if (!text || !window.speechSynthesis) return;
-    clearInterval(ttsPing);
-    speechSynthesis.cancel();
-
-    const utt = new SpeechSynthesisUtterance(text);
-    utt.lang  = lang;
-    utt.rate  = lang.startsWith('zh') ? 0.85 : 0.9;
-    if (lang.startsWith('zh') && voiceZH) utt.voice = voiceZH;
-    if (lang.startsWith('en') && voiceEN) utt.voice = voiceEN;
-    utt.onend = utt.onerror = () => clearInterval(ttsPing);
-
-    speechSynthesis.resume();
-    speechSynthesis.speak(utt);
-
-    /* Android Chrome bug: synthesis suspends itself — keep nudging it */
-    ttsPing = setInterval(() => {
-      if (!speechSynthesis.speaking) { clearInterval(ttsPing); return; }
-      speechSynthesis.pause();
-      speechSynthesis.resume();
-    }, 5000);
+  async function speakTTS(text, lang) {
+    if (!text) return;
+    stopAudio();
+    const key = getApiKey();
+    if (!key) return;
+    const voice = lang.startsWith('zh') ? 'nova' : 'alloy';
+    try {
+      const res = await fetch('https://api.openai.com/v1/audio/speech', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
+        body: JSON.stringify({ model: 'tts-1-hd', input: text, voice })
+      });
+      if (!res.ok) throw new Error('TTS error');
+      const url = URL.createObjectURL(await res.blob());
+      currentAudio = new Audio(url);
+      currentAudio.onended = () => { URL.revokeObjectURL(url); currentAudio = null; };
+      await currentAudio.play();
+    } catch(e) { console.error('TTS failed:', e); }
   }
 
   function replayZH() { if (lastZhText) speakTTS(lastZhText, 'zh-CN'); }
@@ -335,14 +311,13 @@
 
   /* ── Recording ───────────────────────────────────────────── */
   function toggleRec(mode) {
-    unlockTTS(); /* must be called inside a user-gesture handler */
     if (isRecording) { stopRec(); return; }
     startRec(mode);
   }
 
   function startRec(mode) {
     if (!SR) { showErr('此设备不支持语音识别，请使用 Chrome 浏览器'); return; }
-    speechSynthesis.cancel();
+    stopAudio();
     isRecording = true;
     recognition = new SR();
     recognition.lang            = mode === 'zh' ? 'zh-CN' : 'en-AU';
@@ -492,12 +467,12 @@
 
     showState('result-state');
     requestAnimationFrame(fitResultText);
-    setTimeout(() => speakTTS(translated, transLang), 600);
+    speakTTS(translated, transLang);
   }
 
   /* ── Clear ───────────────────────────────────────────────── */
   function clearDisplay() {
-    speechSynthesis.cancel();
+    stopAudio();
     if (recognition) { try { recognition.stop(); } catch(_) {} }
     finishRec();
     lastZhText = '';
