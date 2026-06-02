@@ -966,11 +966,17 @@
 
     function updateReminderBadge() {
       const count = upcomingNotices().length;
+      const seen  = parseInt(localStorage.getItem('seen_notice_count') || '0');
       const badge = document.getElementById('reminder-badge');
-      badge.textContent = count;
-      badge.style.display = count > 0 ? 'flex' : 'none';
+      const newCount = Math.max(0, count - seen);
+      badge.textContent = newCount;
+      badge.style.display = newCount > 0 ? 'flex' : 'none';
     }
-    function markRemindersSeen() {}
+    function markRemindersSeen() {
+      localStorage.setItem('seen_notice_count', upcomingNotices().length);
+      const badge = document.getElementById('reminder-badge');
+      if (badge) badge.style.display = 'none';
+    }
 
     function upcomingNotices() {
       const now = new Date();
