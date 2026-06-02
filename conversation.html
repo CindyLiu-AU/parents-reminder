@@ -222,84 +222,93 @@
   <h1>💬 对话翻译</h1>
   <div class="header-actions">
     <button class="secondary-theme-toggle" onclick="toggleColorTheme()" title="切换亮色/暗色"></button>
-    <button class="header-btn" onclick="openPinModal()" title="设置" style="font-size:22px;padding:6px 10px;">⚙️</button>
+    <button class="header-btn" onclick="openSettingsModal()" title="设置" style="font-size:22px;padding:6px 10px;">⚙️</button>
     <button class="header-btn" onclick="clearDisplay()">🗑 清除</button>
-  </div>
-</div>
-
-<!-- PIN modal -->
-<div id="pin-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:600;align-items:center;justify-content:center;padding:16px;">
-  <div style="background:#0d1b2a;border:1px solid #2e5a8f;border-radius:20px;padding:28px 24px;width:100%;max-width:300px;display:flex;flex-direction:column;gap:16px;align-items:center;">
-    <div style="font-size:20px;font-weight:800;color:#f59e0b;">🔒 输入密码</div>
-    <input id="pin-input" type="password" inputmode="numeric" maxlength="10" placeholder="••••"
-      style="background:#091525;border:2px solid #2e5a8f;border-radius:12px;color:#f0f4f8;font-size:28px;letter-spacing:8px;padding:12px 20px;font-family:inherit;outline:none;width:100%;box-sizing:border-box;text-align:center;"
-      onkeydown="if(event.key==='Enter') confirmPin()">
-    <div id="pin-err" style="font-size:14px;color:#ef4444;min-height:20px;"></div>
-    <div style="display:flex;gap:10px;width:100%;">
-      <button onclick="closePinModal()" style="flex:1;background:#1e293b;border:1px solid #334155;border-radius:10px;color:#94a3b8;font-size:15px;font-family:inherit;padding:12px;cursor:pointer;">取消</button>
-      <button onclick="confirmPin()" style="flex:1;background:#1d4ed8;border:none;border-radius:10px;color:#fff;font-size:15px;font-weight:700;font-family:inherit;padding:12px;cursor:pointer;">确认</button>
-    </div>
   </div>
 </div>
 
 <!-- Settings modal -->
 <div id="key-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:500;align-items:center;justify-content:center;padding:16px;">
-  <div style="background:#0d1b2a;border:1px solid #2e5a8f;border-radius:20px;padding:28px 24px;width:100%;max-width:440px;display:flex;flex-direction:column;gap:20px;">
+  <div style="background:#0d1b2a;border:1px solid #2e5a8f;border-radius:20px;padding:24px;width:100%;max-width:440px;display:flex;flex-direction:column;gap:18px;">
 
     <div style="font-size:20px;font-weight:800;color:#f59e0b;">⚙️ 设置</div>
 
-    <!-- API Key -->
-    <div style="display:flex;flex-direction:column;gap:8px;">
-      <div style="font-size:14px;font-weight:700;color:#90caf9;">🔑 OpenAI API Key</div>
-      <input id="key-input" type="password" placeholder="sk-..." style="background:#091525;border:1px solid #2e5a8f;border-radius:10px;color:#f0f4f8;font-size:15px;padding:11px 14px;font-family:inherit;outline:none;width:100%;box-sizing:border-box;">
-      <div style="font-size:12px;color:#475569;">仅储存在本机，不会上传。platform.openai.com 获取。</div>
+    <!-- Tab bar -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+      <button id="tab-btn-voice" onclick="switchTab('voice')"
+        style="padding:10px;border-radius:10px;border:2px solid #2e5a8f;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;background:#1e3a6e;color:#90caf9;">
+        🎵 声音设置
+      </button>
+      <button id="tab-btn-key" onclick="switchTab('key')"
+        style="padding:10px;border-radius:10px;border:2px solid #334155;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;background:#0d1b2a;color:#475569;">
+        🔑 API Key
+      </button>
     </div>
 
-    <!-- My voice (parents speak Chinese → output is English) -->
-    <div style="display:flex;flex-direction:column;gap:10px;">
-      <div style="font-size:14px;font-weight:700;color:#fca5a5;">🔴 我的声音 · My Voice</div>
-      <div style="font-size:12px;color:#475569;margin-top:-6px;">爸妈说中文后，英文翻译用的声音</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-        <button id="btn-en-female" class="voice-pick-btn" onclick="pickVoice('en','shimmer')">
-          <span style="font-size:22px;">👩</span>
-          <span class="vp-label">女声 Female</span>
-          <span class="vp-sub">Shimmer</span>
-        </button>
-        <button id="btn-en-male" class="voice-pick-btn" onclick="pickVoice('en','echo')">
-          <span style="font-size:22px;">👨</span>
-          <span class="vp-label">男声 Male</span>
-          <span class="vp-sub">Echo</span>
-        </button>
+    <!-- Voice tab -->
+    <div id="tab-voice">
+      <!-- My voice -->
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;">
+        <div style="font-size:14px;font-weight:700;color:#fca5a5;">🔴 我的声音 · My Voice</div>
+        <div style="font-size:12px;color:#475569;margin-top:-6px;">爸妈说中文后，英文翻译用的声音</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <button id="btn-en-female" class="voice-pick-btn" onclick="pickVoice('en','shimmer')">
+            <span style="font-size:22px;">👩</span>
+            <span class="vp-label">女声 Female</span>
+            <span class="vp-sub">Shimmer</span>
+          </button>
+          <button id="btn-en-male" class="voice-pick-btn" onclick="pickVoice('en','echo')">
+            <span style="font-size:22px;">👨</span>
+            <span class="vp-label">男声 Male</span>
+            <span class="vp-sub">Echo</span>
+          </button>
+        </div>
+      </div>
+      <!-- English speaker's voice -->
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="font-size:14px;font-weight:700;color:#93c5fd;">🔵 对方的声音 · English Speaker's Voice</div>
+        <div style="font-size:12px;color:#475569;margin-top:-6px;">对方说英文后，中文翻译用的声音</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+          <button id="btn-zh-female" class="voice-pick-btn" onclick="pickVoice('zh','nova')">
+            <span style="font-size:22px;">👩</span>
+            <span class="vp-label">Female</span>
+            <span class="vp-sub">Nova</span>
+          </button>
+          <button id="btn-zh-neutral" class="voice-pick-btn" onclick="pickVoice('zh','alloy')">
+            <span style="font-size:22px;">🧑</span>
+            <span class="vp-label">Neutral</span>
+            <span class="vp-sub">Alloy</span>
+          </button>
+          <button id="btn-zh-male" class="voice-pick-btn" onclick="pickVoice('zh','onyx')">
+            <span style="font-size:22px;">👨</span>
+            <span class="vp-label">Male</span>
+            <span class="vp-sub">Onyx</span>
+          </button>
+        </div>
       </div>
     </div>
 
-    <!-- English speaker's voice (they speak English → output is Chinese) -->
-    <div style="display:flex;flex-direction:column;gap:10px;">
-      <div style="font-size:14px;font-weight:700;color:#93c5fd;">🔵 对方的声音 · English Speaker's Voice</div>
-      <div style="font-size:12px;color:#475569;margin-top:-6px;">对方说英文后，中文翻译用的声音</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
-        <button id="btn-zh-female" class="voice-pick-btn" onclick="pickVoice('zh','nova')">
-          <span style="font-size:22px;">👩</span>
-          <span class="vp-label">Female</span>
-          <span class="vp-sub">Nova</span>
-        </button>
-        <button id="btn-zh-neutral" class="voice-pick-btn" onclick="pickVoice('zh','alloy')">
-          <span style="font-size:22px;">🧑</span>
-          <span class="vp-label">Neutral</span>
-          <span class="vp-sub">Alloy</span>
-        </button>
-        <button id="btn-zh-male" class="voice-pick-btn" onclick="pickVoice('zh','onyx')">
-          <span style="font-size:22px;">👨</span>
-          <span class="vp-label">Male</span>
-          <span class="vp-sub">Onyx</span>
-        </button>
+    <!-- API Key tab (hidden until PIN verified) -->
+    <div id="tab-key" style="display:none;flex-direction:column;gap:14px;">
+      <!-- PIN gate inside tab -->
+      <div id="key-pin-gate" style="display:flex;flex-direction:column;gap:12px;align-items:center;">
+        <div style="font-size:15px;color:#64748b;">🔒 输入密码以修改 API Key</div>
+        <input id="key-pin-input" type="password" inputmode="numeric" maxlength="10" placeholder="••••"
+          style="background:#091525;border:2px solid #2e5a8f;border-radius:12px;color:#f0f4f8;font-size:24px;letter-spacing:8px;padding:10px 16px;font-family:inherit;outline:none;width:100%;box-sizing:border-box;text-align:center;"
+          onkeydown="if(event.key==='Enter') confirmKeyPin()">
+        <div id="key-pin-err" style="font-size:13px;color:#ef4444;min-height:18px;"></div>
+        <button onclick="confirmKeyPin()" style="background:#1d4ed8;border:none;border-radius:10px;color:#fff;font-size:15px;font-weight:700;font-family:inherit;padding:10px 32px;cursor:pointer;">确认</button>
+      </div>
+      <!-- Key input (shown after PIN) -->
+      <div id="key-input-area" style="display:none;flex-direction:column;gap:8px;">
+        <div style="font-size:14px;font-weight:700;color:#90caf9;">🔑 OpenAI API Key</div>
+        <input id="key-input" type="password" placeholder="sk-..." style="background:#091525;border:1px solid #2e5a8f;border-radius:10px;color:#f0f4f8;font-size:15px;padding:11px 14px;font-family:inherit;outline:none;width:100%;box-sizing:border-box;">
+        <div style="font-size:12px;color:#475569;">仅储存在本机，不会上传。platform.openai.com 获取。</div>
+        <button onclick="confirmKey()" style="background:#1d4ed8;border:none;border-radius:10px;color:#fff;font-size:15px;font-weight:700;font-family:inherit;padding:10px 24px;cursor:pointer;align-self:flex-end;">保存</button>
       </div>
     </div>
 
-    <div style="display:flex;gap:10px;justify-content:flex-end;">
-      <button onclick="closeKeyModal()" style="background:#1e293b;border:1px solid #334155;border-radius:10px;color:#94a3b8;font-size:15px;font-family:inherit;padding:10px 20px;cursor:pointer;">取消</button>
-      <button onclick="confirmKey()" style="background:#1d4ed8;border:none;border-radius:10px;color:#fff;font-size:15px;font-weight:700;font-family:inherit;padding:10px 24px;cursor:pointer;">保存</button>
-    </div>
+    <button onclick="closeKeyModal()" style="background:#1e293b;border:1px solid #334155;border-radius:10px;color:#94a3b8;font-size:15px;font-family:inherit;padding:10px;cursor:pointer;">关闭</button>
   </div>
 </div>
 
@@ -523,28 +532,48 @@
     btn.classList.toggle('active', active);
   }
 
-  /* ── PIN gate ───────────────────────────────────────────── */
-  const SETTINGS_PIN = '123';
+  /* ── Settings modal ─────────────────────────────────────── */
+  const KEY_PIN = '456';
 
-  function openPinModal() {
-    document.getElementById('pin-input').value = '';
-    document.getElementById('pin-err').textContent = '';
-    document.getElementById('pin-modal').style.display = 'flex';
-    setTimeout(() => document.getElementById('pin-input').focus(), 100);
+  function openSettingsModal() {
+    refreshVoiceBtns();
+    switchTab('voice');
+    document.getElementById('key-modal').style.display = 'flex';
   }
-  function closePinModal() {
-    document.getElementById('pin-modal').style.display = 'none';
+  function closeKeyModal() {
+    document.getElementById('key-modal').style.display = 'none';
   }
-  function confirmPin() {
-    const v = document.getElementById('pin-input').value;
-    if (v === SETTINGS_PIN) {
-      closePinModal();
-      openKeyModal();
+
+  function switchTab(tab) {
+    const isVoice = tab === 'voice';
+    document.getElementById('tab-voice').style.display = isVoice ? 'block' : 'none';
+    document.getElementById('tab-key').style.display   = isVoice ? 'none'  : 'flex';
+    document.getElementById('tab-btn-voice').style.background   = isVoice ? '#1e3a6e' : '#0d1b2a';
+    document.getElementById('tab-btn-voice').style.color        = isVoice ? '#90caf9' : '#475569';
+    document.getElementById('tab-btn-voice').style.borderColor  = isVoice ? '#2e5a8f' : '#334155';
+    document.getElementById('tab-btn-key').style.background     = isVoice ? '#0d1b2a' : '#1e3a6e';
+    document.getElementById('tab-btn-key').style.color          = isVoice ? '#475569' : '#90caf9';
+    document.getElementById('tab-btn-key').style.borderColor    = isVoice ? '#334155' : '#2e5a8f';
+    if (!isVoice) {
+      /* reset PIN gate each time API Key tab is opened */
+      document.getElementById('key-pin-gate').style.display  = 'flex';
+      document.getElementById('key-input-area').style.display = 'none';
+      document.getElementById('key-pin-input').value = '';
+      document.getElementById('key-pin-err').textContent = '';
+      setTimeout(() => document.getElementById('key-pin-input').focus(), 100);
+    }
+  }
+
+  function confirmKeyPin() {
+    const v = document.getElementById('key-pin-input').value;
+    if (v === KEY_PIN) {
+      document.getElementById('key-pin-gate').style.display   = 'none';
+      document.getElementById('key-input-area').style.display = 'flex';
+      document.getElementById('key-input').value = getApiKey();
     } else {
-      const el = document.getElementById('pin-err');
-      el.textContent = '密码错误，请重试';
-      document.getElementById('pin-input').value = '';
-      document.getElementById('pin-input').focus();
+      document.getElementById('key-pin-err').textContent = '密码错误，请重试';
+      document.getElementById('key-pin-input').value = '';
+      document.getElementById('key-pin-input').focus();
     }
   }
 
@@ -568,14 +597,9 @@
     document.getElementById('btn-en-male').classList.toggle('selected',    en === 'echo');
   }
 
-  function openKeyModal() {
-    document.getElementById('key-input').value = getApiKey();
-    refreshVoiceBtns();
-    document.getElementById('key-modal').style.display = 'flex';
-  }
-  function closeKeyModal() {
-    document.getElementById('key-modal').style.display = 'none';
-  }
+  /* openKeyModal kept for translate() error fallback */
+  function openKeyModal() { openSettingsModal(); switchTab('key'); }
+
   function confirmKey() {
     const v = document.getElementById('key-input').value.trim();
     if (v) saveApiKey(v);
