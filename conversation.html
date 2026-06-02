@@ -168,8 +168,8 @@
       transition: background 0.15s, border-color 0.15s;
     }
     .voice-pick-btn.selected { background: #1e3a6e; border-color: #60a5fa; }
-    .vp-label { font-size: 16px; font-weight: 700; }
-    .vp-sub   { font-size: 12px; color: #64748b; }
+    .vp-label { font-size: 17px; font-weight: 700; }
+    .vp-sub   { font-size: 13px; color: #64748b; }
   </style>
   <link rel="stylesheet" href="theme.css">
   <style>
@@ -236,83 +236,86 @@
 
 <!-- Settings modal -->
 <div id="key-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:500;align-items:center;justify-content:center;padding:16px;">
-  <div style="background:#0d1b2a;border:1px solid #2e5a8f;border-radius:20px;padding:24px;width:100%;max-width:440px;display:flex;flex-direction:column;gap:18px;">
+  <div style="background:#0d1b2a;border:1px solid #2e5a8f;border-radius:20px;padding:24px;width:100%;max-width:460px;display:flex;flex-direction:column;gap:20px;">
 
-    <!-- Header row: title + 🔑 icon -->
+    <!-- Header row -->
     <div style="display:flex;align-items:center;justify-content:space-between;">
-      <div style="font-size:20px;font-weight:800;color:#f59e0b;">⚙️ 声音设置</div>
+      <div style="font-size:20px;font-weight:800;color:#f59e0b;">⚙️ 声音设置 · Voice Settings</div>
       <button id="tab-btn-key" onclick="openApiKeyPopup()"
-        style="background:#1e293b;border:1px solid #334155;border-radius:10px;color:#64748b;font-size:18px;padding:6px 10px;cursor:pointer;font-family:inherit;line-height:1;">
+        style="background:#1e293b;border:1px solid #334155;border-radius:10px;color:#64748b;font-size:20px;padding:6px 10px;cursor:pointer;font-family:inherit;line-height:1;">
         🔑
       </button>
     </div>
 
-    <!-- Voice settings (always visible) -->
-    <div id="tab-voice">
+    <!-- Voice settings -->
+    <div id="tab-voice" style="display:flex;flex-direction:column;gap:20px;">
+
       <!-- My voice -->
-      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;">
-        <div style="font-size:14px;font-weight:700;color:#fca5a5;">🔴 我的声音 · My Voice</div>
-        <div style="font-size:12px;color:#475569;margin-top:-6px;">说中文后，英文翻译用的声音</div>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div style="font-size:17px;font-weight:700;color:#fca5a5;">🔴 我的声音 · My Voice</div>
+        <div style="font-size:14px;color:#94a3b8;line-height:1.5;">说中文后，英文翻译用的声音<br>Voice used for English translation after I speak Chinese</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
           <button id="btn-en-female" class="voice-pick-btn" onclick="pickVoice('en','shimmer')">
-            <span style="font-size:22px;">👩</span>
+            <span style="font-size:24px;">👩</span>
             <span class="vp-label">女声</span>
             <span class="vp-sub">Female · Shimmer</span>
           </button>
           <button id="btn-en-male" class="voice-pick-btn" onclick="pickVoice('en','echo')">
-            <span style="font-size:22px;">👨</span>
+            <span style="font-size:24px;">👨</span>
             <span class="vp-label">男声</span>
             <span class="vp-sub">Male · Echo</span>
           </button>
         </div>
       </div>
+
       <!-- English speaker's voice -->
-      <div style="display:flex;flex-direction:column;gap:10px;">
-        <div style="font-size:14px;font-weight:700;color:#93c5fd;">🔵 对方的声音 · English Speaker's Voice</div>
-        <div style="font-size:12px;color:#475569;margin-top:-6px;">对方说英文后，中文翻译用的声音</div>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div style="font-size:17px;font-weight:700;color:#93c5fd;">🔵 对方的声音 · English Speaker's Voice</div>
+        <div style="font-size:14px;color:#94a3b8;line-height:1.5;">对方说英文后，中文翻译用的声音<br>Voice used for Chinese translation after English is spoken</div>
         <div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;">
           <button id="btn-zh-female" class="voice-pick-btn" onclick="pickVoice('zh','nova')" style="flex:0 0 calc(50% - 5px);">
-            <span style="font-size:22px;">👩</span>
+            <span style="font-size:24px;">👩</span>
             <span class="vp-label">女声</span>
             <span class="vp-sub">Female · Nova</span>
           </button>
           <button id="btn-zh-neutral" class="voice-pick-btn" onclick="pickVoice('zh','alloy')" style="flex:0 0 calc(50% - 5px);">
-            <span style="font-size:22px;">🧑</span>
+            <span style="font-size:24px;">🧑</span>
             <span class="vp-label">中性</span>
             <span class="vp-sub">Neutral · Alloy</span>
           </button>
           <button id="btn-zh-male" class="voice-pick-btn" onclick="pickVoice('zh','onyx')" style="flex:0 0 calc(50% - 5px);">
-            <span style="font-size:22px;">👨</span>
+            <span style="font-size:24px;">👨</span>
             <span class="vp-label">男声</span>
             <span class="vp-sub">Male · Onyx</span>
           </button>
         </div>
       </div>
+
     </div>
 
-    <button onclick="closeKeyModal()" style="background:#1e293b;border:1px solid #334155;border-radius:10px;color:#94a3b8;font-size:15px;font-family:inherit;padding:10px;cursor:pointer;">关闭</button>
+    <button onclick="closeKeyModal()" style="background:#1e293b;border:1px solid #334155;border-radius:10px;color:#94a3b8;font-size:16px;font-family:inherit;padding:12px;cursor:pointer;">关闭 · Close</button>
   </div>
 </div>
 
 <!-- API Key popup (separate modal on top) -->
 <div id="api-key-popup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:600;align-items:center;justify-content:center;padding:16px;">
-  <div style="background:#0d1b2a;border:1px solid #2e5a8f;border-radius:20px;padding:24px;width:100%;max-width:380px;display:flex;flex-direction:column;gap:18px;">
-    <div style="font-size:18px;font-weight:800;color:#f59e0b;">🔑 API Key 设置</div>
-    <div id="kp-pin-gate" style="display:flex;flex-direction:column;gap:12px;align-items:center;">
-      <div style="font-size:15px;color:#64748b;">🔒 输入密码以修改 API Key</div>
+  <div style="background:#0d1b2a;border:1px solid #2e5a8f;border-radius:20px;padding:24px;width:100%;max-width:420px;display:flex;flex-direction:column;gap:20px;">
+    <div style="font-size:20px;font-weight:800;color:#f59e0b;">🔑 API Key 设置 · Settings</div>
+    <div id="kp-pin-gate" style="display:flex;flex-direction:column;gap:14px;align-items:center;">
+      <div style="font-size:16px;color:#94a3b8;text-align:center;">🔒 输入密码以修改<br>Enter password to continue</div>
       <input id="kp-pin-input" type="password" inputmode="numeric" maxlength="10" placeholder="••••"
-        style="background:#091525;border:2px solid #2e5a8f;border-radius:12px;color:#f0f4f8;font-size:24px;letter-spacing:8px;padding:10px 16px;font-family:inherit;outline:none;width:100%;box-sizing:border-box;text-align:center;"
+        style="background:#091525;border:2px solid #2e5a8f;border-radius:12px;color:#f0f4f8;font-size:28px;letter-spacing:10px;padding:12px 16px;font-family:inherit;outline:none;width:100%;box-sizing:border-box;text-align:center;"
         onkeydown="if(event.key==='Enter') confirmKeyPin()">
-      <div id="kp-pin-err" style="font-size:13px;color:#ef4444;min-height:18px;"></div>
-      <button onclick="confirmKeyPin()" style="background:#1d4ed8;border:none;border-radius:10px;color:#fff;font-size:15px;font-weight:700;font-family:inherit;padding:10px 32px;cursor:pointer;">确认</button>
+      <div id="kp-pin-err" style="font-size:14px;color:#ef4444;min-height:20px;"></div>
+      <button onclick="confirmKeyPin()" style="background:#1d4ed8;border:none;border-radius:10px;color:#fff;font-size:16px;font-weight:700;font-family:inherit;padding:12px 36px;cursor:pointer;">确认 · Confirm</button>
     </div>
-    <div id="kp-input-area" style="display:none;flex-direction:column;gap:8px;">
-      <div style="font-size:14px;font-weight:700;color:#90caf9;">🔑 OpenAI API Key</div>
-      <input id="kp-key-input" type="password" placeholder="sk-..." style="background:#091525;border:1px solid #2e5a8f;border-radius:10px;color:#f0f4f8;font-size:15px;padding:11px 14px;font-family:inherit;outline:none;width:100%;box-sizing:border-box;">
-      <div style="font-size:12px;color:#475569;">仅储存在本机，不会上传。platform.openai.com 获取。</div>
-      <button onclick="confirmKey()" style="background:#1d4ed8;border:none;border-radius:10px;color:#fff;font-size:15px;font-weight:700;font-family:inherit;padding:10px 24px;cursor:pointer;align-self:flex-end;">保存</button>
+    <div id="kp-input-area" style="display:none;flex-direction:column;gap:12px;">
+      <div style="font-size:17px;font-weight:700;color:#90caf9;">🔑 OpenAI API Key</div>
+      <input id="kp-key-input" type="password" placeholder="sk-..." style="background:#091525;border:1px solid #2e5a8f;border-radius:10px;color:#f0f4f8;font-size:15px;padding:12px 14px;font-family:inherit;outline:none;width:100%;box-sizing:border-box;">
+      <div style="font-size:14px;color:#64748b;line-height:1.6;">仅储存在本机，不会上传<br>Stored locally only, never uploaded<br><span style="color:#475569;">获取 Key：platform.openai.com · Get key at platform.openai.com</span></div>
+      <button onclick="confirmKey()" style="background:#1d4ed8;border:none;border-radius:10px;color:#fff;font-size:16px;font-weight:700;font-family:inherit;padding:12px 28px;cursor:pointer;align-self:flex-end;">保存 · Save</button>
     </div>
-    <button onclick="closeApiKeyPopup()" style="background:#1e293b;border:1px solid #334155;border-radius:10px;color:#94a3b8;font-size:15px;font-family:inherit;padding:10px;cursor:pointer;">关闭</button>
+    <button onclick="closeApiKeyPopup()" style="background:#1e293b;border:1px solid #334155;border-radius:10px;color:#94a3b8;font-size:16px;font-family:inherit;padding:12px;cursor:pointer;">关闭 · Close</button>
   </div>
 </div>
 
