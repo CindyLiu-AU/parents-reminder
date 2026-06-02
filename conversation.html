@@ -187,7 +187,21 @@
   <h1>💬 对话翻译</h1>
   <div class="header-actions">
     <button class="secondary-theme-toggle" onclick="toggleColorTheme()" title="切换亮色/暗色"></button>
+    <button class="header-btn" onclick="openKeyModal()" title="设置 OpenAI API Key">🔑</button>
     <button class="header-btn" onclick="clearDisplay()">🗑 清除</button>
+  </div>
+</div>
+
+<!-- API key modal -->
+<div id="key-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;align-items:center;justify-content:center;">
+  <div style="background:#0d1b2a;border:1px solid #2e5a8f;border-radius:18px;padding:28px 24px;width:90%;max-width:420px;display:flex;flex-direction:column;gap:16px;">
+    <div style="font-size:20px;font-weight:800;color:#f59e0b;">🔑 OpenAI API Key</div>
+    <div style="font-size:14px;color:#64748b;line-height:1.6;">输入你的 OpenAI API Key，仅储存在本机，不会上传。<br>前往 platform.openai.com 获取。</div>
+    <input id="key-input" type="password" placeholder="sk-..." style="background:#091525;border:1px solid #2e5a8f;border-radius:10px;color:#f0f4f8;font-size:16px;padding:12px 14px;font-family:inherit;outline:none;width:100%;box-sizing:border-box;">
+    <div style="display:flex;gap:10px;justify-content:flex-end;">
+      <button onclick="closeKeyModal()" style="background:#1e293b;border:1px solid #334155;border-radius:10px;color:#94a3b8;font-size:15px;font-family:inherit;padding:10px 20px;cursor:pointer;">取消</button>
+      <button onclick="confirmKey()" style="background:#1d4ed8;border:none;border-radius:10px;color:#fff;font-size:15px;font-weight:700;font-family:inherit;padding:10px 24px;cursor:pointer;">保存</button>
+    </div>
   </div>
 </div>
 
@@ -381,16 +395,49 @@
     btn.classList.toggle('active', active);
   }
 
-  /* ── Translation (Google Translate public endpoint) ─────── */
+  /* ── OpenAI API key ─────────────────────────────────────── */
+  const API_KEY_STORE = 'openai_api_key';
+  function getApiKey() { return localStorage.getItem(API_KEY_STORE) || ''; }
+  function saveApiKey(k) { localStorage.setItem(API_KEY_STORE, k.trim()); }
+
+  function openKeyModal() {
+    document.getElementById('key-input').value = getApiKey();
+    document.getElementById('key-modal').style.display = 'flex';
+  }
+  function closeKeyModal() {
+    document.getElementById('key-modal').style.display = 'none';
+  }
+  function confirmKey() {
+    const v = document.getElementById('key-input').value.trim();
+    if (v) { saveApiKey(v); closeKeyModal(); }
+  }
+
+  /* ── Translation (GPT-4o-mini) ───────────────────────────── */
   async function translate(text, from, to) {
-    const sl = from === 'zh' ? 'zh-CN' : 'en';
-    const tl = to   === 'zh' ? 'zh-CN' : 'en';
-    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sl}&tl=${tl}&dt=t&q=${encodeURIComponent(text)}`;
-    const res  = await fetch(url);
-    if (!res.ok) throw new Error('翻译服务错误');
+    const key = getApiKey();
+    if (!key) { openKeyModal(); throw new Error('需要 OpenAI API Key'); }
+
+    const fromLabel = from === 'zh' ? 'Simplified Chinese' : 'English';
+    const toLabel   = to   === 'zh' ? 'Simplified Chinese' : 'English';
+
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        max_tokens: 300,
+        messages: [
+          { role: 'system', content: `You are a translator. Translate naturally and conversationally as spoken language between ${fromLabel} and ${toLabel}. Return ONLY the translation, nothing else.` },
+          { role: 'user', content: text }
+        ]
+      })
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error?.message || '翻译服务错误');
+    }
     const data = await res.json();
-    // Response[0] is an array of [translated_segment, original_segment, ...]
-    return data[0].map(seg => seg[0]).filter(Boolean).join('');
+    return data.choices[0].message.content.trim();
   }
 
   function fitResultText() {
