@@ -475,6 +475,8 @@
     };
 
     recognition.onerror = (e) => {
+      /* 'aborted' = user manually cancelled — not an error, go back silently */
+      if (e.error === 'aborted') { finishRec(); showState('idle-state'); return; }
       const msgs = {
         'no-speech':   '没有听到说话，请再试一次',
         'not-allowed': '麦克风权限被拒绝，请在浏览器设置中允许',
