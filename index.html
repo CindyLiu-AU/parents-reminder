@@ -310,6 +310,36 @@
     #conv-btn       { bottom: 444px; }
     #podcast-btn    { bottom: 508px; }
 
+    /* Coles button (left side) */
+    #coles-btn {
+      position: fixed; left: 20px; bottom: 60px;
+      background: #c8102e; border: 2px solid #ff3344;
+      border-radius: 26px; height: 52px; padding: 0 16px 0 14px;
+      gap: 8px; font-size: 24px;
+      display: flex; align-items: center; justify-content: center;
+      text-decoration: none; z-index: 200;
+      box-shadow: 0 4px 12px rgba(200,16,46,0.5);
+      cursor: pointer; color: #fff; font-family: inherit;
+    }
+    #coles-btn .nav-label { color: #fff; }
+
+    /* Coles overlay */
+    #coles-overlay {
+      display: none; position: fixed; inset: 0; z-index: 1000;
+      flex-direction: column; background: #000;
+    }
+    #coles-overlay.open { display: flex; }
+    #coles-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 16px; background: #c8102e; flex-shrink: 0;
+    }
+    #coles-bar span { font-size: 20px; color: #fff; font-weight: 800; }
+    #coles-close {
+      background: none; border: none; color: #fff;
+      font-size: 32px; cursor: pointer; line-height: 1; padding: 0 4px;
+    }
+    #coles-frame { flex: 1; border: none; width: 100%; background: #fff; }
+
     /* Podcast overlay */
     #podcast-overlay {
       display: none; position: fixed; inset: 0; z-index: 1000;
@@ -484,6 +514,7 @@
     }
 
     /* ── Light mode: nav buttons ── */
+    html.light #coles-btn { background: #e8192c !important; border-color: #c8102e !important; }
     html.light #reminders-btn,
     html.light #spending-btn,
     html.light #apps-btn,
@@ -534,6 +565,18 @@
     <a href="reminders.html" id="reminders-btn" onclick="markRemindersSeen();event.stopPropagation()"><span class="nav-label">通知提醒</span>📋<span class="nav-badge" id="reminder-badge" style="display:none;"></span></a>
     <button id="podcast-btn" onclick="openPodcast();event.stopPropagation()"><span class="nav-label">中文广播</span>📻</button>
   </nav>
+
+  <!-- Coles button -->
+  <button id="coles-btn" onclick="openColes();event.stopPropagation()"><span class="nav-label">大红</span>🛒</button>
+
+  <!-- Coles overlay -->
+  <div id="coles-overlay">
+    <div id="coles-bar">
+      <span>🛒 Coles 大红超市（中文）</span>
+      <button id="coles-close" onclick="closeColes()">✕</button>
+    </div>
+    <iframe id="coles-frame" src="" allowfullscreen></iframe>
+  </div>
 
   <!-- SBS Chinese podcast overlay -->
   <div id="podcast-overlay">
@@ -997,6 +1040,21 @@
     // ── Manual refresh ───────────────────────────────────────
     function manualRefresh() {
       location.reload();
+    }
+
+    // ── Coles overlay ─────────────────────────────────────────
+    const COLES_URL = 'https://www-coles-com-au.translate.goog/?_x_tr_sl=en&_x_tr_tl=zh-CN&_x_tr_hl=zh-CN&_x_tr_pto=wapp';
+    function openColes() {
+      document.getElementById('coles-frame').src = COLES_URL;
+      document.getElementById('coles-overlay').classList.add('open');
+      const themeBtn = document.getElementById('theme-toggle');
+      if (themeBtn) themeBtn.style.display = 'none';
+    }
+    function closeColes() {
+      document.getElementById('coles-overlay').classList.remove('open');
+      document.getElementById('coles-frame').src = '';
+      const themeBtn = document.getElementById('theme-toggle');
+      if (themeBtn) themeBtn.style.display = '';
     }
 
     // ── SBS Podcast overlay ───────────────────────────────────
