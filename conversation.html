@@ -21,12 +21,12 @@
       top: 0; left: 0; right: 0;
       background: #091525;
       border-bottom: 2px solid #1e3a5f;
-      padding: 14px 20px;
+      padding: 8px 16px;
       display: flex; align-items: center; justify-content: space-between;
       z-index: 100;
     }
     #header h1 { margin: 0; padding: 0; line-height: 1; }
-    .app-logo { height: 48px; width: auto; display: block; }
+    .app-logo { height: 80px; width: auto; display: block; }
     #logo-light { display: none; }
     #logo-dark  { display: block; }
     .header-actions { display: flex; gap: 8px; }
@@ -41,7 +41,7 @@
     /* ── Main display area ── */
     #main-display {
       position: fixed;
-      top: 66px; bottom: 210px;
+      top: 96px; bottom: 210px;
       left: 0; right: 0;
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
@@ -177,8 +177,8 @@
     #header .secondary-theme-toggle {
       background: #1e3a6e !important; border: 1px solid #2e5a8f !important;
       border-radius: 10px !important; color: #90caf9 !important;
-      font-size: 22px !important; font-weight: 600 !important;
-      padding: 7px 14px !important; cursor: pointer;
+      font-size: 17px !important; font-weight: 600 !important;
+      padding: 5px 9px !important; cursor: pointer;
       width: auto !important; height: auto !important;
       display: flex !important; align-items: center !important;
     }
@@ -229,8 +229,8 @@
   </h1>
   <div class="header-actions">
     <button class="secondary-theme-toggle" onclick="toggleColorTheme()" title="切换亮色/暗色"></button>
-    <button class="header-btn" onclick="openSettingsModal()" title="设置" style="font-size:22px;padding:6px 10px;">⚙️</button>
-    <button class="header-btn" onclick="clearDisplay()" style="font-size:22px;padding:6px 10px;">🗑</button>
+    <button class="header-btn" onclick="openSettingsModal()" title="设置" style="font-size:17px;padding:5px 9px;">⚙️</button>
+    <button class="header-btn" onclick="clearDisplay()" style="font-size:17px;padding:5px 9px;">🗑</button>
   </div>
 </div>
 
