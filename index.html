@@ -312,7 +312,7 @@
 
     /* Coles button (left side) */
     #coles-btn {
-      position: fixed; left: 20px; bottom: 60px;
+      position: fixed; left: 20px; bottom: 110px;
       background: #c8102e; border: 2px solid #ff3344;
       border-radius: 26px; height: 52px; padding: 0 16px 0 14px;
       gap: 8px; font-size: 24px;
@@ -322,23 +322,6 @@
       cursor: pointer; color: #fff; font-family: inherit;
     }
     #coles-btn .nav-label { color: #fff; }
-
-    /* Coles overlay */
-    #coles-overlay {
-      display: none; position: fixed; inset: 0; z-index: 1000;
-      flex-direction: column; background: #000;
-    }
-    #coles-overlay.open { display: flex; }
-    #coles-bar {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 10px 16px; background: #c8102e; flex-shrink: 0;
-    }
-    #coles-bar span { font-size: 20px; color: #fff; font-weight: 800; }
-    #coles-close {
-      background: none; border: none; color: #fff;
-      font-size: 32px; cursor: pointer; line-height: 1; padding: 0 4px;
-    }
-    #coles-frame { flex: 1; border: none; width: 100%; background: #fff; }
 
     /* Podcast overlay */
     #podcast-overlay {
@@ -567,16 +550,7 @@
   </nav>
 
   <!-- Coles button -->
-  <button id="coles-btn" onclick="openColes();event.stopPropagation()"><span class="nav-label">大红</span>🛒</button>
-
-  <!-- Coles overlay -->
-  <div id="coles-overlay">
-    <div id="coles-bar">
-      <span>🛒 Coles 大红超市（中文）</span>
-      <button id="coles-close" onclick="closeColes()">✕</button>
-    </div>
-    <iframe id="coles-frame" src="" allowfullscreen></iframe>
-  </div>
+  <a id="coles-btn" href="https://www-coles-com-au.translate.goog/?_x_tr_sl=en&_x_tr_tl=zh-CN&_x_tr_hl=zh-CN&_x_tr_pto=wapp" target="_blank" onclick="event.stopPropagation()"><span class="nav-label">大红</span>🛒</a>
 
   <!-- SBS Chinese podcast overlay -->
   <div id="podcast-overlay">
@@ -1040,21 +1014,6 @@
     // ── Manual refresh ───────────────────────────────────────
     function manualRefresh() {
       location.reload();
-    }
-
-    // ── Coles overlay ─────────────────────────────────────────
-    const COLES_URL = 'https://www-coles-com-au.translate.goog/?_x_tr_sl=en&_x_tr_tl=zh-CN&_x_tr_hl=zh-CN&_x_tr_pto=wapp';
-    function openColes() {
-      document.getElementById('coles-frame').src = COLES_URL;
-      document.getElementById('coles-overlay').classList.add('open');
-      const themeBtn = document.getElementById('theme-toggle');
-      if (themeBtn) themeBtn.style.display = 'none';
-    }
-    function closeColes() {
-      document.getElementById('coles-overlay').classList.remove('open');
-      document.getElementById('coles-frame').src = '';
-      const themeBtn = document.getElementById('theme-toggle');
-      if (themeBtn) themeBtn.style.display = '';
     }
 
     // ── SBS Podcast overlay ───────────────────────────────────
