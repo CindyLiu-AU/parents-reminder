@@ -158,6 +158,15 @@
     }
 
     #theme-toggle { display: none !important; }
+    .voice-pick-btn {
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      background: #091525; border: 2px solid #2e5a8f; border-radius: 14px;
+      color: #f0f4f8; font-family: inherit; padding: 14px 8px; cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .voice-pick-btn.selected { background: #1e3a6e; border-color: #60a5fa; }
+    .vp-label { font-size: 16px; font-weight: 700; }
+    .vp-sub   { font-size: 12px; color: #64748b; }
   </style>
   <link rel="stylesheet" href="theme.css">
   <style>
@@ -198,17 +207,58 @@
   <h1>💬 对话翻译</h1>
   <div class="header-actions">
     <button class="secondary-theme-toggle" onclick="toggleColorTheme()" title="切换亮色/暗色"></button>
-    <button class="header-btn" onclick="openKeyModal()" title="设置 OpenAI API Key">🔑</button>
+    <button class="header-btn" onclick="openKeyModal()" title="设置">⚙️</button>
     <button class="header-btn" onclick="clearDisplay()">🗑 清除</button>
   </div>
 </div>
 
-<!-- API key modal -->
-<div id="key-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;align-items:center;justify-content:center;">
-  <div style="background:#0d1b2a;border:1px solid #2e5a8f;border-radius:18px;padding:28px 24px;width:90%;max-width:420px;display:flex;flex-direction:column;gap:16px;">
-    <div style="font-size:20px;font-weight:800;color:#f59e0b;">🔑 OpenAI API Key</div>
-    <div style="font-size:14px;color:#64748b;line-height:1.6;">输入你的 OpenAI API Key，仅储存在本机，不会上传。<br>前往 platform.openai.com 获取。</div>
-    <input id="key-input" type="password" placeholder="sk-..." style="background:#091525;border:1px solid #2e5a8f;border-radius:10px;color:#f0f4f8;font-size:16px;padding:12px 14px;font-family:inherit;outline:none;width:100%;box-sizing:border-box;">
+<!-- Settings modal -->
+<div id="key-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:500;align-items:center;justify-content:center;padding:16px;">
+  <div style="background:#0d1b2a;border:1px solid #2e5a8f;border-radius:20px;padding:28px 24px;width:100%;max-width:440px;display:flex;flex-direction:column;gap:20px;">
+
+    <div style="font-size:20px;font-weight:800;color:#f59e0b;">⚙️ 设置</div>
+
+    <!-- API Key -->
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <div style="font-size:14px;font-weight:700;color:#90caf9;">🔑 OpenAI API Key</div>
+      <input id="key-input" type="password" placeholder="sk-..." style="background:#091525;border:1px solid #2e5a8f;border-radius:10px;color:#f0f4f8;font-size:15px;padding:11px 14px;font-family:inherit;outline:none;width:100%;box-sizing:border-box;">
+      <div style="font-size:12px;color:#475569;">仅储存在本机，不会上传。platform.openai.com 获取。</div>
+    </div>
+
+    <!-- Chinese voice -->
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div style="font-size:14px;font-weight:700;color:#fca5a5;">🔴 中文声音</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <button id="btn-zh-female" class="voice-pick-btn" onclick="pickVoice('zh','nova')">
+          <span style="font-size:22px;">👩</span>
+          <span class="vp-label">女声</span>
+          <span class="vp-sub">Nova</span>
+        </button>
+        <button id="btn-zh-male" class="voice-pick-btn" onclick="pickVoice('zh','onyx')">
+          <span style="font-size:22px;">👨</span>
+          <span class="vp-label">男声</span>
+          <span class="vp-sub">Onyx</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- English voice -->
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div style="font-size:14px;font-weight:700;color:#93c5fd;">🔵 English Voice</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <button id="btn-en-female" class="voice-pick-btn" onclick="pickVoice('en','shimmer')">
+          <span style="font-size:22px;">👩</span>
+          <span class="vp-label">Female</span>
+          <span class="vp-sub">Shimmer</span>
+        </button>
+        <button id="btn-en-male" class="voice-pick-btn" onclick="pickVoice('en','echo')">
+          <span style="font-size:22px;">👨</span>
+          <span class="vp-label">Male</span>
+          <span class="vp-sub">Echo</span>
+        </button>
+      </div>
+    </div>
+
     <div style="display:flex;gap:10px;justify-content:flex-end;">
       <button onclick="closeKeyModal()" style="background:#1e293b;border:1px solid #334155;border-radius:10px;color:#94a3b8;font-size:15px;font-family:inherit;padding:10px 20px;cursor:pointer;">取消</button>
       <button onclick="confirmKey()" style="background:#1d4ed8;border:none;border-radius:10px;color:#fff;font-size:15px;font-weight:700;font-family:inherit;padding:10px 24px;cursor:pointer;">保存</button>
@@ -325,7 +375,9 @@
     stopAudio();
     const key = getApiKey();
     if (!key) return;
-    const voice = lang.startsWith('zh') ? 'nova' : 'alloy';
+    const voice = lang.startsWith('zh')
+      ? (localStorage.getItem('voice_zh') || 'nova')
+      : (localStorage.getItem('voice_en') || 'shimmer');
     try {
       const res = await fetch('https://api.openai.com/v1/audio/speech', {
         method: 'POST',
@@ -430,8 +482,23 @@
   function getApiKey() { return localStorage.getItem(API_KEY_STORE) || ''; }
   function saveApiKey(k) { localStorage.setItem(API_KEY_STORE, k.trim()); }
 
+  function pickVoice(lang, voice) {
+    localStorage.setItem('voice_' + lang, voice);
+    refreshVoiceBtns();
+  }
+
+  function refreshVoiceBtns() {
+    const zh = localStorage.getItem('voice_zh') || 'nova';
+    const en = localStorage.getItem('voice_en') || 'shimmer';
+    document.getElementById('btn-zh-female').classList.toggle('selected', zh === 'nova');
+    document.getElementById('btn-zh-male').classList.toggle('selected',   zh === 'onyx');
+    document.getElementById('btn-en-female').classList.toggle('selected', en === 'shimmer');
+    document.getElementById('btn-en-male').classList.toggle('selected',   en === 'echo');
+  }
+
   function openKeyModal() {
     document.getElementById('key-input').value = getApiKey();
+    refreshVoiceBtns();
     document.getElementById('key-modal').style.display = 'flex';
   }
   function closeKeyModal() {
@@ -439,7 +506,8 @@
   }
   function confirmKey() {
     const v = document.getElementById('key-input').value.trim();
-    if (v) { saveApiKey(v); closeKeyModal(); }
+    if (v) saveApiKey(v);
+    closeKeyModal();
   }
 
   /* ── Translation (GPT-4o-mini) ───────────────────────────── */
