@@ -282,14 +282,20 @@
   let recTimeout  = null;
   let lastZhText  = '';
   let lastEnText  = '';
-  let currentAudio = null;
-  let audioUnlocked = false;
+  let currentSource = null;
+  let audioCtx = null;
 
   function unlockAudio() {
-    if (audioUnlocked) return;
-    audioUnlocked = true;
-    const a = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA');
-    a.play().catch(() => {});
+    try {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      /* Play a silent buffer to fully unlock autoplay */
+      const buf = audioCtx.createBuffer(1, 1, 22050);
+      const src = audioCtx.createBufferSource();
+      src.buffer = buf;
+      src.connect(audioCtx.destination);
+      src.start(0);
+    } catch(_) {}
   }
 
   /* ── State display ───────────────────────────────────────── */
@@ -309,9 +315,9 @@
     errTimer = setTimeout(() => { el.style.display = 'none'; }, 4000);
   }
 
-  /* ── TTS (OpenAI tts-1-hd) ───────────────────────────────── */
+  /* ── TTS (OpenAI tts-1-hd via AudioContext) ─────────────── */
   function stopAudio() {
-    if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+    if (currentSource) { try { currentSource.stop(); } catch(_) {} currentSource = null; }
   }
 
   async function speakTTS(text, lang) {
@@ -326,14 +332,23 @@
         headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
         body: JSON.stringify({ model: 'tts-1-hd', input: text, voice })
       });
-      if (!res.ok) throw new Error('TTS error');
-      const url = URL.createObjectURL(await res.blob());
-      currentAudio = new Audio(url);
-      currentAudio.onended = () => { URL.revokeObjectURL(url); currentAudio = null; };
-      await currentAudio.play();
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error?.message || 'HTTP ' + res.status);
+      }
+      const arrayBuffer = await res.arrayBuffer();
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') await audioCtx.resume();
+      const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+      const src = audioCtx.createBufferSource();
+      src.buffer = audioBuffer;
+      src.connect(audioCtx.destination);
+      src.onended = () => { currentSource = null; };
+      currentSource = src;
+      src.start(0);
     } catch(e) {
       console.error('TTS failed:', e);
-      showErr('语音播放失败，请检查 API Key 或网络');
+      showErr('语音失败：' + e.message);
     }
   }
 
