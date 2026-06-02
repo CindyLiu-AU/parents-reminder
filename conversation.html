@@ -76,11 +76,10 @@
       gap: 18px; width: 100%;
     }
     #result-original {
-      font-size: 28px; color: #64748b;
-      line-height: 1.5; max-width: 100%;
+      font-size: 40px; color: #64748b;
+      line-height: 1.4; max-width: 100%;
       word-break: break-word;
     }
-    #result-arrow { font-size: 36px; color: #1e3a5f; }
     #result-translation {
       font-size: 58px; font-weight: 800;
       line-height: 1.4; max-width: 100%;
@@ -160,7 +159,7 @@
     html.light .listen-sub { color: #64748b; }
     html.light .trans-label { color: #1d4ed8; }
     html.light #result-original { color: #64748b; }
-    html.light #result-arrow { color: #94a3b8; }
+
     html.light #result-translation.zh-result { color: #15803d; }
     html.light #result-translation.en-result { color: #1d4ed8; }
     html.light .replay-btn { background: #e0e7ff; border-color: #a5b4fc; color: #3730a3; }
@@ -217,7 +216,6 @@
   <!-- result -->
   <div id="result-state">
     <div id="result-original"></div>
-    <div id="result-arrow">↓</div>
     <div id="result-translation"></div>
     <div style="display:flex;gap:14px;margin-top:8px;flex-wrap:wrap;justify-content:center;">
       <button class="replay-btn" id="replay-btn">🔊 朗读</button>
@@ -397,12 +395,12 @@
     const state     = document.getElementById('result-state');
     const trans     = document.getElementById('result-translation');
     const orig      = document.getElementById('result-original');
-    let transPx = 58, origPx = 28;
+    let transPx = 58, origPx = 40;
     trans.style.fontSize = transPx + 'px';
     orig.style.fontSize  = origPx  + 'px';
     while (state.offsetHeight > container.clientHeight - 16 && transPx > 18) {
       transPx -= 3;
-      origPx   = Math.max(14, Math.round(transPx * 0.48));
+      origPx   = Math.max(16, Math.round(transPx * 0.69));
       trans.style.fontSize = transPx + 'px';
       orig.style.fontSize  = origPx  + 'px';
     }
