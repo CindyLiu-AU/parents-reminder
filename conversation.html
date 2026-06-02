@@ -255,36 +255,38 @@
       <div style="font-size:12px;color:#475569;">仅储存在本机，不会上传。platform.openai.com 获取。</div>
     </div>
 
-    <!-- Chinese voice -->
+    <!-- My voice (parents speak Chinese → output is English) -->
     <div style="display:flex;flex-direction:column;gap:10px;">
-      <div style="font-size:14px;font-weight:700;color:#fca5a5;">🔴 中文声音</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-        <button id="btn-zh-female" class="voice-pick-btn" onclick="pickVoice('zh','nova')">
-          <span style="font-size:22px;">👩</span>
-          <span class="vp-label">女声</span>
-          <span class="vp-sub">Nova</span>
-        </button>
-        <button id="btn-zh-male" class="voice-pick-btn" onclick="pickVoice('zh','onyx')">
-          <span style="font-size:22px;">👨</span>
-          <span class="vp-label">男声</span>
-          <span class="vp-sub">Onyx</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- English voice -->
-    <div style="display:flex;flex-direction:column;gap:10px;">
-      <div style="font-size:14px;font-weight:700;color:#93c5fd;">🔵 English Voice</div>
+      <div style="font-size:14px;font-weight:700;color:#93c5fd;">🔵 我的声音 · My Voice</div>
+      <div style="font-size:12px;color:#475569;margin-top:-6px;">爸妈说中文后，英文翻译用的声音</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
         <button id="btn-en-female" class="voice-pick-btn" onclick="pickVoice('en','shimmer')">
           <span style="font-size:22px;">👩</span>
-          <span class="vp-label">Female</span>
+          <span class="vp-label">女声 Female</span>
           <span class="vp-sub">Shimmer</span>
         </button>
         <button id="btn-en-male" class="voice-pick-btn" onclick="pickVoice('en','echo')">
           <span style="font-size:22px;">👨</span>
-          <span class="vp-label">Male</span>
+          <span class="vp-label">男声 Male</span>
           <span class="vp-sub">Echo</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- English speaker's voice (they speak English → output is Chinese) -->
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div style="font-size:14px;font-weight:700;color:#fca5a5;">🔴 对方的声音 · English Speaker's Voice</div>
+      <div style="font-size:12px;color:#475569;margin-top:-6px;">对方说英文后，中文翻译用的声音</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <button id="btn-zh-female" class="voice-pick-btn" onclick="pickVoice('zh','nova')">
+          <span style="font-size:22px;">👩</span>
+          <span class="vp-label">女声 Female</span>
+          <span class="vp-sub">Nova</span>
+        </button>
+        <button id="btn-zh-male" class="voice-pick-btn" onclick="pickVoice('zh','onyx')">
+          <span style="font-size:22px;">👨</span>
+          <span class="vp-label">男声 Male</span>
+          <span class="vp-sub">Onyx</span>
         </button>
       </div>
     </div>
