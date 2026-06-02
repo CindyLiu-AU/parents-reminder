@@ -162,9 +162,9 @@
 
     #theme-toggle { display: none !important; }
     .voice-pick-btn {
-      display: flex; flex-direction: row; align-items: center; gap: 8px;
+      display: flex; flex-direction: column; align-items: center; gap: 3px;
       background: #091525; border: 2px solid #2e5a8f; border-radius: 12px;
-      color: #f0f4f8; font-family: inherit; padding: 8px 10px; cursor: pointer;
+      color: #f0f4f8; font-family: inherit; padding: 10px 6px; cursor: pointer;
       transition: background 0.15s, border-color 0.15s;
     }
     .voice-pick-btn.selected { background: #1e3a6e; border-color: #60a5fa; }
@@ -256,18 +256,12 @@
         <div style="font-size:14px;color:#94a3b8;line-height:1.5;">讲中文时，翻译成英文用的声音<br>Voice used to read the English translation</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
           <button id="btn-en-female" class="voice-pick-btn" onclick="pickVoice('en','shimmer')">
-            <span style="font-size:20px;">👩</span>
-            <span style="display:flex;flex-direction:column;align-items:flex-start;gap:1px;">
-              <span class="vp-label">女声 · Female</span>
-              <span class="vp-sub">Shimmer</span>
-            </span>
+            <span style="font-size:22px;">👩</span>
+            <span class="vp-label">女声 · Female</span>
           </button>
           <button id="btn-en-male" class="voice-pick-btn" onclick="pickVoice('en','echo')">
-            <span style="font-size:20px;">👨</span>
-            <span style="display:flex;flex-direction:column;align-items:flex-start;gap:1px;">
-              <span class="vp-label">男声 · Male</span>
-              <span class="vp-sub">Echo</span>
-            </span>
+            <span style="font-size:22px;">👨</span>
+            <span class="vp-label">男声 · Male</span>
           </button>
         </div>
       </div>
@@ -278,25 +272,16 @@
         <div style="font-size:14px;color:#94a3b8;line-height:1.5;">讲英文时，翻译成中文用的声音<br>Voice used to read the Chinese translation</div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
           <button id="btn-zh-female" class="voice-pick-btn" onclick="pickVoice('zh','nova')">
-            <span style="font-size:20px;">👩</span>
-            <span style="display:flex;flex-direction:column;align-items:flex-start;gap:1px;">
-              <span class="vp-label">女声 · Female</span>
-              <span class="vp-sub">Nova</span>
-            </span>
+            <span style="font-size:22px;">👩</span>
+            <span class="vp-label">女声 · Female</span>
           </button>
           <button id="btn-zh-neutral" class="voice-pick-btn" onclick="pickVoice('zh','alloy')">
-            <span style="font-size:20px;">🧑</span>
-            <span style="display:flex;flex-direction:column;align-items:flex-start;gap:1px;">
-              <span class="vp-label">中性 · Neutral</span>
-              <span class="vp-sub">Alloy</span>
-            </span>
+            <span style="font-size:22px;">🧑</span>
+            <span class="vp-label">中性 · Neutral</span>
           </button>
           <button id="btn-zh-male" class="voice-pick-btn" onclick="pickVoice('zh','onyx')">
-            <span style="font-size:20px;">👨</span>
-            <span style="display:flex;flex-direction:column;align-items:flex-start;gap:1px;">
-              <span class="vp-label">男声 · Male</span>
-              <span class="vp-sub">Onyx</span>
-            </span>
+            <span style="font-size:22px;">👨</span>
+            <span class="vp-label">男声 · Male</span>
           </button>
         </div>
       </div>
