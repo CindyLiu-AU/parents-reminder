@@ -265,7 +265,7 @@
 
     #timeslot-badge { display: none; }
 
-    #reminders-btn, #spending-btn, #apps-btn, #flashcards-btn, #roadrules-btn, #dict-btn, #podcast-btn {
+    #reminders-btn, #spending-btn, #apps-btn, #flashcards-btn, #roadrules-btn, #dict-btn, #podcast-btn, #conv-btn {
       position: fixed;
       right: 20px;
       background: #1e3a6e;
@@ -297,7 +297,8 @@
     #flashcards-btn { bottom: 252px; }
     #roadrules-btn  { bottom: 316px; }
     #dict-btn       { bottom: 380px; }
-    #podcast-btn    { bottom: 444px; }
+    #conv-btn       { bottom: 444px; }
+    #podcast-btn    { bottom: 508px; }
 
     /* Podcast overlay */
     #podcast-overlay {
@@ -479,7 +480,8 @@
     html.light #flashcards-btn,
     html.light #roadrules-btn,
     html.light #dict-btn,
-    html.light #podcast-btn {
+    html.light #podcast-btn,
+    html.light #conv-btn {
       background: #dbeafe !important;
       border-color: #93c5fd !important;
       color: #1e293b !important;
@@ -520,6 +522,7 @@
     <a href="apps.html" id="apps-btn" onclick="event.stopPropagation()"><span class="nav-label">应用指南</span>📱</a>
     <a href="spending.html" id="spending-btn" onclick="event.stopPropagation()"><span class="nav-label">购物账单</span>🛒</a>
     <a href="reminders.html" id="reminders-btn" onclick="event.stopPropagation()"><span class="nav-label">通知提醒</span>📋</a>
+    <a href="conversation.html" id="conv-btn" onclick="event.stopPropagation()"><span class="nav-label">对话翻译</span>💬</a>
     <button id="podcast-btn" onclick="openPodcast();event.stopPropagation()"><span class="nav-label">中文广播</span>📻</button>
   </nav>
 
