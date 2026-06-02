@@ -964,19 +964,16 @@
       if (el) el.textContent = 'fetched ' + new Date().toLocaleTimeString();
     }
 
+    function noticeKey(d) { return d.fulldate + '|' + (d.label || d.type); }
     function updateReminderBadge() {
-      const count = upcomingNotices().length;
-      const seen  = parseInt(localStorage.getItem('seen_notice_count') || '0');
+      let seen;
+      try { seen = new Set(JSON.parse(localStorage.getItem('seen_notices') || '[]')); } catch { seen = new Set(); }
+      const unseen = upcomingNotices().filter(d => !seen.has(noticeKey(d))).length;
       const badge = document.getElementById('reminder-badge');
-      const newCount = Math.max(0, count - seen);
-      badge.textContent = newCount;
-      badge.style.display = newCount > 0 ? 'flex' : 'none';
+      badge.textContent = unseen;
+      badge.style.display = unseen > 0 ? 'flex' : 'none';
     }
-    function markRemindersSeen() {
-      localStorage.setItem('seen_notice_count', upcomingNotices().length);
-      const badge = document.getElementById('reminder-badge');
-      if (badge) badge.style.display = 'none';
-    }
+    function markRemindersSeen() {}
 
     function upcomingNotices() {
       const now = new Date();

@@ -171,6 +171,9 @@
     .item-actions .btn-delete:hover { border-color: #ef4444; background: rgba(239,68,68,.1); }
     .item-actions .btn-archive { color: #a78bfa; border-color: #2d1f4a; }
     .item-actions .btn-archive:hover { border-color: #7c3aed; background: rgba(124,58,237,.1); }
+    .item-actions .btn-seen { color: #34d399; border-color: #064e3b; font-weight: 700; }
+    .item-actions .btn-seen:hover { border-color: #34d399; background: rgba(52,211,153,.1); }
+    .item-actions .btn-seen.confirmed { color: #6ee7b7; border-color: #064e3b; opacity: 0.6; cursor: default; }
 
     /* ── Add button ── */
     #add-btn {
@@ -356,12 +359,32 @@
             ${note ? `<div class="item-note">${note}</div>` : ''}
             ${clHTML}
             <div class="item-actions">
+              ${seenBtn(d)}
               <button onclick="openEditModal(${idx})">✏️ 编辑</button>
               <button class="btn-archive" onclick="archiveNotice(${idx})">📦 归档</button>
               <button class="btn-delete"  onclick="deleteNotice(${idx})">🗑️ 删除</button>
             </div>
           </div>
         </div>`;
+    }
+
+    function noticeKey(d) { return d.fulldate + '|' + (d.label || d.type); }
+    function getSeenSet() {
+      try { return new Set(JSON.parse(localStorage.getItem('seen_notices') || '[]')); } catch { return new Set(); }
+    }
+    function seenBtn(d) {
+      const seen = getSeenSet().has(noticeKey(d));
+      return seen
+        ? `<button class="btn-seen confirmed" disabled>✓ 已知道 · Seen</button>`
+        : `<button class="btn-seen" onclick="markSeen(this,'${noticeKey(d).replace(/'/g,"\\'")}')">👁 我知道了 · I've seen this</button>`;
+    }
+    function markSeen(btn, key) {
+      const seen = getSeenSet();
+      seen.add(key);
+      localStorage.setItem('seen_notices', JSON.stringify([...seen]));
+      btn.textContent = '✓ 已知道 · Seen';
+      btn.classList.add('confirmed');
+      btn.disabled = true;
     }
 
     function toggleChecklist(btn) {
