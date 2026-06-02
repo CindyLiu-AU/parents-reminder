@@ -166,6 +166,7 @@
     html.light .mic-btn.zh-btn:active,
     html.light .mic-btn.zh-btn.active { background: #dcfce7; }
     html.light .btn-label-hint { color: #94a3b8; }
+    #theme-toggle { display: none; }
   </style>
   <link rel="stylesheet" href="theme.css">
 </head>
@@ -174,6 +175,7 @@
 <div id="header">
   <h1>💬 对话翻译</h1>
   <div class="header-actions">
+    <button class="secondary-theme-toggle" onclick="toggleColorTheme()" title="切换亮色/暗色"></button>
     <button class="header-btn" onclick="clearDisplay()">🗑 清除</button>
     <a class="header-btn" href="index.html">🏠 返回</a>
   </div>
