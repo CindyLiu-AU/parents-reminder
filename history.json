@@ -10,12 +10,12 @@
   },
   {
     "type": "custom",
-    "icon": "📋",
-    "label": "12点-2点免费用电",
-    "fulldate": "2026年6月8日（星期一）",
-    "time": "12:00",
-    "pin_from": "10:00",
-    "pin_until": "14:00"
+    "icon": "😊",
+    "label": "大绿送货到家（上午7-12点）",
+    "fulldate": "2026年6月4日（星期四）",
+    "time": "07:00",
+    "pin_from": "07:30",
+    "pin_until": "12:00"
   },
   {
     "type": "custom",
