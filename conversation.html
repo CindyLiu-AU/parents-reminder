@@ -133,8 +133,8 @@
       -webkit-tap-highlight-color: transparent;
       position: relative;
     }
-    .mic-btn.zh-btn { background: #0a2a1a; border-right: 1px solid #1e3a5f; }
-    .mic-btn.en-btn { background: #0d1b35; }
+    .mic-btn.en-btn { background: #0d1b35; border-right: 1px solid #1e3a5f; }
+    .mic-btn.zh-btn { background: #0a2a1a; }
 
     .mic-btn.zh-btn:active, .mic-btn.zh-btn.active { background: #064e3b; }
     .mic-btn.en-btn:active, .mic-btn.en-btn.active { background: #1e3a6e; }
@@ -228,19 +228,19 @@
 <div id="status-bar">准备好了</div>
 
 <div id="btn-area">
-  <button class="mic-btn zh-btn" id="zh-btn" onclick="toggleRec('zh')">
-    <div class="rec-dot"></div>
-    <div class="mic-icon">🎤</div>
-    <div class="mic-label-main">我说中文</div>
-    <div class="mic-label-lang">中文 → English</div>
-    <div class="mic-label-hint" id="zh-hint">点击开始</div>
-  </button>
   <button class="mic-btn en-btn" id="en-btn" onclick="toggleRec('en')">
     <div class="rec-dot"></div>
     <div class="mic-icon">🎤</div>
     <div class="mic-label-main">对方说英文</div>
     <div class="mic-label-lang">English → 中文</div>
     <div class="mic-label-hint" id="en-hint">点击开始</div>
+  </button>
+  <button class="mic-btn zh-btn" id="zh-btn" onclick="toggleRec('zh')">
+    <div class="rec-dot"></div>
+    <div class="mic-icon">🎤</div>
+    <div class="mic-label-main">我说中文</div>
+    <div class="mic-label-lang">中文 → English</div>
+    <div class="mic-label-hint" id="zh-hint">点击开始</div>
   </button>
 </div>
 
