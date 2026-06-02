@@ -2,6 +2,15 @@
   {
     "type": "custom",
     "icon": "📋",
+    "label": "12点-2点 免费用电",
+    "fulldate": "2026年6月15日（星期一）",
+    "time": "12:00",
+    "pin_from": "10:00",
+    "pin_until": "14:00"
+  },
+  {
+    "type": "custom",
+    "icon": "📋",
     "label": "12点-2点免费用电",
     "fulldate": "2026年6月8日（星期一）",
     "time": "12:00",
