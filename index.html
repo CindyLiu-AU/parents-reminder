@@ -981,14 +981,13 @@
     const PODCAST_BASE = 'https://www.sbs.com.au/language/chinese/zh-hans/collection/%E6%9B%B4%E5%A4%9Asbs%E6%99%AE%E9%80%9A%E8%AF%9D%E6%92%AD%E5%AE%A2?page=';
 
     let podcastZoom = 1.0;
+    let currentPodcastPage = 1;
 
     function podcastBack() {
-      try { document.getElementById('podcast-frame').contentWindow.history.back(); }
-      catch(e) {}
+      if (currentPodcastPage > 1) setPodcastPage(currentPodcastPage - 1);
     }
     function podcastForward() {
-      try { document.getElementById('podcast-frame').contentWindow.history.forward(); }
-      catch(e) {}
+      if (currentPodcastPage < 3) setPodcastPage(currentPodcastPage + 1);
     }
 
     function applyPodcastZoom() {
@@ -1002,6 +1001,7 @@
     function podcastZoomOut() { podcastZoom = Math.max(0.5, +(podcastZoom - 0.25).toFixed(2)); applyPodcastZoom(); }
 
     function setPodcastPage(n) {
+      currentPodcastPage = n;
       document.getElementById('podcast-frame').src = PODCAST_BASE + n;
       [1,2,3].forEach(i => document.getElementById('pp'+i).classList.toggle('active', i === n));
     }
