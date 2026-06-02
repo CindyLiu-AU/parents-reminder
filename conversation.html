@@ -390,6 +390,22 @@
     return data[0].map(seg => seg[0]).filter(Boolean).join('');
   }
 
+  function fitResultText() {
+    const container = document.getElementById('main-display');
+    const state     = document.getElementById('result-state');
+    const trans     = document.getElementById('result-translation');
+    const orig      = document.getElementById('result-original');
+    let transPx = 58, origPx = 28;
+    trans.style.fontSize = transPx + 'px';
+    orig.style.fontSize  = origPx  + 'px';
+    while (state.offsetHeight > container.clientHeight - 16 && transPx > 18) {
+      transPx -= 3;
+      origPx   = Math.max(14, Math.round(transPx * 0.48));
+      trans.style.fontSize = transPx + 'px';
+      orig.style.fontSize  = origPx  + 'px';
+    }
+  }
+
   async function handleSpeech(mode, original) {
     finishRec();
     showState('translating-state');
@@ -425,6 +441,7 @@
     }
 
     showState('result-state');
+    requestAnimationFrame(fitResultText);
     setTimeout(() => speakTTS(translated, transLang), 600);
   }
 
