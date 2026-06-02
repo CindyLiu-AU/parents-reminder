@@ -277,15 +277,20 @@
     <div style="display:flex;flex-direction:column;gap:10px;">
       <div style="font-size:14px;font-weight:700;color:#93c5fd;">🔵 对方的声音 · English Speaker's Voice</div>
       <div style="font-size:12px;color:#475569;margin-top:-6px;">对方说英文后，中文翻译用的声音</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
         <button id="btn-zh-female" class="voice-pick-btn" onclick="pickVoice('zh','nova')">
           <span style="font-size:22px;">👩</span>
-          <span class="vp-label">女声 Female</span>
+          <span class="vp-label">Female</span>
           <span class="vp-sub">Nova</span>
+        </button>
+        <button id="btn-zh-neutral" class="voice-pick-btn" onclick="pickVoice('zh','alloy')">
+          <span style="font-size:22px;">🧑</span>
+          <span class="vp-label">Neutral</span>
+          <span class="vp-sub">Alloy</span>
         </button>
         <button id="btn-zh-male" class="voice-pick-btn" onclick="pickVoice('zh','onyx')">
           <span style="font-size:22px;">👨</span>
-          <span class="vp-label">男声 Male</span>
+          <span class="vp-label">Male</span>
           <span class="vp-sub">Onyx</span>
         </button>
       </div>
@@ -410,7 +415,7 @@
     if (!key) return;
     const gen = ++ttsGen; /* capture generation — stale calls abort on each await */
     const voice = lang.startsWith('zh')
-      ? (localStorage.getItem('voice_zh') || 'nova')
+      ? (localStorage.getItem('voice_zh') || 'alloy')
       : (localStorage.getItem('voice_en') || 'shimmer');
     try {
       const res = await fetch('https://api.openai.com/v1/audio/speech', {
@@ -554,12 +559,13 @@
   }
 
   function refreshVoiceBtns() {
-    const zh = localStorage.getItem('voice_zh') || 'nova';
+    const zh = localStorage.getItem('voice_zh') || 'alloy';
     const en = localStorage.getItem('voice_en') || 'shimmer';
-    document.getElementById('btn-zh-female').classList.toggle('selected', zh === 'nova');
-    document.getElementById('btn-zh-male').classList.toggle('selected',   zh === 'onyx');
-    document.getElementById('btn-en-female').classList.toggle('selected', en === 'shimmer');
-    document.getElementById('btn-en-male').classList.toggle('selected',   en === 'echo');
+    document.getElementById('btn-zh-female').classList.toggle('selected',  zh === 'nova');
+    document.getElementById('btn-zh-neutral').classList.toggle('selected', zh === 'alloy');
+    document.getElementById('btn-zh-male').classList.toggle('selected',    zh === 'onyx');
+    document.getElementById('btn-en-female').classList.toggle('selected',  en === 'shimmer');
+    document.getElementById('btn-en-male').classList.toggle('selected',    en === 'echo');
   }
 
   function openKeyModal() {
