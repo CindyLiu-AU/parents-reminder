@@ -48,10 +48,19 @@
     }
 
     /* ── Idle state ── */
-    #idle-state { display: flex; flex-direction: column; align-items: center; gap: 16px; }
-    .idle-icon { font-size: 80px; }
-    .idle-title { font-size: 28px; font-weight: 700; color: #64748b; }
-    .idle-sub   { font-size: 20px; color: #475569; line-height: 1.9; }
+    #idle-state { display: flex; flex-direction: column; align-items: stretch; gap: 18px; width: 100%; max-width: 480px; }
+    .idle-card {
+      display: flex; align-items: center; gap: 20px;
+      border-radius: 18px; padding: 22px 24px;
+    }
+    .idle-card.en-card { background: rgba(29,78,216,0.18); border: 2px solid #1d4ed8; }
+    .idle-card.zh-card { background: rgba(220,38,38,0.18); border: 2px solid #dc2626; }
+    .idle-card-dot { font-size: 28px; flex-shrink: 0; }
+    .idle-card-text { display: flex; flex-direction: column; gap: 4px; text-align: left; }
+    .idle-card-main { font-size: 26px; font-weight: 800; }
+    .idle-card.en-card .idle-card-main { color: #93c5fd; }
+    .idle-card.zh-card .idle-card-main { color: #fca5a5; }
+    .idle-card-sub { font-size: 17px; color: #64748b; }
 
     /* ── Listening state ── */
     #listening-state { display: none; flex-direction: column; align-items: center; gap: 20px; }
@@ -155,9 +164,11 @@
     html.light .header-btn { background: #f1f5f9; border-color: #cbd5e1; color: #1e293b; }
     html.light .header-btn:hover { background: #e2e8f0; }
     html.light #main-display { background: #f5f5f0; }
-    html.light .idle-icon { filter: none; }
-    html.light .idle-title { color: #1e293b; font-size: 32px; }
-    html.light .idle-sub   { color: #475569; }
+    html.light .idle-card.en-card { background: rgba(29,78,216,0.10); border-color: #1d4ed8; }
+    html.light .idle-card.zh-card { background: rgba(220,38,38,0.10); border-color: #dc2626; }
+    html.light .idle-card.en-card .idle-card-main { color: #1d4ed8; }
+    html.light .idle-card.zh-card .idle-card-main { color: #dc2626; }
+    html.light .idle-card-sub { color: #64748b; }
     html.light .listen-mic { filter: none; }
     html.light .listen-label { color: #d97706; }
     html.light .listen-sub { color: #475569; }
@@ -210,11 +221,19 @@
 
   <!-- idle -->
   <div id="idle-state">
-    <div class="idle-icon">💬</div>
-    <div class="idle-title">对话翻译</div>
-    <div class="idle-sub">
-      Press the blue button for English speakers<br>
-      点击下方绿色按钮，自己说中文
+    <div class="idle-card en-card">
+      <div class="idle-card-dot">🔵</div>
+      <div class="idle-card-text">
+        <div class="idle-card-main">Speak English</div>
+        <div class="idle-card-sub">Press the blue button below</div>
+      </div>
+    </div>
+    <div class="idle-card zh-card">
+      <div class="idle-card-dot">🔴</div>
+      <div class="idle-card-text">
+        <div class="idle-card-main">说中文</div>
+        <div class="idle-card-sub">按下方红色按钮</div>
+      </div>
     </div>
   </div>
 
