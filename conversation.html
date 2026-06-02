@@ -264,6 +264,14 @@
   let lastZhText  = '';
   let lastEnText  = '';
   let currentAudio = null;
+  let audioUnlocked = false;
+
+  function unlockAudio() {
+    if (audioUnlocked) return;
+    audioUnlocked = true;
+    const a = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA');
+    a.play().catch(() => {});
+  }
 
   /* ── State display ───────────────────────────────────────── */
   function showState(name) {
@@ -304,14 +312,18 @@
       currentAudio = new Audio(url);
       currentAudio.onended = () => { URL.revokeObjectURL(url); currentAudio = null; };
       await currentAudio.play();
-    } catch(e) { console.error('TTS failed:', e); }
+    } catch(e) {
+      console.error('TTS failed:', e);
+      showErr('语音播放失败，请检查 API Key 或网络');
+    }
   }
 
-  function replayZH() { if (lastZhText) speakTTS(lastZhText, 'zh-CN'); }
-  function replayEN() { if (lastEnText) speakTTS(lastEnText, 'en-AU'); }
+  function replayZH() { unlockAudio(); if (lastZhText) speakTTS(lastZhText, 'zh-CN'); }
+  function replayEN() { unlockAudio(); if (lastEnText) speakTTS(lastEnText, 'en-AU'); }
 
   /* ── Recording ───────────────────────────────────────────── */
   function toggleRec(mode) {
+    unlockAudio();
     if (isRecording) { stopRec(); return; }
     startRec(mode);
   }
