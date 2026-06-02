@@ -207,8 +207,23 @@
   <h1>💬 对话翻译</h1>
   <div class="header-actions">
     <button class="secondary-theme-toggle" onclick="toggleColorTheme()" title="切换亮色/暗色"></button>
-    <button class="header-btn" onclick="openKeyModal()" title="设置" style="font-size:22px;padding:6px 10px;">⚙️</button>
+    <button class="header-btn" onclick="openPinModal()" title="设置" style="font-size:22px;padding:6px 10px;">⚙️</button>
     <button class="header-btn" onclick="clearDisplay()">🗑 清除</button>
+  </div>
+</div>
+
+<!-- PIN modal -->
+<div id="pin-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:600;align-items:center;justify-content:center;padding:16px;">
+  <div style="background:#0d1b2a;border:1px solid #2e5a8f;border-radius:20px;padding:28px 24px;width:100%;max-width:300px;display:flex;flex-direction:column;gap:16px;align-items:center;">
+    <div style="font-size:20px;font-weight:800;color:#f59e0b;">🔒 输入密码</div>
+    <input id="pin-input" type="password" inputmode="numeric" maxlength="10" placeholder="••••"
+      style="background:#091525;border:2px solid #2e5a8f;border-radius:12px;color:#f0f4f8;font-size:28px;letter-spacing:8px;padding:12px 20px;font-family:inherit;outline:none;width:100%;box-sizing:border-box;text-align:center;"
+      onkeydown="if(event.key==='Enter') confirmPin()">
+    <div id="pin-err" style="font-size:14px;color:#ef4444;min-height:20px;"></div>
+    <div style="display:flex;gap:10px;width:100%;">
+      <button onclick="closePinModal()" style="flex:1;background:#1e293b;border:1px solid #334155;border-radius:10px;color:#94a3b8;font-size:15px;font-family:inherit;padding:12px;cursor:pointer;">取消</button>
+      <button onclick="confirmPin()" style="flex:1;background:#1d4ed8;border:none;border-radius:10px;color:#fff;font-size:15px;font-weight:700;font-family:inherit;padding:12px;cursor:pointer;">确认</button>
+    </div>
   </div>
 </div>
 
@@ -475,6 +490,31 @@
   function setBtn(mode, active) {
     const btn = document.getElementById(mode + '-btn');
     btn.classList.toggle('active', active);
+  }
+
+  /* ── PIN gate ───────────────────────────────────────────── */
+  const SETTINGS_PIN = '123';
+
+  function openPinModal() {
+    document.getElementById('pin-input').value = '';
+    document.getElementById('pin-err').textContent = '';
+    document.getElementById('pin-modal').style.display = 'flex';
+    setTimeout(() => document.getElementById('pin-input').focus(), 100);
+  }
+  function closePinModal() {
+    document.getElementById('pin-modal').style.display = 'none';
+  }
+  function confirmPin() {
+    const v = document.getElementById('pin-input').value;
+    if (v === SETTINGS_PIN) {
+      closePinModal();
+      openKeyModal();
+    } else {
+      const el = document.getElementById('pin-err');
+      el.textContent = '密码错误，请重试';
+      document.getElementById('pin-input').value = '';
+      document.getElementById('pin-input').focus();
+    }
   }
 
   /* ── OpenAI API key ─────────────────────────────────────── */
