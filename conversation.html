@@ -502,22 +502,24 @@
       translated = mode === 'zh' ? '（翻译失败，请检查网络）' : '(Translation failed)';
     }
 
-    lastZhText = mode === 'zh' ? original   : translated;
-    lastEnText = mode === 'zh' ? translated : original;
+    const zhText = mode === 'zh' ? original   : translated;
+    const enText = mode === 'zh' ? translated : original;
+    lastZhText = zhText;
+    lastEnText = enText;
 
     document.getElementById('result-original').textContent    = original;
     const transEl = document.getElementById('result-translation');
     transEl.textContent = translated;
     transEl.className   = transClass;
 
-    // Show only the button for the translated language
+    // Capture text in closure so replay always uses this result's text
     const btn = document.getElementById('replay-btn');
     if (mode === 'zh') {
       btn.textContent = '🔊 朗读英文';
-      btn.onclick = replayEN;
+      btn.onclick = () => { unlockAudio(); speakTTS(enText, 'en-AU'); };
     } else {
       btn.textContent = '🔊 Read Chinese / 朗读中文';
-      btn.onclick = replayZH;
+      btn.onclick = () => { unlockAudio(); speakTTS(zhText, 'zh-CN'); };
     }
 
     showState('result-state');
