@@ -148,24 +148,27 @@
     }
 
     /* ── Light mode ── */
-    html.light body { background: #f0f4f8; color: #1e293b; }
-    html.light #header { background: #ffffff; border-color: #cbd5e1; }
-    html.light #header h1 { color: #b45309; }
-    html.light .header-btn { background: #e0e7ff; border-color: #a5b4fc; color: #3730a3; }
+    html.light body { background: #f5f5f0; color: #1e293b; }
+    html.light #header { background: #ffffff; border-color: #e2e8f0; box-shadow: 0 2px 8px rgba(0,0,0,0.07); }
+    html.light #header h1 { color: #1e293b; }
+    html.light .header-btn { background: #f1f5f9; border-color: #cbd5e1; color: #1e293b; }
+    html.light .header-btn:hover { background: #e2e8f0; }
+    html.light #main-display { background: #f5f5f0; }
     html.light .idle-icon { filter: none; }
-    html.light .idle-title { color: #475569; }
-    html.light .idle-sub   { color: #64748b; }
-    html.light .listen-label { color: #b45309; }
-    html.light .listen-sub { color: #64748b; }
-    html.light .trans-label { color: #1d4ed8; }
-    html.light #result-original { color: #64748b; }
-
-    html.light #result-translation.zh-result { color: #15803d; }
+    html.light .idle-title { color: #1e293b; font-size: 32px; }
+    html.light .idle-sub   { color: #475569; }
+    html.light .listen-mic { filter: none; }
+    html.light .listen-label { color: #d97706; }
+    html.light .listen-sub { color: #475569; }
+    html.light .trans-spinner { filter: none; }
+    html.light .trans-label { color: #2563eb; }
+    html.light #result-original { color: #475569; }
+    html.light #result-translation.zh-result { color: #16a34a; }
     html.light #result-translation.en-result { color: #1d4ed8; }
-    html.light .replay-btn { background: #e0e7ff; border-color: #a5b4fc; color: #3730a3; }
-    html.light .replay-btn:hover { background: #c7d2fe; }
-    html.light #btn-area { background: #e5e5e5; border-color: #bbb; }
-    html.light .mic-btn.en-btn { background: #1d4ed8; border-right-color: #111; }
+    html.light .replay-btn { background: #1e293b; border-color: #334155; color: #f8fafc; }
+    html.light .replay-btn:hover { background: #334155; }
+    html.light #btn-area { background: #e2e8f0; border-color: #cbd5e1; }
+    html.light .mic-btn.en-btn { background: #1d4ed8; border-right-color: #cbd5e1; }
     html.light .mic-btn.zh-btn { background: #dc2626; }
     html.light .mic-btn.en-btn .btn-label-main { color: #ffffff; }
     html.light .mic-btn.zh-btn .btn-label-main { color: #ffffff; }
@@ -173,7 +176,7 @@
     html.light .mic-btn.en-btn.active { background: #2563eb; }
     html.light .mic-btn.zh-btn:active,
     html.light .mic-btn.zh-btn.active { background: #ef4444; }
-    html.light .btn-label-hint { color: #64748b; }
+    html.light .btn-label-hint { color: #94a3b8; }
     #theme-toggle { display: none !important; }
   </style>
   <link rel="stylesheet" href="theme.css">
