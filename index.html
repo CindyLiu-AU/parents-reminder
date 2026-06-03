@@ -323,6 +323,19 @@
     }
     #coles-btn .nav-label { color: #fff; }
 
+    /* Woolworths button (left side) */
+    #woolworths-btn {
+      position: fixed; left: 20px; bottom: 172px;
+      background: #007837; border: 2px solid #00a04a;
+      border-radius: 26px; height: 52px; padding: 0 16px 0 14px;
+      gap: 8px; font-size: 24px;
+      display: flex; align-items: center; justify-content: center;
+      text-decoration: none; z-index: 200;
+      box-shadow: 0 4px 12px rgba(0,120,55,0.5);
+      cursor: pointer; color: #fff; font-family: inherit;
+    }
+    #woolworths-btn .nav-label { color: #fff; }
+
     /* Podcast overlay */
     #podcast-overlay {
       display: none; position: fixed; inset: 0; z-index: 1000;
@@ -498,6 +511,7 @@
 
     /* ── Light mode: nav buttons ── */
     html.light #coles-btn { background: #e8192c !important; border-color: #c8102e !important; }
+    html.light #woolworths-btn { background: #007837 !important; border-color: #005a29 !important; }
     html.light #reminders-btn,
     html.light #spending-btn,
     html.light #apps-btn,
@@ -551,6 +565,9 @@
 
   <!-- Coles button -->
   <a id="coles-btn" href="https://www.coles.com.au/" target="_blank" onclick="event.stopPropagation()"><span class="nav-label">大红</span>🛒</a>
+
+  <!-- Woolworths button -->
+  <a id="woolworths-btn" href="https://www.woolworths.com.au/" target="_blank" onclick="event.stopPropagation()"><span class="nav-label">大绿</span>🛍️</a>
 
   <!-- SBS Chinese podcast overlay -->
   <div id="podcast-overlay">
