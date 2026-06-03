@@ -2,6 +2,13 @@
   {
     "type": "custom",
     "icon": "📋",
+    "label": "爸爸首次就诊（免费）",
+    "fulldate": "2026年6月16日（星期二）",
+    "time": "12:00"
+  },
+  {
+    "type": "custom",
+    "icon": "📋",
     "label": "宜家送货",
     "fulldate": "2026年6月13日（星期六）",
     "time": "09:00"
