@@ -354,7 +354,21 @@
       padding: 8px 18px; cursor: pointer; font-family: inherit;
     }
     #coles-close:hover { background: rgba(0,0,0,0.4); }
-    #coles-frame { flex: 1; border: none; width: 100%; background: #fff; }
+    #coles-body {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 28px;
+      background: #1a0008;
+    }
+    #coles-body .shop-icon { font-size: 96px; line-height: 1; }
+    #coles-body .shop-name { font-size: 36px; font-weight: 800; color: #fff; }
+    #coles-body .shop-open-btn {
+      display: inline-block; background: #c8102e; border: 3px solid #ff3344;
+      border-radius: 20px; padding: 22px 52px;
+      font-size: 30px; font-weight: 800; color: #fff;
+      font-family: inherit; cursor: pointer; text-decoration: none;
+      box-shadow: 0 6px 24px rgba(200,16,46,0.5);
+    }
+    #coles-body .shop-hint { font-size: 18px; color: #f87171; }
 
     /* Woolworths overlay */
     #woolworths-overlay {
@@ -374,7 +388,21 @@
       padding: 8px 18px; cursor: pointer; font-family: inherit;
     }
     #woolworths-close:hover { background: rgba(0,0,0,0.4); }
-    #woolworths-frame { flex: 1; border: none; width: 100%; background: #fff; }
+    #woolworths-body {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 28px;
+      background: #001a0a;
+    }
+    #woolworths-body .shop-icon { font-size: 96px; line-height: 1; }
+    #woolworths-body .shop-name { font-size: 36px; font-weight: 800; color: #fff; }
+    #woolworths-body .shop-open-btn {
+      display: inline-block; background: #007837; border: 3px solid #00a04a;
+      border-radius: 20px; padding: 22px 52px;
+      font-size: 30px; font-weight: 800; color: #fff;
+      font-family: inherit; cursor: pointer; text-decoration: none;
+      box-shadow: 0 6px 24px rgba(0,120,55,0.5);
+    }
+    #woolworths-body .shop-hint { font-size: 18px; color: #6ee7b7; }
 
     /* Podcast overlay */
     #podcast-overlay {
@@ -634,7 +662,12 @@
       <span>🛒 Coles 大红</span>
       <button id="coles-close" onclick="closeColes()">✕ 关闭</button>
     </div>
-    <iframe id="coles-frame" src="" sandbox="allow-scripts allow-same-origin allow-forms"></iframe>
+    <div id="coles-body">
+      <div class="shop-icon">🛒</div>
+      <div class="shop-name">Coles 大红超市</div>
+      <a class="shop-open-btn" href="https://www.coles.com.au/" target="_blank">点击进入网站 →</a>
+      <div class="shop-hint">在新窗口打开，看完后关闭标签页返回</div>
+    </div>
   </div>
 
   <!-- Woolworths overlay -->
@@ -643,7 +676,12 @@
       <span>🛍️ Woolworths 大绿</span>
       <button id="woolworths-close" onclick="closeWoolworths()">✕ 关闭</button>
     </div>
-    <iframe id="woolworths-frame" src="" sandbox="allow-scripts allow-same-origin allow-forms"></iframe>
+    <div id="woolworths-body">
+      <div class="shop-icon">🛍️</div>
+      <div class="shop-name">Woolworths 大绿超市</div>
+      <a class="shop-open-btn" href="https://www.woolworths.com.au/" target="_blank">点击进入网站 →</a>
+      <div class="shop-hint">在新窗口打开，看完后关闭标签页返回</div>
+    </div>
   </div>
 
   <!-- Weather detail overlay -->
@@ -1140,12 +1178,10 @@
     function openColes() {
       const themeBtn = document.getElementById('theme-toggle');
       if (themeBtn) themeBtn.style.display = 'none';
-      document.getElementById('coles-frame').src = 'https://www.coles.com.au/';
       document.getElementById('coles-overlay').classList.add('open');
     }
     function closeColes() {
       document.getElementById('coles-overlay').classList.remove('open');
-      document.getElementById('coles-frame').src = '';
       const themeBtn = document.getElementById('theme-toggle');
       if (themeBtn) themeBtn.style.display = '';
     }
@@ -1154,12 +1190,10 @@
     function openWoolworths() {
       const themeBtn = document.getElementById('theme-toggle');
       if (themeBtn) themeBtn.style.display = 'none';
-      document.getElementById('woolworths-frame').src = 'https://www.woolworths.com.au/';
       document.getElementById('woolworths-overlay').classList.add('open');
     }
     function closeWoolworths() {
       document.getElementById('woolworths-overlay').classList.remove('open');
-      document.getElementById('woolworths-frame').src = '';
       const themeBtn = document.getElementById('theme-toggle');
       if (themeBtn) themeBtn.style.display = '';
     }
