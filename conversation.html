@@ -605,7 +605,7 @@
   /* ── Translation (GPT-4o-mini) ───────────────────────────── */
   async function translate(text, from, to) {
     const key = getApiKey();
-    if (!key) { openKeyModal(); throw new Error('需要 OpenAI API Key'); }
+    if (!key) throw new Error('需要 OpenAI API Key');
 
     const fromLabel = from === 'zh' ? 'Simplified Chinese' : 'English';
     const toLabel   = to   === 'zh' ? 'Simplified Chinese' : 'English';
@@ -648,6 +648,13 @@
 
   async function handleSpeech(mode, original) {
     finishRec();
+
+    if (!getApiKey()) {
+      openApiKeyPopup();
+      showState('idle-state');
+      return;
+    }
+
     showState('translating-state');
 
     const fromLang = mode === 'zh' ? 'zh' : 'en';
@@ -659,7 +666,7 @@
     try {
       translated = await translate(original, fromLang, toLang);
     } catch(e) {
-      translated = mode === 'zh' ? '（翻译失败，请检查网络）' : '(Translation failed)';
+      translated = mode === 'zh' ? '（翻译失败，请检查网络）' : '(Translation failed, check network)';
     }
 
     const zhText = mode === 'zh' ? original   : translated;
