@@ -130,6 +130,13 @@
       background: #0a1628; border-radius: 8px; padding: 6px 8px;
       width: 100%; margin-top: 4px;
     }
+    .google-translate-btn {
+      display: inline-block; background: #1a73e8; border: none;
+      border-radius: 14px; padding: 14px 28px;
+      font-size: 22px; font-weight: 800; color: #fff;
+      font-family: inherit; cursor: pointer; text-decoration: none;
+      margin-top: 8px; box-shadow: 0 4px 12px rgba(26,115,232,0.4);
+    }
 
 /* ── Repeat section — progress + stop only ── */
     .repeat-section { display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
@@ -468,9 +475,14 @@
   }
 
   function showError(msg, detail = '') {
+    const text = document.getElementById('input').value.trim();
+    const gtUrl = text
+      ? `https://translate.google.com/?sl=${direction === 'en-zh' ? 'en' : 'zh-CN'}&tl=${direction === 'en-zh' ? 'zh-CN' : 'en'}&text=${encodeURIComponent(text)}&op=translate`
+      : '';
     document.getElementById('result-box').innerHTML =
       `<div class="result-error">${msg}</div>` +
-      (detail ? `<div class="result-error-detail">${detail}</div>` : '');
+      (detail ? `<div class="result-error-detail">${detail}</div>` : '') +
+      (gtUrl ? `<a href="${gtUrl}" target="_blank" class="google-translate-btn">用 Google 翻译打开</a>` : '');
   }
 
   /* ── History ── */
