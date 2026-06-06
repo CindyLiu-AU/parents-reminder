@@ -212,8 +212,10 @@
     render();
   }
 
+  const OLD_CATS = new Set(['医疗','购物','餐厅','交通','学校','银行','其他']);
+
   function buildCatPills() {
-    const cats = [...new Set(allPlaces.map(p => p.category).filter(Boolean))];
+    const cats = [...new Set(allPlaces.map(p => p.category).filter(c => c && !OLD_CATS.has(c)))];
     const wrap = document.getElementById('cat-wrap');
     if (cats.length < 2) { wrap.classList.remove('visible'); return; }
     wrap.classList.add('visible');
