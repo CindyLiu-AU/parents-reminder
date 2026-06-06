@@ -407,18 +407,44 @@
     const apiTo    = isEnZh ? 'zh-CN'     : 'en';
 
     let result = '';
-    try {
-      const res  = await fetchWithTimeout(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=${apiFrom}&tl=${apiTo}&dt=t&q=${encodeURIComponent(text)}`);
-      const data = await res.json();
-      result = data[0]?.map(x => x[0])?.join('') || '';
-    } catch(e) {}
+    const errors = [];
 
+    // API 1: Google Translate (gtx)
+    if (!result) {
+      try {
+        const res  = await fetchWithTimeout(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=${apiFrom}&tl=${apiTo}&dt=t&q=${encodeURIComponent(text)}`);
+        const data = await res.json();
+        result = data[0]?.map(x => x[0])?.join('') || '';
+      } catch(e) { errors.push('gtx:' + e.message); }
+    }
+
+    // API 2: Google Translate (dict-chrome-ex — works better on Android Chrome)
+    if (!result) {
+      try {
+        const res  = await fetchWithTimeout(`https://translate.googleapis.com/translate_a/single?client=dict-chrome-ex&sl=${apiFrom}&tl=${apiTo}&dt=t&q=${encodeURIComponent(text)}`);
+        const data = await res.json();
+        result = data[0]?.map(x => x[0])?.join('') || '';
+      } catch(e) { errors.push('dce:' + e.message); }
+    }
+
+    // API 3: MyMemory
     if (!result) {
       try {
         const res  = await fetchWithTimeout(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${pair}`);
         const data = await res.json();
         result = data.responseData?.translatedText || '';
-      } catch(e) {}
+      } catch(e) { errors.push('mm:' + e.message); }
+    }
+
+    // API 4: Lingva (Google Translate proxy with full CORS support)
+    if (!result) {
+      try {
+        const lSrc = apiFrom === 'zh-CN' ? 'zh' : apiFrom;
+        const lTgt = apiTo  === 'zh-CN' ? 'zh' : apiTo;
+        const res  = await fetchWithTimeout(`https://lingva.ml/api/v1/${lSrc}/${lTgt}/${encodeURIComponent(text)}`);
+        const data = await res.json();
+        result = data.translation || '';
+      } catch(e) { errors.push('lv:' + e.message); }
     }
 
     btn.disabled = false;
@@ -431,7 +457,7 @@
       saveHistory(text, result, direction);
       speakBoth();
     } else {
-      showError('翻译失败，请检查网络后重试');
+      showError('翻译失败，请检查网络后重试\n' + errors.join(' / '));
     }
   }
 
