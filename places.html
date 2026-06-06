@@ -145,6 +145,12 @@
       text-decoration: none;
     }
     .edit-place-btn:active { background: #112240; color: #90caf9; }
+
+    .area-select {
+      background: #0d2745; border: 1px solid #1e3a5f; border-radius: 10px;
+      color: #64b5f6; font-size: 13px; font-weight: 700; font-family: inherit;
+      padding: 5px 8px; cursor: pointer; outline: none; margin-left: auto;
+    }
   </style>
 </head>
 <body>
@@ -167,12 +173,44 @@
 <div id="place-list"></div>
 
 <script>
-  const CLICKS_KEY = 'place_clicks';
-  const CUSTOM_KEY = 'places_custom';
+  const CLICKS_KEY  = 'place_clicks';
+  const CUSTOM_KEY  = 'places_custom';
+  const AREAS_KEY   = 'places_areas';
+  const CAT_OVR_KEY = 'places_cat_overrides';
+  const DEFAULT_AREAS = ['金斯顿', '叁地贝', '市中心', '北区', '东区'];
   let allPlaces   = [];
   let sortMode    = 'recent';
   let searchQuery = '';
   let activecat   = '';
+
+  function getAreas() {
+    try {
+      const s = JSON.parse(localStorage.getItem(AREAS_KEY) || 'null');
+      return (s && s.length) ? s : [...DEFAULT_AREAS];
+    } catch { return [...DEFAULT_AREAS]; }
+  }
+
+  function getCatOverrides() {
+    try { return JSON.parse(localStorage.getItem(CAT_OVR_KEY) || '{}'); } catch { return {}; }
+  }
+
+  function changeCat(id, val) {
+    event.stopPropagation();
+    const custom = JSON.parse(localStorage.getItem(CUSTOM_KEY) || '[]');
+    const isCustom = custom.some(p => p.id === id);
+    if (isCustom) {
+      localStorage.setItem(CUSTOM_KEY, JSON.stringify(
+        custom.map(p => p.id === id ? {...p, category: val} : p)
+      ));
+    } else {
+      const ovr = getCatOverrides();
+      if (val) ovr[id] = val; else delete ovr[id];
+      localStorage.setItem(CAT_OVR_KEY, JSON.stringify(ovr));
+    }
+    allPlaces = allPlaces.map(p => p.id === id ? {...p, category: val} : p);
+    buildCatPills();
+    render();
+  }
 
   function getClicks() {
     try { return JSON.parse(localStorage.getItem(CLICKS_KEY) || '{}'); } catch { return {}; }
@@ -236,6 +274,7 @@
 
   function render() {
     const clicks = getClicks();
+    const areas  = getAreas();
     const list   = document.getElementById('place-list');
 
     if (!allPlaces.length) {
@@ -285,6 +324,10 @@
         <div class="place-stats">
           <span class="place-count${isNone ? ' zero' : ''}">${isNone ? '从未去过' : '去过 ' + c.count + ' 次'}</span>
           ${c.lastAt ? `<span class="place-last">上次：${timeSince(c.lastAt)}</span>` : ''}
+          <select class="area-select" onclick="event.stopPropagation()" onchange="changeCat('${p.id}', this.value)">
+            <option value="" ${!p.category || OLD_CATS.has(p.category) ? 'selected' : ''}>未分区</option>
+            ${areas.map(a => `<option value="${a}"${p.category === a ? ' selected' : ''}>${a}</option>`).join('')}
+          </select>
         </div>
         ${p.phone ? `<a class="call-btn" href="tel:${phone}" onclick="event.stopPropagation()">📞 打电话 ${p.phone}</a>` : ''}
         <a class="edit-place-btn" href="places-admin.html?edit=${p.id}" onclick="event.stopPropagation()">✏️ 编辑此地点</a>
@@ -298,7 +341,11 @@
       fetch('places.json?t=' + t).then(r => r.json()).catch(() => []),
       Promise.resolve(JSON.parse(localStorage.getItem(CUSTOM_KEY) || '[]'))
     ]);
-    allPlaces = [...json, ...custom];
+    const overrides = getCatOverrides();
+    allPlaces = [
+      ...json.map(p => overrides[p.id] ? {...p, category: overrides[p.id]} : p),
+      ...custom
+    ];
     buildCatPills();
     render();
   }

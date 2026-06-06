@@ -116,6 +116,24 @@
     }
     .empty { color: #334d66; font-size: 18px; padding: 12px 4px; }
 
+    .area-tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #0d2745; border: 1px solid #1e3a5f; border-radius: 20px;
+      color: #64b5f6; font-size: 14px; font-weight: 700;
+      padding: 6px 12px;
+    }
+    .area-tag button {
+      background: none; border: none; color: #546e7a; font-size: 14px;
+      cursor: pointer; padding: 0 2px; line-height: 1;
+    }
+    .area-tag button:active { color: #fca5a5; }
+    .add-area-btn {
+      background: #1e3a6e; border: 2px solid #2e5a8f; border-radius: 14px;
+      color: #90caf9; font-size: 16px; font-weight: 700; font-family: inherit;
+      padding: 14px 20px; cursor: pointer; white-space: nowrap; flex-shrink: 0;
+    }
+    .add-area-btn:active { background: #2e5a8f; }
+
     /* ── Lock screen ── */
     #lock-screen {
       position: fixed; inset: 0; z-index: 200;
@@ -165,6 +183,16 @@
 <div id="content">
 
   <div class="form-card">
+    <h2>📍 管理区域</h2>
+    <div id="areas-tags" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;"></div>
+    <div style="display:flex;gap:8px;">
+      <input class="form-input" id="new-area-inp" placeholder="输入新区域名称" style="flex:1;font-size:16px;"
+             onkeydown="if(event.key==='Enter')addArea()" />
+      <button class="add-area-btn" onclick="addArea()">添加</button>
+    </div>
+  </div>
+
+  <div class="form-card">
     <h2>➕ 添加新地点</h2>
     <div>
       <label class="form-label">地点名称（English）</label>
@@ -199,15 +227,9 @@
     </div>
     <div>
       <label class="form-label">区域</label>
-      <input class="form-input" id="inp-cat" list="area-suggestions"
-             placeholder="e.g. 金斯顿、市中心、叁地贝" autocomplete="off" />
-      <datalist id="area-suggestions">
-        <option value="金斯顿">
-        <option value="叁地贝">
-        <option value="市中心">
-        <option value="北区">
-        <option value="东区">
-      </datalist>
+      <select class="form-select" id="inp-cat">
+        <option value="">未分区</option>
+      </select>
     </div>
     <button class="add-btn" id="save-btn" onclick="savePlace()">保存地点</button>
     <button class="cancel-btn" id="cancel-btn" onclick="cancelEdit()" style="display:none">取消编辑</button>
@@ -219,9 +241,48 @@
 </div>
 
 <script>
-  const ADMIN_PWD  = '8888';
-  const CUSTOM_KEY = 'places_custom';
-  const CLICKS_KEY = 'place_clicks';
+  const ADMIN_PWD     = '8888';
+  const CUSTOM_KEY    = 'places_custom';
+  const CLICKS_KEY    = 'place_clicks';
+  const AREAS_KEY     = 'places_areas';
+  const DEFAULT_AREAS = ['金斯顿', '叁地贝', '市中心', '北区', '东区'];
+
+  function getAreas() {
+    try {
+      const s = JSON.parse(localStorage.getItem(AREAS_KEY) || 'null');
+      return (s && s.length) ? s : [...DEFAULT_AREAS];
+    } catch { return [...DEFAULT_AREAS]; }
+  }
+  function saveAreas(a) { localStorage.setItem(AREAS_KEY, JSON.stringify(a)); }
+
+  function renderAreas() {
+    const areas = getAreas();
+    document.getElementById('areas-tags').innerHTML = areas.map((a, i) =>
+      `<div class="area-tag">${a}<button onclick="deleteArea(${i})">✕</button></div>`
+    ).join('') || '<span style="color:#334d66;font-size:14px;">暂无区域</span>';
+    const sel = document.getElementById('inp-cat');
+    const cur = sel.value;
+    sel.innerHTML = `<option value="">未分区</option>` +
+      areas.map(a => `<option value="${a}"${cur === a ? ' selected' : ''}>${a}</option>`).join('');
+  }
+
+  function addArea() {
+    const inp = document.getElementById('new-area-inp');
+    const val = inp.value.trim();
+    if (!val) return;
+    const areas = getAreas();
+    if (!areas.includes(val)) { areas.push(val); saveAreas(areas); }
+    inp.value = '';
+    renderAreas();
+  }
+
+  function deleteArea(i) {
+    if (!confirm('删除此区域？')) return;
+    const areas = getAreas();
+    areas.splice(i, 1);
+    saveAreas(areas);
+    renderAreas();
+  }
 
   function unlock() {
     const val = document.getElementById('lock-input').value;
@@ -347,7 +408,7 @@
     document.getElementById('inp-name-zh').value = p.name   || '';
     document.getElementById('inp-addr').value    = p.address || '';
     document.getElementById('inp-phone').value   = p.phone  || '';
-    document.getElementById('inp-cat').value     = p.category || '其他';
+    document.getElementById('inp-cat').value     = p.category || '';
     document.getElementById('trans-status').textContent = '';
     if (p.image) {
       pendingImage = p.image;
@@ -435,6 +496,7 @@
     const t = Date.now();
     jsonPlaces   = await fetch('places.json?t=' + t).then(r => r.json()).catch(() => []);
     customPlaces = getCustom();
+    renderAreas();
     render();
     const editId = new URLSearchParams(location.search).get('edit');
     if (editId) {
@@ -449,7 +511,8 @@
   }
 
   function init() {
-    if (sessionStorage.getItem('admin_unlocked')) {
+    const editId = new URLSearchParams(location.search).get('edit');
+    if (sessionStorage.getItem('admin_unlocked') || editId) {
       document.getElementById('lock-screen').style.display = 'none';
       loadData();
     } else {
