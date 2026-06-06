@@ -74,7 +74,8 @@
     .place-emoji { font-size: 44px; flex-shrink: 0; }
 
     .place-info { flex: 1; min-width: 0; }
-    .place-name { font-size: 38px; font-weight: 900; color: #fff; line-height: 1.2; margin-bottom: 8px; }
+    .place-name { font-size: 38px; font-weight: 900; color: #fff; line-height: 1.2; margin-bottom: 4px; }
+    .place-name-en { font-size: 16px; color: #64748b; margin-bottom: 6px; }
     .place-addr { font-size: 15px; color: #64b5f6; line-height: 1.5; word-break: break-word; }
 
     .maps-icon {
@@ -178,6 +179,7 @@
           <span class="place-emoji">${emoji}</span>
           <div class="place-info">
             <div class="place-name">${p.name}</div>
+            ${p.nameEn ? `<div class="place-name-en">${p.nameEn}</div>` : ''}
             <div class="place-addr">${p.address}</div>
           </div>
           <div class="maps-icon">🗺️</div>

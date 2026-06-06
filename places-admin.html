@@ -46,6 +46,13 @@
     .form-input::placeholder { color: #334d66; font-size: 16px; }
     .form-select option { background: #0a1628; }
 
+    .translate-name-btn {
+      background: #1e3a6e; border: 2px solid #2e5a8f; border-radius: 14px;
+      color: #90caf9; font-size: 16px; font-weight: 700; font-family: inherit;
+      padding: 0 18px; cursor: pointer; white-space: nowrap; flex-shrink: 0;
+    }
+    .translate-name-btn:active { background: #2e5a8f; }
+
     .add-btn {
       width: 100%; background: #f59e0b; border: none; border-radius: 16px;
       color: #1a1000; font-size: 22px; font-weight: 900; font-family: inherit;
@@ -103,8 +110,16 @@
   <div class="form-card">
     <h2>➕ 添加新地点</h2>
     <div>
-      <label class="form-label">地点名称（中文）</label>
-      <input class="form-input" id="inp-name" placeholder="例：全科医生诊所" />
+      <label class="form-label">地点名称（English）</label>
+      <div style="display:flex;gap:8px;align-items:stretch;">
+        <input class="form-input" id="inp-name-en" placeholder="e.g. GP Clinic" style="flex:1"
+               oninput="scheduleTranslate()" />
+        <button class="translate-name-btn" onclick="translateName()" id="trans-btn" title="翻译">翻译</button>
+      </div>
+    </div>
+    <div>
+      <label class="form-label">中文名称 <span id="trans-status" style="color:#64748b;font-weight:400;font-size:12px;"></span></label>
+      <input class="form-input" id="inp-name-zh" placeholder="自动翻译，或手动输入" />
     </div>
     <div>
       <label class="form-label">地址（English）</label>
@@ -142,16 +157,51 @@
   function saveCustom(a) { localStorage.setItem(CUSTOM_KEY, JSON.stringify(a)); }
   function getClicks() { try { return JSON.parse(localStorage.getItem(CLICKS_KEY) || '{}'); } catch { return {}; } }
 
+  let translateTimer = null;
+
+  function scheduleTranslate() {
+    clearTimeout(translateTimer);
+    translateTimer = setTimeout(translateName, 900);
+  }
+
+  async function translateName() {
+    const en = document.getElementById('inp-name-en').value.trim();
+    if (!en) return;
+    document.getElementById('trans-status').textContent = '翻译中…';
+    let zh = '';
+    try {
+      const res  = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=zh-CN&dt=t&q=${encodeURIComponent(en)}`);
+      const data = await res.json();
+      zh = data[0]?.map(x => x[0])?.join('') || '';
+    } catch(e) {}
+    if (!zh) {
+      try {
+        const res  = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(en)}&langpair=en|zh-CN`);
+        const data = await res.json();
+        zh = data.responseData?.translatedText || '';
+      } catch(e) {}
+    }
+    if (zh) {
+      document.getElementById('inp-name-zh').value = zh;
+      document.getElementById('trans-status').textContent = '✓ 已翻译';
+    } else {
+      document.getElementById('trans-status').textContent = '翻译失败，请手动输入';
+    }
+  }
+
   function addPlace() {
-    const name = document.getElementById('inp-name').value.trim();
-    const addr = document.getElementById('inp-addr').value.trim();
-    const cat  = document.getElementById('inp-cat').value;
-    if (!name || !addr) { alert('请填写名称和地址'); return; }
+    const nameEn = document.getElementById('inp-name-en').value.trim();
+    const nameZh = document.getElementById('inp-name-zh').value.trim();
+    const addr   = document.getElementById('inp-addr').value.trim();
+    const cat    = document.getElementById('inp-cat').value;
+    if (!nameZh || !addr) { alert('请填写中文名称和地址'); return; }
     const custom = getCustom();
-    custom.push({ id: 'c' + Date.now(), name, address: addr, category: cat });
+    custom.push({ id: 'c' + Date.now(), name: nameZh, nameEn: nameEn || '', address: addr, category: cat });
     saveCustom(custom);
-    document.getElementById('inp-name').value = '';
+    document.getElementById('inp-name-en').value = '';
+    document.getElementById('inp-name-zh').value = '';
     document.getElementById('inp-addr').value = '';
+    document.getElementById('trans-status').textContent = '';
     customPlaces = custom;
     render();
   }
@@ -188,6 +238,7 @@
           <span class="row-emoji">${emoji}</span>
           <div class="row-info">
             <div class="row-name">${p.name}</div>
+            ${p.nameEn ? `<div style="font-size:13px;color:#64748b;margin-bottom:2px;">${p.nameEn}</div>` : ''}
             <div class="row-addr">${p.address}</div>
             <div class="row-source">${isJson ? '🔒 系统地点' : '✏️ 手动添加'}</div>
           </div>
