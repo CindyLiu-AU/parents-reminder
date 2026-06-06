@@ -71,7 +71,7 @@
 
     /* ── Scrollable list ── */
     #place-list {
-      position: fixed; top: 120px; bottom: 0; left: 0; right: 0;
+      position: fixed; top: var(--header-h, 120px); bottom: 0; left: 0; right: 0;
       overflow-y: auto; -webkit-overflow-scrolling: touch;
       padding: 12px 14px calc(80px + env(safe-area-inset-bottom));
       display: flex; flex-direction: column; gap: 12px;
@@ -255,8 +255,9 @@
   function buildCatPills() {
     const cats = [...new Set(allPlaces.map(p => p.category).filter(c => c && !OLD_CATS.has(c)))];
     const wrap = document.getElementById('cat-wrap');
-    if (cats.length < 2) { wrap.classList.remove('visible'); return; }
+    if (cats.length < 2) { wrap.classList.remove('visible'); fixListTop(); return; }
     wrap.classList.add('visible');
+    setTimeout(fixListTop, 0);
     wrap.innerHTML = `<button class="cat-pill active" data-cat="" onclick="setCat('')">全部</button>` +
       cats.map(c => `<button class="cat-pill" data-cat="${c}" onclick="setCat('${c}')">${c}</button>`).join('');
   }
@@ -335,6 +336,11 @@
     }).join('');
   }
 
+  function fixListTop() {
+    const h = document.getElementById('header').offsetHeight;
+    document.documentElement.style.setProperty('--header-h', h + 'px');
+  }
+
   async function init() {
     const t = Date.now();
     const [json, custom] = await Promise.all([
@@ -348,8 +354,10 @@
     ];
     buildCatPills();
     render();
+    fixListTop();
   }
 
+  window.addEventListener('resize', fixListTop);
   init();
 </script>
 </body>
