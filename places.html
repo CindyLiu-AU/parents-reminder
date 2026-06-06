@@ -91,7 +91,6 @@
     }
     .place-card:active { transform: scale(0.97); background: #1a2e50; }
     .place-card.top-card { border-color: #f59e0b; box-shadow: 0 0 20px rgba(245,158,11,0.18); }
-    .place-card.never-visited { opacity: 0.6; }
 
     .top-label {
       font-size: 14px; font-weight: 800; color: #f59e0b;
@@ -268,7 +267,7 @@
       const addr  = p.address.replace(/'/g, "\\'");
 
       const phone = p.phone ? p.phone.replace(/'/g, "\\'") : '';
-      return `<div class="place-card${isTop ? ' top-card' : ''}${isNone ? ' never-visited' : ''}"
+      return `<div class="place-card${isTop ? ' top-card' : ''}"
                    onclick="recordClick('${p.id}','${addr}')">
         ${isTop ? `<div class="top-label">${sortMode === 'recent' ? '🕐 最近去的' : '⭐ 最常去的'}</div>` : ''}
         ${p.image ? `<img class="place-img" src="${p.image}">` : ''}
