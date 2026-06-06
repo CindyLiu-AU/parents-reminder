@@ -94,6 +94,16 @@
     .btn-clear  { background: #0a1628; border-color: #1e3a5f; color: #546e7a; }
     .btn-clear:active  { background: #1e3a5f; }
 
+    .img-pick-btn {
+      display: inline-block; background: #1e3a6e; border: 2px solid #2e5a8f;
+      border-radius: 14px; color: #90caf9; font-size: 16px; font-weight: 700;
+      padding: 12px 20px; cursor: pointer;
+    }
+    .img-clear-btn {
+      background: #450a0a; border: 1px solid #7f1d1d; border-radius: 12px;
+      color: #fca5a5; font-size: 14px; font-weight: 700; font-family: inherit;
+      padding: 10px 16px; cursor: pointer; margin-left: 8px;
+    }
     .empty { color: #334d66; font-size: 18px; padding: 12px 4px; }
   </style>
 </head>
@@ -124,6 +134,21 @@
     <div>
       <label class="form-label">地址（English）</label>
       <input class="form-input" id="inp-addr" placeholder="e.g. 21 Channel Hwy, Kingston TAS 7050" />
+    </div>
+    <div>
+      <label class="form-label">电话号码（可选）</label>
+      <input class="form-input" id="inp-phone" placeholder="e.g. 03 6229 0000" type="tel" />
+    </div>
+    <div>
+      <label class="form-label">图片（可选）</label>
+      <div id="img-preview-wrap" style="display:none;margin-bottom:8px;">
+        <img id="img-preview" style="width:100%;border-radius:12px;max-height:160px;object-fit:cover;" />
+      </div>
+      <label class="img-pick-btn">
+        📷 选择图片
+        <input type="file" accept="image/*" id="inp-img" style="display:none" onchange="previewImage(this)" />
+      </label>
+      <button class="img-clear-btn" id="img-clear-btn" onclick="clearImage()" style="display:none">✕ 移除图片</button>
     </div>
     <div>
       <label class="form-label">分类</label>
@@ -189,19 +214,57 @@
     }
   }
 
+  let pendingImage = '';
+
+  function previewImage(input) {
+    if (!input.files || !input.files[0]) return;
+    const file = input.files[0];
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const max = 600;
+        const ratio = Math.min(max / img.width, max / img.height, 1);
+        canvas.width  = Math.round(img.width  * ratio);
+        canvas.height = Math.round(img.height * ratio);
+        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+        pendingImage = canvas.toDataURL('image/jpeg', 0.75);
+        document.getElementById('img-preview').src = pendingImage;
+        document.getElementById('img-preview-wrap').style.display = 'block';
+        document.getElementById('img-clear-btn').style.display = 'inline-block';
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function clearImage() {
+    pendingImage = '';
+    document.getElementById('inp-img').value = '';
+    document.getElementById('img-preview-wrap').style.display = 'none';
+    document.getElementById('img-clear-btn').style.display = 'none';
+  }
+
   function addPlace() {
     const nameEn = document.getElementById('inp-name-en').value.trim();
     const nameZh = document.getElementById('inp-name-zh').value.trim();
     const addr   = document.getElementById('inp-addr').value.trim();
+    const phone  = document.getElementById('inp-phone').value.trim();
     const cat    = document.getElementById('inp-cat').value;
     if (!nameZh || !addr) { alert('请填写中文名称和地址'); return; }
     const custom = getCustom();
-    custom.push({ id: 'c' + Date.now(), name: nameZh, nameEn: nameEn || '', address: addr, category: cat });
+    const entry  = { id: 'c' + Date.now(), name: nameZh, nameEn: nameEn || '', address: addr, category: cat };
+    if (phone) entry.phone = phone;
+    if (pendingImage) entry.image = pendingImage;
+    custom.push(entry);
     saveCustom(custom);
     document.getElementById('inp-name-en').value = '';
     document.getElementById('inp-name-zh').value = '';
-    document.getElementById('inp-addr').value = '';
+    document.getElementById('inp-addr').value    = '';
+    document.getElementById('inp-phone').value   = '';
     document.getElementById('trans-status').textContent = '';
+    clearImage();
     customPlaces = custom;
     render();
   }
@@ -234,12 +297,14 @@
       const isJson = jsonPlaces.some(j => j.id === p.id);
 
       return `<div class="place-row${isJson ? ' from-json' : ''}">
+        ${p.image ? `<img src="${p.image}" style="width:100%;border-radius:10px;max-height:120px;object-fit:cover;margin-bottom:10px;">` : ''}
         <div class="row-top">
           <span class="row-emoji">${emoji}</span>
           <div class="row-info">
             <div class="row-name">${p.name}</div>
             ${p.nameEn ? `<div style="font-size:13px;color:#64748b;margin-bottom:2px;">${p.nameEn}</div>` : ''}
             <div class="row-addr">${p.address}</div>
+            ${p.phone ? `<div style="font-size:13px;color:#6ee7b7;margin-top:2px;">📞 ${p.phone}</div>` : ''}
             <div class="row-source">${isJson ? '🔒 系统地点' : '✏️ 手动添加'}</div>
           </div>
         </div>
