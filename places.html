@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <title>常去地点</title>
+  <link rel="stylesheet" href="theme.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    html, body {
+      min-height: 100vh;
+      background: #0d1b2a;
+      color: #f0f4f8;
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    /* ── Header ── */
+    #header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: #091525;
+      border-bottom: 2px solid #1e3a5f;
+      padding: 12px 20px;
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    #header h1 { font-size: 22px; font-weight: 800; color: #f59e0b; white-space: nowrap; }
+
+    .sort-wrap { display: flex; gap: 8px; }
+    .sort-btn {
+      background: #112240; border: 2px solid #1e3a5f; border-radius: 20px;
+      color: #64748b; font-size: 14px; font-weight: 700; font-family: inherit;
+      padding: 7px 16px; cursor: pointer; transition: all 0.15s; white-space: nowrap;
+    }
+    .sort-btn.active { background: #1e3a6e; border-color: #f59e0b; color: #f59e0b; }
+
+    .back-btn {
+      background: #1e3a6e; border: 1px solid #2e5a8f; border-radius: 10px;
+      color: #90caf9; font-size: 14px; font-weight: 700; font-family: inherit;
+      padding: 8px 14px; cursor: pointer; text-decoration: none; white-space: nowrap;
+    }
+
+    /* ── List ── */
+    #place-list {
+      padding: 88px 16px 32px;
+      display: flex; flex-direction: column; gap: 14px;
+      max-width: 700px; margin: 0 auto;
+    }
+
+    .empty-state {
+      text-align: center; color: #334d66; font-size: 20px;
+      padding: 80px 20px; line-height: 2;
+    }
+
+    /* ── Place card ── */
+    .place-card {
+      background: #112240;
+      border: 2px solid #1e3a5f;
+      border-radius: 20px;
+      padding: 20px 22px;
+      cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.15s;
+      position: relative;
+      overflow: hidden;
+    }
+    .place-card:active { transform: scale(0.98); }
+    .place-card.top-card {
+      border-color: #f59e0b;
+      box-shadow: 0 0 24px rgba(245,158,11,0.2);
+    }
+    .place-card.never-visited { opacity: 0.7; }
+
+    .top-label {
+      font-size: 13px; font-weight: 800; color: #f59e0b;
+      letter-spacing: 1px; margin-bottom: 10px;
+    }
+
+    .place-main {
+      display: flex; align-items: center; gap: 16px;
+    }
+    .place-emoji { font-size: 40px; flex-shrink: 0; }
+
+    .place-info { flex: 1; min-width: 0; }
+    .place-name {
+      font-size: 26px; font-weight: 800; color: #fff;
+      margin-bottom: 4px; line-height: 1.2;
+    }
+    .place-addr {
+      font-size: 14px; color: #64b5f6; line-height: 1.4;
+      word-break: break-word;
+    }
+
+    .maps-arrow {
+      font-size: 28px; color: #2e5a8f; flex-shrink: 0;
+    }
+
+    .place-stats {
+      display: flex; align-items: center; gap: 14px;
+      margin-top: 14px; padding-top: 12px;
+      border-top: 1px solid #1e3a5f;
+      flex-wrap: wrap;
+    }
+    .place-count {
+      font-size: 15px; font-weight: 800;
+      background: #0a1e35; border-radius: 10px;
+      padding: 4px 12px; color: #f59e0b;
+    }
+    .place-count.zero { color: #334d66; }
+    .place-last { font-size: 14px; color: #546e7a; }
+
+    /* ── Light mode ── */
+    html.light body { background: #f0f4f8; color: #1e293b; }
+    html.light #header { background: #e2e8f0; border-color: #cbd5e1; }
+    html.light #header h1 { color: #d97706; }
+    html.light .sort-btn { background: #dbeafe; border-color: #93c5fd; color: #64748b; }
+    html.light .sort-btn.active { background: #bfdbfe; border-color: #d97706; color: #d97706; }
+    html.light .back-btn { background: #dbeafe; border-color: #93c5fd; color: #1e40af; }
+    html.light .place-card { background: #fff; border-color: #cbd5e1; }
+    html.light .place-card.top-card { border-color: #d97706; }
+    html.light .place-name { color: #1e293b; }
+    html.light .place-addr { color: #1d4ed8; }
+    html.light .place-stats { border-color: #e2e8f0; }
+    html.light .place-count { background: #f8fafc; color: #d97706; }
+    html.light .maps-arrow { color: #93c5fd; }
+  </style>
+</head>
+<body>
+
+<div id="header">
+  <a href="index.html" class="back-btn">← 返回</a>
+  <h1>📍 常去地点</h1>
+  <div class="sort-wrap">
+    <button class="sort-btn active" id="sort-recent" onclick="setSort('recent')">最近去过</button>
+    <button class="sort-btn"        id="sort-freq"   onclick="setSort('frequent')">最常去</button>
+  </div>
+</div>
+
+<div id="place-list"></div>
+
+<script>
+  const CLICKS_KEY = 'place_clicks';
+  const CUSTOM_KEY = 'places_custom';
+
+  let allPlaces = [];
+  let sortMode  = 'recent';
+
+  function getClicks() {
+    try { return JSON.parse(localStorage.getItem(CLICKS_KEY) || '{}'); } catch { return {}; }
+  }
+
+  function recordClick(id, address) {
+    const clicks = getClicks();
+    if (!clicks[id]) clicks[id] = { count: 0, lastAt: null };
+    clicks[id].count++;
+    clicks[id].lastAt = new Date().toISOString();
+    localStorage.setItem(CLICKS_KEY, JSON.stringify(clicks));
+    render();
+    const url = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(address);
+    window.open(url, '_blank');
+  }
+
+  function setSort(mode) {
+    sortMode = mode;
+    document.getElementById('sort-recent').classList.toggle('active', mode === 'recent');
+    document.getElementById('sort-freq').classList.toggle('active',   mode === 'frequent');
+    render();
+  }
+
+  function timeSince(iso) {
+    if (!iso) return '';
+    const days = Math.floor((Date.now() - new Date(iso).getTime()) / 86400000);
+    if (days === 0) return '今天';
+    if (days === 1) return '昨天';
+    if (days < 30)  return days + ' 天前';
+    return Math.floor(days / 30) + ' 个月前';
+  }
+
+  const CAT = { 医疗:'🏥', 购物:'🛒', 餐厅:'🍜', 交通:'🚌', 学校:'🏫', 银行:'🏦', 其他:'📍' };
+
+  function render() {
+    const clicks = getClicks();
+    const list   = document.getElementById('place-list');
+
+    if (!allPlaces.length) {
+      list.innerHTML = '<div class="empty-state">还没有地点<br>请联系 Cindy 添加</div>';
+      return;
+    }
+
+    let sorted = [...allPlaces];
+    if (sortMode === 'recent') {
+      sorted.sort((a, b) => {
+        const la = clicks[a.id]?.lastAt || '';
+        const lb = clicks[b.id]?.lastAt || '';
+        return lb.localeCompare(la);
+      });
+    } else {
+      sorted.sort((a, b) => (clicks[b.id]?.count || 0) - (clicks[a.id]?.count || 0));
+    }
+
+    list.innerHTML = sorted.map((p, i) => {
+      const c      = clicks[p.id] || { count: 0, lastAt: null };
+      const emoji  = CAT[p.category] || '📍';
+      const isTop  = i === 0 && c.count > 0;
+      const isNone = c.count === 0;
+      const addr   = p.address.replace(/'/g, "\\'");
+
+      return `<div class="place-card${isTop ? ' top-card' : ''}${isNone ? ' never-visited' : ''}"
+                   onclick="recordClick('${p.id}', '${addr}')">
+        ${isTop ? `<div class="top-label">${sortMode === 'recent' ? '🕐 上次去的' : '⭐ 最常去的'}</div>` : ''}
+        <div class="place-main">
+          <span class="place-emoji">${emoji}</span>
+          <div class="place-info">
+            <div class="place-name">${p.name}</div>
+            <div class="place-addr">${p.address}</div>
+          </div>
+          <span class="maps-arrow">›</span>
+        </div>
+        <div class="place-stats">
+          <span class="place-count${isNone ? ' zero' : ''}">
+            ${isNone ? '从未去过' : '去过 ' + c.count + ' 次'}
+          </span>
+          ${c.lastAt ? `<span class="place-last">上次：${timeSince(c.lastAt)}</span>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  async function init() {
+    const t = Date.now();
+    const [json, custom] = await Promise.all([
+      fetch('places.json?t=' + t).then(r => r.json()).catch(() => []),
+      Promise.resolve(JSON.parse(localStorage.getItem(CUSTOM_KEY) || '[]'))
+    ]);
+    allPlaces = [...json, ...custom];
+    render();
+  }
+
+  init();
+</script>
+<script src="theme.js"></script>
+</body>
+</html>
