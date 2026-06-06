@@ -41,9 +41,38 @@
     }
     .sort-btn.active { background: #1e3a6e; border-color: #f59e0b; color: #f59e0b; }
 
+    /* ── Search bar ── */
+    .search-wrap { position: relative; }
+    .search-input {
+      width: 100%; background: #112240; border: 2px solid #1e3a5f; border-radius: 14px;
+      color: #f0f4f8; font-size: 18px; font-family: inherit;
+      padding: 13px 48px 13px 16px; outline: none;
+    }
+    .search-input:focus { border-color: #f59e0b; }
+    .search-input::placeholder { color: #334d66; }
+    .search-clear {
+      position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+      background: #1e3a6e; border: none; border-radius: 50%;
+      width: 30px; height: 30px; color: #64748b; font-size: 16px;
+      cursor: pointer; display: none; align-items: center; justify-content: center;
+    }
+
+    /* ── Category pills ── */
+    .cat-wrap {
+      display: flex; gap: 8px; overflow-x: auto;
+      -webkit-overflow-scrolling: touch; padding-bottom: 2px;
+    }
+    .cat-wrap::-webkit-scrollbar { display: none; }
+    .cat-pill {
+      flex-shrink: 0; background: #112240; border: 2px solid #1e3a5f; border-radius: 20px;
+      color: #546e7a; font-size: 15px; font-weight: 700; font-family: inherit;
+      padding: 8px 16px; cursor: pointer; white-space: nowrap; transition: all 0.15s;
+    }
+    .cat-pill.active { background: #1e3a6e; border-color: #64b5f6; color: #64b5f6; }
+
     /* ── Scrollable list ── */
     #place-list {
-      position: fixed; top: 130px; bottom: 0; left: 0; right: 0;
+      position: fixed; top: 230px; bottom: 0; left: 0; right: 0;
       overflow-y: auto; -webkit-overflow-scrolling: touch;
       padding: 12px 14px 24px;
       display: flex; flex-direction: column; gap: 12px;
@@ -118,10 +147,15 @@
     <h1>📍 常去地点</h1>
     <a href="places-admin.html" class="back-btn">✏️ 管理</a>
   </div>
+  <div class="search-wrap">
+    <input class="search-input" id="search-input" placeholder="🔍 搜索地点…" oninput="onSearch(this.value)" />
+    <button class="search-clear" id="search-clear" onclick="clearSearch()">✕</button>
+  </div>
   <div class="sort-wrap">
     <button class="sort-btn active" id="sort-recent" onclick="setSort('recent')">🕐 最近去过</button>
     <button class="sort-btn"        id="sort-freq"   onclick="setSort('frequent')">⭐ 最常去</button>
   </div>
+  <div class="cat-wrap" id="cat-wrap"></div>
 </div>
 
 <div id="place-list"></div>
@@ -129,8 +163,10 @@
 <script>
   const CLICKS_KEY = 'place_clicks';
   const CUSTOM_KEY = 'places_custom';
-  let allPlaces = [];
-  let sortMode  = 'recent';
+  let allPlaces   = [];
+  let sortMode    = 'recent';
+  let searchQuery = '';
+  let activecat   = '';
 
   function getClicks() {
     try { return JSON.parse(localStorage.getItem(CLICKS_KEY) || '{}'); } catch { return {}; }
@@ -153,6 +189,33 @@
     render();
   }
 
+  function onSearch(val) {
+    searchQuery = val.trim().toLowerCase();
+    document.getElementById('search-clear').style.display = val ? 'flex' : 'none';
+    render();
+  }
+
+  function clearSearch() {
+    document.getElementById('search-input').value = '';
+    onSearch('');
+    document.getElementById('search-input').focus();
+  }
+
+  function setCat(cat) {
+    activecat = cat;
+    document.querySelectorAll('.cat-pill').forEach(p => p.classList.toggle('active', p.dataset.cat === cat));
+    render();
+  }
+
+  function buildCatPills() {
+    const cats = [...new Set(allPlaces.map(p => p.category).filter(Boolean))];
+    const wrap = document.getElementById('cat-wrap');
+    if (cats.length < 2) { wrap.style.display = 'none'; return; }
+    wrap.style.display = 'flex';
+    wrap.innerHTML = `<button class="cat-pill active" data-cat="" onclick="setCat('')">全部</button>` +
+      cats.map(c => `<button class="cat-pill" data-cat="${c}" onclick="setCat('${c}')">${CAT[c] || '📍'} ${c}</button>`).join('');
+  }
+
   function timeSince(iso) {
     if (!iso) return '';
     const days = Math.floor((Date.now() - new Date(iso).getTime()) / 86400000);
@@ -173,7 +236,18 @@
       return;
     }
 
-    let sorted = [...allPlaces];
+    let sorted = allPlaces.filter(p => {
+      if (activecat && p.category !== activecat) return false;
+      if (!searchQuery) return true;
+      return (p.name || '').toLowerCase().includes(searchQuery) ||
+             (p.nameEn || '').toLowerCase().includes(searchQuery) ||
+             (p.address || '').toLowerCase().includes(searchQuery);
+    });
+    if (!sorted.length) {
+      list.innerHTML = '<div class="empty-state">🔍<br>没有找到相关地点</div>';
+      return;
+    }
+
     if (sortMode === 'recent') {
       sorted.sort((a, b) => (clicks[b.id]?.lastAt || '').localeCompare(clicks[a.id]?.lastAt || ''));
     } else {
@@ -217,6 +291,7 @@
       Promise.resolve(JSON.parse(localStorage.getItem(CUSTOM_KEY) || '[]'))
     ]);
     allPlaces = [...json, ...custom];
+    buildCatPills();
     render();
   }
 
