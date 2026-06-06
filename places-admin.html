@@ -502,8 +502,7 @@
   }
 
   function init() {
-    const editId = new URLSearchParams(location.search).get('edit');
-    if (sessionStorage.getItem('admin_unlocked') || editId) {
+    if (sessionStorage.getItem('admin_unlocked')) {
       document.getElementById('lock-screen').style.display = 'none';
       loadData();
     } else {

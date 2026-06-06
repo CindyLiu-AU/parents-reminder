@@ -151,14 +151,52 @@
       color: #1a1000; font-size: 13px; font-weight: 800; font-family: inherit;
       padding: 5px 10px; cursor: pointer; outline: none; margin-left: auto;
     }
+
+    /* ── Password overlay ── */
+    #pwd-overlay {
+      display: none; position: fixed; inset: 0; z-index: 300;
+      background: rgba(9,21,37,0.96);
+      flex-direction: column; align-items: center; justify-content: center;
+      gap: 18px; padding: 40px;
+    }
+    #pwd-overlay.open { display: flex; }
+    .pwd-title { font-size: 22px; font-weight: 900; color: #f59e0b; }
+    .pwd-input {
+      width: 100%; max-width: 260px;
+      background: #112240; border: 2px solid #1e3a5f; border-radius: 16px;
+      color: #f0f4f8; font-size: 30px; font-family: inherit;
+      padding: 16px 20px; outline: none; text-align: center; letter-spacing: 10px;
+    }
+    .pwd-input:focus { border-color: #f59e0b; }
+    .pwd-confirm {
+      width: 100%; max-width: 260px;
+      background: #f59e0b; border: none; border-radius: 16px;
+      color: #1a1000; font-size: 20px; font-weight: 900; font-family: inherit;
+      padding: 16px; cursor: pointer;
+    }
+    .pwd-confirm:active { opacity: 0.85; }
+    .pwd-cancel {
+      color: #546e7a; font-size: 15px; background: none; border: none;
+      font-family: inherit; cursor: pointer; padding: 8px;
+    }
+    .pwd-error { color: #fca5a5; font-size: 15px; min-height: 22px; }
   </style>
 </head>
 <body>
 
+<div id="pwd-overlay">
+  <div class="pwd-title">🔐 请输入密码</div>
+  <input class="pwd-input" id="pwd-input" type="password" inputmode="numeric"
+         placeholder="••••" maxlength="20" onkeydown="if(event.key==='Enter')pwdConfirm()" />
+  <button class="pwd-confirm" onclick="pwdConfirm()">确认</button>
+  <button class="pwd-cancel" onclick="pwdClose()">取消</button>
+  <div class="pwd-error" id="pwd-error"></div>
+</div>
+
 <div id="header">
   <div class="header-row1">
     <h1>📍 常去地点</h1>
-    <a href="places-admin.html" class="manage-btn">✏️ 管理</a>
+    <button class="manage-btn" onclick="promptAndGo('places-admin.html')">✏️ 管理</button>
   </div>
   <div class="header-row2">
     <div class="search-wrap">
@@ -173,6 +211,7 @@
 <div id="place-list"></div>
 
 <script>
+  const ADMIN_PWD   = '8888';
   const CLICKS_KEY  = 'place_clicks';
   const CUSTOM_KEY  = 'places_custom';
   const AREAS_KEY   = 'places_areas';
@@ -210,6 +249,33 @@
     allPlaces = allPlaces.map(p => p.id === id ? {...p, category: val} : p);
     buildCatPills();
     render();
+  }
+
+  let pendingUrl = '';
+
+  function promptAndGo(url) {
+    event.stopPropagation();
+    pendingUrl = url;
+    document.getElementById('pwd-input').value = '';
+    document.getElementById('pwd-error').textContent = '';
+    document.getElementById('pwd-overlay').classList.add('open');
+    setTimeout(() => document.getElementById('pwd-input').focus(), 100);
+  }
+
+  function pwdConfirm() {
+    if (document.getElementById('pwd-input').value === ADMIN_PWD) {
+      sessionStorage.setItem('admin_unlocked', '1');
+      window.location.href = pendingUrl;
+    } else {
+      document.getElementById('pwd-error').textContent = '密码错误，请重试';
+      document.getElementById('pwd-input').value = '';
+      document.getElementById('pwd-input').focus();
+    }
+  }
+
+  function pwdClose() {
+    document.getElementById('pwd-overlay').classList.remove('open');
+    pendingUrl = '';
   }
 
   function getClicks() {
@@ -326,7 +392,7 @@
           </select>
         </div>
         ${p.phone ? `<a class="call-btn" href="tel:${phone}" onclick="event.stopPropagation()">📞 打电话 ${p.phone}</a>` : ''}
-        <a class="edit-place-btn" href="places-admin.html?edit=${p.id}" onclick="event.stopPropagation()">✏️ 编辑此地点</a>
+        <button class="edit-place-btn" onclick="promptAndGo('places-admin.html?edit=${p.id}')">✏️ 编辑此地点</button>
       </div>`;
     }).join('');
   }
