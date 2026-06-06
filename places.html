@@ -324,8 +324,9 @@
     if (cats.length < 2) { wrap.classList.remove('visible'); fixListTop(); return; }
     wrap.classList.add('visible');
     setTimeout(fixListTop, 0);
-    wrap.innerHTML = `<button class="cat-pill active" data-cat="" onclick="setCat('')">全部</button>` +
-      cats.map(c => `<button class="cat-pill" data-cat="${c}" onclick="setCat('${c}')">${c}</button>`).join('');
+    const countOf = c => allPlaces.filter(p => p.category === c).length;
+    wrap.innerHTML = `<button class="cat-pill active" data-cat="" onclick="setCat('')">全部 ${allPlaces.length}</button>` +
+      cats.map(c => `<button class="cat-pill" data-cat="${c}" onclick="setCat('${c}')">${c} ${countOf(c)}</button>`).join('');
   }
 
   function timeSince(iso) {
