@@ -124,6 +124,12 @@
     .result-loading { font-size: 26px; color: #475569; animation: blink 1s infinite; }
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
     .result-error { font-size: 24px; color: #f87171; }
+    .result-error-detail {
+      font-size: 11px; color: #6b7280; word-break: break-all;
+      max-height: 60px; overflow-y: auto; text-align: left;
+      background: #0a1628; border-radius: 8px; padding: 6px 8px;
+      width: 100%; margin-top: 4px;
+    }
 
 /* ── Repeat section — progress + stop only ── */
     .repeat-section { display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
@@ -457,12 +463,14 @@
       saveHistory(text, result, direction);
       speakBoth();
     } else {
-      showError('翻译失败，请检查网络后重试\n' + errors.join(' / '));
+      showError('翻译失败，请检查网络后重试', errors.join(' | '));
     }
   }
 
-  function showError(msg) {
-    document.getElementById('result-box').innerHTML = `<div class="result-error">${msg}</div>`;
+  function showError(msg, detail = '') {
+    document.getElementById('result-box').innerHTML =
+      `<div class="result-error">${msg}</div>` +
+      (detail ? `<div class="result-error-detail">${detail}</div>` : '');
   }
 
   /* ── History ── */
