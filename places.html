@@ -140,13 +140,11 @@
     .call-btn:active { background: #065f46; }
 
     .edit-place-btn {
-      display: flex; align-items: center; justify-content: center;
-      background: none; border: 1px solid #1e3a5f; border-radius: 10px;
-      color: #475569; font-size: 13px; font-weight: 700; font-family: inherit;
-      padding: 6px 12px; cursor: pointer; margin-top: 8px; width: 100%;
-      text-decoration: none;
+      background: none; border: 1px solid #1e3a5f; border-radius: 8px;
+      color: #475569; font-size: 16px; font-family: inherit;
+      padding: 4px 8px; cursor: pointer; flex-shrink: 0;
     }
-    .edit-place-btn:active { background: #112240; color: #90caf9; }
+    .edit-place-btn:active { background: #1e3a6e; color: #90caf9; }
 
     .area-select {
       background: #f59e0b; border: none; border-radius: 10px;
@@ -410,9 +408,9 @@
             <option value="" ${!p.category || OLD_CATS.has(p.category) ? 'selected' : ''}>未分区</option>
             ${areas.map(a => `<option value="${a}"${p.category === a ? ' selected' : ''}>${a}</option>`).join('')}
           </select>
+          <button class="edit-place-btn" onclick="promptAndGo('places-admin.html?edit=${p.id}')">✏️</button>
         </div>
         ${p.phone ? `<a class="call-btn" href="tel:${phone}" onclick="event.stopPropagation()">📞 打电话 ${p.phone}</a>` : ''}
-        <button class="edit-place-btn" onclick="promptAndGo('places-admin.html?edit=${p.id}')">✏️ 编辑此地点</button>
       </div>`;
     }).join('');
   }
