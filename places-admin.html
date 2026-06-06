@@ -93,12 +93,22 @@
     .btn-delete:active { background: #7f1d1d; }
     .btn-clear  { background: #0a1628; border-color: #1e3a5f; color: #546e7a; }
     .btn-clear:active  { background: #1e3a5f; }
+    .btn-edit   { background: #1e3a6e; border-color: #2e5a8f; color: #90caf9; }
+    .btn-edit:active   { background: #2e5a8f; }
 
     .img-pick-btn {
       display: inline-block; background: #1e3a6e; border: 2px solid #2e5a8f;
       border-radius: 14px; color: #90caf9; font-size: 16px; font-weight: 700;
       padding: 12px 20px; cursor: pointer;
     }
+    .cancel-btn {
+      width: 100%; background: #1e3a6e; border: 2px solid #2e5a8f; border-radius: 16px;
+      color: #90caf9; font-size: 18px; font-weight: 800; font-family: inherit;
+      padding: 14px; cursor: pointer; margin-top: 6px;
+    }
+    .cancel-btn:active { background: #2e5a8f; }
+    .form-card.editing { border-color: #f59e0b; }
+
     .img-clear-btn {
       background: #450a0a; border: 1px solid #7f1d1d; border-radius: 12px;
       color: #fca5a5; font-size: 14px; font-weight: 700; font-family: inherit;
@@ -162,7 +172,8 @@
         <option value="其他" selected>📍 其他</option>
       </select>
     </div>
-    <button class="add-btn" onclick="addPlace()">保存地点</button>
+    <button class="add-btn" id="save-btn" onclick="savePlace()">保存地点</button>
+    <button class="cancel-btn" id="cancel-btn" onclick="cancelEdit()" style="display:none">取消编辑</button>
   </div>
 
   <div class="section-title">已有地点</div>
@@ -246,27 +257,78 @@
     document.getElementById('img-clear-btn').style.display = 'none';
   }
 
-  function addPlace() {
+  let editingId = null;
+
+  function savePlace() {
     const nameEn = document.getElementById('inp-name-en').value.trim();
     const nameZh = document.getElementById('inp-name-zh').value.trim();
     const addr   = document.getElementById('inp-addr').value.trim();
     const phone  = document.getElementById('inp-phone').value.trim();
     const cat    = document.getElementById('inp-cat').value;
     if (!nameZh || !addr) { alert('请填写中文名称和地址'); return; }
-    const custom = getCustom();
-    const entry  = { id: 'c' + Date.now(), name: nameZh, nameEn: nameEn || '', address: addr, category: cat };
-    if (phone) entry.phone = phone;
-    if (pendingImage) entry.image = pendingImage;
-    custom.push(entry);
+
+    let custom = getCustom();
+    if (editingId) {
+      custom = custom.map(p => {
+        if (p.id !== editingId) return p;
+        const updated = { ...p, name: nameZh, nameEn: nameEn || '', address: addr, category: cat };
+        if (phone) updated.phone = phone; else delete updated.phone;
+        if (pendingImage) updated.image = pendingImage;
+        return updated;
+      });
+    } else {
+      const entry = { id: 'c' + Date.now(), name: nameZh, nameEn: nameEn || '', address: addr, category: cat };
+      if (phone) entry.phone = phone;
+      if (pendingImage) entry.image = pendingImage;
+      custom.push(entry);
+    }
+
     saveCustom(custom);
+    customPlaces = custom;
+    resetForm();
+    render();
+  }
+
+  function editPlace(id) {
+    const p = customPlaces.find(x => x.id === id);
+    if (!p) return;
+    editingId = id;
+    document.getElementById('inp-name-en').value = p.nameEn || '';
+    document.getElementById('inp-name-zh').value = p.name   || '';
+    document.getElementById('inp-addr').value    = p.address || '';
+    document.getElementById('inp-phone').value   = p.phone  || '';
+    document.getElementById('inp-cat').value     = p.category || '其他';
+    document.getElementById('trans-status').textContent = '';
+    if (p.image) {
+      pendingImage = p.image;
+      document.getElementById('img-preview').src = p.image;
+      document.getElementById('img-preview-wrap').style.display = 'block';
+      document.getElementById('img-clear-btn').style.display = 'inline-block';
+    } else {
+      clearImage();
+    }
+    document.getElementById('save-btn').textContent = '更新地点';
+    document.getElementById('cancel-btn').style.display = 'block';
+    document.querySelector('.form-card').classList.add('editing');
+    document.querySelector('.form-card').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function cancelEdit() {
+    editingId = null;
+    resetForm();
+  }
+
+  function resetForm() {
+    editingId = null;
     document.getElementById('inp-name-en').value = '';
     document.getElementById('inp-name-zh').value = '';
     document.getElementById('inp-addr').value    = '';
     document.getElementById('inp-phone').value   = '';
     document.getElementById('trans-status').textContent = '';
+    document.getElementById('save-btn').textContent = '保存地点';
+    document.getElementById('cancel-btn').style.display = 'none';
+    document.querySelector('.form-card').classList.remove('editing');
     clearImage();
-    customPlaces = custom;
-    render();
   }
 
   function deletePlace(id) {
@@ -311,6 +373,7 @@
         <div class="row-bottom">
           <span class="row-clicks">${c.count ? '去过 ' + c.count + ' 次' : '从未去过'}</span>
           ${c.count ? `<button class="btn-sm btn-clear" onclick="clearClicks('${p.id}')">清除次数</button>` : ''}
+          ${!isJson ? `<button class="btn-sm btn-edit" onclick="editPlace('${p.id}')">✏️ 编辑</button>` : ''}
           ${!isJson ? `<button class="btn-sm btn-delete" onclick="deletePlace('${p.id}')">删除</button>` : ''}
         </div>
       </div>`;
