@@ -22,19 +22,27 @@
       padding: 10px 12px 8px;
       display: flex; flex-direction: column; gap: 7px;
     }
-    /* Row 1: title + manage */
-    .header-row1 {
-      display: flex; align-items: center; justify-content: space-between;
+    /* Row 1: title + icon buttons */
+    .header-row1 { display: flex; align-items: center; gap: 8px; }
+    #header h1 { flex: 1; font-size: 18px; font-weight: 900; color: #f59e0b; }
+    .icon-btn {
+      flex-shrink: 0; background: #112240; border: 2px solid #1e3a5f; border-radius: 10px;
+      color: #64b5f6; font-size: 18px; font-family: inherit;
+      width: 42px; height: 42px; display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
     }
-    #header h1 { font-size: 18px; font-weight: 900; color: #f59e0b; }
+    .icon-btn.active { border-color: #f59e0b; color: #f59e0b; background: #1a2e10; }
+    .icon-btn:active { background: #1e3a6e; }
     .manage-btn {
-      background: #1e3a6e; border: 1px solid #2e5a8f; border-radius: 10px;
+      flex-shrink: 0; background: #1e3a6e; border: 1px solid #2e5a8f; border-radius: 10px;
       color: #90caf9; font-size: 13px; font-weight: 700; font-family: inherit;
       padding: 7px 13px; cursor: pointer; text-decoration: none; white-space: nowrap;
+      height: 42px; display: flex; align-items: center;
     }
 
-    /* Row 2: search + sort toggle */
-    .header-row2 { display: flex; gap: 8px; align-items: center; }
+    /* Search expand row (hidden until search button tapped) */
+    .search-expand { display: none; }
+    .search-expand.open { display: flex; gap: 8px; align-items: center; }
     .search-wrap { position: relative; flex: 1; }
     .search-input {
       width: 100%; background: #112240; border: 2px solid #1e3a5f; border-radius: 12px;
@@ -45,29 +53,23 @@
     .search-input::placeholder { color: #334d66; }
     .search-clear {
       position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
-      background: none; border: none; color: #546e7a; font-size: 16px;
+      background: none; border: none; color: #546e7a; font-size: 18px;
       cursor: pointer; display: none; padding: 4px;
     }
-    .sort-toggle {
-      flex-shrink: 0; background: #112240; border: 2px solid #1e3a5f; border-radius: 12px;
-      color: #64b5f6; font-size: 13px; font-weight: 800; font-family: inherit;
-      padding: 10px 12px; cursor: pointer; white-space: nowrap; transition: all 0.15s;
-    }
-    .sort-toggle:active { background: #1e3a6e; }
 
-    /* Row 3: category pills (hidden when no categories) */
+    /* Row 3: category pills */
     .cat-wrap {
-      display: none; gap: 6px; overflow-x: auto;
+      display: none; gap: 8px; overflow-x: auto;
       -webkit-overflow-scrolling: touch;
     }
     .cat-wrap.visible { display: flex; }
     .cat-wrap::-webkit-scrollbar { display: none; }
     .cat-pill {
-      flex-shrink: 0; background: #112240; border: 1px solid #1e3a5f; border-radius: 16px;
-      color: #546e7a; font-size: 13px; font-weight: 700; font-family: inherit;
-      padding: 5px 12px; cursor: pointer; white-space: nowrap;
+      flex-shrink: 0; background: #1e3a6e; border: 2px solid #2e5a8f; border-radius: 20px;
+      color: #90caf9; font-size: 15px; font-weight: 800; font-family: inherit;
+      padding: 8px 16px; cursor: pointer; white-space: nowrap;
     }
-    .cat-pill.active { background: #0d2745; border-color: #64b5f6; color: #64b5f6; }
+    .cat-pill.active { background: #f59e0b; border-color: #f59e0b; color: #1a1000; }
 
     /* ── Scrollable list ── */
     #place-list {
@@ -196,14 +198,15 @@
 <div id="header">
   <div class="header-row1">
     <h1>📍 常去地点</h1>
+    <button class="icon-btn" id="search-btn" onclick="toggleSearch()">🔍</button>
+    <button class="icon-btn" id="sort-toggle" onclick="toggleSort()">🕐</button>
     <button class="manage-btn" onclick="promptAndGo('places-admin.html')">✏️ 管理</button>
   </div>
-  <div class="header-row2">
+  <div class="search-expand" id="search-expand">
     <div class="search-wrap">
-      <input class="search-input" id="search-input" placeholder="🔍 搜索地点…" oninput="onSearch(this.value)" />
+      <input class="search-input" id="search-input" placeholder="搜索地点…" oninput="onSearch(this.value)" />
       <button class="search-clear" id="search-clear" onclick="clearSearch()">✕</button>
     </div>
-    <button class="sort-toggle" id="sort-toggle" onclick="toggleSort()">🕐 最近</button>
   </div>
   <div class="cat-wrap" id="cat-wrap"></div>
 </div>
@@ -292,9 +295,23 @@
     window.location.href = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(address);
   }
 
+  function toggleSearch() {
+    const row = document.getElementById('search-expand');
+    const btn = document.getElementById('search-btn');
+    const open = row.classList.toggle('open');
+    btn.classList.toggle('active', open);
+    if (open) {
+      setTimeout(() => { document.getElementById('search-input').focus(); fixListTop(); }, 50);
+    } else {
+      document.getElementById('search-input').value = '';
+      onSearch('');
+      fixListTop();
+    }
+  }
+
   function toggleSort() {
     sortMode = sortMode === 'recent' ? 'frequent' : 'recent';
-    document.getElementById('sort-toggle').textContent = sortMode === 'recent' ? '🕐 最近' : '⭐ 常去';
+    document.getElementById('sort-toggle').textContent = sortMode === 'recent' ? '🕐' : '⭐';
     render();
   }
 
@@ -307,7 +324,9 @@
   function clearSearch() {
     document.getElementById('search-input').value = '';
     onSearch('');
-    document.getElementById('search-input').focus();
+    document.getElementById('search-expand').classList.remove('open');
+    document.getElementById('search-btn').classList.remove('active');
+    setTimeout(fixListTop, 50);
   }
 
   function setCat(cat) {
