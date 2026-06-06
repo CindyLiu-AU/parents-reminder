@@ -218,7 +218,7 @@
     if (cats.length < 2) { wrap.classList.remove('visible'); return; }
     wrap.classList.add('visible');
     wrap.innerHTML = `<button class="cat-pill active" data-cat="" onclick="setCat('')">全部</button>` +
-      cats.map(c => `<button class="cat-pill" data-cat="${c}" onclick="setCat('${c}')">${CAT[c] || '📍'} ${c}</button>`).join('');
+      cats.map(c => `<button class="cat-pill" data-cat="${c}" onclick="setCat('${c}')">${c}</button>`).join('');
   }
 
   function timeSince(iso) {
@@ -230,7 +230,7 @@
     return Math.floor(days / 30) + ' 个月前';
   }
 
-  const CAT = { 医疗:'🏥', 购物:'🛒', 餐厅:'🍜', 交通:'🚌', 学校:'🏫', 银行:'🏦', 其他:'📍' };
+;
 
   function render() {
     const clicks = getClicks();
@@ -261,7 +261,7 @@
 
     list.innerHTML = sorted.map((p, i) => {
       const c     = clicks[p.id] || { count: 0, lastAt: null };
-      const emoji = CAT[p.category] || '📍';
+      const emoji = '📍';
       const isTop = i === 0 && c.count > 0;
       const isNone = c.count === 0;
       const addr  = p.address.replace(/'/g, "\\'");

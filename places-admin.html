@@ -198,16 +198,16 @@
       <button class="img-clear-btn" id="img-clear-btn" onclick="clearImage()" style="display:none">✕ 移除图片</button>
     </div>
     <div>
-      <label class="form-label">分类</label>
-      <select class="form-select" id="inp-cat">
-        <option value="医疗">🏥 医疗</option>
-        <option value="购物">🛒 购物</option>
-        <option value="餐厅">🍜 餐厅</option>
-        <option value="交通">🚌 交通</option>
-        <option value="学校">🏫 学校</option>
-        <option value="银行">🏦 银行</option>
-        <option value="其他" selected>📍 其他</option>
-      </select>
+      <label class="form-label">区域</label>
+      <input class="form-input" id="inp-cat" list="area-suggestions"
+             placeholder="e.g. 金斯顿、市中心、叁地贝" autocomplete="off" />
+      <datalist id="area-suggestions">
+        <option value="金斯顿">
+        <option value="叁地贝">
+        <option value="市中心">
+        <option value="北区">
+        <option value="东区">
+      </datalist>
     </div>
     <button class="add-btn" id="save-btn" onclick="savePlace()">保存地点</button>
     <button class="cancel-btn" id="cancel-btn" onclick="cancelEdit()" style="display:none">取消编辑</button>
@@ -222,7 +222,6 @@
   const ADMIN_PWD  = '8888';
   const CUSTOM_KEY = 'places_custom';
   const CLICKS_KEY = 'place_clicks';
-  const CAT = { 医疗:'🏥', 购物:'🛒', 餐厅:'🍜', 交通:'🚌', 学校:'🏫', 银行:'🏦', 其他:'📍' };
 
   function unlock() {
     const val = document.getElementById('lock-input').value;
@@ -315,7 +314,7 @@
     const nameZh = document.getElementById('inp-name-zh').value.trim();
     const addr   = document.getElementById('inp-addr').value.trim();
     const phone  = document.getElementById('inp-phone').value.trim();
-    const cat    = document.getElementById('inp-cat').value;
+    const cat    = document.getElementById('inp-cat').value.trim();
     if (!nameZh || !addr) { alert('请填写中文名称和地址'); return; }
 
     let custom = getCustom();
@@ -375,6 +374,7 @@
     document.getElementById('inp-name-zh').value = '';
     document.getElementById('inp-addr').value    = '';
     document.getElementById('inp-phone').value   = '';
+    document.getElementById('inp-cat').value     = '';
     document.getElementById('trans-status').textContent = '';
     document.getElementById('save-btn').textContent = '保存地点';
     document.getElementById('cancel-btn').style.display = 'none';
@@ -405,7 +405,7 @@
     if (!all.length) { list.innerHTML = '<div class="empty">暂时没有地点</div>'; return; }
 
     list.innerHTML = all.map(p => {
-      const emoji  = CAT[p.category] || '📍';
+      const emoji  = '📍';
       const c      = clicks[p.id] || { count: 0 };
       const isJson = jsonPlaces.some(j => j.id === p.id);
 
@@ -418,7 +418,7 @@
             ${p.nameEn ? `<div style="font-size:13px;color:#64748b;margin-bottom:2px;">${p.nameEn}</div>` : ''}
             <div class="row-addr">${p.address}</div>
             ${p.phone ? `<div style="font-size:13px;color:#6ee7b7;margin-top:2px;">📞 ${p.phone}</div>` : ''}
-            <div class="row-source">${isJson ? '🔒 系统地点' : '✏️ 手动添加'}</div>
+            <div class="row-source">${isJson ? '🔒 系统地点' : '✏️ 手动添加'}${p.category ? ' · ' + p.category : ''}</div>
           </div>
         </div>
         <div class="row-bottom">
