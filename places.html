@@ -289,7 +289,6 @@
     clicks[id].count++;
     clicks[id].lastAt = new Date().toISOString();
     localStorage.setItem(CLICKS_KEY, JSON.stringify(clicks));
-    render();
     window.location.href = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(address);
   }
 
