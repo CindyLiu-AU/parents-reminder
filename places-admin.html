@@ -115,9 +115,46 @@
       padding: 10px 16px; cursor: pointer; margin-left: 8px;
     }
     .empty { color: #334d66; font-size: 18px; padding: 12px 4px; }
+
+    /* ── Lock screen ── */
+    #lock-screen {
+      position: fixed; inset: 0; z-index: 200;
+      background: #0d1b2a;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 18px; padding: 40px;
+    }
+    .lock-icon { font-size: 52px; }
+    .lock-title { font-size: 26px; font-weight: 900; color: #f59e0b; }
+    .lock-sub { font-size: 15px; color: #546e7a; }
+    .lock-input {
+      width: 100%; max-width: 260px;
+      background: #112240; border: 2px solid #1e3a5f; border-radius: 16px;
+      color: #f0f4f8; font-size: 30px; font-family: inherit;
+      padding: 16px 20px; outline: none; text-align: center; letter-spacing: 10px;
+    }
+    .lock-input:focus { border-color: #f59e0b; }
+    .lock-btn {
+      width: 100%; max-width: 260px;
+      background: #f59e0b; border: none; border-radius: 16px;
+      color: #1a1000; font-size: 20px; font-weight: 900; font-family: inherit;
+      padding: 16px; cursor: pointer;
+    }
+    .lock-btn:active { opacity: 0.85; transform: scale(0.98); }
+    .lock-error { color: #fca5a5; font-size: 15px; min-height: 22px; }
   </style>
 </head>
 <body>
+
+<div id="lock-screen">
+  <div class="lock-icon">🔐</div>
+  <div class="lock-title">管理地点</div>
+  <div class="lock-sub">请输入密码</div>
+  <input class="lock-input" id="lock-input" type="password" inputmode="numeric"
+         placeholder="••••" maxlength="20" onkeydown="if(event.key==='Enter')unlock()" />
+  <button class="lock-btn" onclick="unlock()">确认</button>
+  <div class="lock-error" id="lock-error"></div>
+</div>
 
 <div id="header">
   <a href="places.html" class="back-btn">← 返回</a>
@@ -182,9 +219,23 @@
 </div>
 
 <script>
+  const ADMIN_PWD  = '8888';
   const CUSTOM_KEY = 'places_custom';
   const CLICKS_KEY = 'place_clicks';
   const CAT = { 医疗:'🏥', 购物:'🛒', 餐厅:'🍜', 交通:'🚌', 学校:'🏫', 银行:'🏦', 其他:'📍' };
+
+  function unlock() {
+    const val = document.getElementById('lock-input').value;
+    if (val === ADMIN_PWD) {
+      sessionStorage.setItem('admin_unlocked', '1');
+      document.getElementById('lock-screen').style.display = 'none';
+      loadData();
+    } else {
+      document.getElementById('lock-error').textContent = '密码错误，请重试';
+      document.getElementById('lock-input').value = '';
+      document.getElementById('lock-input').focus();
+    }
+  }
 
   let jsonPlaces   = [];
   let customPlaces = [];
@@ -380,7 +431,7 @@
     }).join('');
   }
 
-  async function init() {
+  async function loadData() {
     const t = Date.now();
     jsonPlaces   = await fetch('places.json?t=' + t).then(r => r.json()).catch(() => []);
     customPlaces = getCustom();
@@ -394,6 +445,15 @@
         const row = document.querySelector(`[data-id="${editId}"]`);
         if (row) row.scrollIntoView({ behavior: 'smooth' });
       }
+    }
+  }
+
+  function init() {
+    if (sessionStorage.getItem('admin_unlocked')) {
+      document.getElementById('lock-screen').style.display = 'none';
+      loadData();
+    } else {
+      setTimeout(() => document.getElementById('lock-input').focus(), 300);
     }
   }
 
