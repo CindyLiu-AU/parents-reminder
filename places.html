@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <title>常去地点</title>
   <style>
@@ -73,7 +73,7 @@
     #place-list {
       position: fixed; top: 120px; bottom: 0; left: 0; right: 0;
       overflow-y: auto; -webkit-overflow-scrolling: touch;
-      padding: 12px 14px 24px;
+      padding: 12px 14px calc(24px + env(safe-area-inset-bottom));
       display: flex; flex-direction: column; gap: 12px;
     }
 
