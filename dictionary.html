@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <title>查词典</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="theme.css">
@@ -258,6 +259,7 @@
 
   function initVoices() {
     const v = speechSynthesis.getVoices();
+    if (!v.length) return false;
     ttsVoiceEn = v.find(x => x.lang === 'en-AU')
               || v.find(x => x.lang === 'en-GB')
               || v.find(x => x.lang.startsWith('en') && x.localService)
@@ -265,11 +267,26 @@
     ttsVoiceCn = v.find(x => x.lang === 'zh-CN')
               || v.find(x => x.lang === 'zh-TW')
               || v.find(x => x.lang.startsWith('zh')) || null;
+    return true;
   }
-  if (speechSynthesis.onvoiceschanged !== undefined) speechSynthesis.addEventListener('voiceschanged', initVoices);
-  initVoices();
+  speechSynthesis.addEventListener('voiceschanged', initVoices);
+  // Android Chrome sometimes never fires voiceschanged — poll as fallback
+  let _voicePoll = 0;
+  const _voiceTimer = setInterval(() => {
+    if (initVoices() || ++_voicePoll > 30) clearInterval(_voiceTimer);
+  }, 200);
+
+  // Chrome on Android silently pauses speech synthesis — keep it alive
+  setInterval(() => { if (speechSynthesis.paused) speechSynthesis.resume(); }, 100);
 
   const delay = ms => new Promise(r => setTimeout(r, ms));
+
+  async function fetchWithTimeout(url, ms = 8000) {
+    const ctrl = new AbortController();
+    const id = setTimeout(() => ctrl.abort(), ms);
+    try { const r = await fetch(url, { signal: ctrl.signal }); clearTimeout(id); return r; }
+    catch(e) { clearTimeout(id); throw e; }
+  }
 
   /* ── English TTS ── */
   function sayEnglish(text) {
@@ -290,30 +307,17 @@
   /* ── Chinese TTS ── */
   async function sayChinese(text) {
     if (!text) return;
-
-    if (ttsVoiceCn) {
-      // Device has a Chinese voice — use Web Speech API
-      await new Promise(resolve => {
-        speechSynthesis.cancel();
-        const utt = new SpeechSynthesisUtterance(text);
-        utt.lang = 'zh-CN'; utt.voice = ttsVoiceCn;
-        let done = false;
-        const finish = () => { if (!done) { done = true; resolve(); } };
-        utt.onend = finish; utt.onerror = finish;
-        setTimeout(finish, Math.max(3000, text.length * 300));
-        speechSynthesis.speak(utt);
-      });
-    } else {
-      // No Chinese voice on device — use Google Translate TTS audio directly
-      await new Promise(resolve => {
-        const url = `https://translate.google.com/translate_tts?ie=UTF-8&tl=zh-CN&client=tw-ob&q=${encodeURIComponent(text.slice(0, 200))}`;
-        const audio = new Audio(url);
-        audio.onended = resolve;
-        audio.onerror = resolve;
-        setTimeout(resolve, 5000);
-        audio.play().catch(resolve);
-      });
-    }
+    await new Promise(resolve => {
+      speechSynthesis.cancel();
+      const utt = new SpeechSynthesisUtterance(text);
+      utt.lang = 'zh-CN';
+      if (ttsVoiceCn) utt.voice = ttsVoiceCn;
+      let done = false;
+      const finish = () => { if (!done) { done = true; resolve(); } };
+      utt.onend = finish; utt.onerror = finish;
+      setTimeout(finish, Math.max(3000, text.length * 300));
+      speechSynthesis.speak(utt);
+    });
   }
 
   /* ── Speak both in correct order for direction ── */
@@ -404,14 +408,14 @@
 
     let result = '';
     try {
-      const res  = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=${apiFrom}&tl=${apiTo}&dt=t&q=${encodeURIComponent(text)}`);
+      const res  = await fetchWithTimeout(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=${apiFrom}&tl=${apiTo}&dt=t&q=${encodeURIComponent(text)}`);
       const data = await res.json();
       result = data[0]?.map(x => x[0])?.join('') || '';
     } catch(e) {}
 
     if (!result) {
       try {
-        const res  = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${pair}`);
+        const res  = await fetchWithTimeout(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${pair}`);
         const data = await res.json();
         result = data.responseData?.translatedText || '';
       } catch(e) {}
