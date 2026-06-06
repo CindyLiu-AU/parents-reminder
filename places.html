@@ -99,36 +99,30 @@
       letter-spacing: 1px; margin-bottom: 12px;
     }
 
-    .place-main { display: flex; align-items: center; gap: 14px; }
-    .place-emoji { font-size: 44px; flex-shrink: 0; }
-
+    .place-main { display: flex; align-items: flex-start; }
     .place-info { flex: 1; min-width: 0; }
-    .place-name { font-size: 20px; font-weight: 900; color: #fff; line-height: 1.2; margin-bottom: 4px; }
-    .place-name-en { font-size: 16px; color: #64748b; margin-bottom: 6px; }
-    .place-addr { font-size: 15px; color: #64b5f6; line-height: 1.5; word-break: break-word; }
+    .place-name { font-size: 19px; font-weight: 900; color: #fff; line-height: 1.3; margin-bottom: 3px; }
+    .place-name-en { font-size: 14px; color: #64748b; margin-bottom: 5px; line-height: 1.3; }
+    .place-addr { font-size: 14px; color: #64b5f6; line-height: 1.5; word-break: break-all; }
 
     .place-img {
       width: 100%; border-radius: 14px; max-height: 160px;
       object-fit: cover; margin-bottom: 14px; display: block;
     }
 
-    .maps-icon {
-      flex-shrink: 0; background: #1e3a6e; border-radius: 12px;
-      width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;
-      font-size: 24px;
-    }
-
     .place-stats {
-      display: flex; align-items: center; gap: 12px;
-      margin-top: 14px; padding-top: 12px; border-top: 1px solid #1e3a5f;
-      flex-wrap: wrap;
+      display: flex; align-items: center;
+      margin-top: 12px; padding-top: 10px; border-top: 1px solid #1e3a5f;
+      gap: 8px;
     }
+    .place-stats-left { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .place-stats-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
     .place-count {
-      font-size: 16px; font-weight: 800;
-      background: #0a1e35; border-radius: 10px; padding: 5px 14px; color: #f59e0b;
+      font-size: 14px; font-weight: 800; white-space: nowrap;
+      background: #0a1e35; border-radius: 8px; padding: 4px 10px; color: #f59e0b;
     }
     .place-count.zero { color: #334d66; }
-    .place-last { font-size: 15px; color: #546e7a; flex: 1; }
+    .place-last { font-size: 13px; color: #546e7a; white-space: nowrap; }
 
     .call-btn {
       display: flex; align-items: center; gap: 8px;
@@ -149,7 +143,7 @@
     .area-select {
       background: #f59e0b; border: none; border-radius: 10px;
       color: #1a1000; font-size: 13px; font-weight: 800; font-family: inherit;
-      padding: 5px 10px; cursor: pointer; outline: none; margin-left: auto;
+      padding: 5px 10px; cursor: pointer; outline: none; max-width: 110px;
     }
 
     /* ── Password overlay ── */
@@ -401,13 +395,17 @@
           </div>
         </div>
         <div class="place-stats">
-          <span class="place-count${isNone ? ' zero' : ''}">${isNone ? '从未去过' : '去过 ' + c.count + ' 次'}</span>
-          ${c.lastAt ? `<span class="place-last">上次：${timeSince(c.lastAt)}</span>` : ''}
-          <select class="area-select" onclick="event.stopPropagation()" onchange="changeCat('${p.id}', this.value)">
-            <option value="" ${!p.category || OLD_CATS.has(p.category) ? 'selected' : ''}>未分区</option>
-            ${areas.map(a => `<option value="${a}"${p.category === a ? ' selected' : ''}>${a}</option>`).join('')}
-          </select>
-          <button class="edit-place-btn" onclick="promptAndGo('places-admin.html?edit=${p.id}')">✏️</button>
+          <div class="place-stats-left">
+            <span class="place-count${isNone ? ' zero' : ''}">${isNone ? '从未去过' : '去过 ' + c.count + ' 次'}</span>
+            ${c.lastAt ? `<span class="place-last">上次：${timeSince(c.lastAt)}</span>` : ''}
+          </div>
+          <div class="place-stats-right">
+            <select class="area-select" onclick="event.stopPropagation()" onchange="changeCat('${p.id}', this.value)">
+              <option value="" ${!p.category || OLD_CATS.has(p.category) ? 'selected' : ''}>未分区</option>
+              ${areas.map(a => `<option value="${a}"${p.category === a ? ' selected' : ''}>${a}</option>`).join('')}
+            </select>
+            <button class="edit-place-btn" onclick="promptAndGo('places-admin.html?edit=${p.id}')">✏️</button>
+          </div>
         </div>
         ${p.phone ? `<a class="call-btn" href="tel:${phone}" onclick="event.stopPropagation()">📞 打电话 ${p.phone}</a>` : ''}
       </div>`;
