@@ -138,6 +138,15 @@
       width: 100%; justify-content: center;
     }
     .call-btn:active { background: #065f46; }
+
+    .edit-place-btn {
+      display: flex; align-items: center; justify-content: center;
+      background: none; border: 1px solid #1e3a5f; border-radius: 10px;
+      color: #475569; font-size: 13px; font-weight: 700; font-family: inherit;
+      padding: 6px 12px; cursor: pointer; margin-top: 8px; width: 100%;
+      text-decoration: none;
+    }
+    .edit-place-btn:active { background: #112240; color: #90caf9; }
   </style>
 </head>
 <body>
@@ -280,6 +289,7 @@
           ${c.lastAt ? `<span class="place-last">上次：${timeSince(c.lastAt)}</span>` : ''}
         </div>
         ${p.phone ? `<a class="call-btn" href="tel:${phone}" onclick="event.stopPropagation()">📞 打电话 ${p.phone}</a>` : ''}
+        <a class="edit-place-btn" href="places-admin.html?edit=${p.id}" onclick="event.stopPropagation()">✏️ 编辑此地点</a>
       </div>`;
     }).join('');
   }

@@ -358,7 +358,7 @@
       const c      = clicks[p.id] || { count: 0 };
       const isJson = jsonPlaces.some(j => j.id === p.id);
 
-      return `<div class="place-row${isJson ? ' from-json' : ''}">
+      return `<div class="place-row${isJson ? ' from-json' : ''}" data-id="${p.id}">
         ${p.image ? `<img src="${p.image}" style="width:100%;border-radius:10px;max-height:120px;object-fit:cover;margin-bottom:10px;">` : ''}
         <div class="row-top">
           <span class="row-emoji">${emoji}</span>
@@ -385,6 +385,16 @@
     jsonPlaces   = await fetch('places.json?t=' + t).then(r => r.json()).catch(() => []);
     customPlaces = getCustom();
     render();
+    const editId = new URLSearchParams(location.search).get('edit');
+    if (editId) {
+      const isCustom = customPlaces.some(p => p.id === editId);
+      if (isCustom) {
+        editPlace(editId);
+      } else {
+        const row = document.querySelector(`[data-id="${editId}"]`);
+        if (row) row.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
   }
 
   init();
