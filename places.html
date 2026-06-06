@@ -303,24 +303,19 @@
 
     list.innerHTML = sorted.map((p, i) => {
       const c     = clicks[p.id] || { count: 0, lastAt: null };
-      const emoji = '📍';
-      const isTop = i === 0 && c.count > 0;
       const isNone = c.count === 0;
       const addr  = p.address.replace(/'/g, "\\'");
 
       const phone = p.phone ? p.phone.replace(/'/g, "\\'") : '';
-      return `<div class="place-card${isTop ? ' top-card' : ''}"
+      return `<div class="place-card"
                    onclick="recordClick('${p.id}','${addr}')">
-        ${isTop ? `<div class="top-label">${sortMode === 'recent' ? '🕐 最近去的' : '⭐ 最常去的'}</div>` : ''}
         ${p.image ? `<img class="place-img" src="${p.image}">` : ''}
         <div class="place-main">
-          <span class="place-emoji">${emoji}</span>
           <div class="place-info">
             <div class="place-name">${p.name}</div>
             ${p.nameEn ? `<div class="place-name-en">${p.nameEn}</div>` : ''}
             <div class="place-addr">${p.address}</div>
           </div>
-          <div class="maps-icon">🗺️</div>
         </div>
         <div class="place-stats">
           <span class="place-count${isNone ? ' zero' : ''}">${isNone ? '从未去过' : '去过 ' + c.count + ' 次'}</span>
