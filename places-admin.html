@@ -211,10 +211,6 @@
       <input class="form-input" id="inp-addr" placeholder="e.g. 21 Channel Hwy, Kingston TAS 7050" />
     </div>
     <div>
-      <label class="form-label">电话号码（可选）</label>
-      <input class="form-input" id="inp-phone" placeholder="e.g. 03 6229 0000" type="tel" />
-    </div>
-    <div>
       <label class="form-label">图片（可选）</label>
       <div id="img-preview-wrap" style="display:none;margin-bottom:8px;">
         <img id="img-preview" style="width:100%;border-radius:12px;max-height:160px;object-fit:cover;" />
@@ -374,7 +370,6 @@
     const nameEn = document.getElementById('inp-name-en').value.trim();
     const nameZh = document.getElementById('inp-name-zh').value.trim();
     const addr   = document.getElementById('inp-addr').value.trim();
-    const phone  = document.getElementById('inp-phone').value.trim();
     const cat    = document.getElementById('inp-cat').value.trim();
     if (!nameZh || !addr) { alert('请填写中文名称和地址'); return; }
 
@@ -383,13 +378,11 @@
       custom = custom.map(p => {
         if (p.id !== editingId) return p;
         const updated = { ...p, name: nameZh, nameEn: nameEn || '', address: addr, category: cat };
-        if (phone) updated.phone = phone; else delete updated.phone;
         if (pendingImage) updated.image = pendingImage;
         return updated;
       });
     } else {
       const entry = { id: 'c' + Date.now(), name: nameZh, nameEn: nameEn || '', address: addr, category: cat };
-      if (phone) entry.phone = phone;
       if (pendingImage) entry.image = pendingImage;
       custom.push(entry);
     }
@@ -407,7 +400,6 @@
     document.getElementById('inp-name-en').value = p.nameEn || '';
     document.getElementById('inp-name-zh').value = p.name   || '';
     document.getElementById('inp-addr').value    = p.address || '';
-    document.getElementById('inp-phone').value   = p.phone  || '';
     document.getElementById('inp-cat').value     = p.category || '';
     document.getElementById('trans-status').textContent = '';
     if (p.image) {
@@ -434,7 +426,6 @@
     document.getElementById('inp-name-en').value = '';
     document.getElementById('inp-name-zh').value = '';
     document.getElementById('inp-addr').value    = '';
-    document.getElementById('inp-phone').value   = '';
     document.getElementById('inp-cat').value     = '';
     document.getElementById('trans-status').textContent = '';
     document.getElementById('save-btn').textContent = '保存地点';
