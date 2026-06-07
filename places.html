@@ -417,13 +417,21 @@
     document.documentElement.style.setProperty('--header-h', h + 'px');
   }
 
+  const GH_RAW = 'https://raw.githubusercontent.com/CindyLiu-AU/parents-reminder/main/places-data.json';
+
   async function init() {
     const t = Date.now();
-    const [json, custom] = await Promise.all([
+    const [json, remote] = await Promise.all([
       fetch('places.json?t=' + t).then(r => r.json()).catch(() => []),
-      Promise.resolve(JSON.parse(localStorage.getItem(CUSTOM_KEY) || '[]'))
+      fetch(GH_RAW + '?t=' + t).then(r => r.json()).catch(() => null)
     ]);
+    if (remote) {
+      if (Array.isArray(remote.custom))    localStorage.setItem(CUSTOM_KEY,  JSON.stringify(remote.custom));
+      if (Array.isArray(remote.areas))     localStorage.setItem(AREAS_KEY,   JSON.stringify(remote.areas));
+      if (remote.catOverrides)             localStorage.setItem(CAT_OVR_KEY, JSON.stringify(remote.catOverrides));
+    }
     const overrides = getCatOverrides();
+    const custom    = getCustom();
     allPlaces = [
       ...json.map(p => overrides[p.id] ? {...p, category: overrides[p.id]} : p),
       ...custom
