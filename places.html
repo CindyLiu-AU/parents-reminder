@@ -426,9 +426,9 @@
       fetch(GH_RAW + '?t=' + t).then(r => r.json()).catch(() => null)
     ]);
     if (remote) {
-      if (Array.isArray(remote.custom))    localStorage.setItem(CUSTOM_KEY,  JSON.stringify(remote.custom));
-      if (Array.isArray(remote.areas))     localStorage.setItem(AREAS_KEY,   JSON.stringify(remote.areas));
-      if (remote.catOverrides)             localStorage.setItem(CAT_OVR_KEY, JSON.stringify(remote.catOverrides));
+      if (Array.isArray(remote.custom)     && remote.custom.length > 0)                localStorage.setItem(CUSTOM_KEY,  JSON.stringify(remote.custom));
+      if (Array.isArray(remote.areas)      && remote.areas.length  > 0)                localStorage.setItem(AREAS_KEY,   JSON.stringify(remote.areas));
+      if (remote.catOverrides              && Object.keys(remote.catOverrides).length)  localStorage.setItem(CAT_OVR_KEY, JSON.stringify(remote.catOverrides));
     }
     const overrides = getCatOverrides();
     const custom    = getCustom();
