@@ -242,6 +242,7 @@
       localStorage.setItem(CAT_OVR_KEY, JSON.stringify(ovr));
     }
     allPlaces = allPlaces.map(p => p.id === id ? {...p, category: val} : p);
+    scheduleFirebaseSave();
     buildCatPills();
     render();
   }
@@ -348,7 +349,7 @@
     return Math.floor(days / 30) + ' 个月前';
   }
 
-;
+  function getCustom() { try { return JSON.parse(localStorage.getItem(CUSTOM_KEY) || '[]'); } catch { return []; } }
 
   function render() {
     const clicks = getClicks();
@@ -417,13 +418,25 @@
     document.documentElement.style.setProperty('--header-h', h + 'px');
   }
 
-  const GH_RAW = 'https://raw.githubusercontent.com/CindyLiu-AU/parents-reminder/main/places-data.json';
+  const FB_URL = 'https://parents-reminder-places-default-rtdb.asia-southeast1.firebasedatabase.app/places.json';
+
+  let fbSaveTimer = null;
+  function scheduleFirebaseSave() {
+    clearTimeout(fbSaveTimer);
+    fbSaveTimer = setTimeout(doFirebaseSave, 2000);
+  }
+  async function doFirebaseSave() {
+    try {
+      const payload = { custom: getCustom(), areas: getAreas(), catOverrides: getCatOverrides() };
+      await fetch(FB_URL, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    } catch(e) { console.error('Firebase save failed:', e); }
+  }
 
   async function init() {
     const t = Date.now();
     const [json, remote] = await Promise.all([
       fetch('places.json?t=' + t).then(r => r.json()).catch(() => []),
-      fetch(GH_RAW + '?t=' + t).then(r => r.json()).catch(() => null)
+      fetch(FB_URL + '?t=' + t).then(r => r.json()).catch(() => null)
     ]);
     if (remote) {
       if (Array.isArray(remote.custom)     && remote.custom.length > 0)                localStorage.setItem(CUSTOM_KEY,  JSON.stringify(remote.custom));

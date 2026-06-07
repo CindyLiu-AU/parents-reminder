@@ -193,19 +193,6 @@
   </div>
 
   <div class="form-card">
-    <h2>☁️ 跨设备同步</h2>
-    <div style="font-size:13px;color:#546e7a;margin-bottom:12px;">连接后，地点数据保存到 GitHub，任何设备打开均可同步。</div>
-    <div id="sync-connected-msg" style="display:none;font-size:14px;color:#34d399;margin-bottom:10px;">✅ 已连接 <span id="sync-status"></span></div>
-    <input class="form-input" id="gh-token-inp" type="password" placeholder="输入 GitHub Personal Access Token"
-           style="font-size:14px;margin-bottom:10px;" />
-    <div style="display:flex;gap:8px;flex-wrap:wrap;">
-      <button class="add-area-btn" style="flex:1;" onclick="connectGh()">连接并上传</button>
-      <button class="add-area-btn" style="flex:1;background:#064e3b;border-color:#34d399;color:#34d399;" id="gh-sync-btn" onclick="manualSync()" style="display:none">立即同步</button>
-      <button class="btn-sm btn-delete" style="padding:14px;flex:1;" id="gh-disconnect-btn" onclick="disconnectGh()">断开</button>
-    </div>
-  </div>
-
-  <div class="form-card">
     <h2>🗑️ 清除数据</h2>
     <button class="btn-sm btn-delete" style="font-size:16px;padding:14px;width:100%;border-radius:14px;"
             onclick="clearAllClicks()">清除所有地点的访问次数</button>
@@ -262,70 +249,32 @@
   const AREAS_KEY     = 'places_areas';
   const CAT_OVR_KEY   = 'places_cat_overrides';
   const DEFAULT_AREAS = ['金斯顿', '叁地贝', '市中心', '北区', '东区'];
-  const GH_REPO       = 'CindyLiu-AU/parents-reminder';
-  const GH_FILE       = 'places-data.json';
-  const GH_TOKEN_KEY  = 'places_gh_token';
-  let ghSha = null;
-  let ghSaveTimer = null;
+  const FB_URL = 'https://parents-reminder-places-default-rtdb.asia-southeast1.firebasedatabase.app/places.json';
+  let fbSaveTimer = null;
 
-  function ghToken() { return localStorage.getItem(GH_TOKEN_KEY); }
-
-  function scheduleGhSave() {
-    if (!ghToken()) return;
-    clearTimeout(ghSaveTimer);
-    ghSaveTimer = setTimeout(doGhSave, 2000);
+  function scheduleFirebaseSave() {
+    clearTimeout(fbSaveTimer);
+    fbSaveTimer = setTimeout(doFirebaseSave, 2000);
   }
 
-  async function doGhSave() {
-    const token = ghToken();
-    if (!token) return;
+  async function doFirebaseSave() {
     try {
-      setSyncStatus('⏳');
-      const payload = {
-        custom:      getCustom(),
-        areas:       getAreas(),
-        catOverrides: JSON.parse(localStorage.getItem(CAT_OVR_KEY) || '{}')
-      };
-      const content = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2))));
-      const body = { message: 'Update places data', content };
-      if (ghSha) body.sha = ghSha;
-      const res = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${GH_FILE}`, {
-        method: 'PUT',
-        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      });
-      if (!res.ok) throw new Error(res.status);
-      const data = await res.json();
-      ghSha = data.content.sha;
-      setSyncStatus('✅');
-    } catch(e) {
-      console.error('GitHub save failed:', e);
-      setSyncStatus('❌');
-    }
+      const payload = { custom: getCustom(), areas: getAreas(), catOverrides: JSON.parse(localStorage.getItem(CAT_OVR_KEY) || '{}') };
+      await fetch(FB_URL, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    } catch(e) { console.error('Firebase save failed:', e); }
   }
 
-  async function doGhLoad() {
-    const token = ghToken();
-    if (!token) return false;
+  async function doFirebaseLoad() {
     try {
-      const res = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${GH_FILE}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const res = await fetch(FB_URL + '?t=' + Date.now());
       if (!res.ok) return false;
-      const data = await res.json();
-      ghSha = data.sha;
-      const payload = JSON.parse(decodeURIComponent(escape(atob(data.content.replace(/\n/g, '')))));
-      // Only overwrite local data if remote actually has content
+      const payload = await res.json();
+      if (!payload) return false;
       if (Array.isArray(payload.custom) && payload.custom.length > 0)       { customPlaces = payload.custom; saveCustom(payload.custom, false); }
       if (Array.isArray(payload.areas)  && payload.areas.length  > 0)       localStorage.setItem(AREAS_KEY,   JSON.stringify(payload.areas));
       if (payload.catOverrides && Object.keys(payload.catOverrides).length)  localStorage.setItem(CAT_OVR_KEY, JSON.stringify(payload.catOverrides));
       return true;
-    } catch(e) { console.error('GitHub load failed:', e); return false; }
-  }
-
-  function setSyncStatus(s) {
-    const el = document.getElementById('sync-status');
-    if (el) el.textContent = s;
+    } catch(e) { console.error('Firebase load failed:', e); return false; }
   }
 
   function getAreas() {
@@ -334,7 +283,7 @@
       return (s && s.length) ? s : [...DEFAULT_AREAS];
     } catch { return [...DEFAULT_AREAS]; }
   }
-  function saveAreas(a) { localStorage.setItem(AREAS_KEY, JSON.stringify(a)); scheduleGhSave(); }
+  function saveAreas(a) { localStorage.setItem(AREAS_KEY, JSON.stringify(a)); scheduleFirebaseSave(); }
 
   function renderAreas() {
     const areas = getAreas();
@@ -382,7 +331,7 @@
   let customPlaces = [];
 
   function getCustom() { try { return JSON.parse(localStorage.getItem(CUSTOM_KEY) || '[]'); } catch { return []; } }
-  function saveCustom(a, sync = true) { localStorage.setItem(CUSTOM_KEY, JSON.stringify(a)); if (sync) scheduleGhSave(); }
+  function saveCustom(a, sync = true) { localStorage.setItem(CUSTOM_KEY, JSON.stringify(a)); if (sync) scheduleFirebaseSave(); }
   function getClicks() { try { return JSON.parse(localStorage.getItem(CLICKS_KEY) || '{}'); } catch { return {}; } }
 
   let translateTimer = null;
@@ -540,38 +489,6 @@
     render();
   }
 
-  function updateSyncUI() {
-    const connected = !!ghToken();
-    document.getElementById('sync-connected-msg').style.display  = connected ? 'block' : 'none';
-    document.getElementById('gh-disconnect-btn').style.display   = connected ? '' : 'none';
-    document.getElementById('gh-sync-btn').style.display         = connected ? '' : 'none';
-    document.getElementById('gh-token-inp').style.display        = connected ? 'none' : '';
-  }
-
-  async function connectGh() {
-    const val = document.getElementById('gh-token-inp').value.trim();
-    if (!val) { alert('请输入 GitHub Token'); return; }
-    localStorage.setItem(GH_TOKEN_KEY, val);
-    updateSyncUI();
-    await doGhLoad();   // fetch SHA (needed for PUT — doesn't matter if remote is empty)
-    await doGhSave();   // always push local data to GitHub
-  }
-
-  async function manualSync() {
-    if (!ghToken()) { alert('请先连接 GitHub Token'); return; }
-    setSyncStatus('⏳');
-    await doGhLoad();
-    await doGhSave();
-    renderAreas(); render();
-  }
-
-  function disconnectGh() {
-    if (!confirm('断开后将无法自动同步，确定吗？')) return;
-    localStorage.removeItem(GH_TOKEN_KEY);
-    ghSha = null;
-    updateSyncUI();
-  }
-
   function render() {
     const clicks = getClicks();
     const all    = [...jsonPlaces, ...customPlaces];
@@ -609,9 +526,8 @@
   async function loadData() {
     const t = Date.now();
     jsonPlaces   = await fetch('places.json?t=' + t).then(r => r.json()).catch(() => []);
-    await doGhLoad();
+    await doFirebaseLoad();
     customPlaces = getCustom();
-    updateSyncUI();
     renderAreas();
     render();
     const editId = new URLSearchParams(location.search).get('edit');
