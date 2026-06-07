@@ -1,77 +1,92 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <title>常去地点</title>
   <style>
+    :root {
+      --bg: #0d1b2a; --bg-hdr: #091525;
+      --card: #112240; --card-hover: #1a2e50; --card-inner: #0a1628; --count-bg: #0a1e35;
+      --border: #1e3a5f; --border2: #2e5a8f;
+      --text: #f0f4f8; --text-muted: #64748b; --text-dim: #546e7a; --text-faint: #334d66;
+      --accent: #f59e0b; --accent-fg: #1a1000; --accent-shadow: rgba(245,158,11,0.18);
+      --blue: #64b5f6; --blue2: #90caf9;
+      --btn: #1e3a6e; --active-icon-bg: #1a2e10;
+      --green-bg: #064e3b; --green: #34d399; --green-hover: #065f46;
+      --red: #fca5a5; --edit-col: #475569;
+    }
+    html[data-theme="light"] {
+      --bg: #f0f6ff; --bg-hdr: #e2edfb;
+      --card: #ffffff; --card-hover: #e8f0fb; --card-inner: #f0f6ff; --count-bg: #e8f2ff;
+      --border: #c5d8f0; --border2: #93b4d0;
+      --text: #0f1f35; --text-muted: #475569; --text-dim: #64748b; --text-faint: #94a3b8;
+      --accent: #d97706; --accent-fg: #1a0a00; --accent-shadow: rgba(217,119,6,0.15);
+      --blue: #1a5fa8; --blue2: #1e4e8c;
+      --btn: #dbeafe; --active-icon-bg: #fef3c7;
+      --green-bg: #d1fae5; --green: #059669; --green-hover: #a7f3d0;
+      --red: #dc2626; --edit-col: #64748b;
+    }
+
     * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
     html, body {
-      height: 100%; background: #0d1b2a;
-      color: #f0f4f8;
+      height: 100%; background: var(--bg);
+      color: var(--text);
       font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
       overflow: hidden;
     }
 
-    /* ── Header ── */
     #header {
       position: fixed; top: 0; left: 0; right: 0; z-index: 10;
-      background: #091525; border-bottom: 2px solid #1e3a5f;
+      background: var(--bg-hdr); border-bottom: 2px solid var(--border);
       padding: 10px 12px 8px;
       display: flex; flex-direction: column; gap: 7px;
     }
-    /* Row 1: title + icon buttons */
     .header-row1 { display: flex; align-items: center; gap: 8px; }
-    #header h1 { flex: 1; font-size: 18px; font-weight: 900; color: #f59e0b; }
+    #header h1 { flex: 1; font-size: 18px; font-weight: 900; color: var(--accent); }
     .icon-btn {
-      flex-shrink: 0; background: #112240; border: 2px solid #1e3a5f; border-radius: 10px;
-      color: #64b5f6; font-size: 18px; font-family: inherit;
+      flex-shrink: 0; background: var(--btn); border: 2px solid var(--border); border-radius: 10px;
+      color: var(--blue); font-size: 18px; font-family: inherit;
       width: 42px; height: 42px; display: flex; align-items: center; justify-content: center;
       cursor: pointer;
     }
-    .icon-btn.active { border-color: #f59e0b; color: #f59e0b; background: #1a2e10; }
-    .icon-btn:active { background: #1e3a6e; }
+    .icon-btn.active { border-color: var(--accent); color: var(--accent); background: var(--active-icon-bg); }
+    .icon-btn:active { background: var(--card-hover); }
     .manage-btn {
-      flex-shrink: 0; background: #1e3a6e; border: 1px solid #2e5a8f; border-radius: 10px;
-      color: #90caf9; font-size: 13px; font-weight: 700; font-family: inherit;
+      flex-shrink: 0; background: var(--btn); border: 1px solid var(--border2); border-radius: 10px;
+      color: var(--blue2); font-size: 13px; font-weight: 700; font-family: inherit;
       padding: 7px 13px; cursor: pointer; text-decoration: none; white-space: nowrap;
       height: 42px; display: flex; align-items: center;
     }
 
-    /* Search expand row (hidden until search button tapped) */
     .search-expand { display: none; }
     .search-expand.open { display: flex; gap: 8px; align-items: center; }
     .search-wrap { position: relative; flex: 1; }
     .search-input {
-      width: 100%; background: #112240; border: 2px solid #1e3a5f; border-radius: 12px;
-      color: #f0f4f8; font-size: 16px; font-family: inherit;
+      width: 100%; background: var(--btn); border: 2px solid var(--border); border-radius: 12px;
+      color: var(--text); font-size: 16px; font-family: inherit;
       padding: 10px 40px 10px 13px; outline: none;
     }
-    .search-input:focus { border-color: #f59e0b; }
-    .search-input::placeholder { color: #334d66; }
+    .search-input:focus { border-color: var(--accent); }
+    .search-input::placeholder { color: var(--text-faint); }
     .search-clear {
       position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
-      background: none; border: none; color: #546e7a; font-size: 18px;
+      background: none; border: none; color: var(--text-dim); font-size: 18px;
       cursor: pointer; display: none; padding: 4px;
     }
 
-    /* Row 3: category pills */
-    .cat-wrap {
-      display: none; gap: 8px; overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-    }
+    .cat-wrap { display: none; gap: 8px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
     .cat-wrap.visible { display: flex; }
     .cat-wrap::-webkit-scrollbar { display: none; }
     .cat-pill {
-      flex-shrink: 0; background: #1e3a6e; border: 2px solid #2e5a8f; border-radius: 20px;
-      color: #90caf9; font-size: 15px; font-weight: 800; font-family: inherit;
+      flex-shrink: 0; background: var(--btn); border: 2px solid var(--border2); border-radius: 20px;
+      color: var(--blue2); font-size: 15px; font-weight: 800; font-family: inherit;
       padding: 8px 16px; cursor: pointer; white-space: nowrap;
     }
-    .cat-pill.active { background: #f59e0b; border-color: #f59e0b; color: #1a1000; }
+    .cat-pill.active { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); }
 
-    /* ── Scrollable list ── */
     #place-list {
       position: fixed; top: var(--header-h, 120px); bottom: 0; left: 0; right: 0;
       overflow-y: auto; -webkit-overflow-scrolling: touch;
@@ -80,73 +95,61 @@
     }
 
     .empty-state {
-      text-align: center; color: #334d66; font-size: 22px;
+      text-align: center; color: var(--text-faint); font-size: 22px;
       padding: 80px 20px; line-height: 2.2;
     }
 
-    /* ── Place card ── */
     .place-card {
-      background: #112240; border: 2px solid #1e3a5f; border-radius: 20px;
-      padding: 18px 16px; cursor: pointer; active: scale(0.98);
-      transition: transform 0.1s;
-      user-select: none;
+      background: var(--card); border: 2px solid var(--border); border-radius: 20px;
+      padding: 18px 16px; cursor: pointer;
+      transition: transform 0.1s; user-select: none;
     }
-    .place-card:active { transform: scale(0.97); background: #1a2e50; }
-    .place-card.top-card { border-color: #f59e0b; box-shadow: 0 0 20px rgba(245,158,11,0.18); }
-
-    .top-label {
-      font-size: 14px; font-weight: 800; color: #f59e0b;
-      letter-spacing: 1px; margin-bottom: 12px;
-    }
+    .place-card:active { transform: scale(0.97); background: var(--card-hover); }
+    .place-card.top-card { border-color: var(--accent); box-shadow: 0 0 20px var(--accent-shadow); }
 
     .place-main { display: flex; align-items: flex-start; }
     .place-info { flex: 1; min-width: 0; }
-    .place-name { font-size: 19px; font-weight: 900; color: #fff; line-height: 1.3; margin-bottom: 3px; }
-    .place-name-en { font-size: 14px; color: #64748b; margin-bottom: 5px; line-height: 1.3; }
-    .place-addr { font-size: 14px; color: #64b5f6; line-height: 1.5; word-break: break-all; }
+    .place-name { font-size: 19px; font-weight: 900; color: var(--text); line-height: 1.3; margin-bottom: 3px; }
+    .place-name-en { font-size: 14px; color: var(--text-muted); margin-bottom: 5px; line-height: 1.3; }
+    .place-addr { font-size: 14px; color: var(--blue); line-height: 1.5; word-break: break-all; }
 
-    .place-img {
-      width: 100%; border-radius: 14px; max-height: 160px;
-      object-fit: cover; margin-bottom: 14px; display: block;
-    }
+    .place-img { width: 100%; border-radius: 14px; max-height: 160px; object-fit: cover; margin-bottom: 14px; display: block; }
 
     .place-stats {
       display: flex; align-items: center;
-      margin-top: 12px; padding-top: 10px; border-top: 1px solid #1e3a5f;
-      gap: 8px;
+      margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border); gap: 8px;
     }
     .place-stats-left { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .place-stats-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
     .place-count {
       font-size: 14px; font-weight: 800; white-space: nowrap;
-      background: #0a1e35; border-radius: 8px; padding: 4px 10px; color: #f59e0b;
+      background: var(--count-bg); border-radius: 8px; padding: 4px 10px; color: var(--accent);
     }
-    .place-count.zero { color: #334d66; }
-    .place-last { font-size: 13px; color: #546e7a; white-space: nowrap; }
+    .place-count.zero { color: var(--text-faint); }
+    .place-last { font-size: 13px; color: var(--text-dim); white-space: nowrap; }
 
     .call-btn {
       display: flex; align-items: center; gap: 8px;
-      background: #064e3b; border: 2px solid #34d399; border-radius: 14px;
-      color: #34d399; font-size: 18px; font-weight: 800; font-family: inherit;
+      background: var(--green-bg); border: 2px solid var(--green); border-radius: 14px;
+      color: var(--green); font-size: 18px; font-weight: 800; font-family: inherit;
       padding: 12px 20px; text-decoration: none; margin-top: 10px;
       width: 100%; justify-content: center;
     }
-    .call-btn:active { background: #065f46; }
+    .call-btn:active { background: var(--green-hover); }
 
     .edit-place-btn {
-      background: none; border: 1px solid #1e3a5f; border-radius: 8px;
-      color: #475569; font-size: 16px; font-family: inherit;
+      background: none; border: 1px solid var(--border); border-radius: 8px;
+      color: var(--edit-col); font-size: 16px; font-family: inherit;
       padding: 4px 8px; cursor: pointer; flex-shrink: 0;
     }
-    .edit-place-btn:active { background: #1e3a6e; color: #90caf9; }
+    .edit-place-btn:active { background: var(--btn); color: var(--blue2); }
 
     .area-select {
-      background: #f59e0b; border: none; border-radius: 10px;
-      color: #1a1000; font-size: 13px; font-weight: 800; font-family: inherit;
+      background: var(--accent); border: none; border-radius: 10px;
+      color: var(--accent-fg); font-size: 13px; font-weight: 800; font-family: inherit;
       padding: 5px 10px; cursor: pointer; outline: none; max-width: 110px;
     }
 
-    /* ── Password overlay ── */
     #pwd-overlay {
       display: none; position: fixed; inset: 0; z-index: 300;
       background: rgba(9,21,37,0.96);
@@ -154,26 +157,23 @@
       gap: 18px; padding: 40px;
     }
     #pwd-overlay.open { display: flex; }
-    .pwd-title { font-size: 22px; font-weight: 900; color: #f59e0b; }
+    .pwd-title { font-size: 22px; font-weight: 900; color: var(--accent); }
     .pwd-input {
       width: 100%; max-width: 260px;
-      background: #112240; border: 2px solid #1e3a5f; border-radius: 16px;
-      color: #f0f4f8; font-size: 30px; font-family: inherit;
+      background: var(--card); border: 2px solid var(--border); border-radius: 16px;
+      color: var(--text); font-size: 30px; font-family: inherit;
       padding: 16px 20px; outline: none; text-align: center; letter-spacing: 10px;
     }
-    .pwd-input:focus { border-color: #f59e0b; }
+    .pwd-input:focus { border-color: var(--accent); }
     .pwd-confirm {
       width: 100%; max-width: 260px;
-      background: #f59e0b; border: none; border-radius: 16px;
-      color: #1a1000; font-size: 20px; font-weight: 900; font-family: inherit;
+      background: var(--accent); border: none; border-radius: 16px;
+      color: var(--accent-fg); font-size: 20px; font-weight: 900; font-family: inherit;
       padding: 16px; cursor: pointer;
     }
     .pwd-confirm:active { opacity: 0.85; }
-    .pwd-cancel {
-      color: #546e7a; font-size: 15px; background: none; border: none;
-      font-family: inherit; cursor: pointer; padding: 8px;
-    }
-    .pwd-error { color: #fca5a5; font-size: 15px; min-height: 22px; }
+    .pwd-cancel { color: var(--text-dim); font-size: 15px; background: none; border: none; font-family: inherit; cursor: pointer; padding: 8px; }
+    .pwd-error { color: var(--red); font-size: 15px; min-height: 22px; }
   </style>
 </head>
 <body>
@@ -192,6 +192,7 @@
     <h1>📍 常去地点</h1>
     <button class="icon-btn" id="search-btn" onclick="toggleSearch()">🔍</button>
     <button class="icon-btn" id="sort-toggle" onclick="toggleSort()">🕐</button>
+    <button class="icon-btn" id="theme-btn" onclick="toggleTheme()">☀️</button>
     <button class="manage-btn" onclick="promptAndGo('places-admin.html')">✏️ 管理</button>
   </div>
   <div class="search-expand" id="search-expand">
@@ -211,11 +212,26 @@
   const CUSTOM_KEY  = 'places_custom';
   const AREAS_KEY   = 'places_areas';
   const CAT_OVR_KEY = 'places_cat_overrides';
+  const THEME_KEY   = 'places_theme';
   const DEFAULT_AREAS = ['金斯顿', '叁地贝', '市中心', '北区', '东区'];
   let allPlaces   = [];
   let sortMode    = 'recent';
   let searchQuery = '';
   let activecat   = '';
+
+  function initTheme() {
+    const saved = localStorage.getItem(THEME_KEY) || 'dark';
+    document.documentElement.setAttribute('data-theme', saved);
+    document.getElementById('theme-btn').textContent = saved === 'dark' ? '☀️' : '🌙';
+  }
+
+  function toggleTheme() {
+    const cur  = document.documentElement.getAttribute('data-theme');
+    const next = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem(THEME_KEY, next);
+    document.getElementById('theme-btn').textContent = next === 'dark' ? '☀️' : '🌙';
+  }
 
   function getAreas() {
     try {
@@ -383,10 +399,8 @@
       const c     = clicks[p.id] || { count: 0, lastAt: null };
       const isNone = c.count === 0;
       const addr  = p.address.replace(/'/g, "\\'");
-
       const phone = p.phone ? p.phone.replace(/'/g, "\\'") : '';
-      return `<div class="place-card"
-                   onclick="recordClick('${p.id}','${addr}')">
+      return `<div class="place-card" onclick="recordClick('${p.id}','${addr}')">
         ${p.image ? `<img class="place-img" src="${p.image}">` : ''}
         <div class="place-main">
           <div class="place-info">
@@ -433,6 +447,7 @@
   }
 
   async function init() {
+    initTheme();
     const t = Date.now();
     const [json, remote] = await Promise.all([
       fetch('places.json?t=' + t).then(r => r.json()).catch(() => []),

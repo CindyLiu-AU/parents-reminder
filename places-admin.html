@@ -1,73 +1,99 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>管理地点</title>
   <style>
+    :root {
+      --bg: #0d1b2a; --bg-hdr: #091525;
+      --card: #112240; --card-inner: #0a1628; --count-bg: #0a1e35;
+      --border: #1e3a5f; --border2: #2e5a8f;
+      --text: #f0f4f8; --text-muted: #64748b; --text-dim: #546e7a; --text-faint: #334d66;
+      --accent: #f59e0b; --accent-fg: #1a1000;
+      --blue: #64b5f6; --blue2: #90caf9;
+      --btn: #1e3a6e;
+      --del-bg: #450a0a; --del-border: #7f1d1d; --del-text: #fca5a5;
+      --red: #fca5a5;
+      --area-tag-bg: #0d2745;
+    }
+    html[data-theme="light"] {
+      --bg: #f0f6ff; --bg-hdr: #e2edfb;
+      --card: #ffffff; --card-inner: #f0f6ff; --count-bg: #e8f2ff;
+      --border: #c5d8f0; --border2: #93b4d0;
+      --text: #0f1f35; --text-muted: #475569; --text-dim: #64748b; --text-faint: #94a3b8;
+      --accent: #d97706; --accent-fg: #1a0a00;
+      --blue: #1a5fa8; --blue2: #1e4e8c;
+      --btn: #dbeafe;
+      --del-bg: #fff1f2; --del-border: #fecdd3; --del-text: #dc2626;
+      --red: #dc2626;
+      --area-tag-bg: #e0eeff;
+    }
+
     * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
     html, body {
-      min-height: 100%; background: #0d1b2a;
-      color: #f0f4f8;
+      min-height: 100%; background: var(--bg);
+      color: var(--text);
       font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
     }
 
-    /* ── Header ── */
     #header {
       position: fixed; top: 0; left: 0; right: 0; z-index: 10;
-      background: #091525; border-bottom: 2px solid #1e3a5f;
+      background: var(--bg-hdr); border-bottom: 2px solid var(--border);
       padding: 14px 16px;
-      display: flex; align-items: center; justify-content: space-between;
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
     }
-    #header h1 { font-size: 22px; font-weight: 900; color: #f59e0b; }
+    #header h1 { font-size: 22px; font-weight: 900; color: var(--accent); flex: 1; text-align: center; }
     .back-btn {
-      background: #1e3a6e; border: 1px solid #2e5a8f; border-radius: 12px;
-      color: #90caf9; font-size: 16px; font-weight: 700; font-family: inherit;
-      padding: 10px 18px; cursor: pointer; text-decoration: none;
+      background: var(--btn); border: 1px solid var(--border2); border-radius: 12px;
+      color: var(--blue2); font-size: 16px; font-weight: 700; font-family: inherit;
+      padding: 10px 18px; cursor: pointer; text-decoration: none; white-space: nowrap;
+    }
+    .theme-btn {
+      background: var(--btn); border: 1px solid var(--border2); border-radius: 12px;
+      font-size: 20px; width: 44px; height: 44px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; flex-shrink: 0;
     }
 
     #content { padding: 80px 14px 40px; display: flex; flex-direction: column; gap: 20px; }
 
-    /* ── Form ── */
     .form-card {
-      background: #112240; border: 2px solid #1e3a5f; border-radius: 20px;
+      background: var(--card); border: 2px solid var(--border); border-radius: 20px;
       padding: 20px 16px; display: flex; flex-direction: column; gap: 14px;
     }
-    .form-card h2 { font-size: 20px; font-weight: 800; color: #64b5f6; }
+    .form-card h2 { font-size: 20px; font-weight: 800; color: var(--blue); }
 
-    .form-label { font-size: 14px; color: #64748b; font-weight: 700; margin-bottom: 6px; display: block; }
+    .form-label { font-size: 14px; color: var(--text-muted); font-weight: 700; margin-bottom: 6px; display: block; }
     .form-input, .form-select {
-      width: 100%; background: #0a1628; border: 2px solid #1e3a5f; border-radius: 14px;
-      color: #f0f4f8; font-size: 18px; font-family: inherit;
+      width: 100%; background: var(--card-inner); border: 2px solid var(--border); border-radius: 14px;
+      color: var(--text); font-size: 18px; font-family: inherit;
       padding: 14px 16px; outline: none;
     }
-    .form-input:focus, .form-select:focus { border-color: #f59e0b; }
-    .form-input::placeholder { color: #334d66; font-size: 16px; }
-    .form-select option { background: #0a1628; }
+    .form-input:focus, .form-select:focus { border-color: var(--accent); }
+    .form-input::placeholder { color: var(--text-faint); font-size: 16px; }
+    .form-select option { background: var(--card-inner); }
 
     .translate-name-btn {
-      background: #1e3a6e; border: 2px solid #2e5a8f; border-radius: 14px;
-      color: #90caf9; font-size: 16px; font-weight: 700; font-family: inherit;
+      background: var(--btn); border: 2px solid var(--border2); border-radius: 14px;
+      color: var(--blue2); font-size: 16px; font-weight: 700; font-family: inherit;
       padding: 0 18px; cursor: pointer; white-space: nowrap; flex-shrink: 0;
     }
-    .translate-name-btn:active { background: #2e5a8f; }
+    .translate-name-btn:active { background: var(--border2); }
 
     .add-btn {
-      width: 100%; background: #f59e0b; border: none; border-radius: 16px;
-      color: #1a1000; font-size: 22px; font-weight: 900; font-family: inherit;
+      width: 100%; background: var(--accent); border: none; border-radius: 16px;
+      color: var(--accent-fg); font-size: 22px; font-weight: 900; font-family: inherit;
       padding: 16px; cursor: pointer; margin-top: 4px;
     }
     .add-btn:active { opacity: 0.85; transform: scale(0.98); }
 
-    /* ── List ── */
-    .section-title {
-      font-size: 14px; color: #334d66; font-weight: 700; letter-spacing: 2px;
-    }
+    .section-title { font-size: 14px; color: var(--text-faint); font-weight: 700; letter-spacing: 2px; }
     .places-list { display: flex; flex-direction: column; gap: 10px; }
 
     .place-row {
-      background: #112240; border: 1px solid #1e3a5f; border-radius: 18px;
+      background: var(--card); border: 1px solid var(--border); border-radius: 18px;
       padding: 16px;
     }
     .place-row.from-json { border-style: dashed; opacity: 0.7; }
@@ -75,91 +101,84 @@
     .row-top { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
     .row-emoji { font-size: 32px; flex-shrink: 0; }
     .row-info { flex: 1; min-width: 0; }
-    .row-name { font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 3px; }
-    .row-addr { font-size: 13px; color: #64b5f6; line-height: 1.4; word-break: break-word; }
-    .row-source { font-size: 12px; color: #334d66; margin-top: 3px; }
+    .row-name { font-size: 20px; font-weight: 800; color: var(--text); margin-bottom: 3px; }
+    .row-addr { font-size: 13px; color: var(--blue); line-height: 1.4; word-break: break-word; }
+    .row-source { font-size: 12px; color: var(--text-faint); margin-top: 3px; }
 
     .row-bottom { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
     .row-clicks {
-      font-size: 14px; font-weight: 800; color: #f59e0b;
-      background: #0a1e35; border-radius: 8px; padding: 5px 12px;
+      font-size: 14px; font-weight: 800; color: var(--accent);
+      background: var(--count-bg); border-radius: 8px; padding: 5px 12px;
     }
 
-    .btn-sm {
-      border-radius: 10px; font-size: 14px; font-weight: 700; font-family: inherit;
-      padding: 8px 16px; cursor: pointer; border: 1px solid;
-    }
-    .btn-delete { background: #450a0a; border-color: #7f1d1d; color: #fca5a5; }
-    .btn-delete:active { background: #7f1d1d; }
-    .btn-clear  { background: #0a1628; border-color: #1e3a5f; color: #546e7a; }
-    .btn-clear:active  { background: #1e3a5f; }
-    .btn-edit   { background: #1e3a6e; border-color: #2e5a8f; color: #90caf9; }
-    .btn-edit:active   { background: #2e5a8f; }
+    .btn-sm { border-radius: 10px; font-size: 14px; font-weight: 700; font-family: inherit; padding: 8px 16px; cursor: pointer; border: 1px solid; }
+    .btn-delete { background: var(--del-bg); border-color: var(--del-border); color: var(--del-text); }
+    .btn-delete:active { opacity: 0.8; }
+    .btn-clear  { background: var(--card-inner); border-color: var(--border); color: var(--text-dim); }
+    .btn-clear:active  { opacity: 0.8; }
+    .btn-edit   { background: var(--btn); border-color: var(--border2); color: var(--blue2); }
+    .btn-edit:active   { opacity: 0.8; }
 
     .img-pick-btn {
-      display: inline-block; background: #1e3a6e; border: 2px solid #2e5a8f;
-      border-radius: 14px; color: #90caf9; font-size: 16px; font-weight: 700;
+      display: inline-block; background: var(--btn); border: 2px solid var(--border2);
+      border-radius: 14px; color: var(--blue2); font-size: 16px; font-weight: 700;
       padding: 12px 20px; cursor: pointer;
     }
     .cancel-btn {
-      width: 100%; background: #1e3a6e; border: 2px solid #2e5a8f; border-radius: 16px;
-      color: #90caf9; font-size: 18px; font-weight: 800; font-family: inherit;
+      width: 100%; background: var(--btn); border: 2px solid var(--border2); border-radius: 16px;
+      color: var(--blue2); font-size: 18px; font-weight: 800; font-family: inherit;
       padding: 14px; cursor: pointer; margin-top: 6px;
     }
-    .cancel-btn:active { background: #2e5a8f; }
-    .form-card.editing { border-color: #f59e0b; }
+    .cancel-btn:active { opacity: 0.8; }
+    .form-card.editing { border-color: var(--accent); }
 
     .img-clear-btn {
-      background: #450a0a; border: 1px solid #7f1d1d; border-radius: 12px;
-      color: #fca5a5; font-size: 14px; font-weight: 700; font-family: inherit;
+      background: var(--del-bg); border: 1px solid var(--del-border); border-radius: 12px;
+      color: var(--del-text); font-size: 14px; font-weight: 700; font-family: inherit;
       padding: 10px 16px; cursor: pointer; margin-left: 8px;
     }
-    .empty { color: #334d66; font-size: 18px; padding: 12px 4px; }
+    .empty { color: var(--text-faint); font-size: 18px; padding: 12px 4px; }
 
     .area-tag {
       display: inline-flex; align-items: center; gap: 6px;
-      background: #0d2745; border: 1px solid #1e3a5f; border-radius: 20px;
-      color: #64b5f6; font-size: 14px; font-weight: 700;
+      background: var(--area-tag-bg); border: 1px solid var(--border); border-radius: 20px;
+      color: var(--blue); font-size: 14px; font-weight: 700;
       padding: 6px 12px;
     }
-    .area-tag button {
-      background: none; border: none; color: #546e7a; font-size: 14px;
-      cursor: pointer; padding: 0 2px; line-height: 1;
-    }
-    .area-tag button:active { color: #fca5a5; }
+    .area-tag button { background: none; border: none; color: var(--text-dim); font-size: 14px; cursor: pointer; padding: 0 2px; line-height: 1; }
+    .area-tag button:active { color: var(--red); }
     .add-area-btn {
-      background: #1e3a6e; border: 2px solid #2e5a8f; border-radius: 14px;
-      color: #90caf9; font-size: 16px; font-weight: 700; font-family: inherit;
+      background: var(--btn); border: 2px solid var(--border2); border-radius: 14px;
+      color: var(--blue2); font-size: 16px; font-weight: 700; font-family: inherit;
       padding: 14px 20px; cursor: pointer; white-space: nowrap; flex-shrink: 0;
     }
-    .add-area-btn:active { background: #2e5a8f; }
+    .add-area-btn:active { opacity: 0.8; }
 
-    /* ── Lock screen ── */
     #lock-screen {
       position: fixed; inset: 0; z-index: 200;
-      background: #0d1b2a;
+      background: var(--bg);
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
       gap: 18px; padding: 40px;
     }
     .lock-icon { font-size: 52px; }
-    .lock-title { font-size: 26px; font-weight: 900; color: #f59e0b; }
-    .lock-sub { font-size: 15px; color: #546e7a; }
+    .lock-title { font-size: 26px; font-weight: 900; color: var(--accent); }
+    .lock-sub { font-size: 15px; color: var(--text-dim); }
     .lock-input {
       width: 100%; max-width: 260px;
-      background: #112240; border: 2px solid #1e3a5f; border-radius: 16px;
-      color: #f0f4f8; font-size: 30px; font-family: inherit;
+      background: var(--card); border: 2px solid var(--border); border-radius: 16px;
+      color: var(--text); font-size: 30px; font-family: inherit;
       padding: 16px 20px; outline: none; text-align: center; letter-spacing: 10px;
     }
-    .lock-input:focus { border-color: #f59e0b; }
+    .lock-input:focus { border-color: var(--accent); }
     .lock-btn {
       width: 100%; max-width: 260px;
-      background: #f59e0b; border: none; border-radius: 16px;
-      color: #1a1000; font-size: 20px; font-weight: 900; font-family: inherit;
+      background: var(--accent); border: none; border-radius: 16px;
+      color: var(--accent-fg); font-size: 20px; font-weight: 900; font-family: inherit;
       padding: 16px; cursor: pointer;
     }
     .lock-btn:active { opacity: 0.85; transform: scale(0.98); }
-    .lock-error { color: #fca5a5; font-size: 15px; min-height: 22px; }
+    .lock-error { color: var(--red); font-size: 15px; min-height: 22px; }
   </style>
 </head>
 <body>
@@ -177,7 +196,7 @@
 <div id="header">
   <a href="places.html" class="back-btn">← 返回</a>
   <h1>✏️ 管理地点</h1>
-  <div></div>
+  <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">☀️</button>
 </div>
 
 <div id="content">
@@ -209,7 +228,7 @@
       </div>
     </div>
     <div>
-      <label class="form-label">中文名称 <span id="trans-status" style="color:#64748b;font-weight:400;font-size:12px;"></span></label>
+      <label class="form-label">中文名称 <span id="trans-status" style="color:var(--text-muted);font-weight:400;font-size:12px;"></span></label>
       <input class="form-input" id="inp-name-zh" placeholder="自动翻译，或手动输入" />
     </div>
     <div>
@@ -248,9 +267,24 @@
   const CLICKS_KEY    = 'place_clicks';
   const AREAS_KEY     = 'places_areas';
   const CAT_OVR_KEY   = 'places_cat_overrides';
+  const THEME_KEY     = 'places_theme';
   const DEFAULT_AREAS = ['金斯顿', '叁地贝', '市中心', '北区', '东区'];
   const FB_URL = 'https://parents-reminder-places-default-rtdb.asia-southeast1.firebasedatabase.app/places.json';
   let fbSaveTimer = null;
+
+  function initTheme() {
+    const saved = localStorage.getItem(THEME_KEY) || 'dark';
+    document.documentElement.setAttribute('data-theme', saved);
+    document.getElementById('theme-btn').textContent = saved === 'dark' ? '☀️' : '🌙';
+  }
+
+  function toggleTheme() {
+    const cur  = document.documentElement.getAttribute('data-theme');
+    const next = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem(THEME_KEY, next);
+    document.getElementById('theme-btn').textContent = next === 'dark' ? '☀️' : '🌙';
+  }
 
   function scheduleFirebaseSave() {
     clearTimeout(fbSaveTimer);
@@ -289,7 +323,7 @@
     const areas = getAreas();
     document.getElementById('areas-tags').innerHTML = areas.map((a, i) =>
       `<div class="area-tag">${a}<button onclick="deleteArea(${i})">✕</button></div>`
-    ).join('') || '<span style="color:#334d66;font-size:14px;">暂无区域</span>';
+    ).join('') || '<span style="color:var(--text-faint);font-size:14px;">暂无区域</span>';
     const sel = document.getElementById('inp-cat');
     const cur = sel.value;
     sel.innerHTML = `<option value="">未分区</option>` +
@@ -497,19 +531,17 @@
     if (!all.length) { list.innerHTML = '<div class="empty">暂时没有地点</div>'; return; }
 
     list.innerHTML = all.map(p => {
-      const emoji  = '📍';
       const c      = clicks[p.id] || { count: 0 };
       const isJson = jsonPlaces.some(j => j.id === p.id);
 
       return `<div class="place-row${isJson ? ' from-json' : ''}" data-id="${p.id}">
         ${p.image ? `<img src="${p.image}" style="width:100%;border-radius:10px;max-height:120px;object-fit:cover;margin-bottom:10px;">` : ''}
         <div class="row-top">
-          <span class="row-emoji">${emoji}</span>
+          <span class="row-emoji">📍</span>
           <div class="row-info">
             <div class="row-name">${p.name}</div>
-            ${p.nameEn ? `<div style="font-size:13px;color:#64748b;margin-bottom:2px;">${p.nameEn}</div>` : ''}
+            ${p.nameEn ? `<div style="font-size:13px;color:var(--text-muted);margin-bottom:2px;">${p.nameEn}</div>` : ''}
             <div class="row-addr">${p.address}</div>
-            ${p.phone ? `<div style="font-size:13px;color:#6ee7b7;margin-top:2px;">📞 ${p.phone}</div>` : ''}
             <div class="row-source">${isJson ? '🔒 系统地点' : '✏️ 手动添加'}${p.category ? ' · ' + p.category : ''}</div>
           </div>
         </div>
@@ -544,6 +576,7 @@
   }
 
   function init() {
+    initTheme();
     if (sessionStorage.getItem('admin_unlocked')) {
       document.getElementById('lock-screen').style.display = 'none';
       loadData();
