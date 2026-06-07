@@ -195,12 +195,13 @@
   <div class="form-card">
     <h2>☁️ 跨设备同步</h2>
     <div style="font-size:13px;color:#546e7a;margin-bottom:12px;">连接后，地点数据保存到 GitHub，任何设备打开均可同步。</div>
-    <div id="sync-connected-msg" style="display:none;font-size:14px;color:#34d399;margin-bottom:10px;">✅ 已连接 — 自动同步中 <span id="sync-status"></span></div>
+    <div id="sync-connected-msg" style="display:none;font-size:14px;color:#34d399;margin-bottom:10px;">✅ 已连接 <span id="sync-status"></span></div>
     <input class="form-input" id="gh-token-inp" type="password" placeholder="输入 GitHub Personal Access Token"
            style="font-size:14px;margin-bottom:10px;" />
-    <div style="display:flex;gap:8px;">
-      <button class="add-area-btn" style="flex:1;" onclick="connectGh()">连接</button>
-      <button class="btn-sm btn-delete" style="padding:14px;flex:1;" id="gh-disconnect-btn" onclick="disconnectGh()">断开连接</button>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="add-area-btn" style="flex:1;" onclick="connectGh()">连接并上传</button>
+      <button class="add-area-btn" style="flex:1;background:#064e3b;border-color:#34d399;color:#34d399;" id="gh-sync-btn" onclick="manualSync()" style="display:none">立即同步</button>
+      <button class="btn-sm btn-delete" style="padding:14px;flex:1;" id="gh-disconnect-btn" onclick="disconnectGh()">断开</button>
     </div>
   </div>
 
@@ -543,6 +544,7 @@
     const connected = !!ghToken();
     document.getElementById('sync-connected-msg').style.display  = connected ? 'block' : 'none';
     document.getElementById('gh-disconnect-btn').style.display   = connected ? '' : 'none';
+    document.getElementById('gh-sync-btn').style.display         = connected ? '' : 'none';
     document.getElementById('gh-token-inp').style.display        = connected ? 'none' : '';
   }
 
@@ -551,14 +553,16 @@
     if (!val) { alert('请输入 GitHub Token'); return; }
     localStorage.setItem(GH_TOKEN_KEY, val);
     updateSyncUI();
-    const remoteHasData = await doGhLoad();
-    if (remoteHasData) {
-      // Remote has places — use them
-      renderAreas(); render();
-    } else {
-      // Remote is empty — push local data up to GitHub
-      await doGhSave();
-    }
+    await doGhLoad();   // fetch SHA (needed for PUT — doesn't matter if remote is empty)
+    await doGhSave();   // always push local data to GitHub
+  }
+
+  async function manualSync() {
+    if (!ghToken()) { alert('请先连接 GitHub Token'); return; }
+    setSyncStatus('⏳');
+    await doGhLoad();
+    await doGhSave();
+    renderAreas(); render();
   }
 
   function disconnectGh() {
