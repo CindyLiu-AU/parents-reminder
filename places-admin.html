@@ -305,19 +305,21 @@
 
   async function doGhLoad() {
     const token = ghToken();
-    if (!token) return;
+    if (!token) return false;
     try {
       const res = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${GH_FILE}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
-      if (!res.ok) return;
+      if (!res.ok) return false;
       const data = await res.json();
       ghSha = data.sha;
       const payload = JSON.parse(decodeURIComponent(escape(atob(data.content.replace(/\n/g, '')))));
-      if (Array.isArray(payload.custom))   { customPlaces = payload.custom; saveCustom(payload.custom, false); }
-      if (Array.isArray(payload.areas))    localStorage.setItem(AREAS_KEY,   JSON.stringify(payload.areas));
-      if (payload.catOverrides)            localStorage.setItem(CAT_OVR_KEY, JSON.stringify(payload.catOverrides));
-    } catch(e) { console.error('GitHub load failed:', e); }
+      // Only overwrite local data if remote actually has content
+      if (Array.isArray(payload.custom) && payload.custom.length > 0)       { customPlaces = payload.custom; saveCustom(payload.custom, false); }
+      if (Array.isArray(payload.areas)  && payload.areas.length  > 0)       localStorage.setItem(AREAS_KEY,   JSON.stringify(payload.areas));
+      if (payload.catOverrides && Object.keys(payload.catOverrides).length)  localStorage.setItem(CAT_OVR_KEY, JSON.stringify(payload.catOverrides));
+      return true;
+    } catch(e) { console.error('GitHub load failed:', e); return false; }
   }
 
   function setSyncStatus(s) {
@@ -549,9 +551,14 @@
     if (!val) { alert('请输入 GitHub Token'); return; }
     localStorage.setItem(GH_TOKEN_KEY, val);
     updateSyncUI();
-    await doGhLoad();
-    renderAreas(); render();
-    await doGhSave();
+    const remoteHasData = await doGhLoad();
+    if (remoteHasData) {
+      // Remote has places — use them
+      renderAreas(); render();
+    } else {
+      // Remote is empty — push local data up to GitHub
+      await doGhSave();
+    }
   }
 
   function disconnectGh() {
