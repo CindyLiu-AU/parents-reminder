@@ -442,6 +442,9 @@
       if (Array.isArray(remote.custom)     && remote.custom.length > 0)                localStorage.setItem(CUSTOM_KEY,  JSON.stringify(remote.custom));
       if (Array.isArray(remote.areas)      && remote.areas.length  > 0)                localStorage.setItem(AREAS_KEY,   JSON.stringify(remote.areas));
       if (remote.catOverrides              && Object.keys(remote.catOverrides).length)  localStorage.setItem(CAT_OVR_KEY, JSON.stringify(remote.catOverrides));
+    } else {
+      const localCustom = getCustom();
+      if (localCustom.length > 0) doFirebaseSave();
     }
     const overrides = getCatOverrides();
     const custom    = getCustom();

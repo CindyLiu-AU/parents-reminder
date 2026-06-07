@@ -526,8 +526,9 @@
   async function loadData() {
     const t = Date.now();
     jsonPlaces   = await fetch('places.json?t=' + t).then(r => r.json()).catch(() => []);
-    await doFirebaseLoad();
+    const loaded = await doFirebaseLoad();
     customPlaces = getCustom();
+    if (!loaded && customPlaces.length > 0) await doFirebaseSave();
     renderAreas();
     render();
     const editId = new URLSearchParams(location.search).get('edit');
