@@ -66,31 +66,31 @@
     }
     #weather:hover { background: rgba(100,181,246,0.08); }
 
-    #weather-icon { font-size: 52px; }
+    #weather-icon { font-size: 36px; }
 
     #weather-temp {
-      font-size: 48px;
+      font-size: 30px;
       font-weight: 800;
       color: #f1f5f9;
       line-height: 1;
     }
 
     #weather-desc {
-      font-size: 20px;
+      font-size: 14px;
       color: #94a3b8;
-      margin-top: 3px;
+      margin-top: 2px;
     }
 
     #weather-range {
-      font-size: 20px;
+      font-size: 14px;
       color: #64b5f6;
-      margin-top: 2px;
+      margin-top: 1px;
     }
 
     #weather-location {
-      font-size: 16px;
+      font-size: 12px;
       color: #546e7a;
-      margin-top: 2px;
+      margin-top: 1px;
     }
 
     /* ── Weather detail overlay ── */
@@ -503,7 +503,7 @@
     .nc-time { font-size: 36px; font-weight: 800; color: #f59e0b; margin-bottom: 8px; }
     .nc-note { font-size: 18px; color: #81c784; line-height: 1.6; }
 
-    .analog-clock-svg { width: 300px; height: 300px; }
+    .analog-clock-svg { width: min(300px, 100%); height: auto; }
 
     @media (max-width: 480px) {
       /* Topbar */
@@ -511,13 +511,13 @@
       #clock { font-size: 22px; letter-spacing: 1px; }
       #date-display { font-size: 12px; margin-top: 1px; }
       #weather { gap: 8px; padding: 4px 6px; }
-      #weather-icon { font-size: 28px; }
-      #weather-temp { font-size: 26px; }
-      #weather-desc, #weather-range { font-size: 13px; }
+      #weather-icon { font-size: 24px; }
+      #weather-temp { font-size: 22px; }
+      #weather-desc, #weather-range { font-size: 12px; }
       #weather-location { display: none; }
 
       /* Analog clock */
-      .analog-clock-svg { width: 180px; height: 180px; }
+      .analog-clock-svg { width: min(180px, 100%); height: auto; }
 
       /* Big clock date */
       .big-clock-date { font-size: 16px; margin-top: 8px; }
@@ -1206,6 +1206,13 @@
       if (el) el.textContent = `↻ ${cdSecs}s`;
     }, 1000);
 
+    // ── Fit card below topbar ─────────────────────────────────
+    function fixCardTop() {
+      const h = document.getElementById('topbar').offsetHeight;
+      const card = document.getElementById('card');
+      if (card) card.style.marginTop = (h + 10) + 'px';
+    }
+
     // ── Init ──────────────────────────────────────────────────
     window.onload = async () => {
       document.documentElement.requestFullscreen?.();
@@ -1218,6 +1225,8 @@
         if (toggle && nav) nav.appendChild(toggle);
       }
 
+      fixCardTop();
+      window.addEventListener('resize', fixCardTop);
       updateClock();
       setInterval(updateClock, 1000);
       await fetchWeather();
