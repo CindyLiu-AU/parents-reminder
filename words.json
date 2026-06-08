@@ -1,5 +1,26 @@
 [
   {
+    "word": "Saturday",
+    "word_cn": "星期六",
+    "desc": "简称SAT",
+    "audio": "",
+    "addedAt": "2026-06-08T08:01:58.663Z"
+  },
+  {
+    "word": "FRIDAY",
+    "word_cn": "星期五",
+    "desc": "简称FRI",
+    "audio": "",
+    "addedAt": "2026-06-08T08:01:58.663Z"
+  },
+  {
+    "word": "MONDAY",
+    "word_cn": "星期一",
+    "desc": "简称 MON",
+    "audio": "",
+    "addedAt": "2026-06-08T08:01:58.663Z"
+  },
+  {
     "word": "Sunday",
     "word_cn": "周日",
     "desc": "",
