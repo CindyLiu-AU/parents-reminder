@@ -4,5 +4,11 @@
     "word_cn": "星期一",
     "desc": "简称 MON",
     "audio": ""
+  },
+  {
+    "word": "FRIDAY",
+    "word_cn": "星期五",
+    "desc": "简称FRI",
+    "audio": ""
   }
 ]
