@@ -138,9 +138,9 @@
 <div id="nav-bar">
   <button class="nav-arrow" id="btn-prev" onclick="go(-1)">‹</button>
   <div id="page-jump-wrap">
-    <div id="jump-label">跳到第几页（原文页码）</div>
+    <div id="jump-label">跳到第几张</div>
     <div id="jump-row">
-      <input id="page-inp" type="number" min="1" placeholder="页码"
+      <input id="page-inp" type="number" min="1" placeholder="序号"
              onkeydown="if(event.key==='Enter')jumpToPage()" />
       <button id="jump-btn" onclick="jumpToPage()">跳转</button>
     </div>
@@ -170,10 +170,8 @@
     const pct = tiles.length > 1 ? (cur / (tiles.length - 1)) * 100 : 100;
     document.getElementById('progress-bar').style.width = pct + '%';
 
-    // Label — show original page number and which half
-    const half = t.row === 0 ? '上半' : '下半';
     document.getElementById('pos-label').textContent =
-      `第 ${cur + 1} 节 / 共 ${tiles.length} 节  ·  原文第 ${t.page} 页 ${half}`;
+      `第 ${cur + 1} 张 / 共 ${tiles.length} 张`;
 
     document.getElementById('btn-prev').disabled = cur === 0;
     document.getElementById('btn-next').disabled = cur === tiles.length - 1;
@@ -187,10 +185,9 @@
   function jumpToPage() {
     const val = parseInt(document.getElementById('page-inp').value);
     if (!val) return;
-    // Find first tile matching that original page number
-    const idx = tiles.findIndex(t => t.page === val);
-    if (idx >= 0) show(idx);
-    else alert(`找不到第 ${val} 页，共 ${tiles[tiles.length-1].page} 页`);
+    const idx = val - 1;
+    if (idx >= 0 && idx < tiles.length) show(idx);
+    else alert(`请输入 1 到 ${tiles.length} 之间的数字`);
   }
 
   function printAll() {
