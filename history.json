@@ -18,7 +18,8 @@
     "icon": "📋",
     "label": "宜家送货",
     "fulldate": "2026年6月13日（星期六）",
-    "time": "09:00"
+    "time": "09:00",
+    "archived": true
   },
   {
     "type": "custom",
