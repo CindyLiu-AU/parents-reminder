@@ -16,14 +16,6 @@
   {
     "type": "custom",
     "icon": "📋",
-    "label": "宜家送货",
-    "fulldate": "2026年6月13日（星期六）",
-    "time": "09:00",
-    "archived": true
-  },
-  {
-    "type": "custom",
-    "icon": "📋",
     "label": "6月15日 12点-2点 免费用电",
     "fulldate": "2026年6月15日（星期一）",
     "time": "12:00",
