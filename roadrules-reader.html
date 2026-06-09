@@ -195,25 +195,25 @@
   function go(delta) { stopTTS(); show(cur + delta); }
 
   // ── TTS ──
+  let ttsAudio = null;
+
   function stopTTS() {
-    window.speechSynthesis.cancel();
+    if (ttsAudio) { ttsAudio.pause(); ttsAudio.currentTime = 0; ttsAudio = null; }
     const btn = document.getElementById('tts-btn');
     if (btn) { btn.textContent = '🔊 朗读'; btn.classList.remove('speaking'); }
   }
 
   function toggleTTS() {
     const btn = document.getElementById('tts-btn');
-    if (window.speechSynthesis.speaking) { stopTTS(); return; }
-    const text = tiles[cur] && tiles[cur].text;
-    if (!text) { alert('此图片暂无文字内容'); return; }
-    const utt = new SpeechSynthesisUtterance(text);
-    utt.lang = 'zh-CN';
-    utt.rate = 0.9;
-    utt.onend = () => stopTTS();
-    utt.onerror = () => stopTTS();
+    if (ttsAudio && !ttsAudio.paused) { stopTTS(); return; }
+    const tile = tiles[cur];
+    if (!tile || !tile.audio) { alert('此图片暂无语音'); return; }
+    ttsAudio = new Audio('roadrules-audio/' + tile.audio);
+    ttsAudio.onended = () => stopTTS();
+    ttsAudio.onerror = () => stopTTS();
     btn.textContent = '⏹ 停止';
     btn.classList.add('speaking');
-    window.speechSynthesis.speak(utt);
+    ttsAudio.play();
   }
 
   function jumpToPage() {
