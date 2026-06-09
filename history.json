@@ -32,14 +32,6 @@
     "pin_until": "14:00"
   },
   {
-    "type": "custom",
-    "icon": "🧥",
-    "label": "记得准备衣服",
-    "message": "准备几件衣服放在 Cindy 家（Lindisfarne），冷天热天各备一些，以后来上班就不用每次带衣服了 👕🧥",
-    "fulldate": "2026年4月28日（星期二）",
-    "time": "09:00"
-  },
-  {
     "type": "trip",
     "destination": "朗塞斯顿",
     "date": "5月8日",
