@@ -36,6 +36,14 @@
       white-space: nowrap;
     }
     .print-btn:active { opacity: 0.85; }
+    .tts-btn {
+      background: #16a34a; border: none; border-radius: 10px;
+      color: #fff; font-size: 15px; font-weight: 800;
+      padding: 8px 14px; cursor: pointer; font-family: inherit;
+      white-space: nowrap;
+    }
+    .tts-btn.speaking { background: #dc2626; }
+    .tts-btn:active { opacity: 0.85; }
 
     /* ── Progress bar ── */
     #progress-bar-wrap {
@@ -129,6 +137,7 @@
 <div id="header">
   <a href="roadrules.html" class="back-btn">← 返回</a>
   <h1>🚗 塔州驾驶规则（中文）</h1>
+  <button class="tts-btn" id="tts-btn" onclick="toggleTTS()">🔊 朗读</button>
   <button class="print-btn" onclick="printAll()">🖨 打印</button>
 </div>
 
@@ -183,7 +192,29 @@
     document.getElementById('btn-next').disabled = cur === tiles.length - 1;
   }
 
-  function go(delta) { show(cur + delta); }
+  function go(delta) { stopTTS(); show(cur + delta); }
+
+  // ── TTS ──
+  function stopTTS() {
+    window.speechSynthesis.cancel();
+    const btn = document.getElementById('tts-btn');
+    if (btn) { btn.textContent = '🔊 朗读'; btn.classList.remove('speaking'); }
+  }
+
+  function toggleTTS() {
+    const btn = document.getElementById('tts-btn');
+    if (window.speechSynthesis.speaking) { stopTTS(); return; }
+    const text = tiles[cur] && tiles[cur].text;
+    if (!text) { alert('此图片暂无文字内容'); return; }
+    const utt = new SpeechSynthesisUtterance(text);
+    utt.lang = 'zh-CN';
+    utt.rate = 0.9;
+    utt.onend = () => stopTTS();
+    utt.onerror = () => stopTTS();
+    btn.textContent = '⏹ 停止';
+    btn.classList.add('speaking');
+    window.speechSynthesis.speak(utt);
+  }
 
   function jumpToPage() {
     const val = parseInt(document.getElementById('page-inp').value);
@@ -213,8 +244,8 @@
 
   // Keyboard navigation
   document.addEventListener('keydown', e => {
-    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') go(1);
-    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   go(-1);
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { stopTTS(); go(1); }
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   { stopTTS(); go(-1); }
   });
 
   // Touch swipe
