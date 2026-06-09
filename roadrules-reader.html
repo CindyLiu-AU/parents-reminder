@@ -7,10 +7,10 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    body {
+    html, body {
+      height: 100%; overflow: hidden;
       background: #f0f4f8;
       font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
-      min-height: 100vh;
     }
 
     /* ── Header ── */
@@ -46,18 +46,22 @@
 
     /* ── Main viewer ── */
     #viewer {
-      padding-top: 72px;
-      padding-bottom: 130px;
+      position: fixed;
+      top: 60px; bottom: 90px; left: 0; right: 0;
       display: flex; flex-direction: column; align-items: center;
+      overflow: hidden;
     }
 
     #tile-wrap {
       width: 100%; max-width: 900px;
-      padding: 16px 16px 0;
+      flex: 1; min-height: 0;
+      padding: 8px 12px 0;
+      display: flex; flex-direction: column;
     }
 
     #tile-img {
-      width: 100%; height: auto;
+      flex: 1; min-height: 0;
+      width: 100%; object-fit: contain;
       display: block;
       border-radius: 8px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.15);
@@ -65,9 +69,10 @@
     }
 
     #pos-label {
+      flex-shrink: 0;
       text-align: center;
-      font-size: 16px; color: #64748b;
-      padding: 10px 0 0;
+      font-size: 14px; color: #64748b;
+      padding: 4px 0;
       font-weight: 600;
     }
 
@@ -75,8 +80,9 @@
     #nav-bar {
       position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
       background: #fff; border-top: 2px solid #e2e8f0;
-      padding: 12px 16px; display: flex; align-items: center; gap: 10px;
+      padding: 8px 16px; display: flex; align-items: center; gap: 10px;
       box-shadow: 0 -4px 16px rgba(0,0,0,0.08);
+      height: 90px;
     }
     .nav-arrow {
       flex-shrink: 0;
@@ -175,9 +181,6 @@
 
     document.getElementById('btn-prev').disabled = cur === 0;
     document.getElementById('btn-next').disabled = cur === tiles.length - 1;
-
-    // Scroll to top of image
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   function go(delta) { show(cur + delta); }
