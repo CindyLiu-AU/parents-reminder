@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>塔州驾驶规则</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #f0f4f8;
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    #header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: #1e3a6e; color: #fff;
+      padding: 12px 16px;
+      display: flex; align-items: center; gap: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    .back-btn {
+      background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 10px; color: #fff; font-size: 15px; font-weight: 700;
+      padding: 8px 14px; cursor: pointer; font-family: inherit; text-decoration: none;
+      white-space: nowrap;
+    }
+    .back-btn:active { background: rgba(255,255,255,0.25); }
+    #header h1 { flex: 1; font-size: 18px; font-weight: 900; }
+    .print-btn {
+      background: #f59e0b; border: none; border-radius: 10px;
+      color: #1a1000; font-size: 15px; font-weight: 800;
+      padding: 8px 14px; cursor: pointer; font-family: inherit;
+      white-space: nowrap;
+    }
+    .print-btn:active { opacity: 0.85; }
+
+    /* ── Progress bar ── */
+    #progress-bar-wrap {
+      position: fixed; top: 56px; left: 0; right: 0; z-index: 99;
+      height: 4px; background: #cbd5e1;
+    }
+    #progress-bar { height: 100%; background: #f59e0b; transition: width 0.2s; width: 0%; }
+
+    /* ── Main viewer ── */
+    #viewer {
+      padding-top: 72px;
+      padding-bottom: 130px;
+      display: flex; flex-direction: column; align-items: center;
+    }
+
+    #tile-wrap {
+      width: 100%; max-width: 900px;
+      padding: 16px 16px 0;
+    }
+
+    #tile-img {
+      width: 100%; height: auto;
+      display: block;
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      background: #fff;
+    }
+
+    #pos-label {
+      text-align: center;
+      font-size: 16px; color: #64748b;
+      padding: 10px 0 0;
+      font-weight: 600;
+    }
+
+    /* ── Navigation bar ── */
+    #nav-bar {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+      background: #fff; border-top: 2px solid #e2e8f0;
+      padding: 12px 16px; display: flex; align-items: center; gap: 10px;
+      box-shadow: 0 -4px 16px rgba(0,0,0,0.08);
+    }
+    .nav-arrow {
+      flex-shrink: 0;
+      background: #1e3a6e; border: none; border-radius: 14px;
+      color: #fff; font-size: 22px; font-weight: 900;
+      width: 60px; height: 60px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-family: inherit;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .nav-arrow:active { opacity: 0.8; transform: scale(0.95); }
+    .nav-arrow:disabled { background: #cbd5e1; box-shadow: none; cursor: default; }
+
+    #page-jump-wrap {
+      flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;
+    }
+    #jump-label { font-size: 13px; color: #94a3b8; }
+    #jump-row { display: flex; gap: 6px; align-items: center; width: 100%; max-width: 260px; }
+    #page-inp {
+      flex: 1; border: 2px solid #cbd5e1; border-radius: 10px;
+      font-size: 18px; font-family: inherit; text-align: center;
+      padding: 8px 6px; outline: none; min-width: 0;
+    }
+    #page-inp:focus { border-color: #1e3a6e; }
+    #jump-btn {
+      background: #1e3a6e; border: none; border-radius: 10px;
+      color: #fff; font-size: 14px; font-weight: 700;
+      padding: 10px 14px; cursor: pointer; font-family: inherit; white-space: nowrap;
+    }
+    #jump-btn:active { opacity: 0.8; }
+
+    /* ── Print view ── */
+    @media print {
+      #header, #nav-bar, #progress-bar-wrap, #pos-label { display: none !important; }
+      body { background: #fff; }
+      #viewer { padding: 0; }
+      #tile-wrap { padding: 0; max-width: 100%; page-break-after: always; }
+      #tile-img { box-shadow: none; border-radius: 0; width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="header">
+  <a href="roadrules.html" class="back-btn">← 返回</a>
+  <h1>🚗 塔州驾驶规则（中文）</h1>
+  <button class="print-btn" onclick="printAll()">🖨 打印</button>
+</div>
+
+<div id="progress-bar-wrap"><div id="progress-bar"></div></div>
+
+<div id="viewer">
+  <div id="tile-wrap">
+    <img id="tile-img" src="" alt="加载中..." />
+    <div id="pos-label"></div>
+  </div>
+</div>
+
+<div id="nav-bar">
+  <button class="nav-arrow" id="btn-prev" onclick="go(-1)">‹</button>
+  <div id="page-jump-wrap">
+    <div id="jump-label">跳到第几页（原文页码）</div>
+    <div id="jump-row">
+      <input id="page-inp" type="number" min="1" placeholder="页码"
+             onkeydown="if(event.key==='Enter')jumpToPage()" />
+      <button id="jump-btn" onclick="jumpToPage()">跳转</button>
+    </div>
+  </div>
+  <button class="nav-arrow" id="btn-next" onclick="go(1)">›</button>
+</div>
+
+<script>
+  let tiles = [];
+  let cur   = 0;
+
+  async function loadManifest() {
+    const res  = await fetch('roadrules-imgs/manifest.json?t=' + Date.now());
+    const data = await res.json();
+    tiles = data.tiles;
+    show(0);
+  }
+
+  function show(idx) {
+    if (idx < 0 || idx >= tiles.length) return;
+    cur = idx;
+    const t = tiles[idx];
+    const img = document.getElementById('tile-img');
+    img.src = 'roadrules-imgs/' + t.file;
+
+    // Progress
+    const pct = tiles.length > 1 ? (cur / (tiles.length - 1)) * 100 : 100;
+    document.getElementById('progress-bar').style.width = pct + '%';
+
+    // Label — show original page number and which half
+    const half = t.row === 0 ? '上半' : '下半';
+    document.getElementById('pos-label').textContent =
+      `第 ${cur + 1} 节 / 共 ${tiles.length} 节  ·  原文第 ${t.page} 页 ${half}`;
+
+    document.getElementById('btn-prev').disabled = cur === 0;
+    document.getElementById('btn-next').disabled = cur === tiles.length - 1;
+
+    // Scroll to top of image
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function go(delta) { show(cur + delta); }
+
+  function jumpToPage() {
+    const val = parseInt(document.getElementById('page-inp').value);
+    if (!val) return;
+    // Find first tile matching that original page number
+    const idx = tiles.findIndex(t => t.page === val);
+    if (idx >= 0) show(idx);
+    else alert(`找不到第 ${val} 页，共 ${tiles[tiles.length-1].page} 页`);
+  }
+
+  function printAll() {
+    // Show all tiles at once for print, then restore single-tile view
+    const wrap  = document.getElementById('tile-wrap');
+    const saved = wrap.innerHTML;
+
+    // Build all tiles into the DOM
+    wrap.innerHTML = tiles.map(t =>
+      `<div style="page-break-after:always;margin-bottom:0;">
+         <img src="roadrules-imgs/${t.file}" style="width:100%;display:block;">
+       </div>`
+    ).join('');
+
+    window.print();
+    wrap.innerHTML = saved;
+    // Re-attach the img reference and show current tile
+    show(cur);
+  }
+
+  // Keyboard navigation
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') go(1);
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   go(-1);
+  });
+
+  // Touch swipe
+  let touchX = null;
+  document.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; });
+  document.addEventListener('touchend',   e => {
+    if (touchX === null) return;
+    const dx = e.changedTouches[0].clientX - touchX;
+    touchX = null;
+    if (Math.abs(dx) > 60) go(dx < 0 ? 1 : -1);
+  });
+
+  loadManifest();
+</script>
+</body>
+</html>
