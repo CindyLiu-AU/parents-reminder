@@ -95,6 +95,12 @@
     .audio-preview { display: flex; align-items: center; gap: 8px; }
     .btn-play { background: #1e3a6e; color: #fff; border: none; border-radius: 20px; padding: 5px 12px; font-size: 13px; cursor: pointer; font-family: inherit; }
 
+    .q-answer-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .q-answer-row span { font-size: 13px; color: #64748b; font-weight: 600; }
+    .ans-label { display: flex; align-items: center; gap: 4px; cursor: pointer; }
+    .ans-label input { accent-color: #34d399; width: 16px; height: 16px; cursor: pointer; }
+    .ans-label span { font-size: 14px; font-weight: 700; color: #e2e8f0; }
+
     /* ── Crop modal ── */
     #crop-modal {
       display: none; position: fixed; inset: 0; z-index: 1000;
@@ -225,6 +231,7 @@
     for await (const entry of dirHandle.values()) {
       if (entry.kind !== 'file') continue;
       if (!/\.(png|jpg|jpeg)$/i.test(entry.name)) continue;
+      if (/_diagram\.(png|jpg|jpeg)$/i.test(entry.name)) continue; // skip extracted diagrams
       if (!known.has(entry.name)) {
         newTiles.push({ file: entry.name, text: '', audio: null });
       }
@@ -460,6 +467,25 @@
     }
   }
 
+  // ── Save answer ──
+  async function saveAnswer(file, answer) {
+    const t = manifest.tiles.find(x => x.file === file);
+    if (!t) return;
+    t.answer = answer;
+    await saveManifest();
+    setMsg(`答案已保存：${file} → ${answer}`, 2000);
+    // Refresh just the answer indicator without full re-render
+    const card = document.getElementById('card-' + file.replace(/\./g,'_'));
+    if (card) {
+      const indicator = card.querySelector('.q-answer-row span[style]');
+      if (indicator) { indicator.textContent = `✓ ${answer}`; }
+      else {
+        const row = card.querySelector('.q-answer-row');
+        if (row) { const s = document.createElement('span'); s.style.cssText='color:#34d399;font-weight:700;'; s.textContent=`✓ ${answer}`; row.appendChild(s); }
+      }
+    }
+  }
+
   // ── Save text edit ──
   async function saveText(file) {
     const t   = manifest.tiles.find(x => x.file === file);
@@ -524,6 +550,17 @@
           </div>
           ${diagPreview}
           ${textContent}
+          <div class="q-answer-row">
+            <span>正确答案：</span>
+            ${['A','B','C','D','E'].map(v => `
+              <label class="ans-label">
+                <input type="radio" name="ans-${t.file.replace(/\./g,'_')}" value="${v}"
+                  ${t.answer === v ? 'checked' : ''}
+                  onchange="saveAnswer('${t.file}','${v}')">
+                <span>${v}</span>
+              </label>`).join('')}
+            ${t.answer ? `<span style="color:#34d399;font-weight:700;">✓ ${t.answer}</span>` : ''}
+          </div>
           <div class="q-actions">
             <button class="btn-extract" onclick="extractText('${t.file}')">🔍 提取文字</button>
             <button class="btn-diagram" onclick="openCropModal('${t.file}')">✂️ 手动裁剪</button>

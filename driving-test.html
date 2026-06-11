@@ -46,19 +46,11 @@
       padding: 8px 12px 0;
       display: flex; flex-direction: column; gap: 8px;
     }
-    /* Layout A: diagram + text panel (when diagram extracted) */
     #diagram-img {
       width: 100%; object-fit: contain;
       display: none; border-radius: 8px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.4); background: #fff;
-      max-height: 40vh;
-    }
-    /* Layout B: full screenshot (fallback) */
-    #tile-img {
-      width: 100%; object-fit: contain;
-      display: block; border-radius: 8px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.4); background: #fff;
-      max-height: 40vh;
+      max-height: 38vh;
     }
     #question-text {
       flex: 1; min-height: 0; overflow-y: auto;
@@ -69,6 +61,21 @@
     }
     #question-text::-webkit-scrollbar { width: 4px; }
     #question-text::-webkit-scrollbar-thumb { background: #1e3a5f; border-radius: 2px; }
+    #answer-area {
+      flex-shrink: 0; display: none;
+      align-items: center; justify-content: center; gap: 12px;
+      padding: 6px 0 2px;
+    }
+    #answer-btn {
+      background: #1e3a6e; border: 1px solid #2e5a9e; border-radius: 20px;
+      color: #90caf9; font-size: 14px; font-weight: 700;
+      padding: 7px 20px; cursor: pointer; font-family: inherit;
+    }
+    #answer-reveal {
+      display: none; background: #064e3b; border-radius: 20px;
+      color: #34d399; font-size: 16px; font-weight: 900;
+      padding: 7px 20px; letter-spacing: 1px;
+    }
     #pos-label {
       flex-shrink: 0; text-align: center;
       font-size: 13px; color: #64748b; padding: 4px 0; font-weight: 600;
@@ -115,7 +122,6 @@
       body { background: #fff; }
       #viewer { position: static; overflow: visible; }
       #tile-wrap { page-break-after: always; }
-      #tile-img { box-shadow: none; width: 100%; }
     }
   </style>
 </head>
@@ -133,8 +139,11 @@
 <div id="viewer">
   <div id="tile-wrap">
     <img id="diagram-img" src="" alt="diagram" />
-    <img id="tile-img"    src="" alt="" style="display:none;" />
     <div id="question-text"></div>
+    <div id="answer-area">
+      <button id="answer-btn" onclick="toggleAnswer()">🔍 查看答案</button>
+      <span id="answer-reveal"></span>
+    </div>
     <div id="empty-msg">
       <div class="em-icon">🎯</div>
       <div class="em-text">暂无题目</div>
@@ -165,11 +174,11 @@
     try {
       const res  = await fetch('driving-test-imgs/manifest.json?t=' + Date.now());
       const data = await res.json();
-      tiles = data.tiles || [];
+      // Only show real questions — skip standalone diagram files
+      tiles = (data.tiles || []).filter(t => !/_diagram\.(png|jpg|jpeg)$/i.test(t.file));
     } catch { tiles = []; }
     if (tiles.length > 0) {
       document.getElementById('empty-msg').style.display = 'none';
-      document.getElementById('tile-img').style.display  = 'block';
       show(0);
     }
   }
@@ -179,14 +188,10 @@
     cur = idx;
     const t = tiles[idx];
     const diagEl = document.getElementById('diagram-img');
-    const imgEl  = document.getElementById('tile-img');
     if (t.diagram) {
       diagEl.src           = 'driving-test-imgs/' + t.diagram;
       diagEl.style.display = 'block';
-      imgEl.style.display  = 'none';
     } else {
-      imgEl.src            = 'driving-test-imgs/' + t.file;
-      imgEl.style.display  = 'block';
       diagEl.style.display = 'none';
     }
     const textEl = document.getElementById('question-text');
@@ -196,11 +201,36 @@
     } else {
       textEl.style.display = 'none';
     }
+    // Answer area
+    const ansArea   = document.getElementById('answer-area');
+    const ansReveal = document.getElementById('answer-reveal');
+    ansReveal.style.display = 'none';
+    ansReveal.textContent   = '';
+    if (t.answer) {
+      ansArea.style.display = 'flex';
+      document.getElementById('answer-btn').style.display = 'inline-block';
+    } else {
+      ansArea.style.display = 'none';
+    }
     const pct = tiles.length > 1 ? (cur / (tiles.length - 1)) * 100 : 100;
     document.getElementById('progress-bar').style.width = pct + '%';
     document.getElementById('pos-label').textContent = `第 ${cur + 1} 题 / 共 ${tiles.length} 题`;
     document.getElementById('btn-prev').disabled = cur === 0;
     document.getElementById('btn-next').disabled = cur === tiles.length - 1;
+  }
+
+  function toggleAnswer() {
+    const t       = tiles[cur];
+    const reveal  = document.getElementById('answer-reveal');
+    const btn     = document.getElementById('answer-btn');
+    if (reveal.style.display === 'none' || !reveal.style.display) {
+      reveal.textContent   = `✓ 正确答案：${t.answer}`;
+      reveal.style.display = 'inline-block';
+      btn.style.display    = 'none';
+    } else {
+      reveal.style.display = 'none';
+      btn.style.display    = 'inline-block';
+    }
   }
 
   function go(delta) { stopAuto(); stopTTS(); show(cur + delta); }
