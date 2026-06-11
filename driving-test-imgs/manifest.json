@@ -1,5 +1,5 @@
 {
-  "total": 4,
+  "total": 5,
   "tiles": [
     {
       "file": "q001.png",
@@ -51,6 +51,19 @@
       },
       "diagram": "q004_diagram.png",
       "answer": "A"
+    },
+    {
+      "file": "q005.png",
+      "audio": "q005.mp3",
+      "question": "5. 這個標誌的含義是什麼？",
+      "options": {
+        "A": "只有當車輛或行人從右側來時，才停車。",
+        "B": "減速，如果安全，則通過十字路口。",
+        "C": "僅為行人停車。",
+        "D": "在十字路口的實線處停車，讓左側和右側車輛以及行人通行。"
+      },
+      "diagram": "q005_diagram.png",
+      "answer": "D"
     }
   ]
 }
