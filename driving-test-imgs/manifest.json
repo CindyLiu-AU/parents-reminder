@@ -1,15 +1,23 @@
 {
-  "total": 2,
+  "total": 3,
   "tiles": [
     {
       "file": "q001.png",
       "text": "1. 車輛 A 是否可以通過雙實線?\n\nA. 是的－為了超越其他車輛。\nB. 是的－為了進入車道。\nC. 是的－為了安全地超越自行車。\nD. 是的－為了U型轉彎。",
-      "audio": "q001.mp3"
+      "audio": null,
+      "diagram": "q001_diagram.png"
     },
     {
       "file": "q002.png",
       "text": "2. 哪些车辆可以在安全的情况下，超越车道进行超车？\n\nA. 车辆 A。\nB. 车辆 B。\nC. 车辆 A 和车辆 B 均可超越其他车辆。",
-      "audio": "q002.mp3"
+      "audio": "q002.mp3",
+      "diagram": "q002_diagram.png"
+    },
+    {
+      "file": "q003.png",
+      "text": "",
+      "audio": null,
+      "diagram": "q003_diagram.png"
     }
   ]
 }
