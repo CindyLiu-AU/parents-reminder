@@ -198,8 +198,9 @@
     }
     .nb-icon { font-size: 36px; }
     .nb-title { font-size: 28px; font-weight: 700; color: #ffffff; }
-    .nb-date  { font-size: 20px; font-weight: 600; color: #90caf9; width: 100%; text-align: center; margin-top: -6px; }
-    .nb-time  { font-size: 36px; font-weight: 800; color: #f59e0b; }
+    .nb-datetime { width: 100%; text-align: center; display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap; }
+    .nb-date  { font-size: 22px; font-weight: 700; color: #90caf9; }
+    .nb-time  { font-size: 22px; font-weight: 700; color: #f59e0b; }
 
     /* ── Main card ── */
     .card {
@@ -527,7 +528,7 @@
       .nb-icon  { font-size: 22px; }
       .nb-title { font-size: 18px; }
       .nb-date  { font-size: 14px; }
-      .nb-time  { font-size: 24px; }
+      .nb-time  { font-size: 14px; }
 
       /* Notice text inside card */
       .icon  { font-size: 32px; }
@@ -751,14 +752,14 @@
         || { coles:'Coles 送货', visit:`${d.who||'Cindy'} 来访`, power:'免费用电', trip:`去 ${d.destination}` }[d.type]
         || '通知';
       const badge = badgeHTML(d);
-      const time  = d.time ? `<span class="nb-time">${d.time}</span>` : '';
-      const date  = shortDate(d);
-      const dateEl = date ? `<span class="nb-date">${date}</span>` : '';
+      const fullDate = d.fulldate ? d.fulldate.replace(/^\d{4}年/, '') : (d.date || '');
+      const dateEl = fullDate ? `<span class="nb-date">${fullDate}</span>` : '';
+      const timeEl = d.time   ? `<span class="nb-time">${d.time}</span>` : '';
+      const dtRow  = (dateEl || timeEl) ? `<div class="nb-datetime">${dateEl}${timeEl}</div>` : '';
       return `<div class="notice-bar">
         <span class="nb-icon">${icon}</span>
         <span class="nb-title">${title}${badge}</span>
-        ${time}
-        ${dateEl}
+        ${dtRow}
       </div>`;
     }
 
