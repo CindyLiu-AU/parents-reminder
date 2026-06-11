@@ -4,8 +4,9 @@
     {
       "file": "q001.png",
       "text": "1. 車輛 A 是否可以通過雙實線?\n\nA. 是的－為了超越其他車輛。\nB. 是的－為了進入車道。\nC. 是的－為了安全地超越自行車。\nD. 是的－為了U型轉彎。",
-      "audio": null,
-      "diagram": "q001_diagram.png"
+      "audio": "q001.mp3",
+      "diagram": "q001_diagram.png",
+      "answer": "B"
     },
     {
       "file": "q002.png",
@@ -15,8 +16,8 @@
     },
     {
       "file": "q003.png",
-      "text": "",
-      "audio": null,
+      "text": "3. 您正在駕駛車輛A。在什麼情況下，您不能越過雙重斷線？\n\nA. 在安全的情況下，超越其他車輛。\nB. 駛入車道。\nC. 駛入道路。\nD. 避開道路上的障礙物。",
+      "audio": "q003.mp3",
       "diagram": "q003_diagram.png"
     }
   ]
