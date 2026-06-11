@@ -467,23 +467,19 @@
     }
   }
 
-  // ── Save answer ──
-  async function saveAnswer(file, answer) {
-    const t = manifest.tiles.find(x => x.file === file);
+  // ── Save answer (multi-select checkboxes) ──
+  async function collectAnswer(file) {
+    const t    = manifest.tiles.find(x => x.file === file);
     if (!t) return;
-    t.answer = answer;
-    await saveManifest();
-    setMsg(`答案已保存：${file} → ${answer}`, 2000);
-    // Refresh just the answer indicator without full re-render
     const card = document.getElementById('card-' + file.replace(/\./g,'_'));
-    if (card) {
-      const indicator = card.querySelector('.q-answer-row span[style]');
-      if (indicator) { indicator.textContent = `✓ ${answer}`; }
-      else {
-        const row = card.querySelector('.q-answer-row');
-        if (row) { const s = document.createElement('span'); s.style.cssText='color:#34d399;font-weight:700;'; s.textContent=`✓ ${answer}`; row.appendChild(s); }
-      }
-    }
+    if (!card) return;
+    const checked = Array.from(card.querySelectorAll('.ans-label input:checked'))
+      .map(cb => cb.value).sort().join('');
+    t.answer = checked || null;
+    await saveManifest();
+    setMsg(`答案已保存：${file} → ${checked || '(已清空)'}`, 2000);
+    const ind = card.querySelector('.ans-indicator');
+    if (ind) ind.textContent = checked ? `✓ ${checked}` : '';
   }
 
   // ── Save text edit ──
@@ -552,14 +548,14 @@
           ${textContent}
           <div class="q-answer-row">
             <span>正确答案：</span>
-            ${['A','B','C','D','E'].map(v => `
+            ${['A','B','C','D'].map(v => `
               <label class="ans-label">
-                <input type="radio" name="ans-${t.file.replace(/\./g,'_')}" value="${v}"
-                  ${t.answer === v ? 'checked' : ''}
-                  onchange="saveAnswer('${t.file}','${v}')">
+                <input type="checkbox" value="${v}"
+                  ${t.answer && t.answer.includes(v) ? 'checked' : ''}
+                  onchange="collectAnswer('${t.file}')">
                 <span>${v}</span>
               </label>`).join('')}
-            ${t.answer ? `<span style="color:#34d399;font-weight:700;">✓ ${t.answer}</span>` : ''}
+            <span class="ans-indicator" style="color:#34d399;font-weight:700;">${t.answer ? '✓ ' + t.answer : ''}</span>
           </div>
           <div class="q-actions">
             <button class="btn-extract" onclick="extractText('${t.file}')">🔍 提取文字</button>
