@@ -1,5 +1,5 @@
 {
-  "total": 1,
+  "total": 2,
   "tiles": [
     {
       "file": "q009.png",
@@ -13,6 +13,18 @@
       },
       "diagram": "q009_diagram.png",
       "answer": "C"
+    },
+    {
+      "file": "q002.png",
+      "audio": "q002.mp3",
+      "question": "车A 何时可以越过双虚线？",
+      "options": {
+        "A": "如果安全的话，可以超越骑自行车的人。",
+        "B": "掉头。",
+        "C": "超车。"
+      },
+      "diagram": "q002_diagram.png",
+      "answer": "A"
     }
   ]
 }
