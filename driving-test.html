@@ -348,9 +348,135 @@
       background: linear-gradient(180deg, #88d088 0%, #38a038 100%);
       border-color: #a0e0a0 #187818 #187818 #a0e0a0; color: #fff;
     }
+    /* ══════════════════════════════════════════════
+       START SCREEN
+       ══════════════════════════════════════════════ */
+    #start-screen {
+      position: fixed; inset: 0; z-index: 1000;
+      background: radial-gradient(ellipse 85% 65% at 56% 44%,
+        #e6e1da 0%, #dbd5cc 55%, #cec7be 100%);
+      display: flex; flex-direction: column;
+      font-family: Arial, "PingFang SC", sans-serif;
+    }
+    #ss-header {
+      flex-shrink: 0; height: 13%;
+      background: linear-gradient(180deg, #ccc8c3 0%, #b2aead 40%, #bfbbb6 100%);
+      border-bottom: 2px solid #8a8580;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+    }
+    #ss-header::before {
+      content: '';
+      position: absolute; left: 0; top: 0; bottom: 0; width: 18%;
+      background: linear-gradient(180deg, #c8c4bf 0%, #aeaaa5 100%);
+      clip-path: polygon(0 0,calc(100% - 40px) 0,100% 50%,calc(100% - 40px) 100%,0 100%);
+    }
+    #ss-header::after {
+      content: '';
+      position: absolute; right: 0; top: 0; bottom: 0; width: 7%;
+      background: linear-gradient(180deg, #c8c4bf 0%, #aeaaa5 100%);
+      clip-path: polygon(0 50%,40px 0,100% 0,100% 100%,40px 100%);
+    }
+    #ss-brand {
+      font-size: clamp(16px, 3vw, 30px);
+      font-weight: 900; letter-spacing: 0.28em;
+      color: rgba(68,66,62,0.65);
+      text-shadow: 0 1px 0 rgba(255,255,255,0.45), 0 -1px 0 rgba(0,0,0,0.18);
+      position: relative; z-index: 1;
+    }
+    #ss-sub-title {
+      font-size: clamp(12px, 1.8vw, 18px);
+      font-weight: 700; color: #fff;
+      background: rgba(0,0,0,0.18); border-radius: 3px;
+      padding: 2px 14px; margin-top: 4px;
+      position: relative; z-index: 1;
+    }
+    #ss-body {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 4%;
+    }
+    #ss-title {
+      font-size: clamp(36px, 8vw, 80px);
+      font-weight: 700; color: #b86820;
+      letter-spacing: 0.01em;
+    }
+    /* 3D green button + dark mount ring */
+    #ss-btn-wrap {
+      display: flex; align-items: center; justify-content: center;
+    }
+    #ss-btn-mount {
+      width: clamp(120px, 16vw, 180px);
+      height: clamp(120px, 16vw, 180px);
+      border-radius: 50%;
+      background: radial-gradient(circle at 40% 35%, #585858 0%, #282828 50%, #0a0a0a 100%);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.6), 0 6px 12px rgba(0,0,0,0.5);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+    }
+    #ss-btn-mount:active { transform: scale(0.97); }
+    #ss-green-btn {
+      width: 72%; height: 72%; border-radius: 50%;
+      background: radial-gradient(circle at 35% 28%,
+        #d0ffb0 0%, #60e870 20%, #20c040 55%, #0a5820 100%);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5),
+                  inset 0 3px 0 rgba(255,255,255,0.55),
+                  inset 0 -3px 6px rgba(0,0,0,0.3);
+      pointer-events: none;
+    }
+    #ss-click-text {
+      font-size: clamp(28px, 6vw, 60px);
+      font-weight: 700; color: #b86820;
+    }
+    #ss-footer {
+      flex-shrink: 0; height: 6%;
+      display: flex; align-items: center;
+      justify-content: space-between; padding: 0 16px;
+    }
+    #ss-version {
+      font-size: 11px; color: #706860;
+    }
+    #ss-quit-btn {
+      display: flex; align-items: center; gap: 6px;
+      background: linear-gradient(180deg, #d0ccc8 0%, #b8b4b0 100%);
+      border: 2px solid; border-color: #e0dcd8 #989088 #989088 #e0dcd8;
+      border-radius: 5px; padding: 5px 12px;
+      font-size: 13px; font-weight: 900; cursor: pointer;
+      font-family: inherit; color: #1a1614;
+    }
+    .quit-dot {
+      width: 16px; height: 16px; border-radius: 50%;
+      background: radial-gradient(circle at 38% 30%, #ff8080, #d02020, #700010);
+      border: 1px solid #500010;
+      display: inline-block;
+    }
   </style>
 </head>
 <body>
+
+<!-- ══ START SCREEN ══ -->
+<div id="start-screen">
+  <div id="ss-header">
+    <div id="ss-brand">DRIVER KNOWLEDGE TEST</div>
+    <div id="ss-sub-title">Start Test</div>
+  </div>
+  <div id="ss-body">
+    <div id="ss-title">To Start Your Test</div>
+    <div id="ss-btn-wrap">
+      <div id="ss-btn-mount" onclick="startTest()">
+        <div id="ss-green-btn"></div>
+      </div>
+    </div>
+    <div id="ss-click-text">Click on button</div>
+  </div>
+  <div id="ss-footer">
+    <span id="ss-version">DKTS build 3.2.378.202005261636</span>
+    <button id="ss-quit-btn" onclick="window.history.back()">
+      QUIT <span class="quit-dot"></span>
+    </button>
+  </div>
+</div>
+
 <div id="shell">
 
   <!-- Left chrome + blue panel (diagram) -->
@@ -442,6 +568,11 @@
   let userAnswers      = [];
   let submittedAnswers = [];
 
+  function startTest() {
+    document.getElementById('start-screen').style.display = 'none';
+    if (tiles.length > 0) show(0);
+  }
+
   async function loadManifest() {
     try {
       const res  = await fetch('driving-test-imgs/manifest.json?t=' + Date.now());
@@ -451,15 +582,15 @@
     userAnswers      = new Array(tiles.length).fill(null);
     submittedAnswers = new Array(tiles.length).fill(false);
     document.getElementById('q-total').textContent = tiles.length || '—';
-    if (tiles.length > 0) {
-      document.getElementById('empty-msg').style.display = 'none';
-      if (tiles.some(t => t.answer)) {
-        const chip = document.getElementById('score-chip');
-        chip.style.display = 'inline-block';
-        chip.textContent   = '0 / 0';
-      }
-      show(0);
+    if (tiles.some(t => t.answer)) {
+      const chip = document.getElementById('score-chip');
+      chip.style.display = 'inline-block';
+      chip.textContent   = '0 / 0';
     }
+    if (tiles.length === 0) {
+      document.getElementById('start-screen').style.display = 'none';
+    }
+    // Don't call show(0) here — wait for user to click the green button
   }
 
   function show(idx) {
