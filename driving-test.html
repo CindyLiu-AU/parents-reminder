@@ -61,6 +61,25 @@
     }
     #question-text::-webkit-scrollbar { width: 4px; }
     #question-text::-webkit-scrollbar-thumb { background: #1e3a5f; border-radius: 2px; }
+    #options-area { display: none; flex-direction: column; gap: 7px; }
+    .opt-btn {
+      width: 100%; background: #112240; border: 1px solid #1e3a5f; border-radius: 10px;
+      color: #f0f4f8; font-size: 15px; text-align: left; line-height: 1.5;
+      padding: 10px 14px; cursor: pointer; font-family: inherit;
+      display: flex; align-items: flex-start; gap: 10px;
+    }
+    .opt-btn:active { opacity: 0.8; }
+    .opt-key {
+      flex-shrink: 0; font-weight: 900; color: #90caf9;
+      background: #1e3a6e; border-radius: 6px;
+      padding: 1px 8px; font-size: 14px; margin-top: 1px;
+    }
+    .opt-btn.selected { border-color: #f59e0b; background: #1a2e50; }
+    .opt-btn.correct  { border-color: #16a34a; background: #052e16; }
+    .opt-btn.correct .opt-key { background: #16a34a; color: #fff; }
+    .opt-btn.wrong    { border-color: #dc2626; background: #2d0a0a; }
+    .opt-btn.wrong .opt-key   { background: #dc2626; color: #fff; }
+
     #answer-area {
       flex-shrink: 0; display: none;
       align-items: center; justify-content: center; gap: 12px;
@@ -75,6 +94,11 @@
       display: none; background: #064e3b; border-radius: 20px;
       color: #34d399; font-size: 16px; font-weight: 900;
       padding: 7px 20px; letter-spacing: 1px;
+    }
+    #score-chip {
+      background: #1e3a6e; border-radius: 8px;
+      color: #f0f4f8; font-size: 13px; font-weight: 700;
+      padding: 5px 10px; white-space: nowrap; display: none;
     }
     #pos-label {
       flex-shrink: 0; text-align: center;
@@ -130,6 +154,7 @@
 <div id="header">
   <a href="roadrules.html" class="back-btn">← 返回</a>
   <h1>🎯 驾照模拟题</h1>
+  <span id="score-chip"></span>
   <button class="tts-btn" id="tts-btn" onclick="toggleTTS()">🔊 朗读</button>
   <button class="auto-btn" id="auto-btn" onclick="toggleAuto()">▶ 自动</button>
 </div>
@@ -140,6 +165,7 @@
   <div id="tile-wrap">
     <img id="diagram-img" src="" alt="diagram" />
     <div id="question-text"></div>
+    <div id="options-area"></div>
     <div id="answer-area">
       <button id="answer-btn" onclick="toggleAnswer()">🔍 查看答案</button>
       <span id="answer-reveal"></span>
@@ -167,18 +193,25 @@
 </div>
 
 <script>
-  let tiles = [];
-  let cur   = 0;
+  let tiles       = [];
+  let cur         = 0;
+  let userAnswers = []; // per-question selected answer string (e.g. "A" or "AC")
 
   async function loadManifest() {
     try {
       const res  = await fetch('driving-test-imgs/manifest.json?t=' + Date.now());
       const data = await res.json();
-      // Only show real questions — skip standalone diagram files
       tiles = (data.tiles || []).filter(t => !/_diagram\.(png|jpg|jpeg)$/i.test(t.file));
     } catch { tiles = []; }
+    userAnswers = new Array(tiles.length).fill(null);
     if (tiles.length > 0) {
       document.getElementById('empty-msg').style.display = 'none';
+      // Show score chip if any tile has a known answer
+      if (tiles.some(t => t.answer)) {
+        const chip = document.getElementById('score-chip');
+        chip.style.display = 'inline-block';
+        chip.textContent   = '✓ 0 / 0';
+      }
       show(0);
     }
   }
@@ -187,6 +220,8 @@
     if (idx < 0 || idx >= tiles.length) return;
     cur = idx;
     const t = tiles[idx];
+
+    // Diagram
     const diagEl = document.getElementById('diagram-img');
     if (t.diagram) {
       diagEl.src           = 'driving-test-imgs/' + t.diagram;
@@ -194,35 +229,100 @@
     } else {
       diagEl.style.display = 'none';
     }
+
+    // Question text (only the stem, not options)
     const textEl = document.getElementById('question-text');
-    if (t.text) {
-      textEl.textContent   = t.text;
+    const stem   = t.question || (t.options ? null : t.text);
+    if (stem) {
+      textEl.textContent   = stem;
       textEl.style.display = 'block';
     } else {
       textEl.style.display = 'none';
     }
-    // Answer area
+
+    // Options
+    renderOptions();
+
+    // Answer area (only for text-only questions without structured options)
     const ansArea   = document.getElementById('answer-area');
     const ansReveal = document.getElementById('answer-reveal');
     ansReveal.style.display = 'none';
     ansReveal.textContent   = '';
-    if (t.answer) {
+    if (t.answer && !t.options) {
       ansArea.style.display = 'flex';
       document.getElementById('answer-btn').style.display = 'inline-block';
     } else {
       ansArea.style.display = 'none';
     }
+
     const pct = tiles.length > 1 ? (cur / (tiles.length - 1)) * 100 : 100;
     document.getElementById('progress-bar').style.width = pct + '%';
-    document.getElementById('pos-label').textContent = `第 ${cur + 1} 题 / 共 ${tiles.length} 题`;
+    document.getElementById('pos-label').textContent    = `第 ${cur + 1} 题 / 共 ${tiles.length} 题`;
     document.getElementById('btn-prev').disabled = cur === 0;
     document.getElementById('btn-next').disabled = cur === tiles.length - 1;
   }
 
+  function renderOptions() {
+    const t    = tiles[cur];
+    const area = document.getElementById('options-area');
+    if (!t || !t.options || Object.keys(t.options).length === 0) {
+      area.style.display = 'none';
+      area.innerHTML = '';
+      return;
+    }
+    area.style.display = 'flex';
+    const ua       = userAnswers[cur] || '';
+    const answered = !!ua;
+    area.innerHTML = ['A','B','C','D']
+      .filter(v => t.options[v])
+      .map(v => {
+        let cls = 'opt-btn';
+        if (answered) {
+          if (t.answer && t.answer.includes(v)) cls += ' correct';
+          else if (ua.includes(v))              cls += ' wrong';
+        } else if (ua.includes(v)) {
+          cls += ' selected';
+        }
+        return `<button class="${cls}" onclick="selectOption('${v}')">` +
+               `<span class="opt-key">${v}</span>` +
+               `<span>${escHtmlViewer(t.options[v])}</span>` +
+               `</button>`;
+      }).join('');
+  }
+
+  function selectOption(v) {
+    const t = tiles[cur];
+    if (!t || !t.options) return;
+    // Toggle multi-select (for questions with multiple correct answers)
+    let ua = userAnswers[cur] || '';
+    ua = ua.includes(v) ? ua.replace(v, '') : (ua + v).split('').sort().join('');
+    userAnswers[cur] = ua || null;
+    renderOptions();
+    updateScore();
+  }
+
+  function updateScore() {
+    let correct = 0, answered = 0;
+    tiles.forEach((t, i) => {
+      if (userAnswers[i] && t.answer) {
+        answered++;
+        if (userAnswers[i] === t.answer) correct++;
+      }
+    });
+    const chip = document.getElementById('score-chip');
+    if (chip && chip.style.display !== 'none') {
+      chip.textContent = `✓ ${correct} / ${answered}`;
+    }
+  }
+
+  function escHtmlViewer(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
   function toggleAnswer() {
-    const t       = tiles[cur];
-    const reveal  = document.getElementById('answer-reveal');
-    const btn     = document.getElementById('answer-btn');
+    const t      = tiles[cur];
+    const reveal = document.getElementById('answer-reveal');
+    const btn    = document.getElementById('answer-btn');
     if (reveal.style.display === 'none' || !reveal.style.display) {
       reveal.textContent   = `✓ 正确答案：${t.answer}`;
       reveal.style.display = 'inline-block';

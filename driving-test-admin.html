@@ -96,10 +96,20 @@
     .btn-play { background: #1e3a6e; color: #fff; border: none; border-radius: 20px; padding: 5px 12px; font-size: 13px; cursor: pointer; font-family: inherit; }
 
     .q-answer-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-    .q-answer-row span { font-size: 13px; color: #64748b; font-weight: 600; }
+    .q-answer-row > span:first-child { font-size: 13px; color: #64748b; font-weight: 600; }
     .ans-label { display: flex; align-items: center; gap: 4px; cursor: pointer; }
     .ans-label input { accent-color: #34d399; width: 16px; height: 16px; cursor: pointer; }
     .ans-label span { font-size: 14px; font-weight: 700; color: #e2e8f0; }
+
+    /* Structured question fields */
+    .q-struct { display: flex; flex-direction: column; gap: 6px; }
+    .q-struct-row { display: flex; align-items: center; gap: 8px; }
+    .q-struct-label { font-size: 13px; color: #64748b; font-weight: 700; min-width: 32px; flex-shrink: 0; }
+    .q-opt-inp {
+      flex: 1; background: #0a1628; border: 1px solid #1e3a5f; border-radius: 6px;
+      color: #e2e8f0; font-size: 14px; padding: 7px 10px; font-family: inherit; outline: none;
+    }
+    .q-opt-inp:focus { border-color: #f59e0b; }
 
     /* ── Crop modal ── */
     #crop-modal {
@@ -267,7 +277,7 @@
         const wr  = await fh.createWritable();
         await wr.write(f);
         await wr.close();
-        manifest.tiles.push({ file: newName, text: '', audio: null });
+        manifest.tiles.push({ file: newName, audio: null });
       }
       manifest.total = manifest.tiles.length;
       await saveManifest();
@@ -291,7 +301,7 @@
     for (let i = 0; i < todo.length; i++) {
       const t = todo[i];
       setMsg(`处理中 ${i + 1} / ${todo.length}：${t.file}`);
-      if (!t.text) {
+      if (!t.question && !t.text) {
         await doExtractText(t);
         renderCard(t);
       }
@@ -299,7 +309,7 @@
         await doExtractDiagram(t);
         renderCard(t);
       }
-      if (t.text && !t.audio) {
+      if ((t.question || t.text) && !t.audio) {
         await doGenerateAudio(t);
         renderCard(t);
       }
@@ -346,11 +356,39 @@
           max_tokens: 500
         })
       });
-      const data = await res.json();
-      t.text = (data.choices?.[0]?.message?.content || '').trim();
+      const data   = await res.json();
+      const raw    = (data.choices?.[0]?.message?.content || '').trim();
+      const parsed = parseExtractedText(raw);
+      t.question = parsed.question;
+      t.options  = Object.keys(parsed.options).length >= 2 ? parsed.options : null;
+      if (!t.options) t.text = raw; // fallback if parsing found no options
+      else delete t.text;
     } catch (e) {
       console.error('Extract error:', e);
     }
+  }
+
+  function parseExtractedText(raw) {
+    const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
+    const options = {};
+    const qLines  = [];
+    for (const line of lines) {
+      const m = line.match(/^[（(]?([A-D])[）).、．:：]\s*(.+)/i);
+      if (m) options[m[1].toUpperCase()] = m[2].trim();
+      else   qLines.push(line);
+    }
+    return { question: qLines.join('\n').trim(), options };
+  }
+
+  function buildTTSText(t) {
+    let text = t.question || t.text || '';
+    if (t.options) {
+      ['A','B','C','D'].forEach(v => {
+        if (t.options[v]) text += `\n${v}. ${t.options[v]}`;
+      });
+    }
+    if (t.answer) text += `\n\n正确答案是：${t.answer.split('').join('、')}。`;
+    return text;
   }
 
   // ── Generate audio (TTS) ──
@@ -359,7 +397,7 @@
     if (!t) return;
     const key = getKey();
     if (!key) { alert('请先输入 OpenAI API Key'); return; }
-    if (!t.text) { alert('请先提取题目文字'); return; }
+    if (!t.question && !t.text) { alert('请先提取题目文字'); return; }
     setMsg(`生成语音：${file}`);
     updateCardBadge(file, 'audio', 'proc');
     await doGenerateAudio(t);
@@ -371,13 +409,10 @@
   async function doGenerateAudio(t) {
     const key = getKey();
     try {
-      const answerSuffix = t.answer
-        ? `\n\n正确答案是：${t.answer.split('').join('、')}。`
-        : '';
       const res = await fetch('https://api.openai.com/v1/audio/speech', {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ model: 'tts-1-hd', voice: 'nova', input: t.text + answerSuffix, response_format: 'mp3' })
+        body: JSON.stringify({ model: 'tts-1-hd', voice: 'nova', input: buildTTSText(t), response_format: 'mp3' })
       });
       const blob = await res.blob();
       const audioName = t.file.replace(/\.[^.]+$/, '.mp3');
@@ -493,16 +528,23 @@
     }
   }
 
-  // ── Save text edit ──
-  async function saveText(file) {
-    const t   = manifest.tiles.find(x => x.file === file);
-    const ta  = document.getElementById('ta-' + file);
-    if (!t || !ta) return;
-    t.text = ta.value.trim();
-    t.audio = null; // reset audio since text changed
+  // ── Save structured text ──
+  async function saveStructured(file) {
+    const t  = manifest.tiles.find(x => x.file === file);
+    if (!t) return;
+    const id = file.replace(/\./g,'_');
+    t.question = document.getElementById('q-' + id)?.value.trim() || '';
+    t.options  = {};
+    ['A','B','C','D'].forEach(v => {
+      const val = document.getElementById(`opt${v}-${id}`)?.value.trim();
+      if (val) t.options[v] = val;
+    });
+    if (Object.keys(t.options).length === 0) t.options = null;
+    delete t.text; // migrate away from old flat text
+    t.audio = null;
     await saveManifest();
     renderCard(t);
-    setMsg('文字已保存，请重新生成语音', 2000);
+    setMsg('已保存，请重新生成语音', 2000);
   }
 
   // ── Delete ──
@@ -534,18 +576,32 @@
   }
 
   function cardHTML(t, i) {
-    const textBadge  = t.text    ? '<span class="badge-has">✓ 文字</span>'  : '<span class="badge-none">无文字</span>';
-    const audioBadge = t.audio   ? '<span class="badge-has">✓ 语音</span>'  : '<span class="badge-none">无语音</span>';
-    const diagBadge  = t.diagram ? '<span class="badge-has">✓ 图示</span>'  : '<span class="badge-none">无图示</span>';
-    const textContent = t.text
-      ? `<textarea class="q-text-area" id="ta-${t.file}" rows="4">${escHtml(t.text)}</textarea>`
-      : `<div class="q-placeholder">（尚未提取文字）</div>`;
-    const audioPlayer = t.audio
-      ? `<button class="btn-play" onclick="previewAudio('${t.file}')">▶ 试听</button>` : '';
-    const diagPreview = t.diagram
-      ? `<img class="q-diagram-thumb" src="" data-src="${t.diagram}" alt="diagram" />` : '';
+    const hasText    = !!(t.question || t.text);
+    const textBadge  = hasText    ? '<span class="badge-has">✓ 文字</span>'  : '<span class="badge-none">无文字</span>';
+    const audioBadge = t.audio    ? '<span class="badge-has">✓ 语音</span>'  : '<span class="badge-none">无语音</span>';
+    const diagBadge  = t.diagram  ? '<span class="badge-has">✓ 图示</span>'  : '<span class="badge-none">无图示</span>';
+    const audioPlayer = t.audio   ? `<button class="btn-play" onclick="previewAudio('${t.file}')">▶ 试听</button>` : '';
+    const diagPreview = t.diagram ? `<img class="q-diagram-thumb" src="" data-src="${t.diagram}" alt="diagram" />` : '';
+
+    const id   = t.file.replace(/\./g,'_');
+    const q    = t.question || (t.text ? parseExtractedText(t.text).question : '');
+    const opts = t.options  || (t.text ? parseExtractedText(t.text).options  : {});
+
+    const structuredContent = hasText ? `
+      <div class="q-struct">
+        <div class="q-struct-row">
+          <span class="q-struct-label">题目</span>
+          <textarea class="q-text-area" id="q-${id}" rows="2">${escHtml(q)}</textarea>
+        </div>
+        ${['A','B','C','D'].map(v => `
+        <div class="q-struct-row">
+          <span class="q-struct-label">${v}.</span>
+          <input type="text" class="q-opt-inp" id="opt${v}-${id}" value="${escHtml(opts[v]||'')}">
+        </div>`).join('')}
+      </div>` : `<div class="q-placeholder">（尚未提取文字）</div>`;
+
     return `
-      <div class="q-card" id="card-${t.file.replace(/\./g,'_')}">
+      <div class="q-card" id="card-${id}">
         <div class="q-num">${i + 1}</div>
         <div class="q-thumb" onclick="previewImg('${t.file}')">
           <img src="" data-src="${t.file}" alt="Q${i+1}" loading="lazy" />
@@ -556,7 +612,7 @@
             ${textBadge} ${diagBadge} ${audioBadge} ${audioPlayer}
           </div>
           ${diagPreview}
-          ${textContent}
+          ${structuredContent}
           <div class="q-answer-row">
             <span>正确答案：</span>
             ${['A','B','C','D'].map(v => `
@@ -571,8 +627,8 @@
           <div class="q-actions">
             <button class="btn-extract" onclick="extractText('${t.file}')">🔍 提取文字</button>
             <button class="btn-diagram" onclick="openCropModal('${t.file}')">✂️ 手动裁剪</button>
-            <button class="btn-audio"   onclick="generateAudio('${t.file}')" ${!t.text ? 'disabled' : ''}>🔊 生成语音</button>
-            ${t.text ? `<button class="btn-save-text" onclick="saveText('${t.file}')">💾 保存文字</button>` : ''}
+            <button class="btn-audio"   onclick="generateAudio('${t.file}')" ${!hasText ? 'disabled' : ''}>🔊 生成语音</button>
+            ${hasText ? `<button class="btn-save-text" onclick="saveStructured('${t.file}')">💾 保存</button>` : ''}
             <button class="btn-delete"  onclick="deleteQ('${t.file}')">🗑 删除</button>
           </div>
         </div>
