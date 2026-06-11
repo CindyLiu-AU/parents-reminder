@@ -346,6 +346,8 @@
         note  = d.note ? `Cindy 说：${d.note}` : '';
       } else if (d.type === 'custom') {
         title = d.label || '通知';
+        time  = d.time;
+        date  = d.fulldate || '';
         note  = d.message || '';
       }
 
