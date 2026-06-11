@@ -284,6 +284,32 @@
     }
     #submit-btn.show { display: flex; }
 
+    /* 3D ball icons inside footer buttons */
+    .ball {
+      width: clamp(20px, 2.8vw, 32px);
+      height: clamp(20px, 2.8vw, 32px);
+      border-radius: 50%; flex-shrink: 0;
+      box-shadow: 0 3px 7px rgba(0,0,0,0.45), inset 0 2px 0 rgba(255,255,255,0.45);
+      display: inline-block;
+    }
+    .ball-blue   { background: radial-gradient(circle at 35% 28%, #a0b8ff, #1838e0, #041060); }
+    .ball-red    { background: radial-gradient(circle at 35% 28%, #ff9090, #c82020, #580010); }
+    .ball-green  { background: radial-gradient(circle at 35% 28%, #90ff90, #20c038, #086018); }
+    .ball-amber  { background: radial-gradient(circle at 35% 28%, #ffe880, #d09010, #604808); }
+    .ball-gray   { background: radial-gradient(circle at 35% 28%, #e0e0e0, #909090, #303030); }
+
+    /* green >> double-arrow for NEXT */
+    .next-arrows {
+      display: flex; gap: 1px; align-items: center; flex-shrink: 0;
+    }
+    .next-arrows span {
+      width: 0; height: 0;
+      border-style: solid;
+      border-width: clamp(6px,1vw,10px) 0 clamp(6px,1vw,10px) clamp(8px,1.2vw,13px);
+      border-color: transparent transparent transparent #1a7020;
+      filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.4));
+    }
+
     /* Final right-arrow tab */
     #footer-arrow {
       width: 38px; flex: none; height: 100%;
@@ -518,12 +544,12 @@
       <div id="brand-text">DRIVER KNOWLEDGE TEST</div>
     </div>
     <div id="footer-controls">
-      <button class="foot-btn" id="tts-btn"  onclick="toggleTTS()">🔊 PLAY</button>
-      <button class="foot-btn" id="auto-btn" onclick="toggleAuto()">▶ AUTO</button>
-      <button class="foot-btn" id="btn-prev" onclick="go(-1)" disabled>◀ PREV</button>
-      <button id="submit-btn"               onclick="submitAnswer()">✓ CHECK</button>
-      <button class="foot-btn" id="btn-next" onclick="go(1)"  disabled>NEXT ▶</button>
-      <div id="footer-arrow">▶</div>
+      <button class="foot-btn" id="tts-btn"  onclick="toggleTTS()">PLAY <span class="ball ball-blue"></span></button>
+      <button class="foot-btn" id="auto-btn" onclick="toggleAuto()">AUTO <span class="ball ball-amber"></span></button>
+      <button class="foot-btn" id="btn-prev" onclick="go(-1)" disabled>PREV <span class="ball ball-gray"></span></button>
+      <button id="submit-btn"               onclick="submitAnswer()">CHECK <span class="ball ball-green"></span></button>
+      <button class="foot-btn" id="btn-next" onclick="go(1)"  disabled>NEXT <span class="next-arrows"><span></span><span></span></span></button>
+      <div id="footer-arrow"><span class="next-arrows"><span></span><span></span></span></div>
     </div>
   </div>
 
@@ -707,20 +733,20 @@
   function stopTTS() {
     if (ttsAudio) { ttsAudio.pause(); ttsAudio.currentTime = 0; ttsAudio = null; }
     const btn = document.getElementById('tts-btn');
-    if (btn) { btn.textContent = '🔊 PLAY'; btn.classList.remove('speaking'); }
+    if (btn) { btn.innerHTML = 'PLAY <span class="ball ball-blue"></span>'; btn.classList.remove('speaking'); }
   }
 
   function stopAuto() {
     autoMode = false; stopTTS();
     const btn = document.getElementById('auto-btn');
-    if (btn) { btn.textContent = '▶ AUTO'; btn.classList.remove('active'); }
+    if (btn) { btn.innerHTML = 'AUTO <span class="ball ball-amber"></span>'; btn.classList.remove('active'); }
   }
 
   function toggleAuto() {
     if (autoMode) { stopAuto(); return; }
     autoMode = true;
     const btn = document.getElementById('auto-btn');
-    btn.textContent = '⏹ STOP'; btn.classList.add('active');
+    btn.innerHTML = 'STOP <span class="ball ball-red"></span>'; btn.classList.add('active');
     playAutoStep();
   }
 
@@ -733,11 +759,11 @@
       return;
     }
     ttsAudio = new Audio('driving-test-imgs/' + tile.audio);
-    document.getElementById('tts-btn').textContent = '⏹ STOP';
+    document.getElementById('tts-btn').innerHTML = 'STOP <span class="ball ball-red"></span>';
     document.getElementById('tts-btn').classList.add('speaking');
     ttsAudio.onended = () => {
       ttsAudio = null;
-      document.getElementById('tts-btn').textContent = '🔊 PLAY';
+      document.getElementById('tts-btn').innerHTML = 'PLAY <span class="ball ball-blue"></span>';
       document.getElementById('tts-btn').classList.remove('speaking');
       if (!autoMode) return;
       if (cur < tiles.length - 1) { show(cur + 1); playAutoStep(); } else stopAuto();
@@ -759,7 +785,7 @@
     ttsAudio = new Audio('driving-test-imgs/' + tile.audio);
     ttsAudio.onended = () => stopTTS();
     ttsAudio.onerror = () => stopTTS();
-    btn.textContent = '⏹ STOP'; btn.classList.add('speaking');
+    btn.innerHTML = 'STOP <span class="ball ball-red"></span>'; btn.classList.add('speaking');
     ttsAudio.play();
   }
 
