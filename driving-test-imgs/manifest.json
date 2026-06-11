@@ -1,5 +1,5 @@
 {
-  "total": 3,
+  "total": 4,
   "tiles": [
     {
       "file": "q009.png",
@@ -37,6 +37,19 @@
       },
       "diagram": "q003_diagram.png",
       "answer": "A"
+    },
+    {
+      "file": "q004.png",
+      "audio": "q004.mp3",
+      "question": "在接近带有单个闪烁黄灯的交叉路口时。您必须——",
+      "options": {
+        "A": "减速并鸣喇叭",
+        "B": "停车并让所有从左边和右边接近的车辆先行",
+        "C": "减速；做好停车准备并让右侧车辆先行，然后小心驶过",
+        "D": "加速通过交叉路口"
+      },
+      "diagram": "q004_diagram.png",
+      "answer": "C"
     }
   ]
 }
