@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <title>道路规则手册</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #0d1b2a;
+      color: #f0f4f8;
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+      min-height: 100vh;
+      padding: 20px 16px 100px;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid #1e3a5f;
+    }
+
+    header h1 { font-size: 22px; font-weight: 700; color: #f59e0b; }
+    header p  { font-size: 13px; color: #546e7a; }
+
+    #pdf-status {
+      padding: 40px;
+      text-align: center;
+      color: #90caf9;
+      font-size: 17px;
+      background: #112240;
+      border-radius: 12px;
+    }
+
+    #pdf-container {
+      background: #1a1a2e;
+      border-radius: 12px;
+      padding: 8px;
+    }
+
+    .toc-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: #112240;
+      border: 1px solid #1e3a5f;
+      border-radius: 20px;
+      color: #90caf9;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .toc-btn:active { background: #1e3a5f; }
+
+    .back-btn {
+      position: fixed;
+      bottom: 32px;
+      right: 28px;
+      font-size: 17px;
+      color: #1a1000;
+      text-decoration: none;
+      background: #f59e0b;
+      border-radius: 24px;
+      padding: 13px 26px;
+      z-index: 100;
+      font-weight: 700;
+      box-shadow: 0 4px 16px rgba(245,158,11,0.4);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div>
+      <h1>📄 道路规则手册</h1>
+      <p>塔斯马尼亚道路规则 2022 · 中文版</p>
+    </div>
+    <a class="toc-btn" href="toc.html">📑 目录</a>
+  </header>
+
+  <div id="pdf-status">正在加载PDF，请稍候… Loading…</div>
+  <div id="pdf-container"></div>
+
+  <a class="back-btn" href="roadrules.html">← 返回</a>
+
+  <script>
+    // Load PDF.js and render
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+    script.onload = () => {
+      pdfjsLib.GlobalWorkerOptions.workerSrc =
+        'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+      pdfjsLib.getDocument('road-rules-zh.pdf').promise.then(pdf => {
+        document.getElementById('pdf-status').remove();
+        const container = document.getElementById('pdf-container');
+        const dpr = window.devicePixelRatio || 1;
+        let pageNum = 1;
+
+        function renderNext() {
+          if (pageNum > pdf.numPages) {
+            // All pages rendered — check if we should jump to a target page
+            jumpToTarget();
+            return;
+          }
+          pdf.getPage(pageNum).then(page => {
+            const baseScale = (container.clientWidth - 16) / page.getViewport({scale: 1}).width;
+            const vp = page.getViewport({scale: baseScale * dpr});
+            const canvas = document.createElement('canvas');
+            canvas.id = 'pdf-page-' + pageNum;
+            canvas.width = vp.width;
+            canvas.height = vp.height;
+            canvas.style.cssText = `width:100%;height:${Math.floor(vp.height / dpr)}px;display:block;margin-bottom:4px;border-radius:4px;`;
+            container.appendChild(canvas);
+            page.render({canvasContext: canvas.getContext('2d'), viewport: vp}).promise.then(() => {
+              // Try scrolling to target after each page in case we haven't yet
+              if (_targetPage && !_scrolled) tryScroll();
+              pageNum++;
+              renderNext();
+            });
+          });
+        }
+
+        renderNext();
+      }).catch(() => {
+        document.getElementById('pdf-status').textContent = '❌ PDF加载失败，请检查网络连接';
+      });
+    };
+    document.head.appendChild(script);
+
+    // Read target page from URL hash (e.g. roadrules-pdf.html#20)
+    const _targetPage = parseInt(window.location.hash.replace('#', '')) || null;
+    let _scrolled = false;
+
+    function tryScroll() {
+      const el = document.getElementById('pdf-page-' + _targetPage);
+      if (el) {
+        el.scrollIntoView({behavior: 'instant', block: 'start'});
+        _scrolled = true;
+      }
+    }
+
+    function jumpToTarget() {
+      if (_targetPage && !_scrolled) {
+        const attempt = (tries) => {
+          const el = document.getElementById('pdf-page-' + _targetPage);
+          if (el) { el.scrollIntoView({behavior: 'smooth', block: 'start'}); _scrolled = true; }
+          else if (tries > 0) setTimeout(() => attempt(tries - 1), 400);
+        };
+        attempt(5);
+      }
+    }
+  </script>
+
+</body>
+</html>
