@@ -43,9 +43,12 @@
     }
     #tile-wrap {
       width: 100%; flex: 1; min-height: 0;
-      padding: 8px 12px 0;
+      padding: 8px 12px 8px;
       display: flex; flex-direction: column; gap: 8px;
+      overflow-y: auto;
     }
+    #tile-wrap::-webkit-scrollbar { width: 4px; }
+    #tile-wrap::-webkit-scrollbar-thumb { background: #1e3a5f; border-radius: 2px; }
     #diagram-img {
       width: 100%; object-fit: contain;
       display: none; border-radius: 8px;
@@ -53,14 +56,11 @@
       max-height: 38vh;
     }
     #question-text {
-      flex: 1; min-height: 0; overflow-y: auto;
       background: #112240; border-radius: 10px;
       padding: 14px 16px;
       font-size: 17px; line-height: 1.8; color: #f0f4f8;
       white-space: pre-wrap; display: none;
     }
-    #question-text::-webkit-scrollbar { width: 4px; }
-    #question-text::-webkit-scrollbar-thumb { background: #1e3a5f; border-radius: 2px; }
     #options-area { display: none; flex-direction: column; gap: 7px; }
     .opt-btn {
       width: 100%; background: #112240; border: 1px solid #1e3a5f; border-radius: 10px;
@@ -69,16 +69,57 @@
       display: flex; align-items: flex-start; gap: 10px;
     }
     .opt-btn:active { opacity: 0.8; }
+    .opt-btn:disabled { cursor: default; opacity: 1; }
     .opt-key {
       flex-shrink: 0; font-weight: 900; color: #90caf9;
       background: #1e3a6e; border-radius: 6px;
       padding: 1px 8px; font-size: 14px; margin-top: 1px;
     }
     .opt-btn.selected { border-color: #f59e0b; background: #1a2e50; }
+    .opt-btn.selected .opt-key { background: #f59e0b; color: #000; }
     .opt-btn.correct  { border-color: #16a34a; background: #052e16; }
     .opt-btn.correct .opt-key { background: #16a34a; color: #fff; }
     .opt-btn.wrong    { border-color: #dc2626; background: #2d0a0a; }
     .opt-btn.wrong .opt-key   { background: #dc2626; color: #fff; }
+
+    #submit-btn {
+      display: none; width: 100%;
+      background: #7c3aed; border: none; border-radius: 10px;
+      color: #fff; font-size: 16px; font-weight: 800;
+      padding: 12px; cursor: pointer; font-family: inherit;
+    }
+    #submit-btn:active { opacity: 0.8; }
+
+    /* Result modal */
+    #result-modal {
+      display: none; position: fixed; inset: 0; z-index: 500;
+      background: rgba(0,0,0,0.75);
+      align-items: center; justify-content: center; padding: 24px;
+    }
+    #result-modal.open { display: flex; }
+    #result-box {
+      background: #112240; border-radius: 18px;
+      padding: 28px 24px; width: 100%; max-width: 380px;
+      display: flex; flex-direction: column; gap: 14px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+    }
+    #result-icon { font-size: 52px; text-align: center; }
+    #result-title { font-size: 22px; font-weight: 900; text-align: center; }
+    #result-title.correct { color: #34d399; }
+    #result-title.wrong   { color: #f87171; }
+    #result-body {
+      background: #0a1628; border-radius: 10px; padding: 14px;
+      font-size: 15px; line-height: 1.7; color: #cbd5e1;
+    }
+    #result-body strong { color: #f0f4f8; font-size: 16px; }
+    .result-btns { display: flex; gap: 10px; }
+    .result-btns button {
+      flex: 1; border: none; border-radius: 10px;
+      font-size: 15px; font-weight: 800; padding: 12px;
+      cursor: pointer; font-family: inherit;
+    }
+    #btn-result-stay { background: #1e3a6e; color: #90caf9; }
+    #btn-result-next { background: #16a34a; color: #fff; }
 
     #answer-area {
       flex-shrink: 0; display: none;
@@ -166,6 +207,7 @@
     <img id="diagram-img" src="" alt="diagram" />
     <div id="question-text"></div>
     <div id="options-area"></div>
+    <button id="submit-btn" onclick="submitAnswer()">✓ 提交答案</button>
     <div id="answer-area">
       <button id="answer-btn" onclick="toggleAnswer()">🔍 查看答案</button>
       <span id="answer-reveal"></span>
@@ -176,6 +218,19 @@
       <div class="em-sub">请使用管理页面添加模拟题图片并生成语音</div>
     </div>
     <div id="pos-label"></div>
+  </div>
+</div>
+
+<!-- Result modal -->
+<div id="result-modal">
+  <div id="result-box">
+    <div id="result-icon"></div>
+    <div id="result-title"></div>
+    <div id="result-body"></div>
+    <div class="result-btns">
+      <button id="btn-result-stay" onclick="closeResult()">继续查看</button>
+      <button id="btn-result-next" onclick="closeResultAndNext()">下一题 →</button>
+    </div>
   </div>
 </div>
 
@@ -193,9 +248,10 @@
 </div>
 
 <script>
-  let tiles       = [];
-  let cur         = 0;
-  let userAnswers = []; // per-question selected answer string (e.g. "A" or "AC")
+  let tiles            = [];
+  let cur              = 0;
+  let userAnswers      = []; // selected option string per question e.g. "AC"
+  let submittedAnswers = []; // bool per question — true after Submit pressed
 
   async function loadManifest() {
     try {
@@ -203,14 +259,14 @@
       const data = await res.json();
       tiles = (data.tiles || []).filter(t => !/_diagram\.(png|jpg|jpeg)$/i.test(t.file));
     } catch { tiles = []; }
-    userAnswers = new Array(tiles.length).fill(null);
+    userAnswers      = new Array(tiles.length).fill(null);
+    submittedAnswers = new Array(tiles.length).fill(false);
     if (tiles.length > 0) {
       document.getElementById('empty-msg').style.display = 'none';
-      // Show score chip if any tile has a known answer
       if (tiles.some(t => t.answer)) {
         const chip = document.getElementById('score-chip');
         chip.style.display = 'inline-block';
-        chip.textContent   = '✓ 0 / 0';
+        chip.textContent   = '0 / 0';
       }
       show(0);
     }
@@ -263,55 +319,102 @@
   }
 
   function renderOptions() {
-    const t    = tiles[cur];
-    const area = document.getElementById('options-area');
+    const t         = tiles[cur];
+    const area      = document.getElementById('options-area');
+    const submitBtn = document.getElementById('submit-btn');
     if (!t || !t.options || Object.keys(t.options).length === 0) {
-      area.style.display = 'none';
-      area.innerHTML = '';
+      area.style.display      = 'none';
+      submitBtn.style.display = 'none';
+      area.innerHTML          = '';
       return;
     }
     area.style.display = 'flex';
-    const ua       = userAnswers[cur] || '';
-    const answered = !!ua;
+    const ua        = userAnswers[cur] || '';
+    const submitted = submittedAnswers[cur];
     area.innerHTML = ['A','B','C','D']
       .filter(v => t.options[v])
       .map(v => {
         let cls = 'opt-btn';
-        if (answered) {
+        if (submitted) {
           if (t.answer && t.answer.includes(v)) cls += ' correct';
           else if (ua.includes(v))              cls += ' wrong';
         } else if (ua.includes(v)) {
           cls += ' selected';
         }
-        return `<button class="${cls}" onclick="selectOption('${v}')">` +
+        const disabled = submitted ? 'disabled' : '';
+        return `<button class="${cls}" onclick="selectOption('${v}')" ${disabled}>` +
                `<span class="opt-key">${v}</span>` +
                `<span>${escHtmlViewer(t.options[v])}</span>` +
                `</button>`;
       }).join('');
+    // Show submit only if something selected and not yet submitted
+    submitBtn.style.display = (ua && !submitted) ? 'block' : 'none';
   }
 
   function selectOption(v) {
     const t = tiles[cur];
-    if (!t || !t.options) return;
-    // Toggle multi-select (for questions with multiple correct answers)
+    if (!t || !t.options || submittedAnswers[cur]) return;
     let ua = userAnswers[cur] || '';
     ua = ua.includes(v) ? ua.replace(v, '') : (ua + v).split('').sort().join('');
     userAnswers[cur] = ua || null;
     renderOptions();
+  }
+
+  function submitAnswer() {
+    const t  = tiles[cur];
+    const ua = userAnswers[cur];
+    if (!ua || !t) return;
+    submittedAnswers[cur] = true;
+    renderOptions();
     updateScore();
+
+    const isCorrect = ua === (t.answer || '');
+
+    // Build result body
+    let bodyHTML = '';
+    if (!isCorrect) {
+      bodyHTML += `你的选择：<strong>${ua}</strong><br><br>`;
+    }
+    bodyHTML += `正确答案：<strong>${t.answer || '未设置'}</strong>`;
+    if (t.answer && t.options) {
+      t.answer.split('').forEach(v => {
+        if (t.options[v]) bodyHTML += `<br>${v}. ${escHtmlViewer(t.options[v])}`;
+      });
+    }
+
+    document.getElementById('result-icon').textContent    = isCorrect ? '✅' : '❌';
+    const titleEl = document.getElementById('result-title');
+    titleEl.textContent = isCorrect ? '回答正确！' : '回答错误';
+    titleEl.className   = 'result-title ' + (isCorrect ? 'correct' : 'wrong');
+    document.getElementById('result-body').innerHTML      = bodyHTML;
+
+    // Hide next button on last question
+    document.getElementById('btn-result-next').style.display =
+      cur < tiles.length - 1 ? 'block' : 'none';
+
+    document.getElementById('result-modal').classList.add('open');
+  }
+
+  function closeResult() {
+    document.getElementById('result-modal').classList.remove('open');
+  }
+
+  function closeResultAndNext() {
+    closeResult();
+    if (cur < tiles.length - 1) { stopAuto(); stopTTS(); show(cur + 1); }
   }
 
   function updateScore() {
     let correct = 0, answered = 0;
     tiles.forEach((t, i) => {
-      if (userAnswers[i] && t.answer) {
+      if (submittedAnswers[i] && t.answer) {
         answered++;
         if (userAnswers[i] === t.answer) correct++;
       }
     });
     const chip = document.getElementById('score-chip');
     if (chip && chip.style.display !== 'none') {
-      chip.textContent = `✓ ${correct} / ${answered}`;
+      chip.textContent = `${correct} / ${answered}`;
     }
   }
 
