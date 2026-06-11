@@ -93,6 +93,7 @@
     .btn-diagram { background: #3b1f6e; color: #c4b5fd; border: 1px solid #5b3ea8; border-radius: 8px; font-size: 13px; font-weight: 700; padding: 7px 12px; cursor: pointer; font-family: inherit; }
     .btn-audio   { background: #064e3b; color: #34d399; border: 1px solid #065f46; border-radius: 8px; font-size: 13px; font-weight: 700; padding: 7px 12px; cursor: pointer; font-family: inherit; }
     .btn-save-text { background: #334d66; color: #f0f4f8; border: none; border-radius: 8px; font-size: 13px; font-weight: 700; padding: 7px 12px; cursor: pointer; font-family: inherit; }
+    .btn-translate { background: #065f46; color: #6ee7b7; border: 1px solid #047857; border-radius: 8px; font-size: 13px; font-weight: 700; padding: 7px 12px; cursor: pointer; font-family: inherit; }
     .btn-delete  { background: #450a0a; color: #fca5a5; border: 1px solid #7f1d1d; border-radius: 8px; font-size: 13px; font-weight: 700; padding: 7px 12px; cursor: pointer; font-family: inherit; }
     .q-actions button:disabled { opacity: 0.4; cursor: default; }
     .q-diagram-thumb { margin-top: 6px; max-width: 200px; border-radius: 6px; border: 1px solid #5b3ea8; display: block; }
@@ -546,6 +547,64 @@
     setMsg('已保存，请重新生成语音', 2000);
   }
 
+  // ── Detect English content ──
+  function isEnglishContent(question, opts) {
+    const allText = [question, ...Object.values(opts || {})].join(' ');
+    const cjk = (allText.match(/[一-鿿㐀-䶿＀-￯]/g) || []).length;
+    return allText.length > 0 && cjk / allText.length < 0.1;
+  }
+
+  // ── Translate to Chinese ──
+  async function translateToChinese(file) {
+    const t = manifest.tiles.find(x => x.file === file);
+    if (!t) return;
+    const key = getKey();
+    if (!key) { alert('请先输入 OpenAI API Key'); return; }
+
+    const id = file.replace(/\./g, '_');
+    const currentQ = document.getElementById('q-' + id)?.value.trim() || t.question || '';
+    const currentOpts = {};
+    ['A','B','C','D'].forEach(v => {
+      const val = document.getElementById(`opt${v}-${id}`)?.value.trim();
+      if (val) currentOpts[v] = val;
+    });
+
+    let srcText = currentQ;
+    ['A','B','C','D'].filter(v => currentOpts[v]).forEach(v => {
+      srcText += `\n${v}. ${currentOpts[v]}`;
+    });
+
+    setMsg(`翻译中：${file}`);
+    try {
+      const res = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'gpt-4o',
+          messages: [{
+            role: 'user',
+            content: `Translate this driving test question and options from English to Simplified Chinese. Keep the exact same structure: question line(s) first, then options as "A. ..." "B. ..." etc. Translate only the text, do not change format or letters:\n\n${srcText}`
+          }],
+          max_tokens: 600
+        })
+      });
+      const data = await res.json();
+      const raw  = (data.choices?.[0]?.message?.content || '').trim();
+      const parsed = parseExtractedText(raw);
+
+      const qEl = document.getElementById('q-' + id);
+      if (qEl && parsed.question) qEl.value = parsed.question;
+      ['A','B','C','D'].forEach(v => {
+        const el = document.getElementById(`opt${v}-${id}`);
+        if (el && parsed.options[v]) el.value = parsed.options[v];
+      });
+      setMsg('翻译完成 ✓ 请检查后点击 💾 保存', 4000);
+    } catch(e) {
+      console.error('Translation error:', e);
+      setMsg('翻译失败，请重试', 3000);
+    }
+  }
+
   // ── Delete ──
   async function deleteQ(file) {
     if (!confirm(`确定删除 ${file}？`)) return;
@@ -627,6 +686,7 @@
             <button class="btn-extract" onclick="extractText('${t.file}')">🔍 提取文字</button>
             <button class="btn-diagram" onclick="openCropModal('${t.file}')">✂️ 手动裁剪</button>
             <button class="btn-audio"   onclick="generateAudio('${t.file}')" ${!hasText ? 'disabled' : ''}>🔊 生成语音</button>
+            ${hasText && isEnglishContent(q, opts) ? `<button class="btn-translate" onclick="translateToChinese('${t.file}')">🌏 翻译</button>` : ''}
             ${hasText ? `<button class="btn-save-text" onclick="saveStructured('${t.file}')">💾 保存</button>` : ''}
             <button class="btn-delete"  onclick="deleteQ('${t.file}')">🗑 删除</button>
           </div>
