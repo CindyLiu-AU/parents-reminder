@@ -85,10 +85,12 @@
 
     .q-actions { display: flex; gap: 8px; flex-wrap: wrap; }
     .btn-extract { background: #1e4080; color: #90caf9; border: 1px solid #2e5a9e; border-radius: 8px; font-size: 13px; font-weight: 700; padding: 7px 12px; cursor: pointer; font-family: inherit; }
+    .btn-diagram { background: #3b1f6e; color: #c4b5fd; border: 1px solid #5b3ea8; border-radius: 8px; font-size: 13px; font-weight: 700; padding: 7px 12px; cursor: pointer; font-family: inherit; }
     .btn-audio   { background: #064e3b; color: #34d399; border: 1px solid #065f46; border-radius: 8px; font-size: 13px; font-weight: 700; padding: 7px 12px; cursor: pointer; font-family: inherit; }
     .btn-save-text { background: #334d66; color: #f0f4f8; border: none; border-radius: 8px; font-size: 13px; font-weight: 700; padding: 7px 12px; cursor: pointer; font-family: inherit; }
     .btn-delete  { background: #450a0a; color: #fca5a5; border: 1px solid #7f1d1d; border-radius: 8px; font-size: 13px; font-weight: 700; padding: 7px 12px; cursor: pointer; font-family: inherit; }
     .q-actions button:disabled { opacity: 0.4; cursor: default; }
+    .q-diagram-thumb { margin-top: 6px; max-width: 200px; border-radius: 6px; border: 1px solid #5b3ea8; display: block; }
 
     .audio-preview { display: flex; align-items: center; gap: 8px; }
     .btn-play { background: #1e3a6e; color: #fff; border: none; border-radius: 20px; padding: 5px 12px; font-size: 13px; cursor: pointer; font-family: inherit; }
@@ -244,8 +246,8 @@
     processing = true;
     document.getElementById('btn-all').disabled = true;
 
-    const todo = manifest.tiles.filter(t => !t.audio);
-    if (todo.length === 0) { setMsg('所有题目已有语音 ✓'); processing = false; document.getElementById('btn-all').disabled = false; return; }
+    const todo = manifest.tiles.filter(t => !t.audio || !t.diagram);
+    if (todo.length === 0) { setMsg('所有题目已处理完毕 ✓'); processing = false; document.getElementById('btn-all').disabled = false; return; }
 
     for (let i = 0; i < todo.length; i++) {
       const t = todo[i];
@@ -254,7 +256,11 @@
         await doExtractText(t);
         renderCard(t);
       }
-      if (t.text) {
+      if (!t.diagram) {
+        await doExtractDiagram(t);
+        renderCard(t);
+      }
+      if (t.text && !t.audio) {
         await doGenerateAudio(t);
         renderCard(t);
       }
@@ -343,6 +349,85 @@
     }
   }
 
+  // ── Extract diagram (GPT-4o Vision → Canvas crop) ──
+  async function extractDiagram(file) {
+    const t = manifest.tiles.find(x => x.file === file);
+    if (!t) return;
+    const key = getKey();
+    if (!key) { alert('请先输入 OpenAI API Key'); return; }
+    setMsg(`提取图示：${file}`);
+    await doExtractDiagram(t);
+    await saveManifest();
+    renderCard(t);
+    setMsg('');
+  }
+
+  async function doExtractDiagram(t) {
+    const key = getKey();
+    try {
+      const fh   = await dirHandle.getFileHandle(t.file);
+      const file = await fh.getFile();
+      const b64  = await toBase64(file);
+      const mime = /jpe?g$/i.test(t.file) ? 'image/jpeg' : 'image/png';
+
+      // Ask GPT-4o for bounding box of the diagram/illustration
+      const res = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'gpt-4o',
+          messages: [{
+            role: 'user',
+            content: [
+              { type: 'image_url', image_url: { url: `data:${mime};base64,${b64}` } },
+              { type: 'text', text: 'This is a driving test question image. Find the diagram, road illustration, or road scene image in this question (NOT the text, NOT the answer options — only the visual diagram/photo/illustration part). Return JSON only: {"has_diagram":true,"top":0,"left":0,"bottom":50,"right":100} where values are percentages (0-100) of the full image dimensions. If there is no diagram, return {"has_diagram":false}. Return JSON only, nothing else.' }
+            ]
+          }],
+          max_tokens: 80
+        })
+      });
+      const data = await res.json();
+      let raw = (data.choices?.[0]?.message?.content || '').trim();
+      // Strip markdown code blocks if present
+      raw = raw.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+      const coords = JSON.parse(raw);
+
+      if (!coords.has_diagram) { t.diagram = null; return; }
+
+      // Clamp coords
+      const top    = Math.max(0, Math.min(100, coords.top));
+      const left   = Math.max(0, Math.min(100, coords.left));
+      const bottom = Math.max(top + 1, Math.min(100, coords.bottom));
+      const right  = Math.max(left + 1, Math.min(100, coords.right));
+
+      // Crop using Canvas
+      const img = new Image();
+      img.src = `data:${mime};base64,${b64}`;
+      await new Promise(r => { img.onload = r; });
+
+      const sx = (left   / 100) * img.width;
+      const sy = (top    / 100) * img.height;
+      const sw = ((right - left)   / 100) * img.width;
+      const sh = ((bottom - top)   / 100) * img.height;
+
+      const canvas = document.createElement('canvas');
+      canvas.width  = sw;
+      canvas.height = sh;
+      canvas.getContext('2d').drawImage(img, sx, sy, sw, sh, 0, 0, sw, sh);
+
+      const diagName = t.file.replace(/\.[^.]+$/, '_diagram.png');
+      const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+      const fh2  = await dirHandle.getFileHandle(diagName, { create: true });
+      const wr   = await fh2.createWritable();
+      await wr.write(blob);
+      await wr.close();
+      t.diagram = diagName;
+
+    } catch (e) {
+      console.error('Diagram error:', e);
+    }
+  }
+
   // ── Save text edit ──
   async function saveText(file) {
     const t   = manifest.tiles.find(x => x.file === file);
@@ -384,14 +469,16 @@
   }
 
   function cardHTML(t, i) {
-    const textBadge  = t.text  ? '<span class="badge-has">✓ 有文字</span>' : '<span class="badge-none">无文字</span>';
-    const audioBadge = t.audio ? '<span class="badge-has">✓ 有语音</span>' : '<span class="badge-none">无语音</span>';
+    const textBadge  = t.text    ? '<span class="badge-has">✓ 文字</span>'  : '<span class="badge-none">无文字</span>';
+    const audioBadge = t.audio   ? '<span class="badge-has">✓ 语音</span>'  : '<span class="badge-none">无语音</span>';
+    const diagBadge  = t.diagram ? '<span class="badge-has">✓ 图示</span>'  : '<span class="badge-none">无图示</span>';
     const textContent = t.text
       ? `<textarea class="q-text-area" id="ta-${t.file}" rows="4">${escHtml(t.text)}</textarea>`
       : `<div class="q-placeholder">（尚未提取文字）</div>`;
     const audioPlayer = t.audio
-      ? `<div class="audio-preview"><button class="btn-play" onclick="previewAudio('${t.file}')">▶ 试听</button></div>`
-      : '';
+      ? `<button class="btn-play" onclick="previewAudio('${t.file}')">▶ 试听</button>` : '';
+    const diagPreview = t.diagram
+      ? `<img class="q-diagram-thumb" src="" data-src="${t.diagram}" alt="diagram" />` : '';
     return `
       <div class="q-card" id="card-${t.file.replace(/\./g,'_')}">
         <div class="q-num">${i + 1}</div>
@@ -401,12 +488,13 @@
         <div class="q-body">
           <div class="q-row">
             <span class="q-filename">${t.file}</span>
-            ${textBadge} ${audioBadge}
-            ${audioPlayer}
+            ${textBadge} ${diagBadge} ${audioBadge} ${audioPlayer}
           </div>
+          ${diagPreview}
           ${textContent}
           <div class="q-actions">
             <button class="btn-extract" onclick="extractText('${t.file}')">🔍 提取文字</button>
+            <button class="btn-diagram" onclick="extractDiagram('${t.file}')">✂️ 提取图示</button>
             <button class="btn-audio"   onclick="generateAudio('${t.file}')" ${!t.text ? 'disabled' : ''}>🔊 生成语音</button>
             ${t.text ? `<button class="btn-save-text" onclick="saveText('${t.file}')">💾 保存文字</button>` : ''}
             <button class="btn-delete"  onclick="deleteQ('${t.file}')">🗑 删除</button>
