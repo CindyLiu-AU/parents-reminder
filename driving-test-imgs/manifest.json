@@ -1,24 +1,56 @@
 {
-  "total": 3,
+  "total": 4,
   "tiles": [
     {
       "file": "q001.png",
-      "text": "1. 車輛 A 是否可以通過雙實線?\n\nA. 是的－為了超越其他車輛。\nB. 是的－為了進入車道。\nC. 是的－為了安全地超越自行車。\nD. 是的－為了U型轉彎。",
       "audio": "q001.mp3",
-      "diagram": "q001_diagram.png",
-      "answer": "B"
+      "question": "1. 車輛A是否可以通過雙實線？",
+      "options": {
+        "A": "是的 - 為了超越其他車輛。",
+        "B": "是的 - 為了進入車道。",
+        "C": "是的 - 為了安全地超越自行車。",
+        "D": "是的 - 為了U型轉彎。"
+      },
+      "answer": "BC",
+      "diagram": "q001_diagram.png"
     },
     {
       "file": "q002.png",
-      "text": "2. 哪些车辆可以在安全的情况下，超越车道进行超车？\n\nA. 车辆 A。\nB. 车辆 B。\nC. 车辆 A 和车辆 B 均可超越其他车辆。",
       "audio": "q002.mp3",
-      "diagram": "q002_diagram.png"
+      "question": "2. 哪些车辆可以在安全的情况下，超越车道进行超车？",
+      "options": {
+        "A": "车辆A。",
+        "B": "车辆B。",
+        "C": "车辆A和车辆B均可超越其他车辆。"
+      },
+      "diagram": "q002_diagram.png",
+      "answer": "A"
     },
     {
       "file": "q003.png",
-      "text": "3. 您正在駕駛車輛A。在什麼情況下，您不能越過雙重斷線？\n\nA. 在安全的情況下，超越其他車輛。\nB. 駛入車道。\nC. 駛入道路。\nD. 避開道路上的障礙物。",
       "audio": "q003.mp3",
-      "diagram": "q003_diagram.png"
+      "question": "3. 您正在駕駛車輛 A。在什麼情況下，您不能越過雙重斷線？",
+      "options": {
+        "A": "在安全的情況下，超越其他車輛。",
+        "B": "駛入車道。",
+        "C": "駛入道路。",
+        "D": "避開道路上的障礙物。"
+      },
+      "diagram": "q003_diagram.png",
+      "answer": "A"
+    },
+    {
+      "file": "q004.png",
+      "audio": "q004.mp3",
+      "question": "4. 您正在驾驶车辆A。在什么情况下，您无法越过单条连续的交通标线？",
+      "options": {
+        "A": "在安全的情况下，超越其他车辆。",
+        "B": "进入车道。",
+        "C": "进入道路。",
+        "D": "避开道路上的障碍物。"
+      },
+      "diagram": "q004_diagram.png",
+      "answer": "A"
     }
   ]
 }
