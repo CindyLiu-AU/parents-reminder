@@ -544,11 +544,11 @@
       <div id="brand-text">DRIVER KNOWLEDGE TEST</div>
     </div>
     <div id="footer-controls">
-      <button class="foot-btn" id="tts-btn"  onclick="toggleTTS()">PLAY <span class="ball ball-blue"></span></button>
-      <button class="foot-btn" id="auto-btn" onclick="toggleAuto()">AUTO <span class="ball ball-amber"></span></button>
-      <button class="foot-btn" id="btn-prev" onclick="go(-1)" disabled>PREV <span class="ball ball-gray"></span></button>
-      <button id="submit-btn"               onclick="submitAnswer()">CHECK <span class="ball ball-green"></span></button>
-      <button class="foot-btn" id="btn-next" onclick="go(1)"  disabled>NEXT <span class="next-arrows"><span></span><span></span></span></button>
+      <button class="foot-btn" id="tts-btn"  onclick="toggleTTS()">播放 <span class="ball ball-blue"></span></button>
+      <button class="foot-btn" id="auto-btn" onclick="toggleAuto()">自动 <span class="ball ball-amber"></span></button>
+      <button class="foot-btn" id="btn-prev" onclick="go(-1)" disabled>上一题 <span class="ball ball-gray"></span></button>
+      <button id="submit-btn"               onclick="submitAnswer()">提交 <span class="ball ball-green"></span></button>
+      <button class="foot-btn" id="btn-next" onclick="go(1)"  disabled>下一题 <span class="next-arrows"><span></span><span></span></span></button>
       <div id="footer-arrow"><span class="next-arrows"><span></span><span></span></span></div>
     </div>
   </div>
@@ -733,20 +733,20 @@
   function stopTTS() {
     if (ttsAudio) { ttsAudio.pause(); ttsAudio.currentTime = 0; ttsAudio = null; }
     const btn = document.getElementById('tts-btn');
-    if (btn) { btn.innerHTML = 'PLAY <span class="ball ball-blue"></span>'; btn.classList.remove('speaking'); }
+    if (btn) { btn.innerHTML = '播放 <span class="ball ball-blue"></span>'; btn.classList.remove('speaking'); }
   }
 
   function stopAuto() {
     autoMode = false; stopTTS();
     const btn = document.getElementById('auto-btn');
-    if (btn) { btn.innerHTML = 'AUTO <span class="ball ball-amber"></span>'; btn.classList.remove('active'); }
+    if (btn) { btn.innerHTML = '自动 <span class="ball ball-amber"></span>'; btn.classList.remove('active'); }
   }
 
   function toggleAuto() {
     if (autoMode) { stopAuto(); return; }
     autoMode = true;
     const btn = document.getElementById('auto-btn');
-    btn.innerHTML = 'STOP <span class="ball ball-red"></span>'; btn.classList.add('active');
+    btn.innerHTML = '停止 <span class="ball ball-red"></span>'; btn.classList.add('active');
     playAutoStep();
   }
 
@@ -759,11 +759,11 @@
       return;
     }
     ttsAudio = new Audio('driving-test-imgs/' + tile.audio);
-    document.getElementById('tts-btn').innerHTML = 'STOP <span class="ball ball-red"></span>';
+    document.getElementById('tts-btn').innerHTML = '停止 <span class="ball ball-red"></span>';
     document.getElementById('tts-btn').classList.add('speaking');
     ttsAudio.onended = () => {
       ttsAudio = null;
-      document.getElementById('tts-btn').innerHTML = 'PLAY <span class="ball ball-blue"></span>';
+      document.getElementById('tts-btn').innerHTML = '播放 <span class="ball ball-blue"></span>';
       document.getElementById('tts-btn').classList.remove('speaking');
       if (!autoMode) return;
       if (cur < tiles.length - 1) { show(cur + 1); playAutoStep(); } else stopAuto();
@@ -785,7 +785,7 @@
     ttsAudio = new Audio('driving-test-imgs/' + tile.audio);
     ttsAudio.onended = () => stopTTS();
     ttsAudio.onerror = () => stopTTS();
-    btn.innerHTML = 'STOP <span class="ball ball-red"></span>'; btn.classList.add('speaking');
+    btn.innerHTML = '停止 <span class="ball ball-red"></span>'; btn.classList.add('speaking');
     ttsAudio.play();
   }
 
