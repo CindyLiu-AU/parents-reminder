@@ -6,219 +6,293 @@
   <title>驾照模拟题</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body { height: 100%; overflow: hidden; background: #0d1b2a; font-family: "PingFang SC", "Microsoft YaHei", sans-serif; }
+    html, body { height: 100%; overflow: hidden; background: #b8b3ac; font-family: Arial, "PingFang SC", "Microsoft YaHei", sans-serif; }
 
-    #header {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      background: #1e3a6e; color: #fff;
-      padding: 10px 16px;
-      display: flex; align-items: center; gap: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    #shell { height: 100%; display: flex; flex-direction: column; }
+
+    /* ── Header ── */
+    #q-header {
+      flex-shrink: 0; height: 46px;
+      background: linear-gradient(180deg, #a09890 0%, #807870 50%, #908880 100%);
+      border-bottom: 2px solid #585248;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.35);
+      display: flex; align-items: center; padding: 0 16px; gap: 10px;
     }
     .back-btn {
-      background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);
-      border-radius: 10px; color: #fff; font-size: 14px; font-weight: 700;
-      padding: 7px 12px; text-decoration: none; white-space: nowrap;
+      background: rgba(0,0,0,0.2); border: 1px solid rgba(0,0,0,0.35);
+      border-radius: 5px; color: #f0ece6; font-size: 13px; font-weight: 700;
+      padding: 4px 10px; text-decoration: none; white-space: nowrap; flex-shrink: 0;
     }
-    #header h1 { flex: 1; font-size: 17px; font-weight: 900; }
-    .tts-btn {
-      background: #16a34a; border: none; border-radius: 10px;
-      color: #fff; font-size: 14px; font-weight: 800;
-      padding: 7px 12px; cursor: pointer; font-family: inherit; white-space: nowrap;
+    #q-title {
+      flex: 1; text-align: center;
+      font-size: 18px; font-weight: 900; color: #f0ece6;
+      letter-spacing: 1px; text-shadow: 0 1px 2px rgba(0,0,0,0.5);
     }
-    .tts-btn.speaking { background: #dc2626; }
-    .auto-btn {
-      background: #7c3aed; border: none; border-radius: 10px;
-      color: #fff; font-size: 14px; font-weight: 800;
-      padding: 7px 12px; cursor: pointer; font-family: inherit; white-space: nowrap;
+    #score-chip {
+      background: rgba(0,0,0,0.25); border-radius: 5px;
+      color: #f0ece6; font-size: 13px; font-weight: 700;
+      padding: 4px 10px; display: none; white-space: nowrap; flex-shrink: 0;
     }
-    .auto-btn.active { background: #dc2626; }
 
-    #progress-bar-wrap { position: fixed; top: 52px; left: 0; right: 0; z-index: 99; height: 4px; background: #1e3a5f; }
-    #progress-bar { height: 100%; background: #f59e0b; transition: width 0.2s; width: 0%; }
+    /* ── Progress bar ── */
+    #progress-bar-wrap { flex-shrink: 0; height: 4px; background: #6a6460; }
+    #progress-bar { height: 100%; background: #c8a830; transition: width 0.2s; width: 0%; }
 
-    #viewer {
-      position: fixed; top: 56px; bottom: 84px; left: 0; right: 0;
-      display: flex; flex-direction: column; align-items: center; overflow: hidden;
+    /* ── Main scroll area ── */
+    #main-wrap {
+      flex: 1; min-height: 0; overflow-y: auto;
+      padding: 10px 12px 8px; display: flex; flex-direction: column; gap: 10px;
     }
-    #tile-wrap {
-      width: 100%; flex: 1; min-height: 0;
-      padding: 8px 12px 8px;
-      display: flex; flex-direction: column; gap: 8px;
-      overflow-y: auto;
+    #main-wrap::-webkit-scrollbar { width: 6px; }
+    #main-wrap::-webkit-scrollbar-thumb { background: #a09890; border-radius: 3px; }
+
+    /* ── Top panel: diagram + question ── */
+    #top-panel { display: flex; gap: 10px; flex-shrink: 0; min-height: 140px; }
+
+    #diagram-cell {
+      flex: 0 0 38%; max-width: 38%;
+      background: #c0bbb4;
+      border: 3px solid; border-color: #e0dcd6 #989088 #989088 #e0dcd6;
+      border-radius: 3px; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
     }
-    #tile-wrap::-webkit-scrollbar { width: 4px; }
-    #tile-wrap::-webkit-scrollbar-thumb { background: #1e3a5f; border-radius: 2px; }
-    #diagram-img {
-      width: 100%; object-fit: contain;
-      display: none; border-radius: 8px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.4); background: #fff;
-      max-height: 38vh;
+    #diagram-img { width: 100%; height: 100%; object-fit: contain; display: none; }
+
+    #question-cell {
+      flex: 1;
+      background: #ccc8c2;
+      border: 3px solid; border-color: #989088 #e0dcd6 #e0dcd6 #989088;
+      border-radius: 3px;
+      padding: 16px 18px;
+      display: flex; align-items: center;
     }
     #question-text {
-      background: #112240; border-radius: 10px;
-      padding: 14px 16px;
-      font-size: 17px; line-height: 1.8; color: #f0f4f8;
-      white-space: pre-wrap; display: none;
+      font-size: 17px; font-weight: 700; color: #1a1614;
+      line-height: 1.55; white-space: pre-wrap;
     }
-    #options-area { display: none; flex-direction: column; gap: 7px; }
+
+    /* ── Answers panel ── */
+    #answers-panel { display: flex; gap: 12px; flex-shrink: 0; }
+
+    #answers-label {
+      flex: 0 0 130px; display: flex; flex-direction: column; gap: 8px; padding-top: 4px;
+    }
+    .ans-lbl-title { font-size: 14px; font-weight: 900; color: #1a1614; }
+    .ans-lbl-sub   { font-size: 11px; font-weight: 700; color: #3a3430; line-height: 1.4; }
+
+    #options-area { flex: 1; display: none; flex-direction: column; gap: 8px; }
+
+    /* Option row */
     .opt-btn {
-      width: 100%; background: #112240; border: 1px solid #1e3a5f; border-radius: 10px;
-      color: #f0f4f8; font-size: 15px; text-align: left; line-height: 1.5;
-      padding: 10px 14px; cursor: pointer; font-family: inherit;
-      display: flex; align-items: flex-start; gap: 10px;
+      display: flex; align-items: center; gap: 12px;
+      background: none; border: none; cursor: pointer;
+      padding: 2px 0; width: 100%; font-family: inherit;
     }
-    .opt-btn:active { opacity: 0.8; }
-    .opt-btn:disabled { cursor: default; opacity: 1; }
+    .opt-btn:disabled { cursor: default; }
     .opt-key {
-      flex-shrink: 0; font-weight: 900; color: #90caf9;
-      background: #1e3a6e; border-radius: 6px;
-      padding: 1px 8px; font-size: 14px; margin-top: 1px;
+      width: 50px; height: 50px; border-radius: 50%; flex-shrink: 0;
+      background: radial-gradient(circle at 38% 28%, #90c0ff, #1858d0, #062260);
+      border: 3px solid #041a50;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.45), inset 0 2px 0 rgba(255,255,255,0.4);
+      color: #fff; font-size: 20px; font-weight: 900;
+      display: flex; align-items: center; justify-content: center;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.6);
     }
-    .opt-btn.selected { border-color: #f59e0b; background: #1a2e50; }
-    .opt-btn.selected .opt-key { background: #f59e0b; color: #000; }
-    .opt-btn.correct  { border-color: #16a34a; background: #052e16; }
-    .opt-btn.correct .opt-key { background: #16a34a; color: #fff; }
-    .opt-btn.wrong    { border-color: #dc2626; background: #2d0a0a; }
-    .opt-btn.wrong .opt-key   { background: #dc2626; color: #fff; }
+    .opt-text {
+      flex: 1; background: #cec9c2;
+      border: 1px solid #aca49c; border-radius: 3px;
+      padding: 10px 14px; font-size: 15px; color: #1a1614;
+      text-align: left; line-height: 1.4;
+    }
 
+    /* Selected */
+    .opt-btn.selected .opt-key {
+      background: radial-gradient(circle at 38% 28%, #f8d860, #c89010, #604800);
+      border-color: #483400;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.45), inset 0 2px 0 rgba(255,255,255,0.4),
+                  0 0 10px rgba(210,160,0,0.7);
+    }
+    .opt-btn.selected .opt-text {
+      background: #e8e4de; border-color: #686058;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.12);
+    }
+
+    /* Correct */
+    .opt-btn.correct .opt-key {
+      background: radial-gradient(circle at 38% 28%, #80e080, #18a828, #065018);
+      border-color: #044018;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4), inset 0 2px 0 rgba(255,255,255,0.4);
+    }
+    .opt-btn.correct .opt-text { background: #c8ecc8; border-color: #40a040; }
+
+    /* Wrong */
+    .opt-btn.wrong .opt-key {
+      background: radial-gradient(circle at 38% 28%, #f89090, #d02020, #700010);
+      border-color: #500010;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4), inset 0 2px 0 rgba(255,255,255,0.4);
+    }
+    .opt-btn.wrong .opt-text { background: #f0cece; border-color: #c04040; }
+
+    /* ── Answer area (text-only fallback) ── */
+    #answer-area {
+      display: none; align-items: center; justify-content: center; gap: 12px; padding: 4px 0;
+    }
+    #answer-btn {
+      background: linear-gradient(180deg, #7090c8 0%, #4868a8 100%);
+      border: 2px solid; border-color: #90b0e0 #284880 #284880 #90b0e0;
+      border-radius: 20px; color: #fff; font-size: 14px; font-weight: 700;
+      padding: 7px 20px; cursor: pointer; font-family: inherit;
+    }
+    #answer-reveal {
+      display: none; background: #40a040; border-radius: 20px;
+      color: #fff; font-size: 15px; font-weight: 900; padding: 7px 20px;
+    }
+
+    /* ── Empty state ── */
+    #empty-msg {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      color: #706860; text-align: center; gap: 12px; padding: 32px;
+    }
+    #empty-msg .em-icon { font-size: 60px; }
+    #empty-msg .em-text { font-size: 17px; font-weight: 700; }
+    #empty-msg .em-sub  { font-size: 13px; color: #908880; }
+
+    /* ── Footer ── */
+    #dkt-footer {
+      flex-shrink: 0;
+      background: linear-gradient(180deg, #9a9590 0%, #7a7570 40%, #8a8580 100%);
+      border-top: 2px solid #585248;
+      box-shadow: 0 -2px 6px rgba(0,0,0,0.25);
+    }
+    #footer-brand {
+      text-align: center; padding: 5px 0 4px;
+      font-size: 17px; font-weight: 900; letter-spacing: 4px;
+      color: rgba(255,255,255,0.22);
+      text-shadow: 0 1px 0 rgba(255,255,255,0.08), 0 -1px 0 rgba(0,0,0,0.3);
+    }
+    #footer-controls {
+      padding: 7px 12px 10px;
+      display: flex; align-items: center; gap: 8px; justify-content: center;
+    }
+    .foot-btn {
+      background: linear-gradient(180deg, #dedad4 0%, #c0bbb4 100%);
+      border: 2px solid; border-color: #e8e4de #a09890 #a09890 #e8e4de;
+      border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      font-size: 13px; font-weight: 900; padding: 8px 14px;
+      cursor: pointer; font-family: inherit; color: #2a2420; white-space: nowrap;
+    }
+    .foot-btn:active { transform: translateY(1px); box-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+    .foot-btn:disabled { opacity: 0.4; cursor: default; transform: none; }
+    .foot-btn.speaking, .foot-btn.active {
+      background: linear-gradient(180deg, #f09898 0%, #c84040 100%);
+      border-color: #f8b0b0 #882020 #882020 #f8b0b0; color: #fff;
+    }
     #submit-btn {
-      display: none; width: 100%;
-      background: #7c3aed; border: none; border-radius: 10px;
-      color: #fff; font-size: 16px; font-weight: 800;
-      padding: 12px; cursor: pointer; font-family: inherit;
+      display: none;
+      background: linear-gradient(180deg, #88d088 0%, #38a038 100%);
+      border-color: #a0e0a0 #187818 #187818 #a0e0a0; color: #fff;
+      font-size: 14px; padding: 8px 20px; flex-shrink: 0;
     }
-    #submit-btn:active { opacity: 0.8; }
 
-    /* Result modal */
+    /* ── Result modal ── */
     #result-modal {
       display: none; position: fixed; inset: 0; z-index: 500;
-      background: rgba(0,0,0,0.75);
+      background: rgba(0,0,0,0.6);
       align-items: center; justify-content: center; padding: 24px;
     }
     #result-modal.open { display: flex; }
     #result-box {
-      background: #112240; border-radius: 18px;
-      padding: 28px 24px; width: 100%; max-width: 380px;
-      display: flex; flex-direction: column; gap: 14px;
-      box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+      background: #d0ccc6;
+      border: 4px solid; border-color: #e4e0da #9a9490 #9a9490 #e4e0da;
+      border-radius: 8px; padding: 28px 24px; width: 100%; max-width: 400px;
+      display: flex; flex-direction: column; gap: 16px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.5);
     }
     #result-icon { font-size: 52px; text-align: center; }
     #result-title { font-size: 22px; font-weight: 900; text-align: center; }
-    #result-title.correct { color: #34d399; }
-    #result-title.wrong   { color: #f87171; }
+    #result-title.correct { color: #186018; }
+    #result-title.wrong   { color: #881010; }
     #result-body {
-      background: #0a1628; border-radius: 10px; padding: 14px;
-      font-size: 15px; line-height: 1.7; color: #cbd5e1;
+      background: #b8b4ae;
+      border: 2px solid; border-color: #9a9490 #d8d4ce #d8d4ce #9a9490;
+      border-radius: 4px; padding: 14px;
+      font-size: 15px; line-height: 1.7; color: #1a1614;
     }
-    #result-body strong { color: #f0f4f8; font-size: 16px; }
+    #result-body strong { font-size: 16px; color: #0a0a08; }
     .result-btns { display: flex; gap: 10px; }
     .result-btns button {
-      flex: 1; border: none; border-radius: 10px;
-      font-size: 15px; font-weight: 800; padding: 12px;
-      cursor: pointer; font-family: inherit;
+      flex: 1;
+      background: linear-gradient(180deg, #dedad4 0%, #c0bbb4 100%);
+      border: 2px solid; border-color: #e8e4de #a09890 #a09890 #e8e4de;
+      border-radius: 6px; font-size: 14px; font-weight: 900; padding: 11px;
+      cursor: pointer; font-family: inherit; color: #2a2420;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
     }
-    #btn-result-stay { background: #1e3a6e; color: #90caf9; }
-    #btn-result-next { background: #16a34a; color: #fff; }
-
-    #answer-area {
-      flex-shrink: 0; display: none;
-      align-items: center; justify-content: center; gap: 12px;
-      padding: 6px 0 2px;
-    }
-    #answer-btn {
-      background: #1e3a6e; border: 1px solid #2e5a9e; border-radius: 20px;
-      color: #90caf9; font-size: 14px; font-weight: 700;
-      padding: 7px 20px; cursor: pointer; font-family: inherit;
-    }
-    #answer-reveal {
-      display: none; background: #064e3b; border-radius: 20px;
-      color: #34d399; font-size: 16px; font-weight: 900;
-      padding: 7px 20px; letter-spacing: 1px;
-    }
-    #score-chip {
-      background: #1e3a6e; border-radius: 8px;
-      color: #f0f4f8; font-size: 13px; font-weight: 700;
-      padding: 5px 10px; white-space: nowrap; display: none;
-    }
-    #pos-label {
-      flex-shrink: 0; text-align: center;
-      font-size: 13px; color: #64748b; padding: 4px 0; font-weight: 600;
-    }
-    #empty-msg {
-      flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-      color: #475569; text-align: center; gap: 12px; padding: 32px;
-    }
-    #empty-msg .em-icon { font-size: 64px; }
-    #empty-msg .em-text { font-size: 18px; font-weight: 600; }
-    #empty-msg .em-sub  { font-size: 14px; color: #334d66; }
-
-    #nav-bar {
-      position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
-      background: #0a1628; border-top: 2px solid #1e3a5f;
-      padding: 8px 16px; display: flex; align-items: center; gap: 10px;
-      height: 84px;
-    }
-    .nav-arrow {
-      flex-shrink: 0; background: #1e3a6e; border: none; border-radius: 14px;
-      color: #fff; font-size: 22px; font-weight: 900;
-      width: 56px; height: 56px; display: flex; align-items: center; justify-content: center;
-      cursor: pointer;
-    }
-    .nav-arrow:active { opacity: 0.8; transform: scale(0.95); }
-    .nav-arrow:disabled { background: #1e3a5f; color: #334d66; cursor: default; }
-    #page-jump-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-    #jump-label { font-size: 12px; color: #475569; }
-    #jump-row { display: flex; gap: 6px; align-items: center; width: 100%; max-width: 240px; }
-    #page-inp {
-      flex: 1; border: 2px solid #1e3a5f; border-radius: 10px; background: #112240;
-      color: #f0f4f8; font-size: 17px; font-family: inherit; text-align: center;
-      padding: 7px 6px; outline: none; min-width: 0;
-    }
-    #page-inp:focus { border-color: #f59e0b; }
-    #jump-btn {
-      background: #1e3a6e; border: none; border-radius: 10px;
-      color: #fff; font-size: 13px; font-weight: 700;
-      padding: 9px 12px; cursor: pointer; font-family: inherit; white-space: nowrap;
+    #btn-result-next {
+      background: linear-gradient(180deg, #88d088 0%, #38a038 100%);
+      border-color: #a0e0a0 #187818 #187818 #a0e0a0; color: #fff;
     }
 
-    @media print {
-      #header, #nav-bar, #progress-bar-wrap, #pos-label { display: none !important; }
-      body { background: #fff; }
-      #viewer { position: static; overflow: visible; }
-      #tile-wrap { page-break-after: always; }
+    @media (max-width: 480px) {
+      #top-panel { flex-direction: column; }
+      #diagram-cell { flex: 0 0 auto; max-width: 100%; min-height: 120px; max-height: 180px; }
+      #answers-label { display: none; }
     }
   </style>
 </head>
 <body>
+<div id="shell">
 
-<div id="header">
-  <a href="roadrules.html" class="back-btn">← 返回</a>
-  <h1>🎯 驾照模拟题</h1>
-  <span id="score-chip"></span>
-  <button class="tts-btn" id="tts-btn" onclick="toggleTTS()">🔊 朗读</button>
-  <button class="auto-btn" id="auto-btn" onclick="toggleAuto()">▶ 自动</button>
-</div>
+  <div id="q-header">
+    <a href="roadrules.html" class="back-btn">← 返回</a>
+    <div id="q-title">Question <span id="q-num">—</span> / <span id="q-total">—</span></div>
+    <span id="score-chip">0 / 0</span>
+  </div>
 
-<div id="progress-bar-wrap"><div id="progress-bar"></div></div>
+  <div id="progress-bar-wrap"><div id="progress-bar"></div></div>
 
-<div id="viewer">
-  <div id="tile-wrap">
-    <img id="diagram-img" src="" alt="diagram" />
-    <div id="question-text"></div>
-    <div id="options-area"></div>
-    <button id="submit-btn" onclick="submitAnswer()">✓ 提交答案</button>
+  <div id="main-wrap">
+    <div id="top-panel">
+      <div id="diagram-cell">
+        <img id="diagram-img" src="" alt="diagram" />
+      </div>
+      <div id="question-cell">
+        <div id="question-text"></div>
+      </div>
+    </div>
+
+    <div id="answers-panel">
+      <div id="answers-label">
+        <div class="ans-lbl-title">Answers:</div>
+        <div class="ans-lbl-sub">Please select from one of the answers by clicking the button of your choice.</div>
+      </div>
+      <div id="options-area"></div>
+    </div>
+
     <div id="answer-area">
       <button id="answer-btn" onclick="toggleAnswer()">🔍 查看答案</button>
       <span id="answer-reveal"></span>
     </div>
+
     <div id="empty-msg">
       <div class="em-icon">🎯</div>
       <div class="em-text">暂无题目</div>
       <div class="em-sub">请使用管理页面添加模拟题图片并生成语音</div>
     </div>
-    <div id="pos-label"></div>
   </div>
+
+  <div id="dkt-footer">
+    <div id="footer-brand">DRIVER KNOWLEDGE TEST</div>
+    <div id="footer-controls">
+      <button class="foot-btn" id="tts-btn"  onclick="toggleTTS()">🔊 PLAY</button>
+      <button class="foot-btn" id="auto-btn" onclick="toggleAuto()">▶ AUTO</button>
+      <button class="foot-btn" id="btn-prev" onclick="go(-1)" disabled>◀ PREV</button>
+      <button class="foot-btn" id="submit-btn" onclick="submitAnswer()">✓ CHECK</button>
+      <button class="foot-btn" id="btn-next" onclick="go(1)"  disabled>NEXT ▶</button>
+    </div>
+  </div>
+
 </div>
 
 <!-- Result modal -->
@@ -234,24 +308,11 @@
   </div>
 </div>
 
-<div id="nav-bar">
-  <button class="nav-arrow" id="btn-prev" onclick="go(-1)" disabled>‹</button>
-  <div id="page-jump-wrap">
-    <div id="jump-label">跳到第几题</div>
-    <div id="jump-row">
-      <input id="page-inp" type="number" min="1" placeholder="题号"
-             onkeydown="if(event.key==='Enter')jumpTo()" />
-      <button id="jump-btn" onclick="jumpTo()">跳转</button>
-    </div>
-  </div>
-  <button class="nav-arrow" id="btn-next" onclick="go(1)" disabled>›</button>
-</div>
-
 <script>
   let tiles            = [];
   let cur              = 0;
-  let userAnswers      = []; // selected option string per question e.g. "AC"
-  let submittedAnswers = []; // bool per question — true after Submit pressed
+  let userAnswers      = [];
+  let submittedAnswers = [];
 
   async function loadManifest() {
     try {
@@ -261,6 +322,7 @@
     } catch { tiles = []; }
     userAnswers      = new Array(tiles.length).fill(null);
     submittedAnswers = new Array(tiles.length).fill(false);
+    document.getElementById('q-total').textContent = tiles.length || '—';
     if (tiles.length > 0) {
       document.getElementById('empty-msg').style.display = 'none';
       if (tiles.some(t => t.answer)) {
@@ -278,28 +340,30 @@
     const t = tiles[idx];
 
     // Diagram
-    const diagEl = document.getElementById('diagram-img');
+    const diagImg  = document.getElementById('diagram-img');
+    const diagCell = document.getElementById('diagram-cell');
     if (t.diagram) {
-      diagEl.src           = 'driving-test-imgs/' + t.diagram;
-      diagEl.style.display = 'block';
+      diagImg.src          = 'driving-test-imgs/' + t.diagram;
+      diagImg.style.display = 'block';
+      diagCell.style.display = '';
     } else {
-      diagEl.style.display = 'none';
+      diagImg.style.display  = 'none';
+      diagCell.style.display = 'none';
     }
 
-    // Question text (only the stem, not options)
+    // Question stem
     const textEl = document.getElementById('question-text');
     const stem   = t.question || (t.options ? null : t.text);
     if (stem) {
       textEl.textContent   = stem;
-      textEl.style.display = 'block';
     } else {
-      textEl.style.display = 'none';
+      textEl.textContent   = '';
     }
 
-    // Options
+    // Options + submit
     renderOptions();
 
-    // Answer area (only for text-only questions without structured options)
+    // Answer area (text-only questions)
     const ansArea   = document.getElementById('answer-area');
     const ansReveal = document.getElementById('answer-reveal');
     ansReveal.style.display = 'none';
@@ -313,7 +377,7 @@
 
     const pct = tiles.length > 1 ? (cur / (tiles.length - 1)) * 100 : 100;
     document.getElementById('progress-bar').style.width = pct + '%';
-    document.getElementById('pos-label').textContent    = `第 ${cur + 1} 题 / 共 ${tiles.length} 题`;
+    document.getElementById('q-num').textContent = cur + 1;
     document.getElementById('btn-prev').disabled = cur === 0;
     document.getElementById('btn-next').disabled = cur === tiles.length - 1;
   }
@@ -341,14 +405,12 @@
         } else if (ua.includes(v)) {
           cls += ' selected';
         }
-        const disabled = submitted ? 'disabled' : '';
-        return `<button class="${cls}" onclick="selectOption('${v}')" ${disabled}>` +
+        return `<button class="${cls}" onclick="selectOption('${v}')" ${submitted ? 'disabled' : ''}>` +
                `<span class="opt-key">${v}</span>` +
-               `<span>${escHtmlViewer(t.options[v])}</span>` +
+               `<span class="opt-text">${escHtml(t.options[v])}</span>` +
                `</button>`;
       }).join('');
-    // Show submit only if something selected and not yet submitted
-    submitBtn.style.display = (ua && !submitted) ? 'block' : 'none';
+    submitBtn.style.display = (ua && !submitted) ? 'inline-block' : 'none';
   }
 
   function selectOption(v) {
@@ -369,29 +431,22 @@
     updateScore();
 
     const isCorrect = ua === (t.answer || '');
-
-    // Build result body
     let bodyHTML = '';
-    if (!isCorrect) {
-      bodyHTML += `你的选择：<strong>${ua}</strong><br><br>`;
-    }
+    if (!isCorrect) bodyHTML += `你的选择：<strong>${ua}</strong><br><br>`;
     bodyHTML += `正确答案：<strong>${t.answer || '未设置'}</strong>`;
     if (t.answer && t.options) {
       t.answer.split('').forEach(v => {
-        if (t.options[v]) bodyHTML += `<br>${v}. ${escHtmlViewer(t.options[v])}`;
+        if (t.options[v]) bodyHTML += `<br>${v}. ${escHtml(t.options[v])}`;
       });
     }
 
-    document.getElementById('result-icon').textContent    = isCorrect ? '✅' : '❌';
+    document.getElementById('result-icon').textContent = isCorrect ? '✅' : '❌';
     const titleEl = document.getElementById('result-title');
     titleEl.textContent = isCorrect ? '回答正确！' : '回答错误';
     titleEl.className   = 'result-title ' + (isCorrect ? 'correct' : 'wrong');
-    document.getElementById('result-body').innerHTML      = bodyHTML;
-
-    // Hide next button on last question
+    document.getElementById('result-body').innerHTML = bodyHTML;
     document.getElementById('btn-result-next').style.display =
       cur < tiles.length - 1 ? 'block' : 'none';
-
     document.getElementById('result-modal').classList.add('open');
   }
 
@@ -413,13 +468,7 @@
       }
     });
     const chip = document.getElementById('score-chip');
-    if (chip && chip.style.display !== 'none') {
-      chip.textContent = `${correct} / ${answered}`;
-    }
-  }
-
-  function escHtmlViewer(s) {
-    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    if (chip && chip.style.display !== 'none') chip.textContent = `${correct} / ${answered}`;
   }
 
   function toggleAnswer() {
@@ -427,7 +476,7 @@
     const reveal = document.getElementById('answer-reveal');
     const btn    = document.getElementById('answer-btn');
     if (reveal.style.display === 'none' || !reveal.style.display) {
-      reveal.textContent   = `✓ 正确答案：${t.answer}`;
+      reveal.textContent = `✓ 正确答案：${t.answer}`;
       reveal.style.display = 'inline-block';
       btn.style.display    = 'none';
     } else {
@@ -438,6 +487,10 @@
 
   function go(delta) { stopAuto(); stopTTS(); show(cur + delta); }
 
+  function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
   // ── TTS ──
   let ttsAudio = null;
   let autoMode = false;
@@ -445,20 +498,20 @@
   function stopTTS() {
     if (ttsAudio) { ttsAudio.pause(); ttsAudio.currentTime = 0; ttsAudio = null; }
     const btn = document.getElementById('tts-btn');
-    if (btn) { btn.textContent = '🔊 朗读'; btn.classList.remove('speaking'); }
+    if (btn) { btn.textContent = '🔊 PLAY'; btn.classList.remove('speaking'); }
   }
 
   function stopAuto() {
     autoMode = false; stopTTS();
     const btn = document.getElementById('auto-btn');
-    if (btn) { btn.textContent = '▶ 自动'; btn.classList.remove('active'); }
+    if (btn) { btn.textContent = '▶ AUTO'; btn.classList.remove('active'); }
   }
 
   function toggleAuto() {
     if (autoMode) { stopAuto(); return; }
     autoMode = true;
     const btn = document.getElementById('auto-btn');
-    btn.textContent = '⏹ 停止'; btn.classList.add('active');
+    btn.textContent = '⏹ STOP'; btn.classList.add('active');
     playAutoStep();
   }
 
@@ -471,11 +524,11 @@
       return;
     }
     ttsAudio = new Audio('driving-test-imgs/' + tile.audio);
-    document.getElementById('tts-btn').textContent = '⏹ 停止';
+    document.getElementById('tts-btn').textContent = '⏹ STOP';
     document.getElementById('tts-btn').classList.add('speaking');
     ttsAudio.onended = () => {
       ttsAudio = null;
-      document.getElementById('tts-btn').textContent = '🔊 朗读';
+      document.getElementById('tts-btn').textContent = '🔊 PLAY';
       document.getElementById('tts-btn').classList.remove('speaking');
       if (!autoMode) return;
       if (cur < tiles.length - 1) { show(cur + 1); playAutoStep(); } else stopAuto();
@@ -497,16 +550,8 @@
     ttsAudio = new Audio('driving-test-imgs/' + tile.audio);
     ttsAudio.onended = () => stopTTS();
     ttsAudio.onerror = () => stopTTS();
-    btn.textContent = '⏹ 停止'; btn.classList.add('speaking');
+    btn.textContent = '⏹ STOP'; btn.classList.add('speaking');
     ttsAudio.play();
-  }
-
-  function jumpTo() {
-    const val = parseInt(document.getElementById('page-inp').value);
-    if (!val) return;
-    const idx = val - 1;
-    if (idx >= 0 && idx < tiles.length) { stopAuto(); show(idx); }
-    else alert(`请输入 1 到 ${tiles.length} 之间的数字`);
   }
 
   document.addEventListener('keydown', e => {
