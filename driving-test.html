@@ -210,19 +210,6 @@
     .ci-d { background: #c89020; }
 
     /* ══════════════════════════════════════════════
-       EMPTY STATE
-       ══════════════════════════════════════════════ */
-    #empty-msg {
-      position: absolute; top: 44%; left: 2%; right: 2%; bottom: 19%;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      color: #706858; text-align: center; gap: 10px;
-    }
-    #empty-msg .em-icon { font-size: 50px; }
-    #empty-msg .em-text { font-size: 16px; font-weight: 700; }
-    #empty-msg .em-sub  { font-size: 12px; color: #908878; }
-
-    /* ══════════════════════════════════════════════
        FOOTER
        ══════════════════════════════════════════════ */
     #dkt-footer {
@@ -525,13 +512,6 @@
     <div class="car-item"><div class="car-icon ci-d"></div>D</div>
   </div>
 
-  <!-- Empty state -->
-  <div id="empty-msg">
-    <div class="em-icon">🎯</div>
-    <div class="em-text">暂无题目</div>
-    <div class="em-sub">请使用管理页面添加模拟题图片并生成语音</div>
-  </div>
-
   <!-- Footer -->
   <div id="dkt-footer">
     <div id="footer-brand">
@@ -587,9 +567,7 @@
       chip.style.display = 'inline-block';
       chip.textContent   = '0 / 0';
     }
-    if (tiles.length === 0) {
-      document.getElementById('start-screen').style.display = 'none';
-    }
+    if (tiles.length === 0) document.getElementById('start-screen').style.display = 'none';
     // Don't call show(0) here — wait for user to click the green button
   }
 
