@@ -2,6 +2,13 @@
   {
     "type": "custom",
     "icon": "📋",
+    "label": "霍巴特市区红色艺术节4pm开始",
+    "fulldate": "2026年6月21日（星期日）",
+    "time": "16:00"
+  },
+  {
+    "type": "custom",
+    "icon": "📋",
     "label": "定霍巴特到墨尔本机票",
     "fulldate": "2026年8月15日（星期六）",
     "time": "09:00"
