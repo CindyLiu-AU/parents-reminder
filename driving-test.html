@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>驾照模拟题</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; overflow: hidden; background: #0d1b2a; font-family: "PingFang SC", "Microsoft YaHei", sans-serif; }
+
+    #header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: #1e3a6e; color: #fff;
+      padding: 10px 16px;
+      display: flex; align-items: center; gap: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    .back-btn {
+      background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 10px; color: #fff; font-size: 14px; font-weight: 700;
+      padding: 7px 12px; text-decoration: none; white-space: nowrap;
+    }
+    #header h1 { flex: 1; font-size: 17px; font-weight: 900; }
+    .tts-btn {
+      background: #16a34a; border: none; border-radius: 10px;
+      color: #fff; font-size: 14px; font-weight: 800;
+      padding: 7px 12px; cursor: pointer; font-family: inherit; white-space: nowrap;
+    }
+    .tts-btn.speaking { background: #dc2626; }
+    .auto-btn {
+      background: #7c3aed; border: none; border-radius: 10px;
+      color: #fff; font-size: 14px; font-weight: 800;
+      padding: 7px 12px; cursor: pointer; font-family: inherit; white-space: nowrap;
+    }
+    .auto-btn.active { background: #dc2626; }
+
+    #progress-bar-wrap { position: fixed; top: 52px; left: 0; right: 0; z-index: 99; height: 4px; background: #1e3a5f; }
+    #progress-bar { height: 100%; background: #f59e0b; transition: width 0.2s; width: 0%; }
+
+    #viewer {
+      position: fixed; top: 56px; bottom: 84px; left: 0; right: 0;
+      display: flex; flex-direction: column; align-items: center; overflow: hidden;
+    }
+    #tile-wrap {
+      width: 100%; flex: 1; min-height: 0;
+      padding: 8px 12px 0;
+      display: flex; flex-direction: column;
+    }
+    #tile-img {
+      flex: 1; min-height: 0; width: 100%; object-fit: contain;
+      display: block; border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4); background: #fff;
+    }
+    #pos-label {
+      flex-shrink: 0; text-align: center;
+      font-size: 13px; color: #64748b; padding: 4px 0; font-weight: 600;
+    }
+    #empty-msg {
+      flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      color: #475569; text-align: center; gap: 12px; padding: 32px;
+    }
+    #empty-msg .em-icon { font-size: 64px; }
+    #empty-msg .em-text { font-size: 18px; font-weight: 600; }
+    #empty-msg .em-sub  { font-size: 14px; color: #334d66; }
+
+    #nav-bar {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+      background: #0a1628; border-top: 2px solid #1e3a5f;
+      padding: 8px 16px; display: flex; align-items: center; gap: 10px;
+      height: 84px;
+    }
+    .nav-arrow {
+      flex-shrink: 0; background: #1e3a6e; border: none; border-radius: 14px;
+      color: #fff; font-size: 22px; font-weight: 900;
+      width: 56px; height: 56px; display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+    }
+    .nav-arrow:active { opacity: 0.8; transform: scale(0.95); }
+    .nav-arrow:disabled { background: #1e3a5f; color: #334d66; cursor: default; }
+    #page-jump-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    #jump-label { font-size: 12px; color: #475569; }
+    #jump-row { display: flex; gap: 6px; align-items: center; width: 100%; max-width: 240px; }
+    #page-inp {
+      flex: 1; border: 2px solid #1e3a5f; border-radius: 10px; background: #112240;
+      color: #f0f4f8; font-size: 17px; font-family: inherit; text-align: center;
+      padding: 7px 6px; outline: none; min-width: 0;
+    }
+    #page-inp:focus { border-color: #f59e0b; }
+    #jump-btn {
+      background: #1e3a6e; border: none; border-radius: 10px;
+      color: #fff; font-size: 13px; font-weight: 700;
+      padding: 9px 12px; cursor: pointer; font-family: inherit; white-space: nowrap;
+    }
+
+    @media print {
+      #header, #nav-bar, #progress-bar-wrap, #pos-label { display: none !important; }
+      body { background: #fff; }
+      #viewer { position: static; overflow: visible; }
+      #tile-wrap { page-break-after: always; }
+      #tile-img { box-shadow: none; width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="header">
+  <a href="roadrules.html" class="back-btn">← 返回</a>
+  <h1>🎯 驾照模拟题</h1>
+  <button class="tts-btn" id="tts-btn" onclick="toggleTTS()">🔊 朗读</button>
+  <button class="auto-btn" id="auto-btn" onclick="toggleAuto()">▶ 自动</button>
+</div>
+
+<div id="progress-bar-wrap"><div id="progress-bar"></div></div>
+
+<div id="viewer">
+  <div id="tile-wrap">
+    <img id="tile-img" src="" alt="" style="display:none;" />
+    <div id="empty-msg">
+      <div class="em-icon">🎯</div>
+      <div class="em-text">暂无题目</div>
+      <div class="em-sub">请使用管理页面添加模拟题图片并生成语音</div>
+    </div>
+    <div id="pos-label"></div>
+  </div>
+</div>
+
+<div id="nav-bar">
+  <button class="nav-arrow" id="btn-prev" onclick="go(-1)" disabled>‹</button>
+  <div id="page-jump-wrap">
+    <div id="jump-label">跳到第几题</div>
+    <div id="jump-row">
+      <input id="page-inp" type="number" min="1" placeholder="题号"
+             onkeydown="if(event.key==='Enter')jumpTo()" />
+      <button id="jump-btn" onclick="jumpTo()">跳转</button>
+    </div>
+  </div>
+  <button class="nav-arrow" id="btn-next" onclick="go(1)" disabled>›</button>
+</div>
+
+<script>
+  let tiles = [];
+  let cur   = 0;
+
+  async function loadManifest() {
+    try {
+      const res  = await fetch('driving-test-imgs/manifest.json?t=' + Date.now());
+      const data = await res.json();
+      tiles = data.tiles || [];
+    } catch { tiles = []; }
+    if (tiles.length > 0) {
+      document.getElementById('empty-msg').style.display = 'none';
+      document.getElementById('tile-img').style.display  = 'block';
+      show(0);
+    }
+  }
+
+  function show(idx) {
+    if (idx < 0 || idx >= tiles.length) return;
+    cur = idx;
+    const t = tiles[idx];
+    document.getElementById('tile-img').src = 'driving-test-imgs/' + t.file;
+    const pct = tiles.length > 1 ? (cur / (tiles.length - 1)) * 100 : 100;
+    document.getElementById('progress-bar').style.width = pct + '%';
+    document.getElementById('pos-label').textContent = `第 ${cur + 1} 题 / 共 ${tiles.length} 题`;
+    document.getElementById('btn-prev').disabled = cur === 0;
+    document.getElementById('btn-next').disabled = cur === tiles.length - 1;
+  }
+
+  function go(delta) { stopAuto(); stopTTS(); show(cur + delta); }
+
+  // ── TTS ──
+  let ttsAudio = null;
+  let autoMode = false;
+
+  function stopTTS() {
+    if (ttsAudio) { ttsAudio.pause(); ttsAudio.currentTime = 0; ttsAudio = null; }
+    const btn = document.getElementById('tts-btn');
+    if (btn) { btn.textContent = '🔊 朗读'; btn.classList.remove('speaking'); }
+  }
+
+  function stopAuto() {
+    autoMode = false; stopTTS();
+    const btn = document.getElementById('auto-btn');
+    if (btn) { btn.textContent = '▶ 自动'; btn.classList.remove('active'); }
+  }
+
+  function toggleAuto() {
+    if (autoMode) { stopAuto(); return; }
+    autoMode = true;
+    const btn = document.getElementById('auto-btn');
+    btn.textContent = '⏹ 停止'; btn.classList.add('active');
+    playAutoStep();
+  }
+
+  function playAutoStep() {
+    if (!autoMode) return;
+    const tile = tiles[cur];
+    if (!tile) { stopAuto(); return; }
+    if (!tile.audio) {
+      if (cur < tiles.length - 1) { show(cur + 1); playAutoStep(); } else stopAuto();
+      return;
+    }
+    ttsAudio = new Audio('driving-test-imgs/' + tile.audio);
+    document.getElementById('tts-btn').textContent = '⏹ 停止';
+    document.getElementById('tts-btn').classList.add('speaking');
+    ttsAudio.onended = () => {
+      ttsAudio = null;
+      document.getElementById('tts-btn').textContent = '🔊 朗读';
+      document.getElementById('tts-btn').classList.remove('speaking');
+      if (!autoMode) return;
+      if (cur < tiles.length - 1) { show(cur + 1); playAutoStep(); } else stopAuto();
+    };
+    ttsAudio.onerror = () => {
+      ttsAudio = null;
+      if (!autoMode) return;
+      if (cur < tiles.length - 1) { show(cur + 1); playAutoStep(); } else stopAuto();
+    };
+    ttsAudio.play();
+  }
+
+  function toggleTTS() {
+    if (autoMode) { stopAuto(); return; }
+    const btn = document.getElementById('tts-btn');
+    if (ttsAudio && !ttsAudio.paused) { stopTTS(); return; }
+    const tile = tiles[cur];
+    if (!tile || !tile.audio) { alert('此题暂无语音，请在管理页面生成'); return; }
+    ttsAudio = new Audio('driving-test-imgs/' + tile.audio);
+    ttsAudio.onended = () => stopTTS();
+    ttsAudio.onerror = () => stopTTS();
+    btn.textContent = '⏹ 停止'; btn.classList.add('speaking');
+    ttsAudio.play();
+  }
+
+  function jumpTo() {
+    const val = parseInt(document.getElementById('page-inp').value);
+    if (!val) return;
+    const idx = val - 1;
+    if (idx >= 0 && idx < tiles.length) { stopAuto(); show(idx); }
+    else alert(`请输入 1 到 ${tiles.length} 之间的数字`);
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { stopAuto(); go(1); }
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   { stopAuto(); go(-1); }
+  });
+
+  let touchX = null;
+  document.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; });
+  document.addEventListener('touchend', e => {
+    if (touchX === null) return;
+    const dx = e.changedTouches[0].clientX - touchX;
+    touchX = null;
+    if (Math.abs(dx) > 60) { stopAuto(); go(dx < 0 ? 1 : -1); }
+  });
+
+  loadManifest();
+</script>
+</body>
+</html>

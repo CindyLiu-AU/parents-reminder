@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>驾照题目管理</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0d1b2a; color: #f0f4f8; font-family: "PingFang SC", "Microsoft YaHei", sans-serif; min-height: 100vh; }
+
+    header {
+      background: #1e3a6e; padding: 16px 24px;
+      display: flex; align-items: center; gap: 14px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+    }
+    header h1 { font-size: 20px; font-weight: 900; flex: 1; }
+    .hdr-btn {
+      border: none; border-radius: 10px; font-size: 14px; font-weight: 800;
+      padding: 9px 16px; cursor: pointer; font-family: inherit; white-space: nowrap;
+    }
+    .btn-open   { background: #f59e0b; color: #1a1000; }
+    .btn-add    { background: #16a34a; color: #fff; }
+    .btn-all    { background: #7c3aed; color: #fff; }
+    .btn-viewer { background: rgba(255,255,255,0.12); color: #fff; text-decoration: none; display: inline-flex; align-items: center; }
+    .hdr-btn:active { opacity: 0.8; }
+    .hdr-btn:disabled { opacity: 0.4; cursor: default; }
+
+    #key-bar {
+      background: #091525; border-bottom: 1px solid #1e3a5f;
+      padding: 10px 24px; display: flex; align-items: center; gap: 10px;
+    }
+    #key-bar label { font-size: 13px; color: #64748b; white-space: nowrap; }
+    #api-key-inp {
+      flex: 1; max-width: 420px; background: #112240; border: 1px solid #1e3a5f;
+      border-radius: 8px; color: #f0f4f8; font-size: 13px; padding: 7px 10px; outline: none;
+    }
+    #api-key-inp:focus { border-color: #f59e0b; }
+    .btn-save-key { background: #1e3a6e; color: #fff; border: none; border-radius: 8px; font-size: 13px; font-weight: 700; padding: 7px 14px; cursor: pointer; }
+
+    #status-bar {
+      padding: 10px 24px; font-size: 13px; color: #64748b;
+      display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+    }
+    .stat { color: #90caf9; font-weight: 700; }
+    #progress-msg { color: #f59e0b; font-weight: 600; }
+
+    #no-folder {
+      text-align: center; padding: 80px 24px; color: #475569;
+    }
+    #no-folder .nf-icon { font-size: 72px; margin-bottom: 16px; }
+    #no-folder .nf-text { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+    #no-folder .nf-sub  { font-size: 14px; color: #334d66; line-height: 1.6; }
+
+    #grid { padding: 16px 24px; display: flex; flex-direction: column; gap: 16px; }
+
+    .q-card {
+      background: #112240; border: 1px solid #1e3a5f; border-radius: 14px;
+      display: flex; gap: 16px; padding: 16px; align-items: flex-start;
+    }
+    .q-num {
+      font-size: 22px; font-weight: 900; color: #f59e0b;
+      min-width: 36px; text-align: center; padding-top: 4px;
+    }
+    .q-thumb {
+      width: 140px; flex-shrink: 0; border-radius: 8px; overflow: hidden;
+      border: 1px solid #1e3a5f; cursor: pointer;
+    }
+    .q-thumb img { width: 100%; display: block; }
+    .q-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+
+    .q-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .q-filename { font-size: 12px; color: #475569; }
+
+    .badge-has  { background: #064e3b; color: #34d399; font-size: 12px; font-weight: 700; padding: 3px 8px; border-radius: 20px; }
+    .badge-none { background: #1e3a5f; color: #64748b; font-size: 12px; font-weight: 700; padding: 3px 8px; border-radius: 20px; }
+    .badge-proc { background: #422006; color: #f59e0b; font-size: 12px; font-weight: 700; padding: 3px 8px; border-radius: 20px; }
+
+    .q-text-area {
+      width: 100%; background: #0a1628; border: 1px solid #1e3a5f; border-radius: 8px;
+      color: #e2e8f0; font-size: 14px; line-height: 1.6; padding: 10px;
+      font-family: inherit; resize: vertical; min-height: 80px; outline: none;
+    }
+    .q-text-area:focus { border-color: #f59e0b; }
+    .q-placeholder { color: #334d66; font-style: italic; font-size: 13px; padding: 8px 0; }
+
+    .q-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .btn-extract { background: #1e4080; color: #90caf9; border: 1px solid #2e5a9e; border-radius: 8px; font-size: 13px; font-weight: 700; padding: 7px 12px; cursor: pointer; font-family: inherit; }
+    .btn-audio   { background: #064e3b; color: #34d399; border: 1px solid #065f46; border-radius: 8px; font-size: 13px; font-weight: 700; padding: 7px 12px; cursor: pointer; font-family: inherit; }
+    .btn-save-text { background: #334d66; color: #f0f4f8; border: none; border-radius: 8px; font-size: 13px; font-weight: 700; padding: 7px 12px; cursor: pointer; font-family: inherit; }
+    .btn-delete  { background: #450a0a; color: #fca5a5; border: 1px solid #7f1d1d; border-radius: 8px; font-size: 13px; font-weight: 700; padding: 7px 12px; cursor: pointer; font-family: inherit; }
+    .q-actions button:disabled { opacity: 0.4; cursor: default; }
+
+    .audio-preview { display: flex; align-items: center; gap: 8px; }
+    .btn-play { background: #1e3a6e; color: #fff; border: none; border-radius: 20px; padding: 5px 12px; font-size: 13px; cursor: pointer; font-family: inherit; }
+
+    #publish-box {
+      margin: 0 24px 32px; background: #091525; border: 2px solid #f59e0b;
+      border-radius: 14px; padding: 20px; display: none;
+    }
+    #publish-box h3 { color: #f59e0b; font-size: 16px; margin-bottom: 10px; }
+    #publish-box p  { font-size: 14px; color: #90caf9; margin-bottom: 12px; line-height: 1.5; }
+    #publish-box code { display: block; background: #0a1628; border-radius: 8px; padding: 12px 16px; font-size: 13px; color: #34d399; font-family: monospace; user-select: all; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🎯 驾照模拟题管理</h1>
+  <a href="driving-test.html" class="hdr-btn btn-viewer">👁 预览</a>
+  <button class="hdr-btn btn-add" id="btn-add" onclick="addImages()" disabled>＋ 添加题目图片</button>
+  <button class="hdr-btn btn-all" id="btn-all" onclick="processAll()" disabled>⚡ 一键生成全部语音</button>
+  <button class="hdr-btn btn-open" onclick="openFolder()">📂 打开题目文件夹</button>
+</header>
+
+<div id="key-bar">
+  <label>OpenAI API Key：</label>
+  <input id="api-key-inp" type="password" placeholder="sk-proj-..." autocomplete="off" />
+  <button class="btn-save-key" onclick="saveKey()">保存</button>
+</div>
+
+<div id="status-bar">
+  <span id="progress-msg"></span>
+</div>
+
+<div id="no-folder">
+  <div class="nf-icon">📂</div>
+  <div class="nf-text">请先打开题目文件夹</div>
+  <div class="nf-sub">
+    点击右上角 <strong>📂 打开题目文件夹</strong><br>
+    选择 <code style="background:#112240;padding:2px 6px;border-radius:4px;">parents-reminder / driving-test-imgs</code> 文件夹<br><br>
+    ⚠️ 请在 <strong>Chrome</strong> 浏览器中打开此页面（Safari 不支持文件夹读写）
+  </div>
+</div>
+
+<div id="grid" style="display:none;"></div>
+
+<div id="publish-box">
+  <h3>📤 发布到网站</h3>
+  <p>图片和语音已保存到本地文件夹。请在 Claude Code 输入以下命令推送到 GitHub：</p>
+  <code>git add driving-test-imgs/ && git commit -m "Update driving test questions" && git push</code>
+</div>
+
+<script>
+  const KEY_STORAGE = 'driving_admin_api_key';
+  let dirHandle = null;
+  let manifest  = { total: 0, tiles: [] };
+  let processing = false;
+
+  // ── API Key ──
+  window.addEventListener('load', () => {
+    const saved = localStorage.getItem(KEY_STORAGE);
+    if (saved) document.getElementById('api-key-inp').value = saved;
+  });
+  function saveKey() {
+    const k = document.getElementById('api-key-inp').value.trim();
+    if (!k) return;
+    localStorage.setItem(KEY_STORAGE, k);
+    setMsg('API Key 已保存 ✓', 2000);
+  }
+  function getKey() {
+    return (document.getElementById('api-key-inp').value.trim()) || localStorage.getItem(KEY_STORAGE) || '';
+  }
+
+  // ── Folder ──
+  async function openFolder() {
+    try {
+      dirHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
+    } catch { return; }
+    await loadManifest();
+    await scanFolder();
+    await saveManifest();
+    renderGrid();
+    document.getElementById('btn-add').disabled = false;
+    document.getElementById('btn-all').disabled = false;
+  }
+
+  async function loadManifest() {
+    try {
+      const fh   = await dirHandle.getFileHandle('manifest.json');
+      const file = await fh.getFile();
+      manifest   = JSON.parse(await file.text());
+      if (!manifest.tiles) manifest.tiles = [];
+    } catch {
+      manifest = { total: 0, tiles: [] };
+    }
+  }
+
+  async function scanFolder() {
+    const known = new Set(manifest.tiles.map(t => t.file));
+    const newTiles = [];
+    for await (const entry of dirHandle.values()) {
+      if (entry.kind !== 'file') continue;
+      if (!/\.(png|jpg|jpeg)$/i.test(entry.name)) continue;
+      if (!known.has(entry.name)) {
+        newTiles.push({ file: entry.name, text: '', audio: null });
+      }
+    }
+    // Sort new tiles by filename then append
+    newTiles.sort((a, b) => a.file.localeCompare(b.file));
+    manifest.tiles.push(...newTiles);
+    manifest.tiles.sort((a, b) => a.file.localeCompare(b.file));
+    manifest.total = manifest.tiles.length;
+  }
+
+  async function saveManifest() {
+    const fh  = await dirHandle.getFileHandle('manifest.json', { create: true });
+    const wr  = await fh.createWritable();
+    await wr.write(JSON.stringify({ total: manifest.tiles.length, tiles: manifest.tiles }, null, 2));
+    await wr.close();
+    document.getElementById('publish-box').style.display = 'block';
+  }
+
+  // ── Add images ──
+  async function addImages() {
+    const input = document.createElement('input');
+    input.type = 'file'; input.multiple = true; input.accept = 'image/*';
+    input.onchange = async () => {
+      const files = Array.from(input.files);
+      const base  = manifest.tiles.length;
+      for (let i = 0; i < files.length; i++) {
+        const f   = files[i];
+        const ext = f.name.split('.').pop().toLowerCase();
+        const num = String(base + i + 1).padStart(3, '0');
+        const newName = `q${num}.${ext}`;
+        const fh  = await dirHandle.getFileHandle(newName, { create: true });
+        const wr  = await fh.createWritable();
+        await wr.write(f);
+        await wr.close();
+        manifest.tiles.push({ file: newName, text: '', audio: null });
+      }
+      manifest.total = manifest.tiles.length;
+      await saveManifest();
+      renderGrid();
+      setMsg(`已添加 ${files.length} 张图片`, 3000);
+    };
+    input.click();
+  }
+
+  // ── Process all ──
+  async function processAll() {
+    if (processing) return;
+    const key = getKey();
+    if (!key) { alert('请先输入 OpenAI API Key'); return; }
+    processing = true;
+    document.getElementById('btn-all').disabled = true;
+
+    const todo = manifest.tiles.filter(t => !t.audio);
+    if (todo.length === 0) { setMsg('所有题目已有语音 ✓'); processing = false; document.getElementById('btn-all').disabled = false; return; }
+
+    for (let i = 0; i < todo.length; i++) {
+      const t = todo[i];
+      setMsg(`处理中 ${i + 1} / ${todo.length}：${t.file}`);
+      if (!t.text) {
+        await doExtractText(t);
+        renderCard(t);
+      }
+      if (t.text) {
+        await doGenerateAudio(t);
+        renderCard(t);
+      }
+    }
+    await saveManifest();
+    setMsg(`✓ 完成！共处理 ${todo.length} 道题`);
+    processing = false;
+    document.getElementById('btn-all').disabled = false;
+  }
+
+  // ── Extract text (GPT-4o Vision) ──
+  async function extractText(file) {
+    const t = manifest.tiles.find(x => x.file === file);
+    if (!t) return;
+    const key = getKey();
+    if (!key) { alert('请先输入 OpenAI API Key'); return; }
+    setMsg(`提取文字：${file}`);
+    updateCardBadge(file, 'text', 'proc');
+    await doExtractText(t);
+    await saveManifest();
+    renderCard(t);
+    setMsg('');
+  }
+
+  async function doExtractText(t) {
+    const key = getKey();
+    try {
+      const fh   = await dirHandle.getFileHandle(t.file);
+      const file = await fh.getFile();
+      const b64  = await toBase64(file);
+      const mime = /jpe?g$/i.test(t.file) ? 'image/jpeg' : 'image/png';
+      const res  = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'gpt-4o',
+          messages: [{
+            role: 'user',
+            content: [
+              { type: 'image_url', image_url: { url: `data:${mime};base64,${b64}` } },
+              { type: 'text', text: '请提取这道驾照考试题图片中的所有文字，包括题目和每个选项（A、B、C、D）。直接返回纯文字内容，格式：题目文字，然后换行列出每个选项。不要加任何额外说明。' }
+            ]
+          }],
+          max_tokens: 500
+        })
+      });
+      const data = await res.json();
+      t.text = (data.choices?.[0]?.message?.content || '').trim();
+    } catch (e) {
+      console.error('Extract error:', e);
+    }
+  }
+
+  // ── Generate audio (TTS) ──
+  async function generateAudio(file) {
+    const t = manifest.tiles.find(x => x.file === file);
+    if (!t) return;
+    const key = getKey();
+    if (!key) { alert('请先输入 OpenAI API Key'); return; }
+    if (!t.text) { alert('请先提取题目文字'); return; }
+    setMsg(`生成语音：${file}`);
+    updateCardBadge(file, 'audio', 'proc');
+    await doGenerateAudio(t);
+    await saveManifest();
+    renderCard(t);
+    setMsg('');
+  }
+
+  async function doGenerateAudio(t) {
+    const key = getKey();
+    try {
+      const res = await fetch('https://api.openai.com/v1/audio/speech', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ model: 'tts-1-hd', voice: 'nova', input: t.text, response_format: 'mp3' })
+      });
+      const blob = await res.blob();
+      const audioName = t.file.replace(/\.[^.]+$/, '.mp3');
+      const fh = await dirHandle.getFileHandle(audioName, { create: true });
+      const wr = await fh.createWritable();
+      await wr.write(blob);
+      await wr.close();
+      t.audio = audioName;
+    } catch (e) {
+      console.error('Audio error:', e);
+    }
+  }
+
+  // ── Save text edit ──
+  async function saveText(file) {
+    const t   = manifest.tiles.find(x => x.file === file);
+    const ta  = document.getElementById('ta-' + file);
+    if (!t || !ta) return;
+    t.text = ta.value.trim();
+    t.audio = null; // reset audio since text changed
+    await saveManifest();
+    renderCard(t);
+    setMsg('文字已保存，请重新生成语音', 2000);
+  }
+
+  // ── Delete ──
+  async function deleteQ(file) {
+    if (!confirm(`确定删除 ${file}？`)) return;
+    manifest.tiles = manifest.tiles.filter(t => t.file !== file);
+    manifest.total = manifest.tiles.length;
+    await saveManifest();
+    renderGrid();
+  }
+
+  // ── Render ──
+  function renderGrid() {
+    const grid = document.getElementById('grid');
+    const noF  = document.getElementById('no-folder');
+    if (!dirHandle) { noF.style.display = ''; grid.style.display = 'none'; return; }
+    noF.style.display  = 'none';
+    grid.style.display = 'flex';
+
+    const withAudio = manifest.tiles.filter(t => t.audio).length;
+    document.getElementById('status-bar').querySelector('#progress-msg') || '';
+    document.getElementById('status-bar').innerHTML =
+      `<span>共 <span class="stat">${manifest.tiles.length}</span> 道题 · ` +
+      `<span class="stat">${withAudio}</span> 已生成语音 · ` +
+      `<span class="stat">${manifest.tiles.length - withAudio}</span> 待处理</span>` +
+      `<span id="progress-msg"></span>`;
+
+    grid.innerHTML = manifest.tiles.map((t, i) => cardHTML(t, i)).join('');
+  }
+
+  function cardHTML(t, i) {
+    const textBadge  = t.text  ? '<span class="badge-has">✓ 有文字</span>' : '<span class="badge-none">无文字</span>';
+    const audioBadge = t.audio ? '<span class="badge-has">✓ 有语音</span>' : '<span class="badge-none">无语音</span>';
+    const textContent = t.text
+      ? `<textarea class="q-text-area" id="ta-${t.file}" rows="4">${escHtml(t.text)}</textarea>`
+      : `<div class="q-placeholder">（尚未提取文字）</div>`;
+    const audioPlayer = t.audio
+      ? `<div class="audio-preview"><button class="btn-play" onclick="previewAudio('${t.file}')">▶ 试听</button></div>`
+      : '';
+    return `
+      <div class="q-card" id="card-${t.file.replace(/\./g,'_')}">
+        <div class="q-num">${i + 1}</div>
+        <div class="q-thumb" onclick="previewImg('${t.file}')">
+          <img src="" data-src="${t.file}" alt="Q${i+1}" loading="lazy" />
+        </div>
+        <div class="q-body">
+          <div class="q-row">
+            <span class="q-filename">${t.file}</span>
+            ${textBadge} ${audioBadge}
+            ${audioPlayer}
+          </div>
+          ${textContent}
+          <div class="q-actions">
+            <button class="btn-extract" onclick="extractText('${t.file}')">🔍 提取文字</button>
+            <button class="btn-audio"   onclick="generateAudio('${t.file}')" ${!t.text ? 'disabled' : ''}>🔊 生成语音</button>
+            ${t.text ? `<button class="btn-save-text" onclick="saveText('${t.file}')">💾 保存文字</button>` : ''}
+            <button class="btn-delete"  onclick="deleteQ('${t.file}')">🗑 删除</button>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  function renderCard(t) {
+    const i   = manifest.tiles.findIndex(x => x.file === t.file);
+    const old = document.getElementById('card-' + t.file.replace(/\./g,'_'));
+    if (old) old.outerHTML = cardHTML(t, i);
+    loadCardImages();
+    // Update stats
+    const withAudio = manifest.tiles.filter(x => x.audio).length;
+    const statEl = document.getElementById('status-bar');
+    if (statEl) statEl.innerHTML =
+      `<span>共 <span class="stat">${manifest.tiles.length}</span> 道题 · ` +
+      `<span class="stat">${withAudio}</span> 已生成语音 · ` +
+      `<span class="stat">${manifest.tiles.length - withAudio}</span> 待处理</span>` +
+      `<span id="progress-msg"></span>`;
+  }
+
+  function updateCardBadge(file, type, state) { /* visual-only, full render on completion */ }
+
+  function loadCardImages() {
+    document.querySelectorAll('img[data-src]').forEach(async img => {
+      if (img.src && img.src !== window.location.href) return;
+      try {
+        const fh   = await dirHandle.getFileHandle(img.dataset.src);
+        const file = await fh.getFile();
+        img.src = URL.createObjectURL(file);
+        img.removeAttribute('data-src');
+      } catch {}
+    });
+  }
+
+  function previewAudio(file) {
+    const audioName = file.replace(/\.[^.]+$/, '.mp3');
+    dirHandle.getFileHandle(audioName).then(async fh => {
+      const f   = await fh.getFile();
+      const url = URL.createObjectURL(f);
+      new Audio(url).play();
+    }).catch(() => alert('找不到音频文件'));
+  }
+
+  function previewImg(file) {
+    dirHandle.getFileHandle(file).then(async fh => {
+      const f   = await fh.getFile();
+      const url = URL.createObjectURL(f);
+      window.open(url, '_blank');
+    }).catch(() => {});
+  }
+
+  // ── Utils ──
+  function toBase64(file) {
+    return new Promise((resolve, reject) => {
+      const r = new FileReader();
+      r.onload  = () => resolve(r.result.split(',')[1]);
+      r.onerror = reject;
+      r.readAsDataURL(file);
+    });
+  }
+  function escHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function setMsg(msg, clearAfterMs) {
+    const el = document.getElementById('progress-msg');
+    if (el) el.textContent = msg;
+    if (clearAfterMs) setTimeout(() => { if (el) el.textContent = ''; }, clearAfterMs);
+  }
+
+  // ── Lazy load images after render ──
+  const imgObserver = new MutationObserver(() => loadCardImages());
+  imgObserver.observe(document.getElementById('grid'), { childList: true, subtree: true });
+</script>
+</body>
+</html>
