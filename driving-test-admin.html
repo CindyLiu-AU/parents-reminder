@@ -371,10 +371,13 @@
   async function doGenerateAudio(t) {
     const key = getKey();
     try {
+      const answerSuffix = t.answer
+        ? `\n\n正确答案是：${t.answer.split('').join('、')}。`
+        : '';
       const res = await fetch('https://api.openai.com/v1/audio/speech', {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ model: 'tts-1-hd', voice: 'nova', input: t.text, response_format: 'mp3' })
+        body: JSON.stringify({ model: 'tts-1-hd', voice: 'nova', input: t.text + answerSuffix, response_format: 'mp3' })
       });
       const blob = await res.blob();
       const audioName = t.file.replace(/\.[^.]+$/, '.mp3');
@@ -475,11 +478,19 @@
     if (!card) return;
     const checked = Array.from(card.querySelectorAll('.ans-label input:checked'))
       .map(cb => cb.value).sort().join('');
+    const answerChanged = t.answer !== (checked || null);
     t.answer = checked || null;
+    if (answerChanged && t.audio) {
+      t.audio = null; // audio needs regeneration to include new answer
+    }
     await saveManifest();
-    setMsg(`答案已保存：${file} → ${checked || '(已清空)'}`, 2000);
-    const ind = card.querySelector('.ans-indicator');
-    if (ind) ind.textContent = checked ? `✓ ${checked}` : '';
+    setMsg(answerChanged && !t.audio ? `答案已保存，请重新生成语音 🔊` : `答案已保存：${checked || '(已清空)'}`, 3000);
+    if (answerChanged) {
+      renderCard(t);
+    } else {
+      const ind = card.querySelector('.ans-indicator');
+      if (ind) ind.textContent = checked ? `✓ ${checked}` : '';
+    }
   }
 
   // ── Save text edit ──
