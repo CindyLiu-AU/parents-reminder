@@ -370,9 +370,9 @@
           <div class="item-icon">${icon}</div>
           <div class="item-body">
             <div class="item-type">${label}</div>
+            ${date ? `<div class="item-date">${date}</div>` : ''}
             <div class="item-title">${title}${badgeHTML(d)}</div>
             ${time ? `<div class="item-time">${time}</div>` : ''}
-            ${date ? `<div class="item-date">${date}</div>` : ''}
             ${note ? `<div class="item-note">${note}</div>` : ''}
             ${clHTML}
             <div class="btn-seen-wrap">${seenBtn(d)}</div>
