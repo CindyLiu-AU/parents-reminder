@@ -95,6 +95,24 @@
     .audio-preview { display: flex; align-items: center; gap: 8px; }
     .btn-play { background: #1e3a6e; color: #fff; border: none; border-radius: 20px; padding: 5px 12px; font-size: 13px; cursor: pointer; font-family: inherit; }
 
+    /* ── Crop modal ── */
+    #crop-modal {
+      display: none; position: fixed; inset: 0; z-index: 1000;
+      background: rgba(0,0,0,0.85); flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+    }
+    #crop-modal.open { display: flex; }
+    #crop-header { color: #f0f4f8; font-size: 15px; font-weight: 700; }
+    #crop-hint   { color: #90caf9; font-size: 13px; }
+    #crop-canvas-wrap {
+      position: relative; cursor: crosshair;
+      box-shadow: 0 0 0 2px #f59e0b;
+    }
+    #crop-canvas { display: block; max-width: 90vw; max-height: 70vh; }
+    #crop-actions { display: flex; gap: 12px; }
+    .btn-crop-confirm { background: #16a34a; color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 800; padding: 10px 24px; cursor: pointer; font-family: inherit; }
+    .btn-crop-cancel  { background: #334d66; color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 800; padding: 10px 24px; cursor: pointer; font-family: inherit; }
+    .btn-crop-reset   { background: #1e3a6e; color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 800; padding: 10px 24px; cursor: pointer; font-family: inherit; }
+
     #publish-box {
       margin: 0 24px 32px; background: #091525; border: 2px solid #f59e0b;
       border-radius: 14px; padding: 20px; display: none;
@@ -140,6 +158,20 @@
   <h3>📤 发布到网站</h3>
   <p>图片和语音已保存到本地文件夹。请在 Claude Code 输入以下命令推送到 GitHub：</p>
   <code>git add driving-test-imgs/ && git commit -m "Update driving test questions" && git push</code>
+</div>
+
+<!-- Crop modal -->
+<div id="crop-modal">
+  <div id="crop-header">✂️ 手动裁剪图示区域</div>
+  <div id="crop-hint">拖动选择要保留的区域</div>
+  <div id="crop-canvas-wrap">
+    <canvas id="crop-canvas"></canvas>
+  </div>
+  <div id="crop-actions">
+    <button class="btn-crop-confirm" onclick="confirmCrop()">✓ 保存裁剪</button>
+    <button class="btn-crop-reset"   onclick="resetCrop()">↺ 重新选择</button>
+    <button class="btn-crop-cancel"  onclick="closeCropModal()">✕ 取消</button>
+  </div>
 </div>
 
 <script>
@@ -494,7 +526,7 @@
           ${textContent}
           <div class="q-actions">
             <button class="btn-extract" onclick="extractText('${t.file}')">🔍 提取文字</button>
-            <button class="btn-diagram" onclick="extractDiagram('${t.file}')">✂️ 提取图示</button>
+            <button class="btn-diagram" onclick="openCropModal('${t.file}')">✂️ 手动裁剪</button>
             <button class="btn-audio"   onclick="generateAudio('${t.file}')" ${!t.text ? 'disabled' : ''}>🔊 生成语音</button>
             ${t.text ? `<button class="btn-save-text" onclick="saveText('${t.file}')">💾 保存文字</button>` : ''}
             <button class="btn-delete"  onclick="deleteQ('${t.file}')">🗑 删除</button>
@@ -570,6 +602,177 @@
   // ── Lazy load images after render ──
   const imgObserver = new MutationObserver(() => loadCardImages());
   imgObserver.observe(document.getElementById('grid'), { childList: true, subtree: true });
+
+  // ── Manual Crop Modal ──
+  let cropTile     = null;
+  let cropImg      = null;
+  let cropScale    = 1;
+  let cropSel      = null;   // { x, y, w, h } canvas-pixel coords (w/h negative while dragging backwards)
+  let cropDragging = false;
+  let cropStart    = null;
+
+  async function openCropModal(file) {
+    const t = manifest.tiles.find(x => x.file === file);
+    if (!t) return;
+    cropTile     = t;
+    cropSel      = null;
+    cropDragging = false;
+
+    const fh  = await dirHandle.getFileHandle(file);
+    const f   = await fh.getFile();
+    const url = URL.createObjectURL(f);
+
+    const canvas = document.getElementById('crop-canvas');
+    const img    = new Image();
+    img.onload = () => {
+      cropImg = img;
+      const maxW  = Math.floor(window.innerWidth  * 0.88);
+      const maxH  = Math.floor(window.innerHeight * 0.68);
+      cropScale   = Math.min(1, maxW / img.naturalWidth, maxH / img.naturalHeight);
+      canvas.width  = Math.round(img.naturalWidth  * cropScale);
+      canvas.height = Math.round(img.naturalHeight * cropScale);
+      drawCropFrame();
+      document.getElementById('crop-hint').textContent = '拖动选择要保留的区域';
+      document.getElementById('crop-modal').classList.add('open');
+    };
+    img.src = url;
+  }
+
+  function drawCropFrame() {
+    const canvas = document.getElementById('crop-canvas');
+    const ctx    = canvas.getContext('2d');
+    if (!cropImg) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(cropImg, 0, 0, canvas.width, canvas.height);
+    if (!cropSel) return;
+    const sel = normSel();
+    if (!sel || sel.w < 2 || sel.h < 2) return;
+    const { x, y, w, h } = sel;
+    // dim everything outside selection
+    ctx.fillStyle = 'rgba(0,0,0,0.55)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    // restore selected region from original image
+    ctx.drawImage(cropImg,
+      x / cropScale, y / cropScale, w / cropScale, h / cropScale,
+      x, y, w, h);
+    // border
+    ctx.strokeStyle = '#f59e0b';
+    ctx.lineWidth   = 2;
+    ctx.strokeRect(x + 0.5, y + 0.5, w - 1, h - 1);
+    // corner handles
+    [[x,y],[x+w,y],[x,y+h],[x+w,y+h]].forEach(([cx,cy]) => {
+      ctx.fillStyle = '#f59e0b';
+      ctx.fillRect(cx - 5, cy - 5, 10, 10);
+    });
+  }
+
+  function normSel() {
+    if (!cropSel) return null;
+    return {
+      x: cropSel.w >= 0 ? cropSel.x : cropSel.x + cropSel.w,
+      y: cropSel.h >= 0 ? cropSel.y : cropSel.y + cropSel.h,
+      w: Math.abs(cropSel.w),
+      h: Math.abs(cropSel.h)
+    };
+  }
+
+  function getCanvasXY(e) {
+    const canvas = document.getElementById('crop-canvas');
+    const rect   = canvas.getBoundingClientRect();
+    const src    = e.touches ? e.touches[0] : (e.changedTouches ? e.changedTouches[0] : e);
+    const sx = canvas.width  / rect.width;
+    const sy = canvas.height / rect.height;
+    return {
+      x: Math.max(0, Math.min(canvas.width,  (src.clientX - rect.left) * sx)),
+      y: Math.max(0, Math.min(canvas.height, (src.clientY - rect.top)  * sy))
+    };
+  }
+
+  // Attach canvas drag events
+  (function() {
+    const canvas = document.getElementById('crop-canvas');
+
+    function onDown(e) {
+      if (!document.getElementById('crop-modal').classList.contains('open')) return;
+      cropDragging = true;
+      const p = getCanvasXY(e);
+      cropStart = p;
+      cropSel   = { x: p.x, y: p.y, w: 0, h: 0 };
+      e.preventDefault();
+    }
+    function onMove(e) {
+      if (!cropDragging) return;
+      const p = getCanvasXY(e);
+      cropSel.w = p.x - cropStart.x;
+      cropSel.h = p.y - cropStart.y;
+      drawCropFrame();
+      e.preventDefault();
+    }
+    function onUp(e) {
+      if (!cropDragging) return;
+      cropDragging = false;
+      const p = getCanvasXY(e);
+      cropSel.w = p.x - cropStart.x;
+      cropSel.h = p.y - cropStart.y;
+      drawCropFrame();
+      const sel = normSel();
+      document.getElementById('crop-hint').textContent =
+        sel && sel.w > 4 && sel.h > 4
+          ? `已选区域 ${Math.round(sel.w / cropScale)}×${Math.round(sel.h / cropScale)}px（原始尺寸）— 点击"保存裁剪"确认`
+          : '拖动选择要保留的区域';
+    }
+
+    canvas.addEventListener('mousedown',  onDown);
+    canvas.addEventListener('mousemove',  onMove);
+    canvas.addEventListener('mouseup',    onUp);
+    canvas.addEventListener('touchstart', onDown, { passive: false });
+    canvas.addEventListener('touchmove',  onMove, { passive: false });
+    canvas.addEventListener('touchend',   onUp);
+  })();
+
+  async function confirmCrop() {
+    if (!cropSel || !cropImg || !cropTile) { alert('请先拖动选择裁剪区域'); return; }
+    const sel = normSel();
+    if (!sel || sel.w < 4 || sel.h < 4) { alert('请先拖动选择裁剪区域'); return; }
+
+    // Convert canvas coords → natural image coords
+    const nx = Math.round(sel.x / cropScale);
+    const ny = Math.round(sel.y / cropScale);
+    const nw = Math.round(sel.w / cropScale);
+    const nh = Math.round(sel.h / cropScale);
+
+    const off = document.createElement('canvas');
+    off.width  = nw;
+    off.height = nh;
+    off.getContext('2d').drawImage(cropImg, nx, ny, nw, nh, 0, 0, nw, nh);
+
+    const diagName = cropTile.file.replace(/\.[^.]+$/, '_diagram.png');
+    const blob = await new Promise(r => off.toBlob(r, 'image/png'));
+    const fh   = await dirHandle.getFileHandle(diagName, { create: true });
+    const wr   = await fh.createWritable();
+    await wr.write(blob);
+    await wr.close();
+
+    cropTile.diagram = diagName;
+    await saveManifest();
+    renderCard(cropTile);
+    closeCropModal();
+    setMsg(`图示已保存：${diagName}`, 3000);
+  }
+
+  function resetCrop() {
+    cropSel = null;
+    drawCropFrame();
+    document.getElementById('crop-hint').textContent = '拖动选择要保留的区域';
+  }
+
+  function closeCropModal() {
+    document.getElementById('crop-modal').classList.remove('open');
+    cropTile     = null;
+    cropImg      = null;
+    cropSel      = null;
+    cropDragging = false;
+  }
 </script>
 </body>
 </html>
