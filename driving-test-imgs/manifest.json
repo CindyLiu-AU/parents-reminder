@@ -1,5 +1,5 @@
 {
-  "total": 2,
+  "total": 3,
   "tiles": [
     {
       "file": "q009.png",
@@ -24,6 +24,18 @@
         "C": "超车。"
       },
       "diagram": "q002_diagram.png",
+      "answer": "A"
+    },
+    {
+      "file": "q003.png",
+      "audio": "q003.mp3",
+      "question": "何时可以让A车越过单条连续线？",
+      "options": {
+        "A": "在安全的情况下超越骑自行车的人。",
+        "B": "掉头。",
+        "C": "超车。"
+      },
+      "diagram": "q003_diagram.png",
       "answer": "A"
     }
   ]
