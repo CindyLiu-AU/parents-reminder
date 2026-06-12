@@ -1,5 +1,5 @@
 {
-  "total": 78,
+  "total": 81,
   "tiles": [
     {
       "file": "q001.png",
@@ -962,6 +962,42 @@
       "options": {
         "A": "车A",
         "B": "车B"
+      },
+      "answer": "A"
+    },
+    {
+      "file": "q079.png",
+      "audio": "q079.mp3",
+      "diagram": "q079_diagram.png",
+      "question": "交通灯是绿色的，并且有一个红色的右转箭头。汽车A和汽车B直行，汽车C右转。哪辆车先行？",
+      "options": {
+        "A": "汽车A和汽车C",
+        "B": "汽车B和汽车C",
+        "C": "汽车C",
+        "D": "汽车A和汽车B"
+      },
+      "answer": "D"
+    },
+    {
+      "file": "q080.png",
+      "audio": "q080.mp3",
+      "diagram": "q080_diagram.png",
+      "question": "哪辆车需要让路？",
+      "options": {
+        "A": "汽车 A",
+        "B": "卡车 B"
+      },
+      "answer": "A"
+    },
+    {
+      "file": "q081.png",
+      "audio": "q081.mp3",
+      "diagram": "q081_diagram.png",
+      "question": "车辆应按什么顺序行驶？",
+      "options": {
+        "A": "汽车C、汽车A、汽车B和汽车D",
+        "B": "汽车C、汽车B、汽车A和汽车D",
+        "C": "汽车B、汽车A、汽车C和汽车D"
       },
       "answer": "A"
     }
