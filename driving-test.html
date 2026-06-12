@@ -628,7 +628,8 @@
 
     const pct = tiles.length > 1 ? (cur / (tiles.length - 1)) * 100 : 100;
     document.getElementById('progress-bar').style.width = pct + '%';
-    document.getElementById('q-num').textContent = cur + 1;
+    const fileNum = parseInt((tiles[cur].file || '').match(/\d+/) || [cur + 1], 10);
+    document.getElementById('q-num').textContent = fileNum;
     document.getElementById('btn-prev').disabled = cur === 0;
     document.getElementById('btn-next').disabled = cur === tiles.length - 1;
   }
