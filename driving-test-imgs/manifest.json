@@ -1,5 +1,5 @@
 {
-  "total": 21,
+  "total": 22,
   "tiles": [
     {
       "file": "q001.png",
@@ -259,6 +259,19 @@
       },
       "diagram": "q021_diagram.png",
       "answer": "C"
+    },
+    {
+      "file": "q022.png",
+      "audio": "q022.mp3",
+      "diagram": "q022_diagram.png",
+      "question": "这个标志是什么意思？",
+      "options": {
+        "A": "危险，路面急剧向左转弯",
+        "B": "限速区结束",
+        "C": "前方没有急剧的左转弯",
+        "D": "不得左转"
+      },
+      "answer": "D"
     }
   ]
 }
