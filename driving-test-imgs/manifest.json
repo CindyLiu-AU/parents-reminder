@@ -1,5 +1,5 @@
 {
-  "total": 25,
+  "total": 29,
   "tiles": [
     {
       "file": "q001.png",
@@ -309,6 +309,56 @@
         "D": "汽车 D 和 C"
       },
       "answer": "A"
+    },
+    {
+      "file": "q026.png",
+      "audio": "q026.mp3",
+      "diagram": "q026_diagram.png",
+      "question": "您正在驾驶A车。您必须让路给",
+      "options": {
+        "A": "D车",
+        "B": "B车",
+        "C": "B车和D车",
+        "D": "B车和C车"
+      },
+      "answer": "D"
+    },
+    {
+      "file": "q027.png",
+      "audio": "q027.mp3",
+      "diagram": "q027_diagram.png",
+      "question": "作为 P1 驾照持有者，在有此标志的道路上您能驾驶的最高速度是多少？",
+      "options": {
+        "A": "110 公里/小时",
+        "B": "100 公里/小时",
+        "C": "90 公里/小时",
+        "D": "80 公里/小时"
+      },
+      "answer": "B"
+    },
+    {
+      "file": "q028.png",
+      "audio": "q028.mp3",
+      "diagram": "q028_diagram.png",
+      "question": "当从与道路相关的区域驶出时，你必须",
+      "options": {
+        "A": "给左侧车辆让路",
+        "B": "给右侧车辆让路",
+        "C": "鸣喇叭并小心驶出，因为左右两侧的车辆必须让路给你"
+      },
+      "answer": "B"
+    },
+    {
+      "file": "q029.png",
+      "audio": "q029.mp3",
+      "diagram": "q029_diagram.png",
+      "question": "在80公里/小时的限速区超车骑自行车的人时，您必须保持至少多少距离：",
+      "options": {
+        "A": "2米",
+        "B": "1.5米",
+        "C": "1米"
+      },
+      "answer": "B"
     }
   ]
 }
