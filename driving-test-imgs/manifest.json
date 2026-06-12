@@ -1,5 +1,5 @@
 {
-  "total": 132,
+  "total": 135,
   "tiles": [
     {
       "file": "q001.png",
@@ -1646,14 +1646,53 @@
       "file": "q132.png",
       "audio": "q132.mp3",
       "diagram": "q132_diagram.png",
-      "question": "At intersections with no controls, who has right-of-way?",
+      "question": "在没有交通管制的交叉路口，谁有优先通行权？",
       "options": {
-        "A": "The largest vehicles",
-        "B": "Vehicles approaching at highest speed",
-        "C": "Vehicles approaching from the right",
-        "D": "Vehicles approaching from the next"
+        "A": "最大的车辆",
+        "B": "以最高速度接近的车辆",
+        "C": "从右侧接近的车辆",
+        "D": "从下一个位置接近的车辆"
       },
       "answer": "C"
+    },
+    {
+      "file": "q133.png",
+      "audio": "q133.mp3",
+      "diagram": "q133_diagram.png",
+      "question": "当限速超过60公里/小时时，超车时必须为自行车留出多少空间？",
+      "options": {
+        "A": "0.5米",
+        "B": "1米",
+        "C": "1.5米",
+        "D": "2米"
+      },
+      "answer": "C"
+    },
+    {
+      "file": "q134.png",
+      "audio": "q134.mp3",
+      "diagram": "q134_diagram.png",
+      "question": "儿童必须坐在面向后的安全座椅中直到至少几岁？",
+      "options": {
+        "A": "九个月",
+        "B": "十二个月",
+        "C": "六个月",
+        "D": "三个月"
+      },
+      "answer": "C"
+    },
+    {
+      "file": "q135.png",
+      "audio": "q135.mp3",
+      "diagram": "q135_diagram.png",
+      "question": "当两条车道合并且路上没有标线时，谁有优先通行权？",
+      "options": {
+        "A": "前面的车辆",
+        "B": "行驶速度最慢的车辆",
+        "C": "后面的车辆",
+        "D": "行驶速度最快的车辆"
+      },
+      "answer": "A"
     }
   ]
 }
