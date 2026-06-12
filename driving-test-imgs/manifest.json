@@ -1,5 +1,5 @@
 {
-  "total": 35,
+  "total": 42,
   "tiles": [
     {
       "file": "q001.png",
@@ -430,6 +430,87 @@
         "D": "只要看起来没有损坏就可以继续使用"
       },
       "answer": "A"
+    },
+    {
+      "file": "q036.png",
+      "audio": "q036.mp3",
+      "diagram": "q036_diagram.png",
+      "question": "在行人过道上，谁必须让行？",
+      "options": {
+        "A": "只有车辆A的司机，该车辆与行人同侧行驶",
+        "B": "如果行人在马路中间，车辆A和车辆B都不必让行",
+        "C": "车辆A和车辆B必须停车并让行给在过道上的任何行人",
+        "D": "行人必须让所有车辆先行"
+      },
+      "answer": "C"
+    },
+    {
+      "file": "q037.png",
+      "audio": "q037.mp3",
+      "diagram": "q037_diagram.png",
+      "question": "汽车应以什么顺序通过环岛？（汽车A和汽车C直行。汽车B右转。）",
+      "options": {
+        "A": "汽车B，然后汽车C，然后汽车A",
+        "B": "汽车B，然后汽车A，然后汽车C",
+        "C": "汽车A，然后汽车B，然后汽车C",
+        "D": "汽车C，然后汽车A，然后汽车B"
+      },
+      "answer": "B"
+    },
+    {
+      "file": "q038.png",
+      "audio": "q038.mp3",
+      "diagram": "q038_diagram.png",
+      "question": "汽车A可以越过双实线超越骑自行车的人吗？",
+      "options": {
+        "A": "可以，如果这样做是安全的。",
+        "B": "不可以，在任何时候越过双实线都是违法的。"
+      },
+      "answer": "A"
+    },
+    {
+      "file": "q039.png",
+      "audio": "q039.mp3",
+      "diagram": "q039_diagram.png",
+      "question": "当跨越单条虚线超越骑自行车的人时，你必须：",
+      "options": {
+        "A": "先打右转灯跨线，然后打左转灯并线回去。",
+        "B": "根本不打灯。",
+        "C": "闪烁车灯。",
+        "D": "忽视骑自行车的人，他们必须让开道路。"
+      },
+      "answer": "A"
+    },
+    {
+      "file": "q040.png",
+      "audio": "q040.mp3",
+      "question": "以下哪项陈述是正确的？",
+      "options": {
+        "A": "服用医生开的药物后驾驶是安全的。",
+        "B": "非处方药不会影响您的驾驶。",
+        "C": "某些药物与酒精一起服用会导致嗜睡加强。",
+        "D": "如果服用的药物少于建议剂量，驾驶是安全的。"
+      },
+      "answer": "C"
+    },
+    {
+      "file": "q041.png",
+      "audio": "q041.mp3",
+      "question": "以下哪项陈述是正确的？",
+      "options": {
+        "A": "在长时间工作后，您应该开始长途旅行。",
+        "B": "最好在夜晚或清晨进行长途驾驶。",
+        "C": "在长途旅行期间休息会让您更疲劳。",
+        "D": "在长途旅行中，您应该定期休息 10 分钟。"
+      },
+      "answer": "D"
+    },
+    {
+      "file": "q042.png",
+      "audio": null,
+      "question": "Which of the following statements is true?\nA Ecstasy, marijuana (cannabis) and heroin have no effect on your ability to safely control your car.\nB The effect of drugs like speed or ecstasy makes you over confident, so you take risks while driving.\nC Small amounts of marijuana and alcohol enable you to respond quicker in emergency situations.\nD The use of recreational drugs has no impact on your driving ability.",
+      "options": null,
+      "text": "Which of the following statements is true?\n\nA Ecstasy, marijuana (cannabis) and heroin have no effect on your ability to safely control your car.\n\nB The effect of drugs like speed or ecstasy makes you over confident, so you take risks while driving.\n\nC Small amounts of marijuana and alcohol enable you to respond quicker in emergency situations.\n\nD The use of recreational drugs has no impact on your driving ability."
     }
   ]
 }
