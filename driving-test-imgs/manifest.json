@@ -1,5 +1,5 @@
 {
-  "total": 99,
+  "total": 101,
   "tiles": [
     {
       "file": "q001.png",
@@ -1225,6 +1225,32 @@
         "D": "你有优先通行权"
       },
       "answer": "B"
+    },
+    {
+      "file": "q100.png",
+      "audio": "q100.mp3",
+      "diagram": "q100_diagram.png",
+      "question": "该标识是什么意思？",
+      "options": {
+        "A": "高速公路开始",
+        "B": "临近道路施工，减速并准备停车",
+        "C": "前方绕行",
+        "D": "不得驶越此标志"
+      },
+      "answer": "B"
+    },
+    {
+      "file": "q101.png",
+      "audio": "q101.mp3",
+      "diagram": "q101_diagram.png",
+      "question": "该标识是什么意思？",
+      "options": {
+        "A": "提前危险警告",
+        "B": "从箭头至拐角禁止停车",
+        "C": "车道使用标志允许所有转弯，包括左转",
+        "D": "你必须左转"
+      },
+      "answer": "D"
     }
   ]
 }
