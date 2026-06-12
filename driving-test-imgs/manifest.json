@@ -1,5 +1,5 @@
 {
-  "total": 125,
+  "total": 129,
   "tiles": [
     {
       "file": "q001.png",
@@ -1563,6 +1563,58 @@
         "D": "十秒钟"
       },
       "answer": "A"
+    },
+    {
+      "file": "q126.png",
+      "audio": "q126.mp3",
+      "diagram": "q126_diagram.png",
+      "question": "在没有停车标志或线条的地方，你应该将车停在...？",
+      "options": {
+        "A": "平行于行驶方向相反的方向",
+        "B": "与路缘成90°",
+        "C": "平行于行驶方向",
+        "D": "上述任何一种"
+      },
+      "answer": "C"
+    },
+    {
+      "file": "q127.png",
+      "audio": null,
+      "diagram": "q127_diagram.png",
+      "question": "您不得在距离带有交通信号灯的交叉口多远的地方停车？",
+      "options": {
+        "A": "10 米",
+        "B": "20 米",
+        "C": "5 米",
+        "D": "15 米"
+      },
+      "answer": "B"
+    },
+    {
+      "file": "q128.png",
+      "audio": "q128.mp3",
+      "diagram": "q128_diagram.png",
+      "question": "当从没有交通箭头的多车道道路右转时，您应该从哪条车道转弯...？",
+      "options": {
+        "A": "任意车道",
+        "B": "左侧车道",
+        "C": "右侧车道",
+        "D": "两条车道之间"
+      },
+      "answer": "C"
+    },
+    {
+      "file": "q129.png",
+      "audio": "q129.mp3",
+      "diagram": "q129_diagram.png",
+      "question": "塔斯马尼亚城市地区的默认限速是多少？",
+      "options": {
+        "A": "40公里/小时",
+        "B": "60公里/小时",
+        "C": "50公里/小时",
+        "D": "30公里/小时"
+      },
+      "answer": "C"
     }
   ]
 }
