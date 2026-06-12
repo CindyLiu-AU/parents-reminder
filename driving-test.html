@@ -564,6 +564,7 @@
     <div id="result-title"></div>
     <div id="result-body"></div>
     <div class="result-btns">
+      <button id="btn-result-retry" onclick="retryAnswer()" style="display:none">再试一次 ↩</button>
       <button id="btn-result-stay" onclick="closeResult()">继续查看</button>
       <button id="btn-result-next" onclick="closeResultAndNext()">下一题 →</button>
     </div>
@@ -704,10 +705,17 @@
     document.getElementById('result-body').innerHTML = bodyHTML;
     document.getElementById('btn-result-next').style.display =
       cur < tiles.length - 1 ? 'block' : 'none';
+    document.getElementById('btn-result-retry').style.display = isCorrect ? 'none' : 'block';
     document.getElementById('result-modal').classList.add('open');
   }
 
   function closeResult() { document.getElementById('result-modal').classList.remove('open'); }
+  function retryAnswer() {
+    submittedAnswers[cur] = false;
+    userAnswers[cur] = null;
+    closeResult();
+    renderOptions();
+  }
   function closeResultAndNext() {
     closeResult();
     if (cur < tiles.length - 1) { stopAuto(); stopTTS(); show(cur + 1); }
