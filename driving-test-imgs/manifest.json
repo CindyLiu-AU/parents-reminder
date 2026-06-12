@@ -2,11 +2,23 @@
   "total": 6,
   "tiles": [
     {
-      "file": "q002.png",
-      "audio": "q002.mp3",
+      "file": "q001.png",
+      "audio": "q001.mp3",
       "question": "车A 何时可以越过双虚线？",
       "options": {
         "A": "如果安全的话，可以超越骑自行车的人。",
+        "B": "掉头。",
+        "C": "超车。"
+      },
+      "diagram": "q001_diagram.png",
+      "answer": "A"
+    },
+    {
+      "file": "q002.png",
+      "audio": "q002.mp3",
+      "question": "何时可以让A车越过单条连续线？",
+      "options": {
+        "A": "在安全的情况下超越骑自行车的人。",
         "B": "掉头。",
         "C": "超车。"
       },
@@ -16,18 +28,6 @@
     {
       "file": "q003.png",
       "audio": "q003.mp3",
-      "question": "何时可以让A车越过单条连续线？",
-      "options": {
-        "A": "在安全的情况下超越骑自行车的人。",
-        "B": "掉头。",
-        "C": "超车。"
-      },
-      "diagram": "q003_diagram.png",
-      "answer": "A"
-    },
-    {
-      "file": "q004.png",
-      "audio": "q004.mp3",
       "question": "在接近带有单个闪烁黄灯的交叉路口时。您必须——",
       "options": {
         "A": "减速并鸣喇叭",
@@ -35,12 +35,12 @@
         "C": "减速；做好停车准备并让右侧车辆先行，然后小心驶过",
         "D": "加速通过交叉路口"
       },
-      "diagram": "q004_diagram.png",
+      "diagram": "q003_diagram.png",
       "answer": "C"
     },
     {
-      "file": "q005.png",
-      "audio": "q005.mp3",
+      "file": "q004.png",
+      "audio": "q004.mp3",
       "question": "这个标志意味着？",
       "options": {
         "A": "仅对您右侧的交通让行",
@@ -48,13 +48,13 @@
         "C": "完全停下并让所有车辆和行人先行",
         "D": "减速并准备停车，让左侧和右侧的交通以及行人先行"
       },
-      "diagram": "q005_diagram.png",
+      "diagram": "q004_diagram.png",
       "answer": "D"
     },
     {
-      "file": "q006.png",
-      "audio": "q006.mp3",
-      "diagram": "q006_diagram.png",
+      "file": "q005.png",
+      "audio": "q005.mp3",
+      "diagram": "q005_diagram.png",
       "question": "在110公里/小时的限速区，持有学习驾照的驾驶者最高可以驾驶多少速度？",
       "options": {
         "A": "110公里/小时",
@@ -65,9 +65,9 @@
       "answer": "D"
     },
     {
-      "file": "q007.png",
-      "audio": "q007.mp3",
-      "diagram": "q007_diagram.png",
+      "file": "q006.png",
+      "audio": "q006.mp3",
+      "diagram": "q006_diagram.png",
       "question": "哪辆车让路？",
       "options": {
         "A": "车辆 A",
