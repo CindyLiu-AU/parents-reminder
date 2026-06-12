@@ -539,6 +539,40 @@
       font-size: 13px; font-weight: 900; cursor: pointer;
       font-family: inherit; color: #1a1614;
     }
+    /* 3D green button */
+    #ss-btn-wrap {
+      display: flex; align-items: center; justify-content: center;
+    }
+    #ss-btn-mount {
+      width: clamp(90px, 12vw, 140px);
+      height: clamp(90px, 12vw, 140px);
+      border-radius: 50%;
+      background: radial-gradient(circle at 40% 35%, #585858 0%, #282828 50%, #0a0a0a 100%);
+      box-shadow: 0 10px 28px rgba(0,0,0,0.6);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; opacity: 0.35; transition: opacity .2s, transform .1s;
+    }
+    #ss-btn-mount.ready { opacity: 1; }
+    #ss-btn-mount.ready:active { transform: scale(0.96); }
+    #ss-green-btn {
+      width: 72%; height: 72%; border-radius: 50%;
+      background: radial-gradient(circle at 35% 28%,
+        #d0ffb0 0%, #60e870 20%, #20c040 55%, #0a5820 100%);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5),
+                  inset 0 3px 0 rgba(255,255,255,0.55),
+                  inset 0 -3px 6px rgba(0,0,0,0.3);
+      pointer-events: none;
+    }
+    #ss-click-text {
+      font-size: clamp(18px, 3vw, 36px);
+      font-weight: 700; color: #b86820;
+    }
+    /* Selected mode card glow */
+    .ss-mode-btn.selected-mode {
+      box-shadow: 0 0 0 4px #f0c840, 0 6px 20px rgba(0,0,0,0.4);
+      transform: scale(1.04);
+    }
+
     .quit-dot {
       width: 16px; height: 16px; border-radius: 50%;
       background: radial-gradient(circle at 38% 30%, #ff8080, #d02020, #700010);
@@ -558,17 +592,23 @@
   <div id="ss-body">
     <div id="ss-title">选择练习模式</div>
     <div id="ss-modes">
-      <div class="ss-mode-btn ss-mode-exam" onclick="startTest('exam')">
+      <div class="ss-mode-btn ss-mode-exam" id="mode-exam" onclick="selectMode('exam')">
         <div class="ss-mode-icon">🎯</div>
         <div class="ss-mode-title">模拟考试</div>
         <div class="ss-mode-desc">随机抽取 35 题<br>完成后显示总分</div>
       </div>
-      <div class="ss-mode-btn ss-mode-practice" onclick="startTest('practice')">
+      <div class="ss-mode-btn ss-mode-practice" id="mode-practice" onclick="selectMode('practice')">
         <div class="ss-mode-icon">📚</div>
         <div class="ss-mode-title">练习模式</div>
         <div class="ss-mode-desc">浏览全部题目<br>随时翻页复习</div>
       </div>
     </div>
+    <div id="ss-btn-wrap">
+      <div id="ss-btn-mount" onclick="beginTest()">
+        <div id="ss-green-btn"></div>
+      </div>
+    </div>
+    <div id="ss-click-text">Click on button</div>
   </div>
   <div id="ss-footer">
     <span id="ss-version">DKTS build 3.2.378.202005261636</span>
@@ -690,6 +730,7 @@
   let userAnswers      = [];
   let submittedAnswers = [];
   let examMode         = false;
+  let selectedMode     = null;
   const EXAM_COUNT     = 35;
 
   function shuffle(arr) {
@@ -699,6 +740,18 @@
       [a[i], a[j]] = [a[j], a[i]];
     }
     return a;
+  }
+
+  function selectMode(mode) {
+    selectedMode = mode;
+    document.getElementById('mode-exam').classList.toggle('selected-mode', mode === 'exam');
+    document.getElementById('mode-practice').classList.toggle('selected-mode', mode === 'practice');
+    document.getElementById('ss-btn-mount').classList.add('ready');
+  }
+
+  function beginTest() {
+    if (!selectedMode) return;
+    startTest(selectedMode);
   }
 
   function startTest(mode) {
@@ -746,6 +799,10 @@
 
   function goHome() {
     document.getElementById('final-modal').classList.remove('open');
+    selectedMode = null;
+    document.getElementById('mode-exam').classList.remove('selected-mode');
+    document.getElementById('mode-practice').classList.remove('selected-mode');
+    document.getElementById('ss-btn-mount').classList.remove('ready');
     document.getElementById('start-screen').style.display = 'flex';
   }
 
