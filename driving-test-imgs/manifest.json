@@ -1,5 +1,5 @@
 {
-  "total": 137,
+  "total": 138,
   "tiles": [
     {
       "file": "q001.png",
@@ -1719,6 +1719,19 @@
         "D": "穿过双破折线"
       },
       "answer": "B"
+    },
+    {
+      "file": "q138.png",
+      "audio": "q138.mp3",
+      "diagram": "q138_diagram.png",
+      "question": "在以下哪些情况下可以穿过道路上的双连续线？",
+      "options": {
+        "A": "转入车道",
+        "B": "掉头",
+        "C": "避免自行车骑行者",
+        "D": "超车"
+      },
+      "answer": "C"
     }
   ]
 }
