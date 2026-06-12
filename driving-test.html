@@ -681,9 +681,10 @@
 
     const isCorrect = submitted && t.answer && ua === t.answer;
     const indicator = document.getElementById('correct-indicator');
-    if (isCorrect) {
+    if (submitted && t.answer) {
       indicator.textContent = '✅ ' + t.answer;
       indicator.style.display = 'block';
+      indicator.style.color = isCorrect ? '#16a34a' : '#b45309';
     } else {
       indicator.style.display = 'none';
     }
