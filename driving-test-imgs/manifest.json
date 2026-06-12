@@ -1,5 +1,5 @@
 {
-  "total": 112,
+  "total": 114,
   "tiles": [
     {
       "file": "q001.png",
@@ -1394,6 +1394,32 @@
         "D": "儿童游乐区标志"
       },
       "answer": "B"
+    },
+    {
+      "file": "q113.png",
+      "audio": "q113.mp3",
+      "diagram": "q113_diagram.png",
+      "question": "该标识是什么意思？",
+      "options": {
+        "A": "您不得超越任何同方向行驶的车辆",
+        "B": "仅限单行道",
+        "C": "禁止入内",
+        "D": "允许通过"
+      },
+      "answer": "A"
+    },
+    {
+      "file": "q114.png",
+      "audio": "q114.mp3",
+      "diagram": "q114_diagram.png",
+      "question": "该标识是什么意思？",
+      "options": {
+        "A": "你有优先通行权",
+        "B": "前方学校区域",
+        "C": "驾驶员必须减速，并在必要时停车以避免碰撞",
+        "D": "前方铁路道口"
+      },
+      "answer": "C"
     }
   ]
 }
