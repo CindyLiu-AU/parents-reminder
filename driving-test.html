@@ -101,11 +101,12 @@
       flex: 1; text-align: center;
       font-size: clamp(16px, 2.2vw, 26px); font-weight: 900; color: #151520; letter-spacing: 1px;
     }
-    #score-chip {
-      display: none; background: rgba(0,0,0,0.16); border-radius: 4px;
-      color: #151520; font-size: 12px; font-weight: 700; padding: 3px 8px;
+    #score-chip, #answered-chip {
+      background: rgba(0,0,0,0.16); border-radius: 4px;
+      color: #151520; font-size: clamp(11px, 1.5vw, 15px); font-weight: 700; padding: 3px 8px;
       white-space: nowrap; flex-shrink: 0;
     }
+    #score-chip { display: none; }
 
     /* Progress bar just below top strip */
     #progress-bar-wrap {
@@ -553,7 +554,8 @@
   <div id="rtp">
     <div id="top-bar-content">
       <a href="roadrules.html" class="back-btn">← 返回</a>
-      <div id="q-title">Question <span id="q-num">—</span> / <span id="q-total">—</span></div>
+      <div id="q-title">Question <span id="q-num">—</span><span id="q-total-wrap"> / <span id="q-total">—</span></span></div>
+      <span id="answered-chip" style="display:none">已答 <span id="answered-num">0</span> / <span id="answered-total">35</span></span>
       <span id="score-chip">0 / 0</span>
     </div>
   </div>
@@ -658,9 +660,17 @@
     userAnswers      = new Array(tiles.length).fill(null);
     submittedAnswers = new Array(tiles.length).fill(false);
     document.getElementById('q-total').textContent = tiles.length;
+    document.getElementById('q-total-wrap').style.display = examMode ? 'none' : 'inline';
     const chip = document.getElementById('score-chip');
-    if (examMode) { chip.style.display = 'inline-block'; chip.textContent = '0 / 0'; }
-    else          { chip.style.display = 'none'; }
+    chip.style.display = 'none';
+    const achip = document.getElementById('answered-chip');
+    if (examMode) {
+      document.getElementById('answered-total').textContent = tiles.length;
+      document.getElementById('answered-num').textContent = '0';
+      achip.style.display = 'inline-block';
+    } else {
+      achip.style.display = 'none';
+    }
     document.getElementById('start-screen').style.display = 'none';
     if (tiles.length > 0) show(0);
   }
@@ -838,15 +848,10 @@
   }
 
   function updateScore() {
-    let correct = 0, answered = 0;
-    tiles.forEach((t, i) => {
-      if (submittedAnswers[i] && t.answer) {
-        answered++;
-        if (userAnswers[i] === t.answer) correct++;
-      }
-    });
-    const chip = document.getElementById('score-chip');
-    if (chip && chip.style.display !== 'none') chip.textContent = `${correct} / ${answered}`;
+    const answered = submittedAnswers.filter(Boolean).length;
+    if (examMode) {
+      document.getElementById('answered-num').textContent = answered;
+    }
   }
 
   function go(delta) { stopAuto(); stopTTS(); show(cur + delta); }
