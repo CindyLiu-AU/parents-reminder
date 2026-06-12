@@ -1,5 +1,5 @@
 {
-  "total": 8,
+  "total": 7,
   "tiles": [
     {
       "file": "q002.png",
@@ -85,10 +85,6 @@
         "B": "B 车"
       },
       "answer": "B"
-    },
-    {
-      "file": "q008.png",
-      "audio": null
     }
   ]
 }
