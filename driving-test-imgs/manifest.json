@@ -1,5 +1,5 @@
 {
-  "total": 114,
+  "total": 120,
   "tiles": [
     {
       "file": "q001.png",
@@ -1420,6 +1420,84 @@
         "D": "前方铁路道口"
       },
       "answer": "C"
+    },
+    {
+      "file": "q115.png",
+      "audio": "q115.mp3",
+      "diagram": "q115_diagram.png",
+      "question": "该标识是什么意思？",
+      "options": {
+        "A": "前方弯路",
+        "B": "路面湿滑",
+        "C": "前方有隐藏的交叉路口",
+        "D": "前方道路狭窄"
+      },
+      "answer": "A"
+    },
+    {
+      "file": "q116.png",
+      "audio": "q116.mp3",
+      "diagram": "q116_diagram.png",
+      "question": "该标识是什么意思？",
+      "options": {
+        "A": "慢速行驶车辆",
+        "B": "故障警告三角牌",
+        "C": "前方停车标志",
+        "D": "前方死胡同"
+      },
+      "answer": "B"
+    },
+    {
+      "file": "q117.png",
+      "audio": "q117.mp3",
+      "diagram": "q117_diagram.png",
+      "question": "该标识是什么意思？",
+      "options": {
+        "A": "仅左右转",
+        "B": "前方道路蜿蜒",
+        "C": "允许左右转",
+        "D": "建议速度与弯道警告标志一同使用"
+      },
+      "answer": "D"
+    },
+    {
+      "file": "q118.png",
+      "audio": "q118.mp3",
+      "diagram": "q118_diagram.png",
+      "question": "该标识是什么意思？",
+      "options": {
+        "A": "危险，道路终止",
+        "B": "前方道路蜿蜒",
+        "C": "车道状态 - 准备合并，左车道关闭，右车道开放",
+        "D": "靠左行驶"
+      },
+      "answer": "C"
+    },
+    {
+      "file": "q119.png",
+      "audio": "q119.mp3",
+      "diagram": "q119_diagram.png",
+      "question": "该标识是什么意思？",
+      "options": {
+        "A": "不允许骑自行车",
+        "B": "自行车道标志",
+        "C": "允许自行车停放",
+        "D": "前方自行车横道"
+      },
+      "answer": "B"
+    },
+    {
+      "file": "q120.png",
+      "audio": "q120.mp3",
+      "diagram": "q120_diagram.png",
+      "question": "该标识是什么意思？",
+      "options": {
+        "A": "禁止进入十字路口",
+        "B": "在箭头方向，您不得停车",
+        "C": "从所示角度驶来的车辆必须停车",
+        "D": "无需在箭头方向的停车标志处停车"
+      },
+      "answer": "B"
     }
   ]
 }
