@@ -1,5 +1,5 @@
 {
-  "total": 129,
+  "total": 132,
   "tiles": [
     {
       "file": "q001.png",
@@ -1613,6 +1613,45 @@
         "B": "60公里/小时",
         "C": "50公里/小时",
         "D": "30公里/小时"
+      },
+      "answer": "C"
+    },
+    {
+      "file": "q130.png",
+      "audio": "q130.mp3",
+      "diagram": "q130_diagram.png",
+      "question": "如果您发生了需要向警察报告的事故，您应该在多长时间内报告…？",
+      "options": {
+        "A": "6小时",
+        "B": "12小时",
+        "C": "24小时",
+        "D": "48小时"
+      },
+      "answer": "C"
+    },
+    {
+      "file": "q131.png",
+      "audio": "q131.mp3",
+      "diagram": "q131_diagram.png",
+      "question": "当您看到校车的警告标志和灯光闪烁时，在距离它多远之前，您必须减速至40公里/小时？",
+      "options": {
+        "A": "10米",
+        "B": "25米",
+        "C": "100米",
+        "D": "50米"
+      },
+      "answer": "D"
+    },
+    {
+      "file": "q132.png",
+      "audio": "q132.mp3",
+      "diagram": "q132_diagram.png",
+      "question": "At intersections with no controls, who has right-of-way?",
+      "options": {
+        "A": "The largest vehicles",
+        "B": "Vehicles approaching at highest speed",
+        "C": "Vehicles approaching from the right",
+        "D": "Vehicles approaching from the next"
       },
       "answer": "C"
     }
