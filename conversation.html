@@ -390,19 +390,15 @@
   let lastZhText  = '';
   let lastEnText  = '';
   let currentSource = null;
-  let audioCtx = null;
   let ttsGen = 0;
 
   function unlockAudio() {
+    /* On iOS, prime a silent Audio element inside the user gesture */
     try {
-      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-      /* Play a silent buffer to fully unlock autoplay */
-      const buf = audioCtx.createBuffer(1, 1, 22050);
-      const src = audioCtx.createBufferSource();
-      src.buffer = buf;
-      src.connect(audioCtx.destination);
-      src.start(0);
+      const a = new Audio();
+      a.src = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=';
+      a.volume = 0;
+      a.play().catch(() => {});
     } catch(_) {}
   }
 
@@ -423,9 +419,12 @@
     errTimer = setTimeout(() => { el.style.display = 'none'; }, 4000);
   }
 
-  /* ── TTS (OpenAI tts-1-hd via AudioContext) ─────────────── */
+  /* ── TTS (OpenAI tts-1-hd via Audio element — iOS compatible) ── */
   function stopAudio() {
-    if (currentSource) { try { currentSource.stop(); } catch(_) {} currentSource = null; }
+    if (currentSource) {
+      try { currentSource.pause(); currentSource.src = ''; } catch(_) {}
+      currentSource = null;
+    }
   }
 
   async function speakTTS(text, lang) {
@@ -433,7 +432,7 @@
     stopAudio();
     const key = getApiKey();
     if (!key) return;
-    const gen = ++ttsGen; /* capture generation — stale calls abort on each await */
+    const gen = ++ttsGen;
     const voice = lang.startsWith('zh')
       ? (localStorage.getItem('voice_zh') || 'alloy')
       : (localStorage.getItem('voice_en') || 'shimmer');
@@ -443,24 +442,23 @@
         headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
         body: JSON.stringify({ model: 'tts-1-hd', input: text, voice })
       });
-      if (gen !== ttsGen) return; /* a newer call started — discard */
+      if (gen !== ttsGen) return;
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err.error?.message || 'HTTP ' + res.status);
       }
-      const arrayBuffer = await res.arrayBuffer();
+      const blob = await res.blob();
       if (gen !== ttsGen) return;
-      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      if (audioCtx.state === 'suspended') await audioCtx.resume();
-      const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
-      if (gen !== ttsGen) return;
-      stopAudio(); /* stop anything that snuck in while we were fetching */
-      const src = audioCtx.createBufferSource();
-      src.buffer = audioBuffer;
-      src.connect(audioCtx.destination);
-      src.onended = () => { currentSource = null; };
-      currentSource = src;
-      src.start(0);
+      const url  = URL.createObjectURL(blob);
+      const audio = new Audio(url);
+      audio.onended = () => { URL.revokeObjectURL(url); currentSource = null; };
+      audio.onerror = () => {
+        URL.revokeObjectURL(url);
+        currentSource = null;
+        if (gen === ttsGen) showErr('语音失败：音频无法播放');
+      };
+      currentSource = audio;
+      await audio.play();
     } catch(e) {
       if (gen !== ttsGen) return;
       console.error('TTS failed:', e);
@@ -672,7 +670,8 @@
     try {
       translated = await translate(original, fromLang, toLang);
     } catch(e) {
-      translated = mode === 'zh' ? '（翻译失败，请检查网络）' : '(Translation failed, check network)';
+      showErr('翻译失败：' + e.message);
+      translated = mode === 'zh' ? '（翻译失败）' : '(Translation failed)';
     }
 
     const zhText = mode === 'zh' ? original   : translated;
