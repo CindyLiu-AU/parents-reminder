@@ -139,6 +139,19 @@
       display: none; flex-direction: column; gap: 5px; justify-content: center;
     }
 
+    #correct-banner {
+      position: absolute;
+      top: 44%; left: 2%; right: 2%; bottom: 19%;
+      display: none; align-items: center; justify-content: center;
+      pointer-events: none;
+    }
+    #correct-banner span {
+      font-size: clamp(48px, 8vw, 100px);
+      font-weight: 900; color: #16a34a;
+      text-shadow: 0 3px 10px rgba(0,0,0,0.2);
+      text-align: center; line-height: 1.2;
+    }
+
     .opt-btn {
       display: flex; align-items: center; gap: 10px;
       background: none; border: none; cursor: default;
@@ -532,6 +545,9 @@
   <!-- Options area (middle zone) -->
   <div id="options-wrap"></div>
 
+  <!-- Correct answer banner -->
+  <div id="correct-banner"><span>✅ 回答正确！</span></div>
+
   <!-- Car legend: A=red B=blue C=green D=gold -->
   <div id="car-legend">
     <div class="car-item"><div class="car-icon ci-a"></div>A</div>
@@ -604,6 +620,7 @@
     if (idx < 0 || idx >= tiles.length) return;
     cur = idx;
     const t = tiles[idx];
+    document.getElementById('correct-banner').style.display = 'none';
 
     // Diagram
     const diagImg = document.getElementById('diagram-img');
@@ -669,6 +686,11 @@
       }).join('');
     if (ua && !submitted) sub.classList.add('show');
     else                  sub.classList.remove('show');
+
+    const isCorrect = submitted && t.answer && ua === t.answer;
+    const banner = document.getElementById('correct-banner');
+    banner.style.display = isCorrect ? 'flex' : 'none';
+    wrap.style.opacity   = isCorrect ? '0.25' : '1';
   }
 
   function selectOption(v) {
