@@ -1,5 +1,5 @@
 {
-  "total": 4,
+  "total": 7,
   "tiles": [
     {
       "file": "q009.png",
@@ -50,6 +50,43 @@
       },
       "diagram": "q004_diagram.png",
       "answer": "C"
+    },
+    {
+      "file": "q005.png",
+      "audio": "q005.mp3",
+      "question": "这个标志意味着？",
+      "options": {
+        "A": "仅对您右侧的交通让行",
+        "B": "这是一个警示标志，表示驾驶员可以选择停车",
+        "C": "完全停下并让所有车辆和行人先行",
+        "D": "减速并准备停车，让左侧和右侧的交通以及行人先行"
+      },
+      "diagram": "q005_diagram.png",
+      "answer": "D"
+    },
+    {
+      "file": "q006.png",
+      "audio": "q006.mp3",
+      "diagram": "q006_diagram.png",
+      "question": "在110公里/小时的限速区，持有学习驾照的驾驶者最高可以驾驶多少速度？",
+      "options": {
+        "A": "110公里/小时",
+        "B": "80公里/小时",
+        "C": "100公里/小时",
+        "D": "90公里/小时"
+      },
+      "answer": "D"
+    },
+    {
+      "file": "q007.png",
+      "audio": "q007.mp3",
+      "diagram": "q007_diagram.png",
+      "question": "哪辆车让路？",
+      "options": {
+        "A": "车辆 A",
+        "B": "车辆 B"
+      },
+      "answer": "B"
     }
   ]
 }
