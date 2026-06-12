@@ -1,5 +1,5 @@
 {
-  "total": 24,
+  "total": 25,
   "tiles": [
     {
       "file": "q001.png",
@@ -296,6 +296,19 @@
         "D": "B车"
       },
       "answer": "D"
+    },
+    {
+      "file": "q025.png",
+      "audio": "q025.mp3",
+      "diagram": "q025_diagram.png",
+      "question": "你正在驾驶汽车 A。你必须让路给",
+      "options": {
+        "A": "汽车 C 然后是汽车 B，并确保汽车 D 左转",
+        "B": "汽车 B 和 D",
+        "C": "汽车 D、C 和 B",
+        "D": "汽车 D 和 C"
+      },
+      "answer": "A"
     }
   ]
 }
