@@ -685,9 +685,9 @@
           <div class="q-actions">
             <button class="btn-diagram" onclick="openCropModal('${t.file}')">✂️ 手动裁剪</button>
             <button class="btn-extract" onclick="extractText('${t.file}')">🔍 提取文字</button>
+            ${hasText && isEnglishContent(q, opts) ? `<button class="btn-translate" onclick="translateToChinese('${t.file}')">🌏 翻译</button>` : ''}
             ${hasText ? `<button class="btn-save-text" onclick="saveStructured('${t.file}')">💾 保存</button>` : ''}
             <button class="btn-audio"   onclick="generateAudio('${t.file}')" ${!hasText ? 'disabled' : ''}>🔊 生成语音</button>
-            ${hasText && isEnglishContent(q, opts) ? `<button class="btn-translate" onclick="translateToChinese('${t.file}')">🌏 翻译</button>` : ''}
             <button class="btn-delete"  onclick="deleteQ('${t.file}')">🗑 删除</button>
           </div>
         </div>
