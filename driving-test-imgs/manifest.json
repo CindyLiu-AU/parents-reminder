@@ -1,5 +1,5 @@
 {
-  "total": 81,
+  "total": 86,
   "tiles": [
     {
       "file": "q001.png",
@@ -1000,6 +1000,65 @@
         "C": "汽车B、汽车A、汽车C和汽车D"
       },
       "answer": "A"
+    },
+    {
+      "file": "q082.png",
+      "audio": "q082.mp3",
+      "diagram": "q082_diagram.png",
+      "question": "哪辆车先走？",
+      "options": {
+        "A": "车辆 A",
+        "B": "卡车 B"
+      },
+      "answer": "B"
+    },
+    {
+      "file": "q083.png",
+      "audio": "q083.mp3",
+      "diagram": "q083_diagram.png",
+      "question": "哪辆车让路？",
+      "options": {
+        "A": "车辆A",
+        "B": "车辆B"
+      },
+      "answer": "B"
+    },
+    {
+      "file": "q084.png",
+      "audio": "q084.mp3",
+      "diagram": "q084_diagram.png",
+      "question": "您正在驾驶 A 车。您必须让路给",
+      "options": {
+        "A": "B 车和 C 车",
+        "B": "D 车和 C 车",
+        "C": "C 车",
+        "D": "D 车"
+      },
+      "answer": "A"
+    },
+    {
+      "file": "q085.png",
+      "audio": "q085.mp3",
+      "diagram": "q085_diagram.png",
+      "question": "您正在驾驶A车。谁先走？",
+      "options": {
+        "A": "您必须让左边的汽车和右边的自行车先行",
+        "B": "您必须让左边的汽车先行，自行车必须让您先行",
+        "C": "汽车在转弯前必须让您和自行车先行"
+      },
+      "answer": "A"
+    },
+    {
+      "file": "q086.png",
+      "audio": "q086.mp3",
+      "diagram": "q086_diagram.png",
+      "question": "在50公里/小时的限速区内超越自行车骑行者时，您必须保持至少的最小距离：",
+      "options": {
+        "A": "2米",
+        "B": "1.5米",
+        "C": "1米"
+      },
+      "answer": "C"
     }
   ]
 }
