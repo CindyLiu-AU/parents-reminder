@@ -1,5 +1,5 @@
 {
-  "total": 42,
+  "total": 41,
   "tiles": [
     {
       "file": "q001.png",
@@ -504,13 +504,6 @@
         "D": "在长途旅行中，您应该定期休息 10 分钟。"
       },
       "answer": "D"
-    },
-    {
-      "file": "q042.png",
-      "audio": null,
-      "question": "Which of the following statements is true?\nA Ecstasy, marijuana (cannabis) and heroin have no effect on your ability to safely control your car.\nB The effect of drugs like speed or ecstasy makes you over confident, so you take risks while driving.\nC Small amounts of marijuana and alcohol enable you to respond quicker in emergency situations.\nD The use of recreational drugs has no impact on your driving ability.",
-      "options": null,
-      "text": "Which of the following statements is true?\n\nA Ecstasy, marijuana (cannabis) and heroin have no effect on your ability to safely control your car.\n\nB The effect of drugs like speed or ecstasy makes you over confident, so you take risks while driving.\n\nC Small amounts of marijuana and alcohol enable you to respond quicker in emergency situations.\n\nD The use of recreational drugs has no impact on your driving ability."
     }
   ]
 }
