@@ -1,5 +1,5 @@
 {
-  "total": 92,
+  "total": 95,
   "tiles": [
     {
       "file": "q001.png",
@@ -1134,6 +1134,45 @@
         "D": "靠右行驶"
       },
       "answer": "C"
+    },
+    {
+      "file": "q093.png",
+      "audio": "q093.mp3",
+      "diagram": "q093_diagram.png",
+      "question": "该标识是什么意思？",
+      "options": {
+        "A": "如果保持在左侧车道可以退出",
+        "B": "前方道路曲折",
+        "C": "保持在此标志的左侧",
+        "D": "多车道道路上的慢速车流必须靠左"
+      },
+      "answer": "C"
+    },
+    {
+      "file": "q094.png",
+      "audio": "q094.mp3",
+      "diagram": "q094_diagram.png",
+      "question": "该标识是什么意思？",
+      "options": {
+        "A": "道路施工中",
+        "B": "道路前方分开",
+        "C": "前方桥梁狭窄",
+        "D": "分隔车道结束"
+      },
+      "answer": "B"
+    },
+    {
+      "file": "q095.png",
+      "audio": "q095.mp3",
+      "diagram": "q095_diagram.png",
+      "question": "该标识是什么意思？",
+      "options": {
+        "A": "这里提供轮椅",
+        "B": "只有悬挂澳大利亚残疾人停车许可证的车辆可以在此停车",
+        "C": "人行横道",
+        "D": "附近有医院"
+      },
+      "answer": "B"
     }
   ]
 }
