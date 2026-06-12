@@ -1,5 +1,5 @@
 {
-  "total": 105,
+  "total": 109,
   "tiles": [
     {
       "file": "q001.png",
@@ -1303,6 +1303,58 @@
         "D": "前方禁止超车"
       },
       "answer": "A"
+    },
+    {
+      "file": "q106.png",
+      "audio": "q106.mp3",
+      "diagram": "q106_diagram.png",
+      "question": "该标识是什么意思？",
+      "options": {
+        "A": "狭窄桥梁在前方",
+        "B": "分隔道路在前方结束",
+        "C": "分隔高速公路在前方",
+        "D": "施工中的道路"
+      },
+      "answer": "B"
+    },
+    {
+      "file": "q107.png",
+      "audio": "q107.mp3",
+      "diagram": "q107_diagram.png",
+      "question": "该标识是什么意思？",
+      "options": {
+        "A": "你正在接近交通岛",
+        "B": "在交叉口禁止右转",
+        "C": "前方有隐藏的交叉口",
+        "D": "禁止左转"
+      },
+      "answer": "D"
+    },
+    {
+      "file": "q108.png",
+      "audio": "q108.mp3",
+      "diagram": "q108_diagram.png",
+      "question": "该标识是什么意思？",
+      "options": {
+        "A": "前方蜿蜒道路",
+        "B": "仅能右转",
+        "C": "你正在行驶的道路结束，你必须让所有交通先行",
+        "D": "仅能左转"
+      },
+      "answer": "C"
+    },
+    {
+      "file": "q109.png",
+      "audio": "q109.mp3",
+      "diagram": "q109_diagram.png",
+      "question": "该标识是什么意思？",
+      "options": {
+        "A": "让行",
+        "B": "前方死胡同",
+        "C": "前方停车标志",
+        "D": "前方慢行车辆"
+      },
+      "answer": "C"
     }
   ]
 }
