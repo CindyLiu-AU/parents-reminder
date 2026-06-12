@@ -1,19 +1,6 @@
 {
-  "total": 7,
+  "total": 8,
   "tiles": [
-    {
-      "file": "q009.png",
-      "audio": "q009.mp3",
-      "question": "汽车A能跨越双实线吗？",
-      "options": {
-        "A": "可以——为了超车",
-        "B": "可以——为了转入车道",
-        "C": "可以——如果安全的话，为了超过骑自行车的人",
-        "D": "可以——为了掉头"
-      },
-      "diagram": "q009_diagram.png",
-      "answer": "C"
-    },
     {
       "file": "q002.png",
       "audio": "q002.mp3",
@@ -87,6 +74,21 @@
         "B": "车辆 B"
       },
       "answer": "B"
+    },
+    {
+      "file": "q008.png",
+      "audio": "q008.mp3",
+      "diagram": "q008_diagram.png",
+      "question": "哪辆车要让路？",
+      "options": {
+        "A": "摩托车手",
+        "B": "B 车"
+      },
+      "answer": "B"
+    },
+    {
+      "file": "q008.png",
+      "audio": null
     }
   ]
 }
