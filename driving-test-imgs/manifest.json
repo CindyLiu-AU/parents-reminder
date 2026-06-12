@@ -1,5 +1,5 @@
 {
-  "total": 54,
+  "total": 56,
   "tiles": [
     {
       "file": "q001.png",
@@ -661,7 +661,41 @@
     },
     {
       "file": "q054.png",
-      "audio": null
+      "audio": "q054.mp3",
+      "diagram": "q054_diagram.png",
+      "question": "有红色交通信号灯和一个绿色右转箭头。汽车A和汽车B直行，汽车C右转。哪辆（些）车先走？",
+      "options": {
+        "A": "汽车A和汽车C",
+        "B": "汽车A和汽车B",
+        "C": "汽车A",
+        "D": "汽车C"
+      },
+      "answer": "D"
+    },
+    {
+      "file": "q055.png",
+      "audio": "q055.mp3",
+      "diagram": "q055_diagram.png",
+      "question": "您正在驾驶A车。您必须让路给",
+      "options": {
+        "A": "无需让路，其他车辆必须让路给您",
+        "B": "D车",
+        "C": "B车、C车和D车",
+        "D": "B车"
+      },
+      "answer": "D"
+    },
+    {
+      "file": "q056.png",
+      "audio": "q056.mp3",
+      "diagram": "q056_diagram.png",
+      "question": "当在100公里/小时的限速区的道路上行驶并且骑自行车的人并排行驶时，您必须至少保持以下最小距离超车：",
+      "options": {
+        "A": "3米 - 在安全的情况下。",
+        "B": "1.5米 - 在安全的情况下。",
+        "C": "在超过60公里/小时的速度下超车并排行驶的骑自行车者太冒险。"
+      },
+      "answer": "B"
     }
   ]
 }
