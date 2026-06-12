@@ -1,5 +1,5 @@
 {
-  "total": 7,
+  "total": 6,
   "tiles": [
     {
       "file": "q002.png",
@@ -72,17 +72,6 @@
       "options": {
         "A": "车辆 A",
         "B": "车辆 B"
-      },
-      "answer": "B"
-    },
-    {
-      "file": "q008.png",
-      "audio": "q008.mp3",
-      "diagram": "q008_diagram.png",
-      "question": "哪辆车要让路？",
-      "options": {
-        "A": "摩托车手",
-        "B": "B 车"
       },
       "answer": "B"
     }
