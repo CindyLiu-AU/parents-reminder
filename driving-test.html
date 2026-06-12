@@ -689,8 +689,13 @@
 
     const isCorrect = submitted && t.answer && ua === t.answer;
     const banner = document.getElementById('correct-banner');
-    banner.style.display = isCorrect ? 'flex' : 'none';
-    wrap.style.opacity   = isCorrect ? '0.25' : '1';
+    if (isCorrect) {
+      banner.querySelector('span').textContent = '✅ ' + t.answer;
+      banner.style.display = 'flex';
+    } else {
+      banner.style.display = 'none';
+    }
+    wrap.style.opacity = isCorrect ? '0.25' : '1';
   }
 
   function selectOption(v) {
