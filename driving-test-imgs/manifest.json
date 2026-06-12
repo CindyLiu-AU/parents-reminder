@@ -1,5 +1,5 @@
 {
-  "total": 22,
+  "total": 24,
   "tiles": [
     {
       "file": "q001.png",
@@ -270,6 +270,30 @@
         "B": "限速区结束",
         "C": "前方没有急剧的左转弯",
         "D": "不得左转"
+      },
+      "answer": "D"
+    },
+    {
+      "file": "q023.png",
+      "audio": "q023.mp3",
+      "diagram": "q023_diagram.png",
+      "question": "哪辆车必须让路？",
+      "options": {
+        "A": "车辆A",
+        "B": "车辆B"
+      },
+      "answer": "B"
+    },
+    {
+      "file": "q024.png",
+      "audio": "q024.mp3",
+      "diagram": "q024_diagram.png",
+      "question": "您正在驾驶A车。您必须让路给",
+      "options": {
+        "A": "没有人，其他车辆必须让路给您",
+        "B": "D车",
+        "C": "B车、C车和D车",
+        "D": "B车"
       },
       "answer": "D"
     }
