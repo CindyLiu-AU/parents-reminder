@@ -1,5 +1,5 @@
 {
-  "total": 65,
+  "total": 67,
   "tiles": [
     {
       "file": "q001.png",
@@ -805,6 +805,32 @@
         "D": "等待5秒然后快速转弯"
       },
       "answer": "A"
+    },
+    {
+      "file": "q066.png",
+      "audio": "q066.mp3",
+      "diagram": "q066_diagram.png",
+      "question": "在110公里/小时的限速区内，持有学习驾照的驾驶者最高可以驾驶多少速度？",
+      "options": {
+        "A": "110公里/小时",
+        "B": "80公里/小时",
+        "C": "100公里/小时",
+        "D": "90公里/小时"
+      },
+      "answer": "D"
+    },
+    {
+      "file": "q067.png",
+      "audio": "q067.mp3",
+      "diagram": "q067_diagram.png",
+      "question": "车辆应按什么顺序通过路口？",
+      "options": {
+        "A": "Car C，然后Car B，然后Car A",
+        "B": "Car B，然后Car C，然后Car A",
+        "C": "Car B，然后Car A，然后Car C",
+        "D": "Car A，然后Car B，然后Car C"
+      },
+      "answer": "B"
     }
   ]
 }
