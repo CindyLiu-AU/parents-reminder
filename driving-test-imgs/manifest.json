@@ -1,5 +1,5 @@
 {
-  "total": 101,
+  "total": 105,
   "tiles": [
     {
       "file": "q001.png",
@@ -1251,6 +1251,58 @@
         "D": "你必须左转"
       },
       "answer": "D"
+    },
+    {
+      "file": "q102.png",
+      "audio": "q102.mp3",
+      "diagram": "q102_diagram.png",
+      "question": "该标识是什么意思？",
+      "options": {
+        "A": "只有在其他车辆接近时才停车",
+        "B": "50米处有减速带标志",
+        "C": "100米处有停车标志",
+        "D": "你必须完全停下"
+      },
+      "answer": "D"
+    },
+    {
+      "file": "q103.png",
+      "audio": "q103.mp3",
+      "diagram": "q103_diagram.png",
+      "question": "该标识是什么意思？",
+      "options": {
+        "A": "双向交通结束",
+        "B": "道路与另一条道路汇合",
+        "C": "双向交通 - 车辆在两个方向行驶",
+        "D": "前方交叉街道的路缘车道"
+      },
+      "answer": "C"
+    },
+    {
+      "file": "q104.png",
+      "audio": "q104.mp3",
+      "diagram": "q104_diagram.png",
+      "question": "该标识是什么意思？",
+      "options": {
+        "A": "前方有分岔路",
+        "B": "前方是死胡同",
+        "C": "急转弯",
+        "D": "左侧是死胡同"
+      },
+      "answer": "C"
+    },
+    {
+      "file": "q105.png",
+      "audio": "q105.mp3",
+      "diagram": "q105_diagram.png",
+      "question": "该标识是什么意思？",
+      "options": {
+        "A": "前方路面滑",
+        "B": "前方路面颠簸",
+        "C": "前方蜿蜒道路",
+        "D": "前方禁止超车"
+      },
+      "answer": "A"
     }
   ]
 }
