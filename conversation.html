@@ -162,8 +162,9 @@
     #err-toast {
       position: fixed; bottom: 222px; left: 50%; transform: translateX(-50%);
       background: #450a0a; border: 1px solid #dc2626; color: #fca5a5;
-      font-size: 18px; font-weight: 600; padding: 10px 24px; border-radius: 16px;
-      display: none; z-index: 200; white-space: nowrap; text-align: center;
+      font-size: 16px; font-weight: 600; padding: 12px 20px; border-radius: 16px;
+      display: none; z-index: 200; white-space: pre-wrap; text-align: center;
+      max-width: 90vw; cursor: pointer; line-height: 1.4;
     }
 
     #theme-toggle { display: none !important; }
@@ -423,8 +424,12 @@
     el.textContent = msg;
     el.style.display = 'block';
     clearTimeout(errTimer);
-    errTimer = setTimeout(() => { el.style.display = 'none'; }, 4000);
+    errTimer = setTimeout(() => { el.style.display = 'none'; }, 10000);
   }
+  document.getElementById('err-toast').addEventListener('click', () => {
+    clearTimeout(errTimer);
+    document.getElementById('err-toast').style.display = 'none';
+  });
 
   /* ── TTS (OpenAI tts-1-hd via Audio element — iOS compatible) ── */
   function stopAudio() {
@@ -684,7 +689,13 @@
     try {
       translated = await translate(original, fromLang, toLang);
     } catch(e) {
-      showErr('翻译失败：' + e.message);
+      const msg = e.message || String(e);
+      if (msg.includes('API Key') || msg.includes('api key')) {
+        openApiKeyPopup();
+        showState('idle-state');
+        return;
+      }
+      showErr('翻译失败\n' + msg + '\n（点击关闭）');
       translated = mode === 'zh' ? '（翻译失败）' : '(Translation failed)';
     }
 
