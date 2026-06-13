@@ -390,15 +390,22 @@
   let lastZhText  = '';
   let lastEnText  = '';
   let currentSource = null;
-  let ttsGen = 0;
+  let ttsGen        = 0;
+  let unlockedAudio = null;   // pre-created Audio element, iOS-approved via user gesture
 
   function unlockAudio() {
-    /* On iOS, prime a silent Audio element inside the user gesture */
+    /* iOS requires audio.play() to be called synchronously inside a user gesture.
+       We pre-create the element AND call play() here so iOS marks it as approved.
+       speakTTS() then reuses this same element after the async fetch. */
     try {
+      // Silent unlock tone (keeps AudioSession alive on iOS)
+      const silent = new Audio('data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=');
+      silent.volume = 0;
+      silent.play().catch(() => {});
+      // Pre-create the TTS element; calling play() here registers it as user-approved
       const a = new Audio();
-      a.src = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=';
-      a.volume = 0;
       a.play().catch(() => {});
+      unlockedAudio = a;
     } catch(_) {}
   }
 
@@ -436,6 +443,12 @@
     const voice = lang.startsWith('zh')
       ? (localStorage.getItem('voice_zh') || 'alloy')
       : (localStorage.getItem('voice_en') || 'shimmer');
+
+    // Reuse the pre-unlocked element (iOS approved); fall back to new Audio()
+    const audio = unlockedAudio || new Audio();
+    unlockedAudio = null;
+    currentSource = audio;
+
     try {
       const res = await fetch('https://api.openai.com/v1/audio/speech', {
         method: 'POST',
@@ -449,18 +462,19 @@
       }
       const blob = await res.blob();
       if (gen !== ttsGen) return;
-      const url  = URL.createObjectURL(blob);
-      const audio = new Audio(url);
-      audio.onended = () => { URL.revokeObjectURL(url); currentSource = null; };
+      const url = URL.createObjectURL(blob);
+      audio.onended = () => { URL.revokeObjectURL(url); if (currentSource === audio) currentSource = null; };
       audio.onerror = () => {
         URL.revokeObjectURL(url);
-        currentSource = null;
+        if (currentSource === audio) currentSource = null;
         if (gen === ttsGen) showErr('语音失败：音频无法播放');
       };
-      currentSource = audio;
+      audio.src = url;
+      audio.load();
       await audio.play();
     } catch(e) {
       if (gen !== ttsGen) return;
+      if (currentSource === audio) currentSource = null;
       console.error('TTS failed:', e);
       showErr('语音失败：' + e.message);
     }
