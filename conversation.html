@@ -500,7 +500,7 @@
     stopAudio();
     isRecording = true;
     recognition = new SR();
-    recognition.lang            = mode === 'zh' ? 'zh-CN' : 'en-AU';
+    recognition.lang            = mode === 'zh' ? 'zh-CN' : 'en-US';
     recognition.continuous      = false;
     recognition.interimResults  = false;
     recognition.maxAlternatives = 1;
