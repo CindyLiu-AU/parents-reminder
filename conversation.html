@@ -499,34 +499,33 @@
     if (!SR) { showErr('此设备不支持语音识别，请使用 Chrome 浏览器'); return; }
     stopAudio();
     isRecording = true;
-    recognition = new SR();
-    recognition.lang            = mode === 'zh' ? 'zh-CN' : 'en-US';
-    recognition.continuous      = false;
-    recognition.interimResults  = false;
-    recognition.maxAlternatives = 1;
 
-    recognition.onstart = () => {
+    // Capture instance locally so old callbacks can't bleed into a new session
+    const rec = new SR();
+    recognition = rec;
+    rec.lang            = mode === 'zh' ? 'zh-CN' : 'en-US';
+    rec.continuous      = false;
+    rec.interimResults  = false;
+    rec.maxAlternatives = 1;
+
+    rec.onstart = () => {
       setBtn(mode, true);
       document.getElementById('listen-label').textContent =
         mode === 'zh' ? '正在听… 请说中文' : 'Listening… speak English';
       document.getElementById('listen-sub').textContent = '说完自动停止';
       showState('listening-state');
-      /* Safety: auto-stop after 12s in case browser never fires onend */
       recTimeout = setTimeout(() => stopRec(), 12000);
     };
 
-    /* Stop as soon as the user goes silent — don't wait for browser delay */
-    recognition.onspeechend = () => {
-      try { recognition.stop(); } catch(_) {}
-    };
+    rec.onspeechend = () => { try { rec.stop(); } catch(_) {} };
 
-    recognition.onresult = async (e) => {
+    rec.onresult = async (e) => {
       const text = e.results[0][0].transcript.trim();
       if (text) await handleSpeech(mode, text);
     };
 
-    recognition.onerror = (e) => {
-      /* 'aborted' = user manually cancelled — not an error, go back silently */
+    rec.onerror = (e) => {
+      if (recognition !== rec) return;
       if (e.error === 'aborted') { finishRec(); showState('idle-state'); return; }
       const msgs = {
         'no-speech':   '没有听到说话，请再试一次',
@@ -538,10 +537,16 @@
       showState('idle-state');
     };
 
-    recognition.onend = () => finishRec();
+    // Only call finishRec if this is still the active session
+    rec.onend = () => { if (recognition === rec) finishRec(); };
 
-    try { recognition.start(); }
-    catch(e) { showErr('无法启动麦克风：' + e.message); finishRec(); }
+    // iOS needs ~150ms for the previous audio session to fully release
+    const delay = /iPhone|iPad|iPod/.test(navigator.userAgent) ? 150 : 0;
+    setTimeout(() => {
+      if (recognition !== rec) return;
+      try { rec.start(); }
+      catch(e) { showErr('无法启动麦克风：' + e.message); finishRec(); }
+    }, delay);
   }
 
   function stopRec() {
