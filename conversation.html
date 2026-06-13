@@ -517,7 +517,9 @@
       recTimeout = setTimeout(() => stopRec(), 12000);
     };
 
-    rec.onspeechend = () => { try { rec.stop(); } catch(_) {} };
+    // Don't call stop() in onspeechend — on Chrome iOS it can discard the result
+    // before onresult fires. Let the browser finalize naturally.
+    rec.onspeechend = () => {};
 
     rec.onresult = async (e) => {
       const text = e.results[0][0].transcript.trim();
@@ -541,7 +543,7 @@
     rec.onend = () => { if (recognition === rec) finishRec(); };
 
     // iOS needs ~150ms for the previous audio session to fully release
-    const delay = /iPhone|iPad|iPod/.test(navigator.userAgent) ? 150 : 0;
+    const delay = /iPhone|iPad|iPod/.test(navigator.userAgent) ? 300 : 0;
     setTimeout(() => {
       if (recognition !== rec) return;
       try { rec.start(); }
