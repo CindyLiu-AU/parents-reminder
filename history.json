@@ -35,15 +35,6 @@
     "time": "12:00"
   },
   {
-    "type": "custom",
-    "icon": "📋",
-    "label": "6月15日 12点-2点 免费用电",
-    "fulldate": "2026年6月15日（星期一）",
-    "time": "12:00",
-    "pin_from": "10:00",
-    "pin_until": "14:00"
-  },
-  {
     "type": "trip",
     "destination": "朗塞斯顿",
     "date": "5月8日",
