@@ -1,5 +1,26 @@
 [
   {
+    "word": "lamb",
+    "word_cn": "羔羊/羊肉",
+    "desc": "",
+    "audio": "",
+    "addedAt": "2026-06-19T12:50:41.274Z"
+  },
+  {
+    "word": "chicken",
+    "word_cn": "鸡肉",
+    "desc": "",
+    "audio": "",
+    "addedAt": "2026-06-19T12:50:41.274Z"
+  },
+  {
+    "word": "beef",
+    "word_cn": "牛肉/牛肉",
+    "desc": "",
+    "audio": "",
+    "addedAt": "2026-06-19T12:50:41.274Z"
+  },
+  {
     "word": "Saturday",
     "word_cn": "星期六",
     "desc": "简称SAT",
