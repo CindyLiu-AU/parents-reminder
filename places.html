@@ -311,7 +311,7 @@
     const open = row.classList.toggle('open');
     btn.classList.toggle('active', open);
     if (open) {
-      setTimeout(() => { document.getElementById('search-input').focus(); fixListTop(); }, 50);
+      setTimeout(() => { document.getElementById('search-input').focus(); fixListTop(); }, 10);
     } else {
       document.getElementById('search-input').value = '';
       onSearch('');
