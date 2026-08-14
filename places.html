@@ -326,6 +326,10 @@
   function onSearch(val) {
     searchQuery = val.trim().toLowerCase();
     document.getElementById('search-clear').style.display = val ? 'flex' : 'none';
+    if (searchQuery && activecat) {
+      activecat = '';
+      document.querySelectorAll('.cat-pill').forEach(p => p.classList.toggle('active', p.dataset.cat === ''));
+    }
     render();
   }
 
