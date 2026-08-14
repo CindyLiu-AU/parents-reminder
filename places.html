@@ -201,7 +201,9 @@
       <button class="search-clear" id="search-clear" onclick="clearSearch()">✕</button>
     </div>
   </div>
-  <div class="cat-wrap" id="cat-wrap"></div>
+  <div class="cat-wrap" id="cat-wrap" style="padding:6px 12px 8px">
+    <select id="cat-select" onchange="setCat(this.value)" style="width:100%;background:var(--btn);border:2px solid var(--border2);border-radius:12px;color:var(--blue2);font-size:15px;font-weight:800;font-family:inherit;padding:8px 12px;outline:none;cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%2364b5f6%22 stroke-width=%222.5%22><polyline points=%226 9 12 15 18 9%22/></svg>');background-repeat:no-repeat;background-position:right 10px center;background-size:18px;padding-right:36px"></select>
+  </div>
 </div>
 
 <div id="place-list"></div>
@@ -328,7 +330,8 @@
     document.getElementById('search-clear').style.display = val ? 'flex' : 'none';
     if (searchQuery && activecat) {
       activecat = '';
-      document.querySelectorAll('.cat-pill').forEach(p => p.classList.toggle('active', p.dataset.cat === ''));
+      const sel = document.getElementById('cat-select');
+      if (sel) sel.value = '';
     }
     render();
   }
@@ -343,7 +346,8 @@
 
   function setCat(cat) {
     activecat = cat;
-    document.querySelectorAll('.cat-pill').forEach(p => p.classList.toggle('active', p.dataset.cat === cat));
+    const sel = document.getElementById('cat-select');
+    if (sel) sel.value = cat;
     render();
   }
 
@@ -352,12 +356,14 @@
   function buildCatPills() {
     const cats = [...new Set(allPlaces.map(p => p.category).filter(c => c && !OLD_CATS.has(c)))];
     const wrap = document.getElementById('cat-wrap');
+    const sel  = document.getElementById('cat-select');
     if (cats.length < 2) { wrap.classList.remove('visible'); fixListTop(); return; }
     wrap.classList.add('visible');
     setTimeout(fixListTop, 0);
     const countOf = c => allPlaces.filter(p => p.category === c).length;
-    wrap.innerHTML = `<button class="cat-pill active" data-cat="" onclick="setCat('')">全部 ${allPlaces.length}</button>` +
-      cats.map(c => `<button class="cat-pill" data-cat="${c}" onclick="setCat('${c}')">${c} ${countOf(c)}</button>`).join('');
+    sel.innerHTML = `<option value="">全部地点 (${allPlaces.length})</option>` +
+      cats.map(c => `<option value="${c}">${c} (${countOf(c)})</option>`).join('');
+    sel.value = activecat;
   }
 
   function timeSince(iso) {
