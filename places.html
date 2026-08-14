@@ -482,6 +482,45 @@
   }
 
   window.addEventListener('resize', fixListTop);
+
+  // ── Pull-to-refresh ──
+  let pullStartY = 0, pulling = false;
+  const PULL_THRESHOLD = 80;
+
+  const pullIndicator = document.createElement('div');
+  pullIndicator.style.cssText = 'position:fixed;top:0;left:50%;transform:translateX(-50%) translateY(-60px);background:var(--accent);color:var(--accent-fg);border-radius:0 0 20px 20px;padding:6px 20px;font-size:14px;font-weight:800;font-family:inherit;z-index:999;transition:transform 0.2s;pointer-events:none';
+  pullIndicator.textContent = '↓ 下拉刷新';
+  document.body.appendChild(pullIndicator);
+
+  document.addEventListener('touchstart', e => {
+    if (window.scrollY === 0) { pullStartY = e.touches[0].clientY; pulling = true; }
+  }, { passive: true });
+
+  document.addEventListener('touchmove', e => {
+    if (!pulling) return;
+    const dist = e.touches[0].clientY - pullStartY;
+    if (dist > 0) {
+      const pct = Math.min(dist / PULL_THRESHOLD, 1);
+      pullIndicator.style.transform = `translateX(-50%) translateY(${-60 + pct * 60}px)`;
+      pullIndicator.textContent = dist >= PULL_THRESHOLD ? '↑ 释放刷新' : '↓ 下拉刷新';
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchend', e => {
+    if (!pulling) return;
+    const dist = e.changedTouches[0].clientY - pullStartY;
+    pullIndicator.style.transform = 'translateX(-50%) translateY(-60px)';
+    pullIndicator.textContent = '↓ 下拉刷新';
+    pulling = false;
+    if (dist >= PULL_THRESHOLD) {
+      pullIndicator.textContent = '🔄 刷新中…';
+      pullIndicator.style.transform = 'translateX(-50%) translateY(0)';
+      init().then(() => {
+        setTimeout(() => { pullIndicator.style.transform = 'translateX(-50%) translateY(-60px)'; }, 800);
+      });
+    }
+  });
+
   init();
 </script>
 </body>
