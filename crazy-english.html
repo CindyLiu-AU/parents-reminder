@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <title>Crazy English</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg:       #0d1b2a; --surface: #112240; --border: #1e3a5f;
+      --text:     #f0f4f8; --muted:   #64748b; --dim:    #334d66;
+      --accent:   #f59e0b; --accent2: #3b82f6;
+      --green:    #22c55e; --red:     #ef4444;
+    }
+    html[data-theme="light"] {
+      --bg:      #f0f6ff; --surface: #ffffff; --border: #c5d8f0;
+      --text:    #0f1f35; --muted:   #475569; --dim:    #94a3b8;
+      --accent:  #d97706; --accent2: #2563eb;
+      --green:   #16a34a; --red:     #dc2626;
+    }
+
+    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; min-height: 100vh; }
+
+    /* ── Header ── */
+    #header {
+      position: sticky; top: 0; z-index: 50;
+      background: var(--bg); border-bottom: 1px solid var(--border);
+      padding: 10px 14px;
+    }
+    .header-row1 { display: flex; align-items: center; gap: 8px; }
+    .header-row1 h1 { flex: 1; font-size: 18px; font-weight: 900; color: var(--accent); }
+    .hbtn {
+      flex-shrink: 0; background: var(--surface); border: 2px solid var(--border);
+      border-radius: 10px; color: var(--text); font-size: 13px; font-weight: 700;
+      font-family: inherit; padding: 7px 12px; cursor: pointer;
+    }
+    .hbtn:active { opacity: 0.7; }
+
+    /* ── Tabs ── */
+    .tabs { display: flex; gap: 6px; margin-top: 10px; }
+    .tab {
+      flex: 1; padding: 8px 0; border-radius: 10px; border: 2px solid var(--border);
+      background: var(--surface); color: var(--muted); font-size: 14px; font-weight: 700;
+      font-family: inherit; cursor: pointer; text-align: center;
+    }
+    .tab.active { background: var(--accent); border-color: var(--accent); color: #1a1000; }
+
+    /* ── Word list ── */
+    #word-list { padding: 10px 14px; display: flex; flex-direction: column; gap: 10px; }
+
+    .word-card {
+      background: var(--surface); border: 1.5px solid var(--border); border-radius: 14px;
+      padding: 14px 14px 10px; cursor: pointer;
+    }
+    .word-card.expanded { border-color: var(--accent); }
+
+    .word-top { display: flex; align-items: center; gap: 10px; }
+    .word-type { font-size: 11px; font-weight: 700; background: var(--border); border-radius: 6px; padding: 2px 7px; color: var(--muted); flex-shrink: 0; }
+    .word-en { font-size: 20px; font-weight: 800; color: var(--text); flex: 1; }
+    .word-zh { font-size: 15px; color: var(--accent); font-weight: 700; margin-top: 4px; }
+
+    .word-body { display: none; margin-top: 10px; border-top: 1px solid var(--border); padding-top: 10px; }
+    .word-card.expanded .word-body { display: block; }
+
+    .word-example { font-size: 14px; color: var(--muted); font-style: italic; margin-bottom: 10px; line-height: 1.5; }
+
+    /* ── Pronunciation buttons ── */
+    .say-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .say-btn {
+      flex: 1; min-width: 60px; padding: 10px 6px; border-radius: 10px;
+      border: 2px solid var(--accent2); background: rgba(59,130,246,0.1);
+      color: var(--accent2); font-size: 13px; font-weight: 800; font-family: inherit;
+      cursor: pointer; text-align: center;
+    }
+    .say-btn:active { opacity: 0.7; }
+    .say-btn.running { background: rgba(59,130,246,0.25); border-color: var(--green); color: var(--green); }
+    .say-progress { font-size: 13px; color: var(--green); font-weight: 700; margin-top: 6px; text-align: center; }
+
+    /* ── Add form ── */
+    #add-panel { padding: 14px; display: none; flex-direction: column; gap: 12px; }
+    #add-panel.visible { display: flex; }
+    .form-label { font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .form-input, .form-select, .form-textarea {
+      width: 100%; background: var(--surface); border: 2px solid var(--border);
+      border-radius: 10px; color: var(--text); font-size: 16px; font-family: inherit;
+      padding: 10px 12px; outline: none;
+    }
+    .form-input:focus, .form-textarea:focus { border-color: var(--accent2); }
+    .form-textarea { min-height: 70px; resize: vertical; }
+    .form-select { cursor: pointer; }
+    .submit-btn {
+      width: 100%; padding: 14px; border-radius: 12px; border: none;
+      background: var(--accent); color: #1a1000; font-size: 16px; font-weight: 900;
+      font-family: inherit; cursor: pointer;
+    }
+    .submit-btn:active { opacity: 0.8; }
+
+    /* ── Empty state ── */
+    .empty { text-align: center; color: var(--muted); padding: 60px 20px; font-size: 16px; }
+
+    /* ── Pull-to-refresh ── */
+    #pull-indicator {
+      position: fixed; top: 0; left: 50%; transform: translateX(-50%) translateY(-60px);
+      background: var(--accent); color: #1a1000; border-radius: 0 0 20px 20px;
+      padding: 6px 20px; font-size: 14px; font-weight: 800; z-index: 999;
+      transition: transform 0.2s; pointer-events: none;
+    }
+
+    /* ── Delete button ── */
+    .del-btn {
+      float: right; background: none; border: 1.5px solid var(--border);
+      border-radius: 8px; color: var(--muted); font-size: 12px;
+      padding: 4px 8px; cursor: pointer; font-family: inherit; margin-left: 8px;
+    }
+    .del-btn:active { color: var(--red); border-color: var(--red); }
+  </style>
+</head>
+<body>
+
+<div id="pull-indicator">↓ 下拉刷新</div>
+
+<div id="header">
+  <div class="header-row1">
+    <h1>🗣 Crazy English</h1>
+    <button class="hbtn" onclick="toggleTheme()">☀️</button>
+    <button class="hbtn" id="count-badge" style="color:var(--accent)">0 词</button>
+  </div>
+  <div class="tabs" style="margin-top:10px">
+    <button class="tab active" id="tab-browse" onclick="showTab('browse')">📖 学习</button>
+    <button class="tab" id="tab-add" onclick="showTab('add')">➕ 添加</button>
+  </div>
+</div>
+
+<div id="word-list"></div>
+
+<div id="add-panel">
+  <div>
+    <div class="form-label">英文单词 / 短语 / 句子 *</div>
+    <input class="form-input" id="f-word" placeholder="e.g. apple / turn left / How are you?" />
+  </div>
+  <div>
+    <div class="form-label">中文意思 *</div>
+    <input class="form-input" id="f-zh" placeholder="e.g. 苹果" />
+  </div>
+  <div>
+    <div class="form-label">类型</div>
+    <select class="form-select" id="f-type">
+      <option value="word">单词 Word</option>
+      <option value="phrase">短语 Phrase</option>
+      <option value="sentence">句子 Sentence</option>
+    </select>
+  </div>
+  <div>
+    <div class="form-label">例句 (选填)</div>
+    <textarea class="form-textarea" id="f-example" placeholder="e.g. I eat an apple every day."></textarea>
+  </div>
+  <button class="submit-btn" onclick="addWord()">✅ 添加</button>
+</div>
+
+<script>
+  const FB_URL = 'https://parents-reminder-places-default-rtdb.asia-southeast1.firebasedatabase.app/crazy-english.json';
+  const THEME_KEY = 'ce_theme';
+
+  let allWords    = [];
+  let activeTab   = 'browse';
+  let expandedId  = null;
+  let ttsVoiceEn  = null;
+  let isRepeating = false;
+  let repeatStop  = false;
+
+  // ── Theme ──
+  function applyTheme(t) { document.documentElement.setAttribute('data-theme', t); }
+  function toggleTheme() {
+    const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    localStorage.setItem(THEME_KEY, next); applyTheme(next);
+  }
+  applyTheme(localStorage.getItem(THEME_KEY) || 'dark');
+
+  // ── TTS ──
+  function initVoices() {
+    const v = speechSynthesis.getVoices();
+    if (!v.length) return false;
+    ttsVoiceEn = v.find(x => x.lang === 'en-AU') || v.find(x => x.lang === 'en-GB')
+              || v.find(x => x.lang.startsWith('en') && x.localService)
+              || v.find(x => x.lang.startsWith('en')) || null;
+    return true;
+  }
+  speechSynthesis.addEventListener('voiceschanged', initVoices);
+  let _vp = 0;
+  const _vt = setInterval(() => { if (initVoices() || ++_vp > 30) clearInterval(_vt); }, 200);
+  setInterval(() => { if (speechSynthesis.paused) speechSynthesis.resume(); }, 100);
+
+  const delay = ms => new Promise(r => setTimeout(r, ms));
+
+  function sayEnglish(text) {
+    return new Promise(resolve => {
+      if (!text) { resolve(); return; }
+      speechSynthesis.cancel();
+      const utt = new SpeechSynthesisUtterance(text);
+      utt.lang = 'en-AU'; utt.rate = 0.85;
+      if (ttsVoiceEn) utt.voice = ttsVoiceEn;
+      let done = false;
+      const finish = () => { if (!done) { done = true; resolve(); } };
+      utt.onend = finish; utt.onerror = finish;
+      setTimeout(finish, Math.max(3000, text.length * 120));
+      speechSynthesis.speak(utt);
+    });
+  }
+
+  async function startRepeat(id, times) {
+    const word = allWords.find(w => w.id === id);
+    if (!word) return;
+    stopRepeat();
+    isRepeating = true; repeatStop = false;
+    const prog = document.getElementById('prog-' + id);
+    document.querySelectorAll('.say-btn[data-id="' + id + '"]').forEach(b => b.classList.remove('running'));
+    document.getElementById('say-' + id + '-' + times).classList.add('running');
+    for (let i = 1; i <= times && !repeatStop; i++) {
+      if (prog) prog.textContent = `第 ${i} / ${times} 次`;
+      await sayEnglish(word.word);
+      if (!repeatStop && i < times) await delay(700);
+    }
+    if (!repeatStop && prog) prog.textContent = `✓ 已朗读 ${times} 次`;
+    isRepeating = false;
+    document.querySelectorAll('.say-btn[data-id="' + id + '"]').forEach(b => b.classList.remove('running'));
+  }
+
+  function stopRepeat() {
+    repeatStop = true; isRepeating = false;
+    speechSynthesis.cancel();
+  }
+
+  // ── Tabs ──
+  function showTab(tab) {
+    activeTab = tab;
+    document.getElementById('tab-browse').classList.toggle('active', tab === 'browse');
+    document.getElementById('tab-add').classList.toggle('active', tab === 'add');
+    document.getElementById('word-list').style.display  = tab === 'browse' ? 'flex' : 'none';
+    document.getElementById('add-panel').classList.toggle('visible', tab === 'add');
+    if (tab === 'add') setTimeout(() => document.getElementById('f-word').focus(), 50);
+  }
+
+  // ── Expand/collapse ──
+  function toggleCard(id) {
+    stopRepeat();
+    expandedId = expandedId === id ? null : id;
+    render();
+  }
+
+  // ── Render ──
+  function render() {
+    const el = document.getElementById('word-list');
+    document.getElementById('count-badge').textContent = allWords.length + ' 词';
+    if (!allWords.length) {
+      el.innerHTML = '<div class="empty">还没有单词<br>点击 ➕ 添加 开始吧！</div>';
+      return;
+    }
+    const TYPE_LABEL = { word: '单词', phrase: '短语', sentence: '句子' };
+    el.innerHTML = allWords.map(w => {
+      const exp = expandedId === w.id;
+      return `<div class="word-card${exp ? ' expanded' : ''}" onclick="toggleCard('${w.id}')">
+        <div class="word-top">
+          <span class="word-type">${TYPE_LABEL[w.type] || w.type || '单词'}</span>
+          <span class="word-en">${w.word}</span>
+        </div>
+        <div class="word-zh">${w.zh}</div>
+        <div class="word-body">
+          ${w.example ? `<div class="word-example">"${w.example}"</div>` : ''}
+          <div class="say-row">
+            <button class="say-btn" id="say-${w.id}-1" data-id="${w.id}" onclick="event.stopPropagation();startRepeat('${w.id}',1)">🔊 1次</button>
+            <button class="say-btn" id="say-${w.id}-3" data-id="${w.id}" onclick="event.stopPropagation();startRepeat('${w.id}',3)">🔊 3次</button>
+            <button class="say-btn" id="say-${w.id}-5" data-id="${w.id}" onclick="event.stopPropagation();startRepeat('${w.id}',5)">🔊 5次</button>
+            <button class="say-btn" onclick="event.stopPropagation();stopRepeat()" style="border-color:var(--red);color:var(--red);background:rgba(239,68,68,0.1);flex:0 0 auto">⏹</button>
+          </div>
+          <div class="say-progress" id="prog-${w.id}"></div>
+          <button class="del-btn" onclick="event.stopPropagation();deleteWord('${w.id}')">🗑 删除</button>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // ── Firebase ──
+  async function loadWords() {
+    try {
+      const res = await fetch(FB_URL + '?t=' + Date.now(), { cache: 'no-store' });
+      const data = await res.json();
+      allWords = Array.isArray(data) ? data : [];
+    } catch { allWords = []; }
+    render();
+  }
+
+  async function saveWords() {
+    await fetch(FB_URL, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(allWords)
+    });
+  }
+
+  // ── Add word ──
+  async function addWord() {
+    const word = document.getElementById('f-word').value.trim();
+    const zh   = document.getElementById('f-zh').value.trim();
+    if (!word || !zh) { alert('请填写英文和中文意思'); return; }
+    const entry = {
+      id:      'w' + Date.now(),
+      word, zh,
+      type:    document.getElementById('f-type').value,
+      example: document.getElementById('f-example').value.trim(),
+      addedAt: new Date().toISOString().slice(0, 10)
+    };
+    allWords.unshift(entry);
+    await saveWords();
+    document.getElementById('f-word').value = '';
+    document.getElementById('f-zh').value   = '';
+    document.getElementById('f-example').value = '';
+    document.getElementById('f-type').value = 'word';
+    render();
+    showTab('browse');
+    expandedId = entry.id;
+    render();
+  }
+
+  // ── Delete ──
+  async function deleteWord(id) {
+    if (!confirm('确定删除这个词？')) return;
+    allWords = allWords.filter(w => w.id !== id);
+    if (expandedId === id) expandedId = null;
+    await saveWords();
+    render();
+  }
+
+  // ── Pull-to-refresh ──
+  let pullStartY = 0, pulling = false;
+  const PULL_THRESHOLD = 80;
+  const pullEl = document.getElementById('pull-indicator');
+
+  document.addEventListener('touchstart', e => {
+    if (window.scrollY === 0) { pullStartY = e.touches[0].clientY; pulling = true; }
+  }, { passive: true });
+  document.addEventListener('touchmove', e => {
+    if (!pulling) return;
+    const dist = e.touches[0].clientY - pullStartY;
+    if (dist > 0) {
+      const pct = Math.min(dist / PULL_THRESHOLD, 1);
+      pullEl.style.transform = `translateX(-50%) translateY(${-60 + pct * 60}px)`;
+      pullEl.textContent = dist >= PULL_THRESHOLD ? '↑ 释放刷新' : '↓ 下拉刷新';
+    }
+  }, { passive: true });
+  document.addEventListener('touchend', e => {
+    if (!pulling) return;
+    const dist = e.changedTouches[0].clientY - pullStartY;
+    pullEl.style.transform = 'translateX(-50%) translateY(-60px)';
+    pulling = false;
+    if (dist >= PULL_THRESHOLD) {
+      pullEl.textContent = '🔄 刷新中…';
+      pullEl.style.transform = 'translateX(-50%) translateY(0)';
+      loadWords().then(() => setTimeout(() => { pullEl.style.transform = 'translateX(-50%) translateY(-60px)'; }, 800));
+    }
+  });
+
+  loadWords();
+</script>
+</body>
+</html>
