@@ -182,9 +182,23 @@
   function initVoices() {
     const v = speechSynthesis.getVoices();
     if (!v.length) return false;
-    ttsVoiceEn = v.find(x => x.lang === 'en-AU') || v.find(x => x.lang === 'en-GB')
-              || v.find(x => x.lang.startsWith('en') && x.localService)
-              || v.find(x => x.lang.startsWith('en')) || null;
+    const en = v.filter(x => x.lang.startsWith('en'));
+    // prefer neural/cloud voices: Google (Chrome), Microsoft Natural (Edge), Apple premium (Safari)
+    ttsVoiceEn = en.find(x => x.name.includes('Google') && x.lang === 'en-AU')
+              || en.find(x => x.name.includes('Google') && x.lang === 'en-GB')
+              || en.find(x => x.name.includes('Google'))
+              || en.find(x => /Natural|Neural|Online/.test(x.name) && x.lang.startsWith('en-AU'))
+              || en.find(x => /Natural|Neural|Online/.test(x.name) && x.lang.startsWith('en-GB'))
+              || en.find(x => /Natural|Neural|Online/.test(x.name))
+              || en.find(x => x.name === 'Karen')
+              || en.find(x => x.name === 'Daniel')
+              || en.find(x => x.name === 'Samantha')
+              || en.find(x => !x.localService && x.lang === 'en-AU')
+              || en.find(x => !x.localService && x.lang === 'en-GB')
+              || en.find(x => !x.localService)
+              || en.find(x => x.lang === 'en-AU')
+              || en.find(x => x.lang === 'en-GB')
+              || en[0] || null;
     return true;
   }
   speechSynthesis.addEventListener('voiceschanged', initVoices);
@@ -199,7 +213,7 @@
       if (!text) { resolve(); return; }
       speechSynthesis.cancel();
       const utt = new SpeechSynthesisUtterance(text);
-      utt.lang = 'en-AU'; utt.rate = 0.85;
+      utt.lang = 'en-AU'; utt.rate = 0.9; utt.pitch = 1.0;
       if (ttsVoiceEn) utt.voice = ttsVoiceEn;
       let done = false;
       const finish = () => { if (!done) { done = true; resolve(); } };
