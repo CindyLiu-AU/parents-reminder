@@ -76,6 +76,11 @@
       transition: filter 0.2s;
     }
 
+    /* ── Read-aloud highlight ── */
+    .rw-word { border-radius: 4px; padding: 1px 3px; transition: background 0.1s, color 0.1s; }
+    .rw-word.active { background: var(--accent); color: #1a1000; }
+    .word-en.reading-all { background: rgba(245,158,11,0.18); border-radius: 6px; padding: 1px 5px; }
+
     .word-body { display: none; margin-top: 10px; border-top: 1px solid var(--border); padding-top: 10px; }
     .word-card.expanded .word-body { display: block; }
 
@@ -302,13 +307,37 @@
     });
   }
 
-  async function sayWordByWord(text) {
+  function clearHighlight(id) {
+    const el = document.getElementById('word-en-' + id);
+    if (!el) return;
+    el.classList.remove('reading-all');
+    const orig = el.dataset.orig;
+    if (orig !== undefined) { el.textContent = orig; delete el.dataset.orig; }
+  }
+
+  async function sayWordByWord(text, id) {
     if (!text) return;
     const words = text.trim().split(/\s+/);
+    const el = document.getElementById('word-en-' + id);
+    if (el) {
+      el.dataset.orig = text;
+      el.innerHTML = words.map((w, i) => `<span class="rw-word" id="rw-${id}-${i}">${w}</span>`).join(' ');
+    }
     for (let i = 0; i < words.length && !repeatStop; i++) {
+      document.querySelectorAll(`#word-en-${id} .rw-word`).forEach(s => s.classList.remove('active'));
+      const span = document.getElementById(`rw-${id}-${i}`);
+      if (span) span.classList.add('active');
       await sayEnglish(words[i]);
       if (i < words.length - 1 && !repeatStop) await delay(600);
     }
+    clearHighlight(id);
+  }
+
+  async function sayNormalHighlighted(text, id) {
+    const el = document.getElementById('word-en-' + id);
+    if (el) el.classList.add('reading-all');
+    await sayEnglish(text);
+    if (el) el.classList.remove('reading-all');
   }
 
   async function startRepeat(id, times) {
@@ -316,24 +345,29 @@
     if (!word) return;
     stopRepeat();
     isRepeating = true; repeatStop = false;
-    const mode = cardModes[id] || 'normal';
+    const isMulti = word.word.trim().split(/\s+/).length > 1;
+    const mode = isMulti ? (cardModes[id] || 'normal') : 'normal';
     const prog = document.getElementById('prog-' + id);
     document.querySelectorAll('.say-btn[data-id="' + id + '"]').forEach(b => b.classList.remove('running'));
     document.getElementById('say-' + id + '-' + times).classList.add('running');
     for (let i = 1; i <= times && !repeatStop; i++) {
       if (prog) prog.textContent = `第 ${i} / ${times} 次`;
-      if (mode === 'word') await sayWordByWord(word.word);
-      else await sayEnglish(word.word);
+      if (mode === 'word') await sayWordByWord(word.word, id);
+      else await sayNormalHighlighted(word.word, id);
       if (!repeatStop && i < times) await delay(700);
     }
     if (!repeatStop && prog) prog.textContent = `✓ 已朗读 ${times} 次`;
     isRepeating = false;
+    clearHighlight(id);
     document.querySelectorAll('.say-btn[data-id="' + id + '"]').forEach(b => b.classList.remove('running'));
   }
 
   function stopRepeat() {
     repeatStop = true; isRepeating = false;
     speechSynthesis.cancel();
+    // clear any active highlights
+    document.querySelectorAll('.rw-word.active').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.reading-all').forEach(s => s.classList.remove('reading-all'));
   }
 
   // ── View mode ──
@@ -386,18 +420,19 @@
       const exp = expandedId === w.id;
       const enMask = hideEn ? ' class="word-en word-mask" onclick="revealMask(this,event)"' : ' class="word-en"';
       const zhMask = hideZh ? ' class="word-zh word-mask" onclick="revealMask(this,event)"' : ' class="word-zh"';
+      const isMultiWord = w.word.trim().split(/\s+/).length > 1;
       return `<div class="word-card${exp ? ' expanded' : ''}" onclick="toggleCard('${w.id}')">
         <div class="word-top">
           <span class="word-type">${TYPE_LABEL[w.type] || w.type || '单词'}</span>
-          <span${enMask}>${w.word}</span>
+          <span id="word-en-${w.id}"${enMask}>${w.word}</span>
         </div>
         <div${zhMask}>${w.zh}</div>
         <div class="word-body">
           ${w.example ? `<div class="word-example">"${w.example}"</div>` : ''}
-          <div class="mode-row">
+          ${isMultiWord ? `<div class="mode-row">
             <button class="mode-btn${(cardModes[w.id]||'normal')==='word'?' active':''}" data-id="${w.id}" data-mode="word" onclick="event.stopPropagation();setMode('${w.id}','word')">🔤 逐字</button>
             <button class="mode-btn${(cardModes[w.id]||'normal')==='normal'?' active':''}" data-id="${w.id}" data-mode="normal" onclick="event.stopPropagation();setMode('${w.id}','normal')">🔊 正常</button>
-          </div>
+          </div>` : ''}
           <div class="say-row">
             <button class="say-btn" id="say-${w.id}-1" data-id="${w.id}" onclick="event.stopPropagation();startRepeat('${w.id}',1)">▶ 1次</button>
             <button class="say-btn" id="say-${w.id}-3" data-id="${w.id}" onclick="event.stopPropagation();startRepeat('${w.id}',3)">▶ 3次</button>
