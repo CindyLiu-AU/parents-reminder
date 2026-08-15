@@ -138,7 +138,8 @@
 <div id="add-panel">
   <div>
     <div class="form-label">英文单词 / 短语 / 句子 *</div>
-    <input class="form-input" id="f-word" placeholder="e.g. apple / turn left / How are you?" />
+    <input class="form-input" id="f-word" placeholder="e.g. apple / turn left / How are you?" oninput="onWordInput()" />
+    <div id="translate-status" style="font-size:12px;color:var(--muted);margin-top:4px;min-height:16px"></div>
   </div>
   <div>
     <div class="form-label">中文意思 *</div>
@@ -311,6 +312,29 @@
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(allWords)
     });
+  }
+
+  // ── Auto-translate ──
+  let _translateTimer = null;
+  function onWordInput() {
+    clearTimeout(_translateTimer);
+    const word = document.getElementById('f-word').value.trim();
+    const status = document.getElementById('translate-status');
+    if (!word) { status.textContent = ''; return; }
+    status.textContent = '翻译中…';
+    _translateTimer = setTimeout(() => autoTranslate(word), 700);
+  }
+  async function autoTranslate(word) {
+    const status = document.getElementById('translate-status');
+    try {
+      const res = await fetch('https://api.mymemory.translated.net/get?q=' + encodeURIComponent(word) + '&langpair=en|zh');
+      const data = await res.json();
+      if (data.responseStatus === 200 && data.responseData.translatedText) {
+        const zhField = document.getElementById('f-zh');
+        zhField.value = data.responseData.translatedText;
+        status.textContent = '✓ 已自动翻译';
+      } else { status.textContent = ''; }
+    } catch { status.textContent = ''; }
   }
 
   // ── Add word ──
