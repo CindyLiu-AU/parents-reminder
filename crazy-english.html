@@ -67,6 +67,13 @@
     .word-example { font-size: 14px; color: var(--muted); font-style: italic; margin-bottom: 10px; line-height: 1.5; }
 
     /* ── Pronunciation buttons ── */
+    .mode-row { display: flex; gap: 6px; margin-bottom: 8px; }
+    .mode-btn {
+      flex: 1; padding: 7px 4px; border-radius: 8px;
+      border: 2px solid var(--border); background: var(--surface);
+      color: var(--muted); font-size: 12px; font-weight: 700; font-family: inherit; cursor: pointer;
+    }
+    .mode-btn.active { background: var(--accent2); border-color: var(--accent2); color: #fff; }
     .say-row { display: flex; gap: 8px; flex-wrap: wrap; }
     .say-btn {
       flex: 1; min-width: 60px; padding: 10px 6px; border-radius: 10px;
@@ -170,6 +177,7 @@
   let ttsVoiceEn  = null;
   let isRepeating = false;
   let repeatStop  = false;
+  let cardModes   = {}; // id -> 'word' | 'normal'
 
   // ── Theme ──
   function applyTheme(t) { document.documentElement.setAttribute('data-theme', t); }
@@ -214,7 +222,7 @@
       if (!text) { resolve(); return; }
       speechSynthesis.cancel();
       const utt = new SpeechSynthesisUtterance(text);
-      utt.lang = 'en-AU'; utt.rate = 0.9; utt.pitch = 1.0;
+      utt.lang = 'en-AU'; utt.rate = 0.8; utt.pitch = 1.0;
       if (ttsVoiceEn) utt.voice = ttsVoiceEn;
       let done = false;
       const finish = () => { if (!done) { done = true; resolve(); } };
@@ -224,17 +232,35 @@
     });
   }
 
+  function setMode(id, mode) {
+    cardModes[id] = mode;
+    document.querySelectorAll('.mode-btn[data-id="' + id + '"]').forEach(b => {
+      b.classList.toggle('active', b.dataset.mode === mode);
+    });
+  }
+
+  async function sayWordByWord(text) {
+    if (!text) return;
+    const words = text.trim().split(/\s+/);
+    for (let i = 0; i < words.length && !repeatStop; i++) {
+      await sayEnglish(words[i]);
+      if (i < words.length - 1 && !repeatStop) await delay(600);
+    }
+  }
+
   async function startRepeat(id, times) {
     const word = allWords.find(w => w.id === id);
     if (!word) return;
     stopRepeat();
     isRepeating = true; repeatStop = false;
+    const mode = cardModes[id] || 'normal';
     const prog = document.getElementById('prog-' + id);
     document.querySelectorAll('.say-btn[data-id="' + id + '"]').forEach(b => b.classList.remove('running'));
     document.getElementById('say-' + id + '-' + times).classList.add('running');
     for (let i = 1; i <= times && !repeatStop; i++) {
       if (prog) prog.textContent = `第 ${i} / ${times} 次`;
-      await sayEnglish(word.word);
+      if (mode === 'word') await sayWordByWord(word.word);
+      else await sayEnglish(word.word);
       if (!repeatStop && i < times) await delay(700);
     }
     if (!repeatStop && prog) prog.textContent = `✓ 已朗读 ${times} 次`;
@@ -283,10 +309,14 @@
         <div class="word-zh">${w.zh}</div>
         <div class="word-body">
           ${w.example ? `<div class="word-example">"${w.example}"</div>` : ''}
+          <div class="mode-row">
+            <button class="mode-btn${(cardModes[w.id]||'normal')==='word'?' active':''}" data-id="${w.id}" data-mode="word" onclick="event.stopPropagation();setMode('${w.id}','word')">🔤 逐字</button>
+            <button class="mode-btn${(cardModes[w.id]||'normal')==='normal'?' active':''}" data-id="${w.id}" data-mode="normal" onclick="event.stopPropagation();setMode('${w.id}','normal')">🔊 正常</button>
+          </div>
           <div class="say-row">
-            <button class="say-btn" id="say-${w.id}-1" data-id="${w.id}" onclick="event.stopPropagation();startRepeat('${w.id}',1)">🔊 1次</button>
-            <button class="say-btn" id="say-${w.id}-3" data-id="${w.id}" onclick="event.stopPropagation();startRepeat('${w.id}',3)">🔊 3次</button>
-            <button class="say-btn" id="say-${w.id}-5" data-id="${w.id}" onclick="event.stopPropagation();startRepeat('${w.id}',5)">🔊 5次</button>
+            <button class="say-btn" id="say-${w.id}-1" data-id="${w.id}" onclick="event.stopPropagation();startRepeat('${w.id}',1)">▶ 1次</button>
+            <button class="say-btn" id="say-${w.id}-3" data-id="${w.id}" onclick="event.stopPropagation();startRepeat('${w.id}',3)">▶ 3次</button>
+            <button class="say-btn" id="say-${w.id}-5" data-id="${w.id}" onclick="event.stopPropagation();startRepeat('${w.id}',5)">▶ 5次</button>
             <button class="say-btn" onclick="event.stopPropagation();stopRepeat()" style="border-color:var(--red);color:var(--red);background:rgba(239,68,68,0.1);flex:0 0 auto">⏹</button>
           </div>
           <div class="say-progress" id="prog-${w.id}"></div>
