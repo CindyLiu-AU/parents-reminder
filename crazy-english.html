@@ -47,6 +47,15 @@
     }
     .tab.active { background: var(--accent); border-color: var(--accent); color: #1a1000; }
 
+    /* ── View mode toggle (browse only) ── */
+    #view-toggle { display: flex; gap: 6px; margin-top: 8px; }
+    .view-btn {
+      flex: 1; padding: 6px 4px; border-radius: 8px; border: 2px solid var(--border);
+      background: var(--surface); color: var(--muted); font-size: 12px; font-weight: 700;
+      font-family: inherit; cursor: pointer; text-align: center;
+    }
+    .view-btn.active { background: var(--accent2); border-color: var(--accent2); color: #fff; }
+
     /* ── Word list ── */
     #word-list { padding: 10px 14px; display: flex; flex-direction: column; gap: 10px; }
 
@@ -60,6 +69,12 @@
     .word-type { font-size: 11px; font-weight: 700; background: var(--border); border-radius: 6px; padding: 2px 7px; color: var(--muted); flex-shrink: 0; }
     .word-en { font-size: 20px; font-weight: 800; color: var(--text); flex: 1; }
     .word-zh { font-size: 15px; color: var(--accent); font-weight: 700; margin-top: 4px; }
+
+    /* ── Masked (hidden) text ── */
+    .word-mask {
+      filter: blur(7px); cursor: pointer; user-select: none; border-radius: 4px;
+      transition: filter 0.2s;
+    }
 
     .word-body { display: none; margin-top: 10px; border-top: 1px solid var(--border); padding-top: 10px; }
     .word-card.expanded .word-body { display: block; }
@@ -122,6 +137,43 @@
       padding: 4px 8px; cursor: pointer; font-family: inherit; margin-left: 8px;
     }
     .del-btn:active { color: var(--red); border-color: var(--red); }
+
+    /* ── Game panel ── */
+    #game-panel { display: none; padding: 14px; }
+    #game-panel.visible { display: block; }
+
+    .game-intro { text-align: center; color: var(--muted); padding: 20px 0 4px; font-size: 15px; line-height: 1.6; }
+    .game-start-btn {
+      width: 100%; padding: 14px; border-radius: 12px; border: none;
+      background: var(--accent2); color: #fff; font-size: 16px; font-weight: 900;
+      font-family: inherit; cursor: pointer; margin-top: 14px;
+    }
+    .game-start-btn:active { opacity: 0.8; }
+    .game-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .game-score { font-size: 14px; font-weight: 800; }
+    .game-score .ok { color: var(--green); }
+    .game-score .err { color: var(--red); }
+    .game-new-btn {
+      margin-left: auto; padding: 6px 12px; border-radius: 8px; border: 2px solid var(--border);
+      background: var(--surface); color: var(--muted); font-size: 12px; font-weight: 700;
+      font-family: inherit; cursor: pointer;
+    }
+    .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .game-tile {
+      padding: 12px 8px; border-radius: 12px; border: 2px solid var(--border);
+      background: var(--surface); color: var(--text); font-size: 14px; font-weight: 700;
+      font-family: inherit; cursor: pointer; text-align: center;
+      min-height: 52px; display: flex; align-items: center; justify-content: center;
+      word-break: break-word; transition: border-color 0.15s, background 0.15s;
+    }
+    .game-tile.selected { border-color: var(--accent2); background: rgba(59,130,246,0.18); color: var(--accent2); }
+    .game-tile.matched  { border-color: var(--green);  background: rgba(34,197,94,0.12);  color: var(--green);  opacity: 0.55; cursor: default; }
+    .game-tile.wrong    { border-color: var(--red);    background: rgba(239,68,68,0.15);  animation: shake 0.35s; }
+    @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-7px)} 75%{transform:translateX(7px)} }
+    .game-win {
+      text-align: center; padding: 24px 0 10px; font-size: 22px; font-weight: 900;
+    }
+    .game-win .sub { font-size: 15px; color: var(--green); margin-top: 6px; }
   </style>
 </head>
 <body>
@@ -136,11 +188,22 @@
   </div>
   <div class="tabs" style="margin-top:10px">
     <button class="tab active" id="tab-browse" onclick="showTab('browse')">📖 学习</button>
-    <button class="tab" id="tab-add" onclick="showTab('add')">➕ 添加</button>
+    <button class="tab" id="tab-game"   onclick="showTab('game')">🎮 游戏</button>
+    <button class="tab" id="tab-add"    onclick="showTab('add')">➕ 添加</button>
+  </div>
+  <div id="view-toggle">
+    <button class="view-btn active" data-mode="both"    onclick="setViewMode('both')">👁 双语</button>
+    <button class="view-btn"        data-mode="hide-en" onclick="setViewMode('hide-en')">🙈 隐藏英文</button>
+    <button class="view-btn"        data-mode="hide-zh" onclick="setViewMode('hide-zh')">🙈 隐藏中文</button>
   </div>
 </div>
 
 <div id="word-list"></div>
+
+<div id="game-panel">
+  <div class="game-intro">把左边的英文和右边的中文连起来<br>点击左边一个，再点右边一个</div>
+  <button class="game-start-btn" onclick="startGame()">🎮 开始游戏</button>
+</div>
 
 <div id="add-panel">
   <div>
@@ -177,7 +240,8 @@
   let ttsVoiceEn  = null;
   let isRepeating = false;
   let repeatStop  = false;
-  let cardModes   = {}; // id -> 'word' | 'normal'
+  let cardModes   = {};           // id -> 'word' | 'normal'
+  let viewMode    = 'both';       // 'both' | 'hide-en' | 'hide-zh'
 
   // ── Theme ──
   function applyTheme(t) { document.documentElement.setAttribute('data-theme', t); }
@@ -192,7 +256,6 @@
     const v = speechSynthesis.getVoices();
     if (!v.length) return false;
     const en = v.filter(x => x.lang.startsWith('en'));
-    // prefer neural/cloud voices: Google (Chrome), Microsoft Natural (Edge), Apple premium (Safari)
     ttsVoiceEn = en.find(x => x.name.includes('Google') && x.lang === 'en-AU')
               || en.find(x => x.name.includes('Google') && x.lang === 'en-GB')
               || en.find(x => x.name.includes('Google'))
@@ -273,13 +336,31 @@
     speechSynthesis.cancel();
   }
 
+  // ── View mode ──
+  function setViewMode(mode) {
+    viewMode = mode;
+    document.querySelectorAll('.view-btn').forEach(b =>
+      b.classList.toggle('active', b.dataset.mode === mode));
+    render();
+  }
+
+  function revealMask(el, e) {
+    e.stopPropagation();
+    el.classList.remove('word-mask');
+    el.onclick = null;
+  }
+
   // ── Tabs ──
   function showTab(tab) {
+    stopRepeat();
     activeTab = tab;
-    document.getElementById('tab-browse').classList.toggle('active', tab === 'browse');
-    document.getElementById('tab-add').classList.toggle('active', tab === 'add');
+    ['browse','game','add'].forEach(t => {
+      document.getElementById('tab-' + t).classList.toggle('active', t === tab);
+    });
     document.getElementById('word-list').style.display  = tab === 'browse' ? 'flex' : 'none';
+    document.getElementById('game-panel').classList.toggle('visible', tab === 'game');
     document.getElementById('add-panel').classList.toggle('visible', tab === 'add');
+    document.getElementById('view-toggle').style.display = tab === 'browse' ? 'flex' : 'none';
     if (tab === 'add') setTimeout(() => document.getElementById('f-word').focus(), 50);
   }
 
@@ -299,14 +380,18 @@
       return;
     }
     const TYPE_LABEL = { word: '单词', phrase: '短语', sentence: '句子' };
+    const hideEn = viewMode === 'hide-en';
+    const hideZh = viewMode === 'hide-zh';
     el.innerHTML = allWords.map(w => {
       const exp = expandedId === w.id;
+      const enMask = hideEn ? ' class="word-en word-mask" onclick="revealMask(this,event)"' : ' class="word-en"';
+      const zhMask = hideZh ? ' class="word-zh word-mask" onclick="revealMask(this,event)"' : ' class="word-zh"';
       return `<div class="word-card${exp ? ' expanded' : ''}" onclick="toggleCard('${w.id}')">
         <div class="word-top">
           <span class="word-type">${TYPE_LABEL[w.type] || w.type || '单词'}</span>
-          <span class="word-en">${w.word}</span>
+          <span${enMask}>${w.word}</span>
         </div>
-        <div class="word-zh">${w.zh}</div>
+        <div${zhMask}>${w.zh}</div>
         <div class="word-body">
           ${w.example ? `<div class="word-example">"${w.example}"</div>` : ''}
           <div class="mode-row">
@@ -324,6 +409,107 @@
         </div>
       </div>`;
     }).join('');
+  }
+
+  // ── Game ──
+  let gameState = null;
+
+  function startGame() {
+    if (allWords.length < 2) { alert('至少需要 2 个词才能开始游戏！'); return; }
+    const pool = [...allWords].sort(() => Math.random() - 0.5).slice(0, Math.min(6, allWords.length));
+    gameState = {
+      words:      pool,
+      rightOrder: pool.map((_,i) => i).sort(() => Math.random() - 0.5),
+      leftSel:    null,
+      rightSel:   null,
+      matched:    new Set(),
+      errors:     0,
+      wrongFlash: false
+    };
+    renderGame();
+  }
+
+  function gameSelectLeft(idx) {
+    if (!gameState || gameState.wrongFlash || gameState.matched.has(idx)) return;
+    gameState.leftSel = idx;
+    checkGameMatch();
+  }
+
+  function gameSelectRight(pos) {
+    if (!gameState || gameState.wrongFlash) return;
+    const idx = gameState.rightOrder[pos];
+    if (gameState.matched.has(idx)) return;
+    gameState.rightSel = idx;
+    checkGameMatch();
+  }
+
+  function checkGameMatch() {
+    renderGame();
+    const { leftSel, rightSel, matched, words } = gameState;
+    if (leftSel === null || rightSel === null) return;
+    if (leftSel === rightSel) {
+      const word = words[leftSel];
+      matched.add(leftSel);
+      gameState.leftSel = null; gameState.rightSel = null;
+      renderGame();
+      sayEnglish(word.word);
+    } else {
+      gameState.errors++;
+      gameState.wrongFlash = true;
+      renderGame();
+      setTimeout(() => {
+        gameState.leftSel = null; gameState.rightSel = null;
+        gameState.wrongFlash = false;
+        renderGame();
+      }, 500);
+    }
+  }
+
+  function renderGame() {
+    const panel = document.getElementById('game-panel');
+    if (!gameState) {
+      panel.innerHTML = `
+        <div class="game-intro">把左边的英文和右边的中文连起来<br>点击左边一个，再点右边一个</div>
+        <button class="game-start-btn" onclick="startGame()">🎮 开始游戏</button>`;
+      return;
+    }
+    const { words, rightOrder, leftSel, rightSel, matched, errors, wrongFlash } = gameState;
+    const allDone = matched.size === words.length;
+    let html = '';
+
+    if (allDone) {
+      html += `<div class="game-win">🎉 全部配对！`;
+      html += `<div class="sub">${errors === 0 ? '完美！零错误 🌟' : `错了 ${errors} 次`}</div></div>`;
+      html += `<button class="game-start-btn" onclick="startGame()">🔄 再来一局</button>`;
+      panel.innerHTML = html; return;
+    }
+
+    html += `<div class="game-header">
+      <div class="game-score">
+        <span class="ok">✅ ${matched.size}/${words.length}</span>
+        ${errors > 0 ? `&nbsp;<span class="err">❌ ${errors}</span>` : ''}
+      </div>
+      <button class="game-new-btn" onclick="startGame()">🔄 换一组</button>
+    </div>`;
+
+    html += `<div class="game-grid">`;
+    words.forEach((w, i) => {
+      const rightWordIdx = rightOrder[i];
+
+      // Left tile (English)
+      const lm = matched.has(i), ls = leftSel === i;
+      const lw = wrongFlash && ls;
+      const lc = 'game-tile' + (lm ? ' matched' : lw ? ' wrong' : ls ? ' selected' : '');
+      html += `<button class="${lc}" ${lm ? '' : `onclick="gameSelectLeft(${i})"`}>${lm ? '✓ ' : ''}${w.word}</button>`;
+
+      // Right tile (Chinese)
+      const rm = matched.has(rightWordIdx), rs = rightSel === rightWordIdx;
+      const rw = wrongFlash && rs;
+      const rc = 'game-tile' + (rm ? ' matched' : rw ? ' wrong' : rs ? ' selected' : '');
+      html += `<button class="${rc}" ${rm ? '' : `onclick="gameSelectRight(${i})"`}>${rm ? '✓ ' : ''}${words[rightWordIdx].zh}</button>`;
+    });
+    html += `</div>`;
+    panel.innerHTML = html;
   }
 
   // ── Firebase ──
@@ -360,8 +546,7 @@
       const res = await fetch('https://api.mymemory.translated.net/get?q=' + encodeURIComponent(word) + '&langpair=en|zh');
       const data = await res.json();
       if (data.responseStatus === 200 && data.responseData.translatedText) {
-        const zhField = document.getElementById('f-zh');
-        zhField.value = data.responseData.translatedText;
+        document.getElementById('f-zh').value = data.responseData.translatedText;
         status.textContent = '✓ 已自动翻译';
       } else { status.textContent = ''; }
     } catch { status.textContent = ''; }
