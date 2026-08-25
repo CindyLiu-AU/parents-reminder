@@ -474,17 +474,48 @@
       return new TextDecoder().decode(Uint8Array.from(bin, c => c.charCodeAt(0)));
     }
 
+    function getToken() { return localStorage.getItem(TOKEN_KEY); }
+    function saveToken(t) { localStorage.setItem(TOKEN_KEY, t.trim()); }
+    function clearToken() { localStorage.removeItem(TOKEN_KEY); }
+
+    function promptToken() {
+      const t = prompt('请输入 GitHub Access Token：');
+      if (t) { saveToken(t); return t.trim(); }
+      return null;
+    }
+
+    // Validate token silently on page load — clear if expired
+    (async () => {
+      const t = getToken();
+      if (!t) return;
+      const r = await fetch(API, { headers: { Authorization: `token ${t}` } });
+      if (r.status === 401) { clearToken(); showTokenBanner(); }
+    })();
+
+    function showTokenBanner() {
+      const existing = document.getElementById('token-banner');
+      if (existing) return;
+      const banner = document.createElement('div');
+      banner.id = 'token-banner';
+      banner.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#7c2d12;border:1px solid #f97316;border-radius:12px;padding:12px 20px;color:#fed7aa;font-size:14px;font-weight:700;z-index:600;cursor:pointer;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,0.4)';
+      banner.textContent = '⚠️ Token 已过期 — 点击重新设置';
+      banner.onclick = () => { const t = promptToken(); if (t) banner.remove(); };
+      document.body.appendChild(banner);
+    }
+
     async function modifyData(mutateFn, commitMsg) {
-      let token = localStorage.getItem(TOKEN_KEY);
+      let token = getToken();
       if (!token) {
-        token = prompt('请输入 GitHub PAT（只需输入一次）：');
+        token = promptToken();
         if (!token) return false;
-        localStorage.setItem(TOKEN_KEY, token.trim());
-        token = token.trim();
       }
       try {
         const getRes = await fetch(API, { headers: { Authorization: `token ${token}` } });
-        if (getRes.status === 401) { localStorage.removeItem(TOKEN_KEY); throw new Error('PAT 无效，请刷新重试'); }
+        if (getRes.status === 401) {
+          clearToken();
+          showTokenBanner();
+          throw new Error('Token 已过期，请点击页面下方橙色提示重新设置');
+        }
         if (!getRes.ok) throw new Error(`GitHub ${getRes.status}`);
         const info    = await getRes.json();
         const current = JSON.parse(decodeB64(info.content));
