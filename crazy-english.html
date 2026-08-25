@@ -61,12 +61,16 @@
 
     .word-card {
       background: var(--surface); border: 1.5px solid var(--border); border-radius: 14px;
-      padding: 14px 14px 10px; cursor: pointer; text-align: center;
+      padding: 14px 14px 32px; cursor: pointer; text-align: center; position: relative;
     }
     .word-card.expanded { border-color: var(--accent); }
 
     .word-top { display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; }
-    .word-type { font-size: 11px; font-weight: 700; background: var(--border); border-radius: 6px; padding: 2px 7px; color: var(--muted); }
+    .word-type {
+      position: absolute; bottom: 8px; left: 12px;
+      font-size: 11px; font-weight: 700; background: var(--border);
+      border-radius: 6px; padding: 2px 7px; color: var(--muted);
+    }
     .word-en { font-size: 26px; font-weight: 800; color: var(--text); text-align: center; }
     .word-zh { font-size: 26px; color: var(--accent); font-weight: 700; margin-top: 4px; text-align: center; }
 
@@ -427,8 +431,8 @@
       const zhMask = hideZh ? ' class="word-zh word-mask" onclick="revealMask(this,event)"' : ' class="word-zh"';
       const isMultiWord = w.word.trim().split(/\s+/).length > 1;
       return `<div class="word-card${exp ? ' expanded' : ''}" onclick="toggleCard('${w.id}')">
+        <span class="word-type">${TYPE_LABEL[w.type] || w.type || '单词'}</span>
         <div class="word-top">
-          <span class="word-type">${TYPE_LABEL[w.type] || w.type || '单词'}</span>
           <span id="word-en-${w.id}"${enMask}>${w.word}</span>
         </div>
         <div${zhMask}>${w.zh}</div>
