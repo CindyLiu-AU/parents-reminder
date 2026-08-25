@@ -214,6 +214,9 @@
     <button class="view-btn"        data-mode="hide-en" onclick="setViewMode('hide-en')">🙈 隐藏英文</button>
     <button class="view-btn"        data-mode="hide-zh" onclick="setViewMode('hide-zh')">🙈 隐藏中文</button>
   </div>
+  <div style="margin-top:6px;padding-bottom:10px">
+    <button id="filter-no-example-btn" class="view-btn" style="width:100%" onclick="toggleNoExampleFilter()">⚫ 显示无例句单词</button>
+  </div>
 </div>
 
 <div id="word-list"></div>
@@ -258,8 +261,9 @@
   let ttsVoiceEn  = null;
   let isRepeating = false;
   let repeatStop  = false;
-  let cardModes   = {};           // id -> 'word' | 'normal'
-  let viewMode    = 'both';       // 'both' | 'hide-en' | 'hide-zh'
+  let cardModes        = {};           // id -> 'word' | 'normal'
+  let viewMode         = 'both';       // 'both' | 'hide-en' | 'hide-zh'
+  let filterNoExample  = false;
 
   // ── Theme ──
   function applyTheme(t) { document.documentElement.setAttribute('data-theme', t); }
@@ -391,6 +395,14 @@
     render();
   }
 
+  function toggleNoExampleFilter() {
+    filterNoExample = !filterNoExample;
+    const btn = document.getElementById('filter-no-example-btn');
+    btn.classList.toggle('active', filterNoExample);
+    btn.textContent = filterNoExample ? '✅ 显示全部' : '⚫ 显示无例句单词';
+    render();
+  }
+
   function revealMask(el, e) {
     e.stopPropagation();
     el.classList.remove('word-mask');
@@ -433,7 +445,12 @@
     const TYPE_LABEL = { word: '单词', phrase: '短语', sentence: '句子' };
     const hideEn = viewMode === 'hide-en';
     const hideZh = viewMode === 'hide-zh';
-    el.innerHTML = allWords.map(w => {
+    const displayWords = filterNoExample ? allWords.filter(w => !w.example) : allWords;
+    if (!displayWords.length) {
+      el.innerHTML = '<div class="empty">🎉 所有单词都有例句了！</div>';
+      return;
+    }
+    el.innerHTML = displayWords.map(w => {
       const exp = expandedId === w.id;
       const enMask = hideEn ? ' class="word-en word-mask" onclick="revealMask(this,event)"' : ' class="word-en"';
       const zhMask = hideZh ? ' class="word-zh word-mask" onclick="revealMask(this,event)"' : ' class="word-zh"';
