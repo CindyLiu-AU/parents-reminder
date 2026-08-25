@@ -131,13 +131,6 @@
     /* ── Empty state ── */
     .empty { text-align: center; color: var(--muted); padding: 60px 20px; font-size: 16px; }
 
-    /* ── Pull-to-refresh ── */
-    #pull-indicator {
-      position: fixed; top: 0; left: 50%; transform: translateX(-50%) translateY(-60px);
-      background: var(--accent); color: #1a1000; border-radius: 0 0 20px 20px;
-      padding: 6px 20px; font-size: 14px; font-weight: 800; z-index: 999;
-      transition: transform 0.2s; pointer-events: none;
-    }
 
     /* ── Example indicator dot ── */
     .example-dot {
@@ -195,8 +188,6 @@
   </style>
 </head>
 <body>
-
-<div id="pull-indicator">↓ 下拉刷新</div>
 
 <div id="header">
   <div class="header-row1">
@@ -695,34 +686,6 @@
     render();
   }
 
-  // ── Pull-to-refresh ──
-  let pullStartY = 0, pulling = false;
-  const PULL_THRESHOLD = 80;
-  const pullEl = document.getElementById('pull-indicator');
-
-  document.addEventListener('touchstart', e => {
-    if (window.scrollY === 0) { pullStartY = e.touches[0].clientY; pulling = true; }
-  }, { passive: true });
-  document.addEventListener('touchmove', e => {
-    if (!pulling) return;
-    const dist = e.touches[0].clientY - pullStartY;
-    if (dist > 0) {
-      const pct = Math.min(dist / PULL_THRESHOLD, 1);
-      pullEl.style.transform = `translateX(-50%) translateY(${-60 + pct * 60}px)`;
-      pullEl.textContent = dist >= PULL_THRESHOLD ? '↑ 释放刷新' : '↓ 下拉刷新';
-    }
-  }, { passive: true });
-  document.addEventListener('touchend', e => {
-    if (!pulling) return;
-    const dist = e.changedTouches[0].clientY - pullStartY;
-    pullEl.style.transform = 'translateX(-50%) translateY(-60px)';
-    pulling = false;
-    if (dist >= PULL_THRESHOLD) {
-      pullEl.textContent = '🔄 刷新中…';
-      pullEl.style.transform = 'translateX(-50%) translateY(0)';
-      loadWords().then(() => setTimeout(() => { pullEl.style.transform = 'translateX(-50%) translateY(-60px)'; }, 800));
-    }
-  });
 
   loadWords();
 </script>
