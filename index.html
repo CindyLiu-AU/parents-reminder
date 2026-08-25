@@ -267,7 +267,7 @@
 
     #timeslot-badge { display: none; }
 
-    #reminders-btn, #spending-btn, #flashcards-btn, #roadrules-btn, #dict-btn, #places-btn, #english-btn {
+    #reminders-btn, #spending-btn, #flashcards-btn, #roadrules-btn, #dict-btn, #places-btn, #english-btn, #conv-btn {
       position: fixed;
       right: 20px;
       background: #1e3a6e;
@@ -310,8 +310,9 @@
     #roadrules-btn  { bottom: 316px; }
     #dict-btn       { bottom: 380px; }
     #english-btn    { bottom: 444px; }
-    #places-btn     { bottom: 508px; }
-    #podcast-btn    { bottom: 572px; }
+    #conv-btn       { bottom: 508px; }
+    #places-btn     { bottom: 572px; }
+    #podcast-btn    { bottom: 636px; }
 
     /* Coles button (left side) */
     #coles-btn {
@@ -591,6 +592,7 @@
     html.light #roadrules-btn,
     html.light #dict-btn,
     html.light #english-btn,
+    html.light #conv-btn,
     html.light #places-btn,
     html.light #podcast-btn,
     html.light #conv-btn {
@@ -634,6 +636,7 @@
     <a href="spending.html" id="spending-btn" onclick="event.stopPropagation()"><span class="nav-label">购物账单</span>🛒</a>
     <a href="places.html" id="places-btn" onclick="event.stopPropagation()"><span class="nav-label">常去地点</span>📍</a>
     <a href="crazy-english.html" id="english-btn" onclick="event.stopPropagation()"><span class="nav-label">疯狂英语</span>🗣</a>
+    <a href="conversation.html"  id="conv-btn"    onclick="event.stopPropagation()"><span class="nav-label">兔子翻译</span>🐰</a>
     <a href="reminders.html" id="reminders-btn" onclick="markRemindersSeen();event.stopPropagation()"><span class="nav-label">通知提醒</span>📋<span class="nav-badge" id="reminder-badge" style="display:none;"></span></a>
   </nav>
 
