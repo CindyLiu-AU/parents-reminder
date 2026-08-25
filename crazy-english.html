@@ -496,7 +496,7 @@
 
   function startGame() {
     if (allWords.length < 2) { alert('至少需要 2 个词才能开始游戏！'); return; }
-    const pool = [...allWords].sort(() => Math.random() - 0.5).slice(0, Math.min(6, allWords.length));
+    const pool = [...allWords].sort(() => Math.random() - 0.5).slice(0, Math.min(4, allWords.length));
     gameState = {
       words:      pool,
       rightOrder: pool.map((_,i) => i).sort(() => Math.random() - 0.5),
