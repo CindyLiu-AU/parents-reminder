@@ -214,8 +214,12 @@
     <button class="view-btn"        data-mode="hide-en" onclick="setViewMode('hide-en')">🙈 隐藏英文</button>
     <button class="view-btn"        data-mode="hide-zh" onclick="setViewMode('hide-zh')">🙈 隐藏中文</button>
   </div>
-  <div style="margin-top:6px;padding-bottom:10px">
-    <button id="filter-no-example-btn" class="view-btn" style="width:100%" onclick="toggleNoExampleFilter()">⚫ 显示无例句单词</button>
+  <div id="filter-row" style="display:flex;gap:6px;margin-top:6px;padding-bottom:10px">
+    <button class="view-btn active" data-filter="all"        onclick="setFilter('all')">全部</button>
+    <button class="view-btn"        data-filter="no-example" onclick="setFilter('no-example')">⚫ 无例句</button>
+    <button class="view-btn"        data-filter="word"       onclick="setFilter('word')">单词</button>
+    <button class="view-btn"        data-filter="phrase"     onclick="setFilter('phrase')">短语</button>
+    <button class="view-btn"        data-filter="sentence"   onclick="setFilter('sentence')">句子</button>
   </div>
 </div>
 
@@ -263,7 +267,7 @@
   let repeatStop  = false;
   let cardModes        = {};           // id -> 'word' | 'normal'
   let viewMode         = 'both';       // 'both' | 'hide-en' | 'hide-zh'
-  let filterNoExample  = false;
+  let activeFilter = 'all'; // 'all' | 'no-example' | 'word' | 'phrase' | 'sentence'
 
   // ── Theme ──
   function applyTheme(t) { document.documentElement.setAttribute('data-theme', t); }
@@ -395,11 +399,10 @@
     render();
   }
 
-  function toggleNoExampleFilter() {
-    filterNoExample = !filterNoExample;
-    const btn = document.getElementById('filter-no-example-btn');
-    btn.classList.toggle('active', filterNoExample);
-    btn.textContent = filterNoExample ? '✅ 显示全部' : '⚫ 显示无例句单词';
+  function setFilter(f) {
+    activeFilter = f;
+    document.querySelectorAll('#filter-row .view-btn').forEach(b =>
+      b.classList.toggle('active', b.dataset.filter === f));
     render();
   }
 
@@ -445,9 +448,15 @@
     const TYPE_LABEL = { word: '单词', phrase: '短语', sentence: '句子' };
     const hideEn = viewMode === 'hide-en';
     const hideZh = viewMode === 'hide-zh';
-    const displayWords = filterNoExample ? allWords.filter(w => !w.example) : allWords;
+    const displayWords = allWords.filter(w => {
+      if (activeFilter === 'no-example') return !w.example;
+      if (activeFilter === 'word')       return w.type === 'word';
+      if (activeFilter === 'phrase')     return w.type === 'phrase';
+      if (activeFilter === 'sentence')   return w.type === 'sentence';
+      return true;
+    });
     if (!displayWords.length) {
-      el.innerHTML = '<div class="empty">🎉 所有单词都有例句了！</div>';
+      el.innerHTML = '<div class="empty">没有符合条件的词</div>';
       return;
     }
     el.innerHTML = displayWords.map(w => {
