@@ -135,13 +135,14 @@
       transition: transform 0.2s; pointer-events: none;
     }
 
-    /* ── Delete button ── */
-    .del-btn {
+    /* ── Delete / Edit buttons ── */
+    .del-btn, .edit-btn {
       float: right; background: none; border: 1.5px solid var(--border);
       border-radius: 8px; color: var(--muted); font-size: 12px;
       padding: 4px 8px; cursor: pointer; font-family: inherit; margin-left: 8px;
     }
-    .del-btn:active { color: var(--red); border-color: var(--red); }
+    .del-btn:active  { color: var(--red);    border-color: var(--red);    }
+    .edit-btn:active { color: var(--accent2); border-color: var(--accent2); }
 
     /* ── Game panel ── */
     #game-panel { display: none; padding: 14px; }
@@ -387,6 +388,10 @@
   // ── Tabs ──
   function showTab(tab) {
     stopRepeat();
+    if (tab !== 'add' && editingId) {
+      editingId = null;
+      document.querySelector('#add-panel .submit-btn').textContent = '✅ 添加';
+    }
     activeTab = tab;
     ['browse','game','add'].forEach(t => {
       document.getElementById('tab-' + t).classList.toggle('active', t === tab);
@@ -440,7 +445,8 @@
             <button class="say-btn" onclick="event.stopPropagation();stopRepeat()" style="border-color:var(--red);color:var(--red);background:rgba(239,68,68,0.1);flex:0 0 auto">⏹</button>
           </div>
           <div class="say-progress" id="prog-${w.id}"></div>
-          <button class="del-btn" onclick="event.stopPropagation();deleteWord('${w.id}')">🗑 删除</button>
+          <button class="del-btn"  onclick="event.stopPropagation();deleteWord('${w.id}')">🗑 删除</button>
+          <button class="edit-btn" onclick="event.stopPropagation();editWord('${w.id}')">✏️ 编辑</button>
         </div>
       </div>`;
     }).join('');
@@ -587,28 +593,58 @@
     } catch { status.textContent = ''; }
   }
 
-  // ── Add word ──
+  // ── Add / Edit word ──
+  let editingId = null;
+
+  function editWord(id) {
+    const w = allWords.find(x => x.id === id);
+    if (!w) return;
+    editingId = id;
+    document.getElementById('f-word').value    = w.word;
+    document.getElementById('f-zh').value      = w.zh;
+    document.getElementById('f-type').value    = w.type || 'word';
+    document.getElementById('f-example').value = w.example || '';
+    document.getElementById('translate-status').textContent = '';
+    document.querySelector('#add-panel .submit-btn').textContent = '✅ 保存修改';
+    showTab('add');
+    setTimeout(() => document.getElementById('f-word').focus(), 80);
+  }
+
   async function addWord() {
-    const word = document.getElementById('f-word').value.trim();
-    const zh   = document.getElementById('f-zh').value.trim();
+    const word    = document.getElementById('f-word').value.trim();
+    const zh      = document.getElementById('f-zh').value.trim();
     if (!word || !zh) { alert('请填写英文和中文意思'); return; }
-    const entry = {
-      id:      'w' + Date.now(),
-      word, zh,
-      type:    document.getElementById('f-type').value,
-      example: document.getElementById('f-example').value.trim(),
-      addedAt: new Date().toISOString().slice(0, 10)
-    };
-    allWords.unshift(entry);
-    await saveWords();
-    document.getElementById('f-word').value = '';
-    document.getElementById('f-zh').value   = '';
-    document.getElementById('f-example').value = '';
-    document.getElementById('f-type').value = 'word';
-    render();
-    showTab('browse');
-    expandedId = entry.id;
-    render();
+    const type    = document.getElementById('f-type').value;
+    const example = document.getElementById('f-example').value.trim();
+
+    if (editingId) {
+      // ── Save edit ──
+      const w = allWords.find(x => x.id === editingId);
+      if (w) { w.word = word; w.zh = zh; w.type = type; w.example = example; }
+      const savedId = editingId;
+      editingId = null;
+      document.querySelector('#add-panel .submit-btn').textContent = '✅ 添加';
+      await saveWords();
+      document.getElementById('f-word').value = '';
+      document.getElementById('f-zh').value   = '';
+      document.getElementById('f-example').value = '';
+      document.getElementById('f-type').value = 'word';
+      showTab('browse');
+      expandedId = savedId;
+      render();
+    } else {
+      // ── Add new ──
+      const entry = { id: 'w' + Date.now(), word, zh, type, example, addedAt: new Date().toISOString().slice(0, 10) };
+      allWords.unshift(entry);
+      await saveWords();
+      document.getElementById('f-word').value = '';
+      document.getElementById('f-zh').value   = '';
+      document.getElementById('f-example').value = '';
+      document.getElementById('f-type').value = 'word';
+      showTab('browse');
+      expandedId = entry.id;
+      render();
+    }
   }
 
   // ── Delete ──
