@@ -93,21 +93,21 @@
     /* ── Pronunciation buttons ── */
     .mode-row { display: flex; gap: 6px; margin-bottom: 8px; }
     .mode-btn {
-      flex: 1; padding: 7px 4px; border-radius: 8px;
+      flex: 1; padding: 10px 4px; border-radius: 8px;
       border: 2px solid var(--border); background: var(--surface);
-      color: var(--muted); font-size: 12px; font-weight: 700; font-family: inherit; cursor: pointer;
+      color: var(--muted); font-size: 17px; font-weight: 700; font-family: inherit; cursor: pointer;
     }
     .mode-btn.active { background: var(--accent2); border-color: var(--accent2); color: #fff; }
     .say-row { display: flex; gap: 8px; flex-wrap: wrap; }
     .say-btn {
-      flex: 1; min-width: 60px; padding: 10px 6px; border-radius: 10px;
+      flex: 1; min-width: 60px; padding: 12px 6px; border-radius: 10px;
       border: 2px solid var(--accent2); background: rgba(59,130,246,0.1);
-      color: var(--accent2); font-size: 13px; font-weight: 800; font-family: inherit;
+      color: var(--accent2); font-size: 17px; font-weight: 800; font-family: inherit;
       cursor: pointer; text-align: center;
     }
     .say-btn:active { opacity: 0.7; }
     .say-btn.running { background: rgba(59,130,246,0.25); border-color: var(--green); color: var(--green); }
-    .say-progress { font-size: 13px; color: var(--green); font-weight: 700; margin-top: 6px; text-align: center; }
+    .say-progress { font-size: 17px; color: var(--green); font-weight: 700; margin-top: 6px; text-align: center; }
 
     /* ── Add form ── */
     #add-panel { padding: 14px; display: none; flex-direction: column; gap: 12px; }
@@ -142,8 +142,8 @@
     /* ── Delete / Edit buttons ── */
     .del-btn, .edit-btn {
       float: right; background: none; border: 1.5px solid var(--border);
-      border-radius: 8px; color: var(--muted); font-size: 12px;
-      padding: 4px 8px; cursor: pointer; font-family: inherit; margin-left: 8px;
+      border-radius: 8px; color: var(--muted); font-size: 17px;
+      padding: 6px 12px; cursor: pointer; font-family: inherit; margin-left: 8px;
     }
     .del-btn:active  { color: var(--red);    border-color: var(--red);    }
     .edit-btn:active { color: var(--accent2); border-color: var(--accent2); }
