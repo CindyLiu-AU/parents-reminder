@@ -62,8 +62,10 @@
     .word-card {
       background: var(--surface); border: 1.5px solid var(--border); border-radius: 14px;
       padding: 14px 14px 32px; cursor: pointer; text-align: center; position: relative;
+      transition: padding 0.2s, opacity 0.2s;
     }
-    .word-card.expanded { border-color: var(--accent); }
+    .word-card.expanded { border-color: var(--accent); border-width: 2.5px; }
+    .word-card.compressed { padding-top: 6px; padding-bottom: 22px; opacity: 0.5; }
 
     .word-top { display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; }
     .word-type {
@@ -470,11 +472,12 @@
       return;
     }
     el.innerHTML = displayWords.map(w => {
-      const exp = expandedId === w.id;
+      const exp        = expandedId === w.id;
+      const compressed = expandedId && !exp;
       const enMask = hideEn ? ' class="word-en word-mask" onclick="revealMask(this,event)"' : ' class="word-en"';
       const zhMask = hideZh ? ' class="word-zh word-mask" onclick="revealMask(this,event)"' : ' class="word-zh"';
       const isMultiWord = w.word.trim().split(/\s+/).length > 1;
-      return `<div class="word-card${exp ? ' expanded' : ''}" onclick="toggleCard('${w.id}')">
+      return `<div class="word-card${exp ? ' expanded' : compressed ? ' compressed' : ''}" onclick="toggleCard('${w.id}')">
         <span class="word-type">${TYPE_LABEL[w.type] || w.type || '单词'}</span>
         <span class="example-dot ${w.example ? 'has' : 'none'}" title="${w.example ? '有例句' : '无例句'}"></span>
         <div class="word-top">
