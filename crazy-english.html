@@ -195,7 +195,9 @@
     <h1>🗣 Crazy English</h1>
     <button class="hbtn" onclick="toggleTheme()">☀️</button>
     <button class="hbtn" id="count-badge" style="color:var(--accent)">0 词</button>
+    <button class="hbtn" id="ctrl-toggle" onclick="toggleControls()" style="font-size:14px">▲</button>
   </div>
+  <div id="header-controls">
   <div class="tabs" style="margin-top:10px">
     <button class="tab active" id="tab-browse" onclick="showTab('browse')">📖 学习</button>
     <button class="tab" id="tab-game"   onclick="showTab('game')">🎮 游戏</button>
@@ -212,6 +214,7 @@
     <button class="view-btn"        data-filter="word"       onclick="setFilter('word')">单词</button>
     <button class="view-btn"        data-filter="phrase"     onclick="setFilter('phrase')">短语</button>
     <button class="view-btn"        data-filter="sentence"   onclick="setFilter('sentence')">句子</button>
+  </div>
   </div>
 </div>
 
@@ -261,6 +264,20 @@
   let viewMode         = 'both';       // 'both' | 'hide-en' | 'hide-zh'
   let activeFilter = 'all'; // 'all' | 'no-example' | 'word' | 'phrase' | 'sentence'
 
+  // ── Controls toggle ──
+  let controlsVisible = localStorage.getItem('ce_controls') !== 'hidden';
+  function applyControls() {
+    const ctrl = document.getElementById('header-controls');
+    const btn  = document.getElementById('ctrl-toggle');
+    ctrl.style.display = controlsVisible ? '' : 'none';
+    btn.textContent    = controlsVisible ? '▲' : '▼';
+  }
+  function toggleControls() {
+    controlsVisible = !controlsVisible;
+    localStorage.setItem('ce_controls', controlsVisible ? 'visible' : 'hidden');
+    applyControls();
+  }
+
   // ── Theme ──
   function applyTheme(t) { document.documentElement.setAttribute('data-theme', t); }
   function toggleTheme() {
@@ -268,6 +285,7 @@
     localStorage.setItem(THEME_KEY, next); applyTheme(next);
   }
   applyTheme(localStorage.getItem(THEME_KEY) || 'dark');
+  applyControls();
 
   // ── TTS ──
   function initVoices() {
